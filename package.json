@@ -1,0 +1,54 @@
+{
+  "name": "vubel",
+  "version": "1.0.0-alpha.1",
+  "main": "dist/vubel.js",
+  "umd:main": "dist/vubel.umd.js",
+  "module": "dist/vubel.module.js",
+  "typings": "dist/index.d.ts",
+  "author": "liximomo",
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "start": "TARGET=es rollup -c -w",
+    "build": "rollup -c",
+    "test": "NODE_ENV=test jest",
+    "prepub": "npm run build",
+    "pub": "npm publish --registry http://192.168.99.191:7000"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.2",
+    "jest": "^24.8.0",
+    "rollup": "^1.12.0",
+    "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^4.0.4",
+    "rollup-plugin-typescript2": "^0.21.0",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "vue": "^2.0.0"
+  },
+  "dependencies": {
+    "tslib": "^1.9.3"
+  },
+  "jest": {
+    "verbose": true,
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/helpers/wait-for-update.js"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.[jt]s$": "<rootDir>/test/tsTransform.js"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*.spec.js"
+    ]
+  }
+}
