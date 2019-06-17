@@ -1,9 +1,10 @@
 {
-  "name": "vubel",
-  "version": "1.0.0-alpha.1",
-  "main": "dist/vubel.js",
-  "umd:main": "dist/vubel.umd.js",
-  "module": "dist/vubel.module.js",
+  "name": "vue-function-api",
+  "version": "1.0.0",
+  "description": "Provide logic composition capabilities for Vue.",
+  "main": "dist/vue-function-api.js",
+  "umd:main": "dist/vue-function-api.umd.js",
+  "module": "dist/vue-function-api.module.js",
   "typings": "dist/index.d.ts",
   "author": "liximomo",
   "license": "MIT",
@@ -15,9 +16,13 @@
     "start": "TARGET=es rollup -c -w",
     "build": "rollup -c",
     "test": "NODE_ENV=test jest",
-    "prepub": "npm run build",
-    "pub": "npm publish --registry http://192.168.99.191:7000"
+    "prepub": "npm run test && npm run build",
+    "pub": "npm publish"
   },
+  "bugs": {
+    "url": "https://github.com/liximomo/vue-function-api/issues"
+  },
+  "homepage": "https://github.com/liximomo/vue-function-api#readme",
   "devDependencies": {
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.2",

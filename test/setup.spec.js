@@ -4,18 +4,15 @@ const { plugin, value } = require('../src');
 Vue.use(plugin);
 
 describe('setup', () => {
-  beforeEach(() => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
-  });
-  afterEach(() => {
-    warn.mockRestore();
-  });
-
   it('should merge result properly', () => {
-    const Test = Vue.extend({
+    const A = Vue.extend({
       setup() {
         return { a: 1 };
       },
+    });
+    const Test = Vue.extend({
+      extends: A,
+      setup() {},
     });
     let vm = new Test({
       setup() {

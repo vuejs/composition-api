@@ -1,6 +1,6 @@
 import { VueConstructor } from 'vue';
-import { currentVue } from '../runtimeContext';
-import { getCurrentVM } from '../helper';
+import { getCurrentVue } from '../runtimeContext';
+import { ensuerCurrentVMInFn } from '../helper';
 import { UnknownObject } from '../types/basic';
 import { hasOwn } from '../utils';
 
@@ -19,7 +19,7 @@ function resolveInject(
   }
 
   if (process.env.NODE_ENV !== 'production') {
-    currentVue.util.warn(`Injection "${String(provideKey)}" not found`, vm);
+    getCurrentVue().util.warn(`Injection "${String(provideKey)}" not found`, vm);
   }
 }
 
@@ -31,7 +31,7 @@ export function provide(provideOption: ProvideOption) {
     return;
   }
 
-  const vm = getCurrentVM('provide');
+  const vm = ensuerCurrentVMInFn('provide');
   (vm as any)._provided =
     typeof provideOption === 'function' ? provideOption.call(vm) : provideOption;
 }
@@ -41,6 +41,6 @@ export function inject(injectKey: InjectKey) {
     return;
   }
 
-  const vm = getCurrentVM('inject');
+  const vm = ensuerCurrentVMInFn('inject');
   return resolveInject(injectKey, vm);
 }

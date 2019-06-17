@@ -56,7 +56,6 @@ describe('Hooks provide/inject', () => {
         child: {
           template: `<div>{{ msg }}</div>`,
           setup() {
-            console.log('ss', inject('msg'));
             return {
               msg: inject('msg'),
             };

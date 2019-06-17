@@ -7,27 +7,27 @@ import replace from 'rollup-plugin-replace';
 
 const builds = {
   'cjs-dev': {
-    outFile: 'vubel.js',
+    outFile: 'vue-function-api.js',
     format: 'cjs',
     mode: 'development',
   },
   'cjs-prod': {
-    outFile: 'vubel.min.js',
+    outFile: 'vue-function-api.min.js',
     format: 'cjs',
     mode: 'production',
   },
   'umd-dev': {
-    outFile: 'vubel.umd.js',
+    outFile: 'vue-function-api.umd.js',
     format: 'umd',
     mode: 'development',
   },
   'umd-prod': {
-    outFile: 'vubel.umd.min.js',
+    outFile: 'vue-function-api.umd.min.js',
     format: 'umd',
     mode: 'production',
   },
   es: {
-    outFile: 'vubel.module.js',
+    outFile: 'vue-function-api.module.js',
     format: 'es',
     mode: 'development',
   },
@@ -47,7 +47,7 @@ function genConfig({ outFile, format, mode }) {
       globals: {
         vue: 'Vue',
       },
-      name: format === 'umd' ? 'vubel' : undefined,
+      name: format === 'umd' ? 'vueFunctionApi' : undefined,
     },
     external: ['vue'],
     plugins: [

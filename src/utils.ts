@@ -10,13 +10,13 @@ export function hasOwn(obj: Object | any[], key: string): boolean {
 }
 
 export function assert(condition: any, msg: string) {
-  if (!condition) throw new Error(`[vubel] ${msg}`);
+  if (!condition) throw new Error(`[vue-function-api] ${msg}`);
 }
 
 export function isArray<T>(x: unknown): x is T[] {
   return toString(x) === '[object Array]';
 }
 
-export function isObject<T extends Object = {}>(x: unknown): x is T {
+export function isPlainObject<T extends Object = {}>(x: unknown): x is T {
   return toString(x) === '[object Object]';
 }

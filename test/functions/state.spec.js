@@ -54,4 +54,14 @@ describe('Hooks state', () => {
       expect(app.$el.querySelector('span').textContent).toBe('1');
     }).then(done);
   });
+
+  it('should be unwrapping(nested property inside a reactive object)', () => {
+    new Vue({
+      setup() {
+        const a = value(1);
+        const b = state({ a });
+        expect(b.a).toBe(1);
+      },
+    });
+  });
 });

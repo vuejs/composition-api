@@ -1,8 +1,8 @@
 import { VueConstructor } from 'vue';
 import { UnknownObject } from './types/basic';
 import { isWrapper } from './helper';
-import { setCurrentVM, currentVue as Vue } from './runtimeContext';
-import { isObject, noopFn, assert } from './utils';
+import { setCurrentVM } from './runtimeContext';
+import { isPlainObject, noopFn, assert } from './utils';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -17,7 +17,15 @@ export function mixin(Vue: VueConstructor) {
   function vuexInit(this: any) {
     const vm = this;
     const { setup } = vm.$options;
-    if (setup && typeof setup === 'function') {
+    if (setup) {
+      if (!isProd && typeof setup !== 'function') {
+        Vue.util.warn(
+          'The "setup" option should be a function that returns a object in component definitions.',
+          vm
+        );
+        return;
+      }
+
       let binding: any;
       try {
         setCurrentVM(vm);
@@ -35,7 +43,7 @@ export function mixin(Vue: VueConstructor) {
 
       if (!isProd) {
         assert(
-          isObject(binding),
+          isPlainObject(binding),
           `"setup" must return a "Object", get "${Object.prototype.toString
             .call(binding)
             .slice(8, -1)}"`
