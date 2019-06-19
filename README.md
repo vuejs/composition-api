@@ -40,6 +40,10 @@ yarn add vue-function-api
 ```
 通过全局变量 `window.vueFunctionApi` 来使用。
 
+**CodePen**
+
+[在线示例](https://codepen.io/liximomo/pen/dBOvgg)，fork 后进行测试或 bug 反馈。
+
 # 使用
 ``` js
 import Vue from 'vue';
@@ -184,7 +188,9 @@ console.log(countPlusOne.value) // 2
 ```
 
 ## watch
-▸ **watch**(getter: *`Function`*, callback: *`Function`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+
+▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
 
 `watch` 允许我们在相应的状态发生改变时执行一个回调函数。
 
