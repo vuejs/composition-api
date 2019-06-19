@@ -1,6 +1,6 @@
 {
   "name": "vue-function-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Provide logic composition capabilities for Vue.",
   "main": "dist/vue-function-api.js",
   "umd:main": "dist/vue-function-api.umd.js",
