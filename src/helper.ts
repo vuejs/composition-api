@@ -1,10 +1,10 @@
 import { VueConstructor } from 'vue';
 import { getCurrentVue, getCurrentVM } from './runtimeContext';
 import { assert } from './utils';
-import Wrapper from './wrappers/Wrapper';
+import { AbstractWrapper } from './wrappers';
 
-export function isWrapper<T>(obj: any): obj is Wrapper<T> {
-  return obj instanceof Wrapper;
+export function isWrapper<T>(obj: any): obj is AbstractWrapper<T> {
+  return obj instanceof AbstractWrapper;
 }
 
 export function ensuerCurrentVMInFn(hook: string): InstanceType<VueConstructor> {

@@ -1,7 +1,6 @@
-import { IWrapper } from '../types/lib';
+import { Wrapper, ValueWrapper } from '../wrappers';
 import { isArray, isPlainObject } from '../utils';
 import { observable, isWrapper } from '../helper';
-import ValueWrapper from '../wrappers/ValueWrapper';
 
 function upWrapping(obj: any) {
   const keys = Object.keys(obj);
@@ -22,6 +21,6 @@ export function state<T>(value: T): T {
   return observable(upWrapping(value));
 }
 
-export function value<T>(value: T): IWrapper<T> {
+export function value<T>(value: T): Wrapper<T> {
   return new ValueWrapper(observable({ $$state: upWrapping(value) }));
 }

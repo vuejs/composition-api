@@ -1,12 +1,12 @@
 import { VueConstructor } from 'vue';
-import { IWrapper } from '../types/lib';
+import { Wrapper } from '../wrappers';
 import { isArray, assert } from '../utils';
 import { isWrapper } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
 type watcherCallBack<T> = (newVal: T, oldVal: T) => void;
-type watchedValue<T> = IWrapper<T> | (() => T);
+type watchedValue<T> = Wrapper<T> | (() => T);
 type FlushMode = 'pre' | 'post' | 'sync' | 'auto';
 interface WatcherOption {
   lazy: boolean;

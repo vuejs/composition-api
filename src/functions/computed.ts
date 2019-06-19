@@ -1,8 +1,7 @@
 import { compoundComputed } from '../helper';
-import { IWrapper } from '../types/lib';
-import ComputedWrapper from '../wrappers/ComputedWrapper';
+import { Wrapper, ComputedWrapper } from '../wrappers';
 
-export function computed<T>(getter: () => T, setter?: (x: T) => void): IWrapper<T> {
+export function computed<T>(getter: () => T, setter?: (x: T) => void): Wrapper<T> {
   const computedHost = compoundComputed({
     $$state: setter
       ? {

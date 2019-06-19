@@ -19,7 +19,7 @@
     -  [lifecycle](#lifecycle)
     -  [provide, inject](#provide-inject)
     -  [Wrapper](#Wrapper)
-- [注意事项](#注意)
+- [其他](#其他)
 
 # 安装
 
@@ -372,7 +372,7 @@ console.log(count.value) // 2
 以上这些关于包装对象的细节可能会让你觉得有些复杂，但实际使用中你只需要记住一个基本的规则：只有当你直接以变量的形式引用一个包装对象的时候才会需要用 `.value` 去取它内部的值 —— 在模版中你甚至不需要知道它们的存在。
 
 
-# 注意事项
+# 其他
 
 - vue-function-api 会一直保持与 Vue3.x 的兼容性，当 3.0 发布时，您可以无缝替换掉本库。
 - vue-function-api 的实现只依赖 Vue2.x 本身，不伦 Vue3.x 的发布与否，都不会影响您正常使用本库。

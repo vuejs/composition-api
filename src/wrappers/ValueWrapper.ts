@@ -1,10 +1,10 @@
-import Wrapper from './Wrapper';
+import AbstractWrapper from './AbstractWrapper';
 
 interface ValueInteral<T> {
   $$state: T;
 }
 
-export default class ValueWrapper<V> extends Wrapper<V> {
+export default class ValueWrapper<V> extends AbstractWrapper<V> {
   constructor(private _interal: ValueInteral<V>) {
     super();
   }

@@ -1,5 +1,6 @@
 import Vue, { VueConstructor } from 'vue';
 import { currentVue } from './runtimeContext';
+import { Wrapper } from './wrappers';
 import { install } from './install';
 import { mixin } from './setup';
 
@@ -26,7 +27,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
   _install(window.Vue);
 }
 
-export { plugin };
+export { plugin, Wrapper };
 export * from './functions/state';
 export * from './functions/lifecycle';
 export * from './functions/watch';

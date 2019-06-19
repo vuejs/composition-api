@@ -1,12 +1,12 @@
 import { assert } from '../utils';
-import Wrapper from './Wrapper';
+import AbstractWrapper from './AbstractWrapper';
 
 interface ComputedInteral<T> {
   read(): T;
   write(x: T): void;
 }
 
-export default class ComputedWrapper<V> extends Wrapper<V> {
+export default class ComputedWrapper<V> extends AbstractWrapper<V> {
   constructor(private _interal: ComputedInteral<V>) {
     super();
   }
