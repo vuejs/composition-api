@@ -81,7 +81,7 @@ function createSingleSourceWatcher<T>(
   source: watchedValue<T>,
   cb: watcherCallBack<T>,
   options: WatcherOption
-) {
+): () => void {
   let getter: () => T;
   if (isWrapper<T>(source)) {
     getter = () => source.value;
@@ -128,7 +128,7 @@ function createMuiltSourceWatcher<T>(
   sources: Array<watchedValue<T>>,
   cb: watcherCallBack<T[]>,
   options: WatcherOption
-) {
+): () => void {
   let execCallbackAfterNumRun: false | number = options.lazy ? false : sources.length;
   let pendingCallback = false;
   const watcherContext: WatcherContext<T>[] = [];
@@ -209,10 +209,20 @@ function createMuiltSourceWatcher<T>(
 }
 
 export function watch<T>(
+  source: watchedValue<T>,
+  cb: watcherCallBack<T>,
+  options?: Partial<WatcherOption>
+): () => void;
+export function watch<T>(
+  source: watchedValue<T>[],
+  cb: watcherCallBack<T[]>,
+  options?: Partial<WatcherOption>
+): () => void;
+export function watch<T>(
   source: watchedValue<T> | Array<watchedValue<T>>,
   cb: watcherCallBack<T> | watcherCallBack<T[]>,
   options: Partial<WatcherOption> = {}
-) {
+): () => void {
   const opts: WatcherOption = {
     ...{
       lazy: false,
