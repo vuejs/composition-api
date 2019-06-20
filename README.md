@@ -51,7 +51,7 @@ import { plugin, value, computed, watch, onMounted } from 'vue-class-component'
 
 Vue.use(plugin);
 
-const App = {
+new Vue({
   template: `
     <div>
       <span>count is {{ count }}</span>
@@ -61,27 +61,32 @@ const App = {
   `,
   setup() {
     // reactive state
-    const count = value(0)
+    const count = value(0);
     // computed state
-    const plusOne = computed(() => count.value + 1)
+    const plusOne = computed(() => count.value + 1);
     // method
-    const increment = () => { count.value++ }
+    const increment = () => {
+      count.value++;
+    };
     // watch
-    watch(() => count.value * 2, val => {
-      console.log(`count * 2 is ${val}`)
-    })
+    watch(
+      () => count.value * 2,
+      val => {
+        console.log(`count * 2 is ${val}`);
+      }
+    );
     // lifecycle
     onMounted(() => {
-      console.log(`mounted`)
-    })
+      console.log(`mounted`);
+    });
     // expose bindings on render context
     return {
       count,
       plusOne,
-      increment
-    }
-  }
-}
+      increment,
+    };
+  },
+}).$mount('#app');
 ```
 
 # API
