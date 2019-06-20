@@ -47,7 +47,7 @@ yarn add vue-function-api
 # 使用
 ``` js
 import Vue from 'vue';
-import { plugin, value, computed, watch, onMounted } from 'vue-class-component'
+import { plugin, value, computed, watch, onMounted } from 'vue-function-api'
 
 Vue.use(plugin);
 
@@ -121,7 +121,7 @@ const MyComponent = {
 Example:
 
 ```js
-import { value } from 'vue'
+import { value } from 'vue-function-api'
 
 const MyComponent = {
   setup(props) {
@@ -139,7 +139,7 @@ const MyComponent = {
 ```
 
 ```js
-import { value } from 'vue'
+import { value } from 'vue-function-api'
 
 const MyComponent = {
   setup(props) {
@@ -164,7 +164,7 @@ const MyComponent = {
 Example:
 
 ```js
-import { state } from 'vue'
+import { state } from 'vue-function-api'
 
 const object = state({
   count: 0
@@ -181,7 +181,7 @@ object.count++
 Example:
 
 ```js
-import { value, computed } from 'vue'
+import { value, computed } from 'vue-function-api'
 
 const count = value(0)
 const countPlusOne = computed(() => count.value + 1)
@@ -255,7 +255,7 @@ watch(
 Example:
 
 ```js
-import { onMounted, onUpdated, onUnmounted } from 'vue'
+import { onMounted, onUpdated, onUnmounted } from 'vue-function-api'
 
 const MyComponent = {
   setup() {
@@ -282,7 +282,7 @@ const MyComponent = {
 Example:
 
 ```js
-import { provide, inject } from 'vue'
+import { provide, inject } from 'vue-function-api'
 
 const CountSymbol = Symbol()
 
