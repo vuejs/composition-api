@@ -5,15 +5,8 @@ import { install } from './install';
 import { mixin } from './setup';
 
 declare module 'vue/types/options' {
-  interface ComponentOptions<
-    V extends Vue,
-    Data = DefaultData<V>,
-    Methods = DefaultMethods<V>,
-    Computed = DefaultComputed,
-    PropsDef = PropsDefinition<DefaultProps>,
-    Props = DefaultProps
-  > {
-    setup?(props: Props): object | null | undefined;
+  interface ComponentOptions<V extends Vue> {
+    setup?(props: DefaultProps): object | null | undefined;
   }
 }
 

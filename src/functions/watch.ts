@@ -214,7 +214,7 @@ export function watch<T>(
   options?: Partial<WatcherOption>
 ): () => void;
 export function watch<T>(
-  source: watchedValue<T>[],
+  source: Array<watchedValue<T>>,
   cb: watcherCallBack<T[]>,
   options?: Partial<WatcherOption>
 ): () => void;
