@@ -8,14 +8,16 @@ describe('Hooks value', () => {
     const vm = new Vue({
       setup() {
         return {
+          name: value(null),
           msg: value('foo'),
         };
       },
-      template: '<div>{{ msg }}</div>',
+      template: '<div>{{name}}, {{ msg }}</div>',
     }).$mount();
+    vm.name = 'foo';
     vm.msg = 'bar';
     waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('bar');
+      expect(vm.$el.textContent).toBe('foo, bar');
     }).then(done);
   });
 });
