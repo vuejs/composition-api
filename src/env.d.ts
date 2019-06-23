@@ -7,9 +7,13 @@ declare global {
 }
 
 declare module 'vue/types/vue' {
+  interface Vue {
+    readonly _data: Record<string, any>;
+  }
+
   interface VueConstructor {
     util: {
-      warn(msg: string, vm: Vue);
+      warn(msg: string, vm?: Vue);
       defineReactive(
         obj: Object,
         key: string,

@@ -1,4 +1,4 @@
-import AbstractWrapper from './AbstractWrapper';
+import AbstractWrapper, { proxy } from './AbstractWrapper';
 
 interface ValueInteral<T> {
   $$state: T;
@@ -15,5 +15,20 @@ export default class ValueWrapper<V> extends AbstractWrapper<V> {
 
   set value(v: V) {
     this._interal.$$state = v;
+  }
+
+  exposeToDevltool() {
+    if (process.env.NODE_ENV !== 'production') {
+      const vm = this._vm!;
+      const name = this._propName!;
+      proxy(
+        vm._data,
+        name,
+        () => this.value,
+        (val: any) => {
+          this.value = val;
+        }
+      );
+    }
   }
 }

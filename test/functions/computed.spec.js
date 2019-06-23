@@ -70,7 +70,7 @@ describe('Hooks computed', () => {
     });
     vm.b = 2;
     expect(warn.mock.calls[0][0]).toMatch(
-      'Computed property "$$state" was assigned to but it has no setter.'
+      '[Vue warn]: Computed property "b" was assigned to but it has no setter.'
     );
   });
 

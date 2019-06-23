@@ -30,7 +30,7 @@ export function observable<T = any>(obj: T): T {
   });
   Vue.config.silent = silent;
 
-  return (vm as any)._data.$$state;
+  return vm._data.$$state;
 }
 
 export function compoundComputed(computed: {
