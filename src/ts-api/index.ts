@@ -6,15 +6,17 @@ export type PropType<T> = T;
 
 // type FullPropType<T> = T extends { required: boolean } ? T : T | undefined;
 
-interface ComponentOptionsWithSetup<Props> extends Omit<ComponentOptions<Vue>, 'props' | 'setup'> {
+type ComponentOptionsWithSetup<Props> = Omit<ComponentOptions<Vue>, 'props' | 'setup'> & {
   props: Props;
   setup?: (
     this: undefined,
     props: { [K in keyof Props]: Props[K] },
     context: Context
   ) => object | null | undefined | void;
-}
+};
 
-export function createComponent<Props>(compOpions: ComponentOptionsWithSetup<Props>) {
-  return compOpions;
+export function createComponent<Props>(
+  compOpions: ComponentOptionsWithSetup<Props>
+): ComponentOptions<Vue> {
+  return (compOpions as any) as ComponentOptions<Vue>;
 }
