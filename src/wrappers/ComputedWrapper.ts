@@ -39,14 +39,12 @@ export default class ComputedWrapper<V> extends AbstractWrapper<V> {
         vm.$options.computed = {};
       }
 
-      proxy(
-        vm.$options.computed,
-        name,
-        () => this.value,
-        (val: any) => {
+      proxy(vm.$options.computed, name, () => ({
+        get: () => this.value,
+        set: (val: any) => {
           this.value = val;
-        }
-      );
+        },
+      }));
     }
   }
 }
