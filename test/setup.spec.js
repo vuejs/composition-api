@@ -4,6 +4,98 @@ const { plugin, value } = require('../src');
 Vue.use(plugin);
 
 describe('setup', () => {
+  beforeEach(() => {
+    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
+  });
+  afterEach(() => {
+    warn.mockRestore();
+  });
+
+  it('warn for exist property(data)', () => {
+    new Vue({
+      data() {
+        return {
+          a: 1,
+        };
+      },
+      setup() {
+        const a = value();
+        return {
+          a,
+        };
+      },
+    });
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: The setup binding property "a" is already declared as a data.'
+    );
+  });
+
+  it('warn for exist property(prop)', () => {
+    new Vue({
+      props: {
+        a: {},
+      },
+      setup() {
+        const a = value();
+        return {
+          a,
+        };
+      },
+    });
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: The setup binding property "a" is already declared as a prop.'
+    );
+  });
+
+  it('warn for exist property(method)', () => {
+    new Vue({
+      methods: {
+        a() {},
+      },
+      setup() {
+        const a = value();
+        return {
+          a,
+        };
+      },
+    });
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: The setup binding property "a" is already declared as a method.'
+    );
+  });
+
+  it('warn for exist property(computed)', () => {
+    new Vue({
+      computed: {
+        a() {},
+      },
+      setup() {
+        const a = value();
+        return {
+          a,
+        };
+      },
+    });
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: The setup binding property "a" is already declared as a computed.'
+    );
+  });
+
+  it('warn for exist property', () => {
+    new Vue({
+      setup() {
+        this.a = 1;
+        const a = value();
+        return {
+          a,
+        };
+      },
+    });
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: The setup binding property "a" is already declared.'
+    );
+  });
+
   it('should merge result properly', () => {
     const A = Vue.extend({
       setup() {
