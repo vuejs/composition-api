@@ -20,7 +20,6 @@
     -  [watch](#watch)
     -  [lifecycle](#lifecycle)
     -  [provide, inject](#provide-inject)
-    -  [Wrapper](#Wrapper)
 - [其他](#其他)
 
 # 安装
@@ -95,11 +94,11 @@ new Vue({
 
 ## setup
 
-▸ **setup**(props: *`Props`*): `Object|undefined`
+▸ **setup**(props: *`Props`*, context: *[`Context`](#Context)*): `Object|undefined`
 
 组件现在接受一个新的 `setup` 选项，在这里我们利用函数 api 进行组件逻辑设置。
 
-`setup()` 中可以使用 `this` 访问当前组件实例, 大多数情况下我们并不需要访问它。
+`setup()` 中不可以使用 `this` 访问当前组件实例, 我们可以通过 `setup` 的第二个参数 `context` 来访问 vue2.x API 中实例上的属性。
 
 Example:
 
@@ -307,6 +306,20 @@ const Descendent = {
   }
 }
 ```
+## Context
+`Context` 对象中的属性是 2.x 中的 vue 实例属性的一个子集。完整的属性列表：
+
+* parent
+* root
+* children
+* refs
+* slots
+* attrs
+* listeners
+* on
+* once
+* off
+* emit
 
 ## Wrapper (包装对象)
 > 以下内容引自 [尤雨溪知乎专栏](https://zhuanlan.zhihu.com/p/68477600)

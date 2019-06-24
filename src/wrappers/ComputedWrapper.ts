@@ -1,5 +1,6 @@
 import { getCurrentVue } from '../runtimeContext';
-import AbstractWrapper, { proxy } from './AbstractWrapper';
+import { proxy } from '../utils';
+import AbstractWrapper from './AbstractWrapper';
 
 interface ComputedInteral<T> {
   read(): T;

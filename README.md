@@ -94,7 +94,7 @@ new Vue({
 
 ## setup
 
-▸ **setup**(props: *`Props`*): `Object|undefined`
+▸ **setup**(props: *`Props`*, context: *[`Context`](#Context)*): `Object|undefined`
 
 A new component option, `setup()` is introduced. As the name suggests, this is the place where we use the function-based APIs to setup the logic of our component. `setup()` is called when an instance of the component is created, after props resolution. The function receives the resolved props as its first argument.
 
@@ -117,7 +117,7 @@ const MyComponent = {
 
 ## value
 
-▸ **value**(value: *`any`*): [`Wrapper`](#Wrapper)
+▸ **value**(value: *`any`*): [`Wrapper`][Wrapper]
 
 Calling `value()` returns a **value wrapper** object that contains a single reactive property: `.value`.
 
@@ -177,7 +177,7 @@ object.count++
 ```
 
 ## computed
-▸ **computed**(getter: *`Function`*, setter?: *`Function`*): [`Wrapper`](#Wrapper)
+▸ **computed**(getter: *`Function`*, setter?: *`Function`*): [`Wrapper`][Wrapper]
 
 Equivalent with computed property from `vue 2.x`.
 
@@ -308,8 +308,41 @@ const Descendent = {
 }
 ```
 
+## Context
+The `context` object exposes a number of properties that were previously exposed on this in 2.x APIs:
+ 
+```js
+const MyComponent = {
+  setup(props, context) {
+    context.attrs
+    context.slots
+    context.refs
+    context.emit
+    context.parent
+    context.root
+  }
+}
+```
+
+Full properties list:
+
+* parent
+* root
+* children
+* refs
+* slots
+* attrs
+* listeners
+* on
+* once
+* off
+* emit
+
 # Misc
 
 - `vue-function-api` will keep updated with `Vue3.x` API. When `3.0` released, you can replace this library seamlessly.
 - `vue-function-api` only relies on `Vue2.x` itself. Wheather `Vue3.x` is released or not, it's not affect you using this library.
 - Due the the limitation of `Vue2.x`'s public API. `vue-function-api` inevitably introduce some extract workload. It doesn't concern you if you are now working on extreme environment.
+
+
+[wrapper]: https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#why-do-we-need-value-wrappers

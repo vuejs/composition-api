@@ -1,7 +1,8 @@
 import { VueConstructor } from 'vue';
+import { Context } from './types/vue';
 import { isWrapper } from './helper';
 import { setCurrentVM } from './runtimeContext';
-import { isPlainObject, assert } from './utils';
+import { isPlainObject, assert, proxy } from './utils';
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -28,9 +29,10 @@ export function mixin(Vue: VueConstructor) {
     }
 
     let binding: any;
+    setCurrentVM(vm);
+    const ctx = createContext(vm);
     try {
-      setCurrentVM(vm);
-      binding = setup.call(vm, vm.$props);
+      binding = setup(vm.$props || {}, ctx);
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') {
         Vue.util.warn(`there is an error occuring in "setup"`, vm);
@@ -61,5 +63,43 @@ export function mixin(Vue: VueConstructor) {
         vm[name] = bindingValue;
       }
     });
+  }
+
+  function createContext(vm: any): Context {
+    const ctx = {} as Context;
+    const props = [
+      // 'el', // has workaround
+      // 'options',
+      'parent', // confirmed in rfc
+      'root', // confirmed in rfc
+      // 'children', // very likely
+      'refs', // confirmed in rfc
+      'slots', // confirmed in rfc
+      // 'scopedSlots', // has workaround
+      // 'isServer',
+      // 'ssrContext',
+      // 'vnode',
+      'attrs', // confirmed in rfc
+      // 'listeners', // very likely
+    ];
+    const method = [
+      // 'on',  // very likely
+      // 'once', // very likely
+      // 'off', // very likely
+      'emit', // confirmed in rfc
+      // 'forceUpdate',
+      // 'destroy'
+    ];
+    props.forEach(key =>
+      proxy(ctx, key, () => vm[key], function() {
+        Vue.util.warn(`Cannot assign to '${key}' because it is a read-only property`, vm);
+      })
+    );
+    method.forEach(key => proxy(ctx, key, () => vm[key]));
+
+    if (process.env.NODE_ENV === 'test') {
+      (ctx as any)._vm = vm;
+    }
+    return ctx;
   }
 }

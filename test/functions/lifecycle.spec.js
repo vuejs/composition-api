@@ -17,12 +17,14 @@ describe('Hooks lifecycle', () => {
     it('should have completed observation', () => {
       const spy = jest.fn();
       new Vue({
-        data: {
-          a: 1,
+        data() {
+          return {
+            a: 1,
+          };
         },
-        setup() {
+        setup(_, { _vm }) {
           onCreated(() => {
-            expect(this.a).toBe(1);
+            expect(_vm.a).toBe(1);
             spy();
           });
         },
@@ -36,13 +38,13 @@ describe('Hooks lifecycle', () => {
       const spy = jest.fn();
       const vm = new Vue({
         render() {},
-        setup() {
+        setup(_, { _vm }) {
           onBeforeMount(() => {
+            expect(_vm._isMounted).toBe(false);
+            expect(_vm.$el).toBeUndefined(); // due to empty mount
+            expect(_vm._vnode).toBeNull();
+            expect(_vm._watcher).toBeNull();
             spy();
-            expect(this._isMounted).toBe(false);
-            expect(this.$el).toBeUndefined(); // due to empty mount
-            expect(this._vnode).toBeNull();
-            expect(this._watcher).toBeNull();
           });
         },
       });
@@ -57,12 +59,12 @@ describe('Hooks lifecycle', () => {
       const spy = jest.fn();
       const vm = new Vue({
         template: '<div></div>',
-        setup() {
+        setup(_, { _vm }) {
           onMounted(() => {
+            expect(_vm._isMounted).toBe(true);
+            expect(_vm.$el.tagName).toBe('DIV');
+            expect(_vm._vnode.tag).toBe('div');
             spy();
-            expect(this._isMounted).toBe(true);
-            expect(this.$el.tagName).toBe('DIV');
-            expect(this._vnode.tag).toBe('div');
           });
         },
       });
@@ -99,18 +101,18 @@ describe('Hooks lifecycle', () => {
         components: {
           test: {
             template: '<nested></nested>',
-            setup() {
+            setup(_, { _vm }) {
               onMounted(() => {
-                expect(this.$el.parentNode).toBeTruthy();
+                expect(_vm.$el.parentNode).toBeTruthy();
                 calls.push('child');
               });
             },
             components: {
               nested: {
                 template: '<div></div>',
-                setup() {
+                setup(_, { _vm }) {
                   onMounted(() => {
-                    expect(this.$el.parentNode).toBeTruthy();
+                    expect(_vm.$el.parentNode).toBeTruthy();
                     calls.push('nested');
                   });
                 },
@@ -129,10 +131,10 @@ describe('Hooks lifecycle', () => {
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
         data: { msg: 'foo' },
-        setup() {
+        setup(_, { _vm }) {
           onBeforeUpdate(() => {
+            expect(_vm.$el.textContent).toBe('foo');
             spy();
-            expect(this.$el.textContent).toBe('foo');
           });
         },
       }).$mount();
@@ -148,9 +150,9 @@ describe('Hooks lifecycle', () => {
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
         data: { msg: 'foo' },
-        setup() {
+        setup(_, { _vm }) {
           onBeforeUpdate(() => {
-            this.msg += '!';
+            _vm.msg += '!';
           });
         },
       }).$mount();
@@ -206,10 +208,10 @@ describe('Hooks lifecycle', () => {
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
         data: { msg: 'foo' },
-        setup() {
+        setup(_, { _vm }) {
           onUpdated(() => {
+            expect(_vm.$el.textContent).toBe('bar');
             spy();
-            expect(this.$el.textContent).toBe('bar');
           });
         },
       }).$mount();
@@ -229,17 +231,17 @@ describe('Hooks lifecycle', () => {
         components: {
           test: {
             template: `<div><slot></slot></div>`,
-            setup() {
+            setup(_, { _vm }) {
               onUpdated(() => {
-                expect(this.$el.textContent).toBe('bar');
+                expect(_vm.$el.textContent).toBe('bar');
                 calls.push('child');
               });
             },
           },
         },
-        setup() {
+        setup(_, { _vm }) {
           onUpdated(() => {
-            expect(this.$el.textContent).toBe('bar');
+            expect(_vm.$el.textContent).toBe('bar');
             calls.push('parent');
           });
         },
@@ -297,11 +299,11 @@ describe('Hooks lifecycle', () => {
       const spy = jest.fn();
       const vm = new Vue({
         render() {},
-        setup() {
+        setup(_, { _vm }) {
           onBeforeDestroy(() => {
+            expect(_vm._isBeingDestroyed).toBe(false);
+            expect(_vm._isDestroyed).toBe(false);
             spy();
-            expect(this._isBeingDestroyed).toBe(false);
-            expect(this._isDestroyed).toBe(false);
           });
         },
       }).$mount();
@@ -318,11 +320,11 @@ describe('Hooks lifecycle', () => {
       const spy = jest.fn();
       const vm = new Vue({
         render() {},
-        setup() {
+        setup(_, { _vm }) {
           onDestroyed(() => {
+            expect(_vm._isBeingDestroyed).toBe(true);
+            expect(_vm._isDestroyed).toBe(true);
             spy();
-            expect(this._isBeingDestroyed).toBe(true);
-            expect(this._isDestroyed).toBe(true);
           });
         },
       }).$mount();

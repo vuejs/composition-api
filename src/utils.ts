@@ -4,6 +4,19 @@ export const hasSymbol = typeof Symbol === 'function' && Symbol.for;
 
 export const noopFn: any = (_: any) => _;
 
+const sharedPropertyDefinition = {
+  enumerable: true,
+  configurable: true,
+  get: noopFn,
+  set: noopFn,
+};
+
+export function proxy(target: any, key: string, getter: Function, setter?: Function) {
+  sharedPropertyDefinition.get = getter;
+  sharedPropertyDefinition.set = setter || noopFn;
+  Object.defineProperty(target, key, sharedPropertyDefinition);
+}
+
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 export function hasOwn(obj: Object | any[], key: string): boolean {
   return hasOwnProperty.call(obj, key);

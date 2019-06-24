@@ -1,4 +1,5 @@
-import AbstractWrapper, { proxy } from './AbstractWrapper';
+import { proxy } from '../utils';
+import AbstractWrapper from './AbstractWrapper';
 
 interface ValueInteral<T> {
   $$state: T;

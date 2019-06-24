@@ -1,20 +1,6 @@
 import Vue from 'vue';
-import { UnknownObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
-import { noopFn, hasOwn } from '../utils';
-
-const sharedPropertyDefinition = {
-  enumerable: true,
-  configurable: true,
-  get: noopFn,
-  set: noopFn,
-};
-
-export function proxy(target: UnknownObject, key: string, getter: Function, setter?: Function) {
-  sharedPropertyDefinition.get = getter;
-  sharedPropertyDefinition.set = setter || noopFn;
-  Object.defineProperty(target, key, sharedPropertyDefinition);
-}
+import { proxy, hasOwn } from '../utils';
 
 export default abstract class AbstractWrapper<V> {
   protected _propName?: string;

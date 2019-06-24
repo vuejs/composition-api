@@ -83,8 +83,10 @@ describe('setup', () => {
 
   it('warn for exist property', () => {
     new Vue({
-      setup() {
+      beforeCreate() {
         this.a = 1;
+      },
+      setup() {
         const a = value();
         return {
           a,
@@ -194,56 +196,12 @@ describe('setup', () => {
     }).then(done);
   });
 
-  it('this should be bind to vm', () => {
+  it('this should be undefined', () => {
     const vm = new Vue({
-      template: '<div><child></child></div>',
-      provide: { foo: 1 },
-      components: {
-        child: {
-          template: '<span>{{bar}}</span>',
-          inject: ['foo'],
-          setup() {
-            return { bar: 'foo:' + this.foo };
-          },
-        },
-      },
-    }).$mount();
-    expect(vm.$el.innerHTML).toBe('<span>foo:1</span>');
-  });
-
-  it('this should be bind to vm when merged', () => {
-    const superComponent = {
+      template: '<div></div>',
       setup() {
-        return { ext: 'ext:' + this.foo };
-      },
-    };
-    const mixins = [
-      {
-        setup() {
-          return { mixin1: 'm1:' + this.foo };
-        },
-      },
-      {
-        setup() {
-          return { mixin2: 'm2:' + this.foo };
-        },
-      },
-    ];
-    const vm = new Vue({
-      template: '<div><child></child></div>',
-      provide: { foo: 1 },
-      components: {
-        child: {
-          extends: superComponent,
-          mixins,
-          template: '<span>{{bar}}-{{ext}}-{{mixin1}}-{{mixin2}}</span>',
-          inject: ['foo'],
-          setup() {
-            return { bar: 'foo:' + this.foo };
-          },
-        },
+        expect(this).toBe(global);
       },
     }).$mount();
-    expect(vm.$el.innerHTML).toBe('<span>foo:1-ext:1-m1:1-m2:1</span>');
   });
 });

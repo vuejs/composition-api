@@ -131,9 +131,9 @@ describe('Hooks computed', () => {
     });
 
     const vm = new Comp({
-      setup() {
+      setup(_, { _vm }) {
         const c = computed(() => {
-          return this.b + 1;
+          return _vm.b + 1;
         });
 
         return {

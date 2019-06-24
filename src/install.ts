@@ -43,10 +43,10 @@ export function install(Vue: VueConstructor, _install: (Vue: VueConstructor) => 
   }
 
   Vue.config.optionMergeStrategies.setup = function(parent: Function, child: Function) {
-    return function mergedSetupFn(this: VueConstructor, props: any) {
+    return function mergedSetupFn(props: any, context: any) {
       return mergeData(
-        typeof child === 'function' ? child.call(this, props) || {} : {},
-        typeof parent === 'function' ? parent.call(this, props) || {} : {}
+        typeof child === 'function' ? child(props, context) || {} : {},
+        typeof parent === 'function' ? parent(props, context) || {} : {}
       );
     };
   };
