@@ -328,14 +328,9 @@ Full properties list:
 
 * parent
 * root
-* children
 * refs
 * slots
 * attrs
-* listeners
-* on
-* once
-* off
 * emit
 
 # Misc

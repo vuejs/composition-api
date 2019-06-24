@@ -311,14 +311,9 @@ const Descendent = {
 
 * parent
 * root
-* children
 * refs
 * slots
 * attrs
-* listeners
-* on
-* once
-* off
 * emit
 
 ## Wrapper (包装对象)
