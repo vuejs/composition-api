@@ -5,7 +5,7 @@ import { Context } from '../types/vue';
 export type PropType<T> = T;
 
 // type FullPropType<T> = T extends { required: boolean } ? T : T | undefined;
-
+type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 type ComponentOptionsWithSetup<Props> = Omit<ComponentOptions<Vue>, 'props' | 'setup'> & {
   props: Props;
   setup?: (
