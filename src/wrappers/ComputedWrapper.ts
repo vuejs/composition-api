@@ -2,22 +2,22 @@ import { getCurrentVue } from '../runtimeContext';
 import { proxy } from '../utils';
 import AbstractWrapper from './AbstractWrapper';
 
-interface ComputedInteral<T> {
+interface ComputedInternal<T> {
   read(): T;
   write?(x: T): void;
 }
 
 export default class ComputedWrapper<V> extends AbstractWrapper<V> {
-  constructor(private _interal: ComputedInteral<V>) {
+  constructor(private _internal: ComputedInternal<V>) {
     super();
   }
 
   get value() {
-    return this._interal.read();
+    return this._internal.read();
   }
 
   set value(val: V) {
-    if (!this._interal.write) {
+    if (!this._internal.write) {
       if (process.env.NODE_ENV !== 'production') {
         getCurrentVue().util.warn(
           'Computed property' +
@@ -27,11 +27,11 @@ export default class ComputedWrapper<V> extends AbstractWrapper<V> {
         );
       }
     } else {
-      this._interal.write(val);
+      this._internal.write(val);
     }
   }
 
-  exposeToDevltool() {
+  exposeToDevtool() {
     if (process.env.NODE_ENV !== 'production') {
       const vm = this._vm!;
       const name = this._propName!;

@@ -1,16 +1,16 @@
-import { ensuerCurrentVMInFn } from '../helper';
+import { ensureCurrentVMInFn } from '../helper';
 
 const genName = (name: string) => `on${name[0].toUpperCase() + name.slice(1)}`;
 function createLifeCycle(lifeCyclehook: string) {
   return (callback: Function) => {
-    const vm = ensuerCurrentVMInFn(genName(lifeCyclehook));
+    const vm = ensureCurrentVMInFn(genName(lifeCyclehook));
     vm.$on(`hook:${lifeCyclehook}`, callback);
   };
 }
 
 function createLifeCycles(lifeCyclehooks: string[], name: string) {
   return (callback: Function) => {
-    const vm = ensuerCurrentVMInFn(name);
+    const vm = ensureCurrentVMInFn(name);
     lifeCyclehooks.forEach(lifeCyclehook => vm.$on(`hook:${lifeCyclehook}`, callback));
   };
 }

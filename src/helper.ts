@@ -7,7 +7,7 @@ export function isWrapper<T>(obj: any): obj is AbstractWrapper<T> {
   return obj instanceof AbstractWrapper;
 }
 
-export function ensuerCurrentVMInFn(hook: string): InstanceType<VueConstructor> {
+export function ensureCurrentVMInFn(hook: string): InstanceType<VueConstructor> {
   const vm = getCurrentVM();
   if (process.env.NODE_ENV !== 'production') {
     assert(vm, `"${hook}" get called outside of "setup()"`);

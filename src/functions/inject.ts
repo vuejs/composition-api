@@ -1,6 +1,6 @@
 import { VueConstructor } from 'vue';
 import { getCurrentVue } from '../runtimeContext';
-import { ensuerCurrentVMInFn } from '../helper';
+import { ensureCurrentVMInFn } from '../helper';
 import { UnknownObject } from '../types/basic';
 import { hasOwn } from '../utils';
 
@@ -31,7 +31,7 @@ export function provide(provideOption: ProvideOption) {
     return;
   }
 
-  const vm = ensuerCurrentVMInFn('provide');
+  const vm = ensureCurrentVMInFn('provide');
   (vm as any)._provided =
     typeof provideOption === 'function' ? provideOption.call(vm) : provideOption;
 }
@@ -41,6 +41,6 @@ export function inject(injectKey: InjectKey) {
     return;
   }
 
-  const vm = ensuerCurrentVMInFn('inject');
+  const vm = ensureCurrentVMInFn('inject');
   return resolveInject(injectKey, vm);
 }
