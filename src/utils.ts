@@ -33,3 +33,7 @@ export function isArray<T>(x: unknown): x is T[] {
 export function isPlainObject<T extends Object = {}>(x: unknown): x is T {
   return toString(x) === '[object Object]';
 }
+
+export function isFunction(x: unknown): x is Function {
+  return typeof x === 'function';
+}
