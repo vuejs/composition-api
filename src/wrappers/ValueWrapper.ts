@@ -1,24 +1,24 @@
 import { proxy } from '../utils';
 import AbstractWrapper from './AbstractWrapper';
 
-interface ValueInteral<T> {
+interface ValueInternal<T> {
   $$state: T;
 }
 
 export default class ValueWrapper<V> extends AbstractWrapper<V> {
-  constructor(private _interal: ValueInteral<V>) {
+  constructor(private _internal: ValueInternal<V>) {
     super();
   }
 
   get value() {
-    return this._interal.$$state;
+    return this._internal.$$state;
   }
 
   set value(v: V) {
-    this._interal.$$state = v;
+    this._internal.$$state = v;
   }
 
-  exposeToDevltool() {
+  exposeToDevtool() {
     if (process.env.NODE_ENV !== 'production') {
       const vm = this._vm!;
       const name = this._propName!;
