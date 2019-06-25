@@ -11,6 +11,38 @@ describe('setup', () => {
     warn.mockRestore();
   });
 
+  it('should reveive props as first params', done => {
+    new Vue({
+      props: ['a'],
+      setup(props) {
+        expect(props.a).toBe(1);
+        done();
+      },
+      propsData: {
+        a: 1,
+      },
+    });
+  });
+
+  it('should reveive context second params', done => {
+    new Vue({
+      setup(_, ctx) {
+        expect(ctx).toBeDefined();
+        expect('parent' in ctx).toBe(true);
+        expect(ctx).toEqual(
+          expect.objectContaining({
+            root: expect.any(Object),
+            refs: expect.any(Object),
+            slots: expect.any(Object),
+            attrs: expect.any(Object),
+            emit: expect.any(Function),
+          })
+        );
+        done();
+      },
+    });
+  });
+
   it('warn for exist property(data)', () => {
     new Vue({
       data() {

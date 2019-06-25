@@ -82,7 +82,7 @@ export function mixin(Vue: VueConstructor) {
       'attrs', // confirmed in rfc
       // 'listeners', // very likely
     ];
-    const method = [
+    const methodWithoutReturn = [
       // 'on',  // very likely
       // 'once', // very likely
       // 'off', // very likely
@@ -90,13 +90,20 @@ export function mixin(Vue: VueConstructor) {
       // 'forceUpdate',
       // 'destroy'
     ];
-    props.forEach(key =>
-      proxy(ctx, key, () => vm[key], function() {
+    props.forEach(key => {
+      proxy(ctx, key, () => vm[`$${key}`], function() {
         Vue.util.warn(`Cannot assign to '${key}' because it is a read-only property`, vm);
+      });
+    });
+    methodWithoutReturn.forEach(key =>
+      proxy(ctx, key, () => {
+        const vmKey = `$${key}`;
+        return (...args: any[]) => {
+          const fn: Function = vm[vmKey];
+          fn.apply(vm, args);
+        };
       })
     );
-    method.forEach(key => proxy(ctx, key, () => vm[key]));
-
     if (process.env.NODE_ENV === 'test') {
       (ctx as any)._vm = vm;
     }
