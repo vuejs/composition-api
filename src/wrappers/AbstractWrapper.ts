@@ -25,7 +25,7 @@ export default abstract class AbstractWrapper<V> {
         }
       );
       if (process.env.NODE_ENV !== 'production') {
-        this.exposeToDevltool();
+        this.exposeToDevtool();
       }
     } else if (process.env.NODE_ENV !== 'production') {
       if (hasOwn(vm.$data, propName)) {
@@ -42,5 +42,5 @@ export default abstract class AbstractWrapper<V> {
     }
   }
 
-  protected abstract exposeToDevltool(): void;
+  protected abstract exposeToDevtool(): void;
 }
