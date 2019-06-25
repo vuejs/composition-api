@@ -120,7 +120,7 @@ export function mixin(Vue: VueConstructor) {
       let bindingValue = binding[key];
       if (bindingValue === undefined)
         return;
-      if (!isWrapper(bindingValue) && !isFunction(bindingValue)) {
+      if (!isWrapper(bindingValue) && !isFunction(bindingValue) && !Object.isFrozen(bindingValue)) {
         if (isPlainObject(bindingValue))
           bindingValue = state(bindingValue);
         else
