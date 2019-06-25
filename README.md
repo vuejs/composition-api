@@ -119,22 +119,24 @@ After installing the plugin you can use the new [function API](#API) to compose 
 
 A new component option, `setup()` is introduced. As the name suggests, this is the place where we use the function-based APIs to setup the logic of our component. `setup()` is called when an instance of the component is created, after props resolution. The function receives the resolved props as its first argument.
 
-
-Example:
+The second argument provides a `context` object which exposes a number of properties that were previously exposed on this in 2.x APIs.
 
 ```js
 const MyComponent = {
   props: {
     name: String
   },
-  setup(props) {
-    console.log(props.name)
+  setup(props, context) {
+    console.log(props.name);
+    // context.attrs
+    // context.slots
+    // context.refs
+    // context.emit
+    // context.parent
+    // context.root
   }
 }
 ```
-
-> **`this` is not available inside `setup()`.**
-
 
 ## value
 

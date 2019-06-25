@@ -123,15 +123,19 @@ Vue.use(plugin)
 
 `setup()` 中不可以使用 `this` 访问当前组件实例, 我们可以通过 `setup` 的第二个参数 `context` 来访问 vue2.x API 中实例上的属性。
 
-Example:
-
 ```js
 const MyComponent = {
   props: {
     name: String
   },
-  setup(props) {
-    console.log(props.name)
+  setup(props, context) {
+    console.log(props.name);
+    // context.attrs
+    // context.slots
+    // context.refs
+    // context.emit
+    // context.parent
+    // context.root
   }
 }
 ```
