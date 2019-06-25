@@ -28,7 +28,7 @@
 
 # 安装
 
-**npm** 
+**npm**
 ```bash
 npm install vue-function-api --save
 ```
@@ -162,24 +162,6 @@ const MyComponent = {
 }
 ```
 
-```js
-import { value } from 'vue-function-api'
-
-const MyComponent = {
-  setup(props) {
-    const msg = value('hello')
-    const appendName = () => {
-      msg.value = `hello ${props.name}`
-    }
-    return {
-      msg,
-      appendName
-    }
-  },
-  template: `<div @click="appendName">{{ msg }}</div>`
-}
-```
-
 ## state
 ▸ **state**(value: *`any`*)
 
@@ -217,9 +199,9 @@ console.log(countPlusOne.value) // 2
 ```
 
 ## watch
-▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function`
 
-▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function`
 
 `watch` 允许我们在相应的状态发生改变时执行一个回调函数。
 
