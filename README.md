@@ -28,7 +28,7 @@ Future-Oriented Programming, `vue-function-api` provides function api from `Vue3
 
 # Installation
 
-**npm** 
+**npm**
 ```bash
 npm install vue-function-api --save
 ```
@@ -162,24 +162,6 @@ const MyComponent = {
 }
 ```
 
-```js
-import { value } from 'vue-function-api'
-
-const MyComponent = {
-  setup(props) {
-    const msg = value('hello')
-    const appendName = () => {
-      msg.value = `hello ${props.name}`
-    }
-    return {
-      msg,
-      appendName
-    }
-  },
-  template: `<div @click="appendName">{{ msg }}</div>`
-}
-```
-
 ## state
 ▸ **state**(value: *`any`*)
 
@@ -217,9 +199,9 @@ console.log(countPlusOne.value) // 2
 ```
 
 ## watch
-▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function`
 
-▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function`
 
 The `watch` API provides a way to perform side effect based on reactive state changes.
 
@@ -331,7 +313,7 @@ const Descendent = {
 
 ## Context
 The `context` object exposes a number of properties that were previously exposed on this in 2.x APIs:
- 
+
 ```js
 const MyComponent = {
   setup(props, context) {
