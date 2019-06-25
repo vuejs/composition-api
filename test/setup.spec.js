@@ -236,4 +236,43 @@ describe('setup', () => {
       },
     }).$mount();
   });
+
+  it('should make plain return value reactive', done => {
+    const app = new Vue({
+      setup() {
+        return {
+          state: {
+            count1: 0,
+          },
+          count2: 0,
+        };
+      },
+      render(h) {
+        return h('div', [
+          h('h1', this.state.count1),
+          h('h2', this.count2),
+          h(
+            'button',
+            {
+              on: {
+                click: () => {
+                  this.state.count1++;
+                  this.count2++;
+                },
+              },
+            },
+            '+'
+          ),
+        ]);
+      },
+    }).$mount();
+
+    expect(app.$el.querySelector('h1').textContent).toBe('0');
+    expect(app.$el.querySelector('h2').textContent).toBe('0');
+    app.$el.querySelector('button').click();
+    waitForUpdate(() => {
+      expect(app.$el.querySelector('h1').textContent).toBe('1');
+      expect(app.$el.querySelector('h2').textContent).toBe('1');
+    }).then(done);
+  })
 });

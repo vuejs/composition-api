@@ -2,7 +2,8 @@ import { VueConstructor } from 'vue';
 import { Context } from './types/vue';
 import { isWrapper } from './helper';
 import { setCurrentVM } from './runtimeContext';
-import { isPlainObject, assert, proxy } from './utils';
+import { isPlainObject, assert, proxy, isFunction } from './utils';
+import { value, state } from './functions/state';
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -33,6 +34,7 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createContext(vm);
     try {
       binding = setup(vm.$props || {}, ctx);
+      binding = makeBindingReactive(binding)
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') {
         Vue.util.warn(`there is an error occuring in "setup"`, vm);
@@ -108,5 +110,24 @@ export function mixin(Vue: VueConstructor) {
       (ctx as any)._vm = vm;
     }
     return ctx;
+  }
+
+  function makeBindingReactive(binding: any) {
+    if (isWrapper(binding))
+      return binding;
+    const reactiveBinding: any = {};
+    Object.keys(binding).forEach(key => {
+      let bindingValue = binding[key];
+      if (bindingValue === undefined)
+        return;
+      if (!isWrapper(bindingValue) && !isFunction(bindingValue)) {
+        if (isPlainObject(bindingValue))
+          bindingValue = state(bindingValue);
+        else
+          bindingValue = value(bindingValue);
+      }
+      reactiveBinding[key] = bindingValue;
+    });
+    return reactiveBinding;
   }
 }
