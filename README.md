@@ -12,14 +12,18 @@ Future-Oriented Programming, `vue-function-api` provides function api from `Vue3
 
 - [Installation](#Installation)
 - [Usage](#Usage)
+- [Example](#Example)
+  - [Todo App Compare with Vue2 API](https://codesandbox.io/s/todo-example-6d7ep)
+  - [CodePen Live Demo](https://codepen.io/liximomo/pen/dBOvgg)
+  - [Single-File Component](#single-file-Component)
 - [API](#API)
-    -  [setup](#setup)
-    -  [value](#value)
-    -  [state](#state)
-    -  [computed](#computed)
-    -  [watch](#watch)
-    -  [lifecycle](#lifecycle)
-    -  [provide, inject](#provide-inject)
+  -  [setup](#setup)
+  -  [value](#value)
+  -  [state](#state)
+  -  [computed](#computed)
+  -  [watch](#watch)
+  -  [lifecycle](#lifecycle)
+  -  [provide, inject](#provide-inject)
 - [Misc](#Misc)
 
 # Installation
@@ -41,53 +45,70 @@ yarn add vue-function-api
 ```
 By using the global variable `window.vueFunctionApi`
 
-**CodePen**
-
-[Live Demo](https://codepen.io/liximomo/pen/dBOvgg)
 
 # Usage
-``` js
-import Vue from 'vue';
-import { plugin, value, computed, watch, onMounted } from 'vue-function-api'
 
-Vue.use(plugin);
+You must explicitly install `vue-function-api` via `Vue.use()`:
 
-new Vue({
-  template: `
-    <div>
-      <span>count is {{ count }}</span>
-      <span>plusOne is {{ plusOne }}</span>
-      <button @click="increment">count++</button>
-    </div>
-  `,
-  setup() {
-    // reactive state
-    const count = value(0);
-    // computed state
-    const plusOne = computed(() => count.value + 1);
-    // method
-    const increment = () => {
-      count.value++;
-    };
-    // watch
-    watch(
-      () => count.value * 2,
-      val => {
-        console.log(`count * 2 is ${val}`);
-      }
-    );
-    // lifecycle
-    onMounted(() => {
-      console.log(`mounted`);
-    });
-    // expose bindings on render context
-    return {
-      count,
-      plusOne,
-      increment,
-    };
-  },
-}).$mount('#app');
+```js
+import Vue from 'vue'
+import { plugin } from 'vue-function-api'
+
+Vue.use(plugin)
+```
+
+After installing the plugin you can use the new [function API](#API) to compose your component.
+
+# Example
+
+## [Todo App Compare with Vue2 API](https://codesandbox.io/s/todo-example-6d7ep)
+
+## [CodePen Live Demo](https://codepen.io/liximomo/pen/dBOvgg)
+
+## Single-File Component
+``` html
+<template>
+  <div>
+    <span>count is {{ count }}</span>
+    <span>plusOne is {{ plusOne }}</span>
+    <button @click="increment">count++</button>
+  </div>
+</template>
+
+<script>
+  import Vue from 'vue';
+  import { value, computed, watch, onMounted } from 'vue-function-api'
+
+  export default {
+    setup() {
+      // reactive state
+      const count = value(0);
+      // computed state
+      const plusOne = computed(() => count.value + 1);
+      // method
+      const increment = () => {
+        count.value++;
+      };
+      // watch
+      watch(
+        () => count.value * 2,
+        val => {
+          console.log(`count * 2 is ${val}`);
+        }
+      );
+      // lifecycle
+      onMounted(() => {
+        console.log(`mounted`);
+      });
+      // expose bindings on render context
+      return {
+        count,
+        plusOne,
+        increment,
+      };
+    },
+  };
+</script>
 ```
 
 # API

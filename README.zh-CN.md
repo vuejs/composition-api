@@ -12,6 +12,10 @@
 
 - [安装](#安装)
 - [使用](#使用)
+- [示例](#示例)
+  - [Todo App Compare with Vue2 API](https://codesandbox.io/s/todo-example-6d7ep)
+  - [CodePen Live Demo](https://codepen.io/liximomo/pen/dBOvgg)
+  - [Single-File Component](#single-file-Component)
 - [API](#API)
     -  [setup](#setup)
     -  [value](#value)
@@ -46,48 +50,67 @@ yarn add vue-function-api
 [在线示例](https://codepen.io/liximomo/pen/dBOvgg)，fork 后进行测试或 bug 反馈。
 
 # 使用
-``` js
-import Vue from 'vue';
-import { plugin, value, computed, watch, onMounted } from 'vue-function-api'
+您必须显式地通过 `Vue.use()` 来安装 `vue-function-api`:
 
-Vue.use(plugin);
+```js
+import Vue from 'vue'
+import { plugin } from 'vue-function-api'
 
-new Vue({
-  template: `
-    <div>
-      <span>count is {{ count }}</span>
-      <span>plusOne is {{ plusOne }}</span>
-      <button @click="increment">count++</button>
-    </div>
-  `,
-  setup() {
-    // reactive state
-    const count = value(0);
-    // computed state
-    const plusOne = computed(() => count.value + 1);
-    // method
-    const increment = () => {
-      count.value++;
-    };
-    // watch
-    watch(
-      () => count.value * 2,
-      val => {
-        console.log(`count * 2 is ${val}`);
-      }
-    );
-    // lifecycle
-    onMounted(() => {
-      console.log(`mounted`);
-    });
-    // expose bindings on render context
-    return {
-      count,
-      plusOne,
-      increment,
-    };
-  },
-}).$mount('#app');
+Vue.use(plugin)
+```
+
+安装插件后，您就可以使用新的[函数式 API](#API)来书写组件了。
+
+# 示例
+
+## [Todo App Compare with Vue2 API](https://codesandbox.io/s/todo-example-6d7ep)
+
+## [CodePen Live Demo](https://codepen.io/liximomo/pen/dBOvgg)
+
+## Single-File Component
+``` html
+<template>
+  <div>
+    <span>count is {{ count }}</span>
+    <span>plusOne is {{ plusOne }}</span>
+    <button @click="increment">count++</button>
+  </div>
+</template>
+
+<script>
+  import Vue from 'vue';
+  import { value, computed, watch, onMounted } from 'vue-function-api'
+
+  export default {
+    setup() {
+      // reactive state
+      const count = value(0);
+      // computed state
+      const plusOne = computed(() => count.value + 1);
+      // method
+      const increment = () => {
+        count.value++;
+      };
+      // watch
+      watch(
+        () => count.value * 2,
+        val => {
+          console.log(`count * 2 is ${val}`);
+        }
+      );
+      // lifecycle
+      onMounted(() => {
+        console.log(`mounted`);
+      });
+      // expose bindings on render context
+      return {
+        count,
+        plusOne,
+        increment,
+      };
+    },
+  };
+</script>
 ```
 
 # API
