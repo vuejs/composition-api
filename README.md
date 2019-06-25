@@ -2,7 +2,7 @@
 
 > [Function-based Component API RFC](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md)
 
-Future-Oriented Programming, `vue-function-api` provides function api from `Vue3.x` to `Vue2.x` for developering next-generation Vue applications.
+Future-Oriented Programming, `vue-function-api` provides function api from `Vue3.x` to `Vue2.x` for developing next-generation Vue applications.
 
 [**中文文档**](./README.zh-CN.md)
 
