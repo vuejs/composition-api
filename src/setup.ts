@@ -34,7 +34,6 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createContext(vm);
     try {
       binding = setup(vm.$props || {}, ctx);
-      binding = makeBindingReactive(binding)
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') {
         Vue.util.warn(`there is an error occuring in "setup"`, vm);
@@ -58,7 +57,17 @@ export function mixin(Vue: VueConstructor) {
     }
 
     Object.keys(binding).forEach(name => {
-      const bindingValue = binding[name];
+      let bindingValue = binding[name];
+      if (bindingValue === undefined)
+        return;
+      // make plain value reactive
+      if (!isWrapper(bindingValue) && !isFunction(bindingValue) && !Object.isFrozen(bindingValue)) {
+        if (isPlainObject(bindingValue))
+          bindingValue = state(bindingValue);
+        else
+          bindingValue = value(bindingValue);
+      }
+      // bind to vm
       if (isWrapper(bindingValue)) {
         bindingValue.setVmProperty(vm, name);
       } else {
@@ -110,24 +119,5 @@ export function mixin(Vue: VueConstructor) {
       (ctx as any)._vm = vm;
     }
     return ctx;
-  }
-
-  function makeBindingReactive(binding: any) {
-    if (isWrapper(binding))
-      return binding;
-    const reactiveBinding: any = {};
-    Object.keys(binding).forEach(key => {
-      let bindingValue = binding[key];
-      if (bindingValue === undefined)
-        return;
-      if (!isWrapper(bindingValue) && !isFunction(bindingValue) && !Object.isFrozen(bindingValue)) {
-        if (isPlainObject(bindingValue))
-          bindingValue = state(bindingValue);
-        else
-          bindingValue = value(bindingValue);
-      }
-      reactiveBinding[key] = bindingValue;
-    });
-    return reactiveBinding;
   }
 }
