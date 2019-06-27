@@ -10,6 +10,7 @@
 
 # 导航
 
+- [Changelog](https://github.com/vuejs/vue-function-api/blob/master/CHANGELOG.md)
 - [安装](#安装)
 - [使用](#使用)
 - [示例](#示例)

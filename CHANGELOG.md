@@ -1,3 +1,10 @@
+# 2.0.6
+## Fixed
+* watch callback is called repeatedly with multi-sources
+
+## Improved
+* reduce `watch()` memory overhead
+
 # 2.0.0
 Implement the [newest version of RFC](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md)
 

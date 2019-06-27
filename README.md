@@ -10,6 +10,7 @@ Future-Oriented Programming, `vue-function-api` provides function api from `Vue3
 
 # Navigation
 
+- [Changelog](https://github.com/vuejs/vue-function-api/blob/master/CHANGELOG.md)
 - [Installation](#Installation)
 - [Usage](#Usage)
 - [Example](#Example)
