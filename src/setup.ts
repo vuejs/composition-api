@@ -37,7 +37,7 @@ export function mixin(Vue: VueConstructor) {
       if (process.env.NODE_ENV !== 'production') {
         Vue.util.warn(`there is an error occuring in "setup"`, vm);
       }
-      console.log(err);
+      throw err;
     } finally {
       setCurrentVM(null);
     }

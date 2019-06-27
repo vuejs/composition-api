@@ -1,7 +1,36 @@
 import { VueConstructor } from 'vue';
 import { getCurrentVue, getCurrentVM } from './runtimeContext';
-import { assert } from './utils';
+import { assert, isPlainObject, isArray, proxy } from './utils';
 import { AbstractWrapper } from './wrappers';
+
+export function upWrapping(obj: any) {
+  if (!obj) {
+    return obj;
+  }
+
+  const result: Record<string, any> = {};
+  const keys = Object.keys(obj);
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    const value = obj[key];
+    if (isWrapper(value)) {
+      proxy(
+        result,
+        key,
+        () => value.value,
+        (val: any) => {
+          value.value = val;
+        }
+      );
+    } else if (isPlainObject(value) || isArray(value)) {
+      result[key] = upWrapping(value);
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}
 
 export function isWrapper<T>(obj: any): obj is AbstractWrapper<T> {
   return obj instanceof AbstractWrapper;
