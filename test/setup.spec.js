@@ -243,16 +243,23 @@ describe('setup', () => {
         return {
           name: null,
           nested: {
-            msg: 'foo',
+            object: {
+              msg: 'foo'
+            }
           },
+          foo: {
+            bar: 0
+          }
         };
       },
-      template: '<div>{{ name }}, {{ nested.msg }}</div>',
+      template: '<div>{{ name }}, {{ nested.object.msg }}, {{ foo.bar }}</div>',
     }).$mount();
+    expect(vm.$el.textContent).toBe(', foo, 0');
     vm.name = 'foo';
-    vm.nested.msg = 'bar';
+    vm.nested.object.msg = 'bar';
+    vm.foo = { bar: 1 };
     waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('foo, bar');
+      expect(vm.$el.textContent).toBe('foo, bar, 1');
     }).then(done);
   })
 });
