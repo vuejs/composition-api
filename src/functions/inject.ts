@@ -1,13 +1,13 @@
 import { VueConstructor } from 'vue';
 import { getCurrentVue } from '../runtimeContext';
 import { ensureCurrentVMInFn } from '../helper';
-import { UnknownObject } from '../types/basic';
 import { hasOwn } from '../utils';
+import { Wrapper } from '../wrappers';
 
 function resolveInject(
   provideKey: InjectKey,
   vm: InstanceType<VueConstructor>
-): UnknownObject | void {
+): Wrapper<any> | void {
   let source = vm;
   while (source) {
     // @ts-ignore
