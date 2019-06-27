@@ -10,6 +10,7 @@
 
 # 导航
 
+- [Changelog](https://github.com/vuejs/vue-function-api/blob/master/CHANGELOG.md)
 - [安装](#安装)
 - [使用](#使用)
 - [示例](#示例)
@@ -28,7 +29,7 @@
 
 # 安装
 
-**npm** 
+**npm**
 ```bash
 npm install vue-function-api --save
 ```
@@ -123,15 +124,19 @@ Vue.use(plugin)
 
 `setup()` 中不可以使用 `this` 访问当前组件实例, 我们可以通过 `setup` 的第二个参数 `context` 来访问 vue2.x API 中实例上的属性。
 
-Example:
-
 ```js
 const MyComponent = {
   props: {
     name: String
   },
-  setup(props) {
-    console.log(props.name)
+  setup(props, context) {
+    console.log(props.name);
+    // context.attrs
+    // context.slots
+    // context.refs
+    // context.emit
+    // context.parent
+    // context.root
   }
 }
 ```
@@ -143,24 +148,6 @@ const MyComponent = {
 `value` 函数为组件声明一个响应式属性，我们只需要在 `setup` 函数中返回 `value` 的返回值即可。
 
 Example:
-
-```js
-import { value } from 'vue-function-api'
-
-const MyComponent = {
-  setup(props) {
-    const msg = value('hello')
-    const appendName = () => {
-      msg.value = `hello ${props.name}`
-    }
-    return {
-      msg,
-      appendName
-    }
-  },
-  template: `<div @click="appendName">{{ msg }}</div>`
-}
-```
 
 ```js
 import { value } from 'vue-function-api'
@@ -217,9 +204,9 @@ console.log(countPlusOne.value) // 2
 ```
 
 ## watch
-▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Wrapper | () => any`*, callback: *`(newVal, oldVal)`*, options?: *[`WatchOption`](#WatchOption)*): `Function`
 
-▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function` 
+▸ **watch**(source: *`Array<Wrapper | () => any>`*, callback: *`([newVal1, newVal2, ... newValN], [oldVal1, oldVal2, ... oldValN])`*, options?: *[`WatchOption`](#WatchOption)*): `Function`
 
 `watch` 允许我们在相应的状态发生改变时执行一个回调函数。
 

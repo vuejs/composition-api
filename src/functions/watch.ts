@@ -1,23 +1,28 @@
-import { VueConstructor } from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import { Wrapper } from '../wrappers';
 import { isArray, assert } from '../utils';
 import { isWrapper } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
+const initValue = {};
+type InitValue = typeof initValue;
 type watcherCallBack<T> = (newVal: T, oldVal: T) => void;
 type watchedValue<T> = Wrapper<T> | (() => T);
-type FlushMode = 'pre' | 'post' | 'sync' | 'auto';
+type FlushMode = 'pre' | 'post' | 'sync';
 interface WatcherOption {
   lazy: boolean;
   deep: boolean;
   flush: FlushMode;
 }
 interface WatcherContext<T> {
-  value: T;
-  oldValue: T;
+  getter: () => T;
+  value: T | InitValue;
+  oldValue: T | InitValue;
   watcherStopHandle: Function;
 }
+
+let fallbackVM: Vue;
 
 function hasWatchEnv(vm: any) {
   return vm[WatcherPreFlushQueueKey] !== undefined;
@@ -66,7 +71,6 @@ function flushWatcherCallback(vm: any, fn: Function, mode: FlushMode) {
       fallbackFlush();
       vm[WatcherPostFlushQueueKey].push(fn);
       break;
-    case 'auto':
     case 'sync':
       fn();
       break;
@@ -131,15 +135,15 @@ function createMuiltSourceWatcher<T>(
 ): () => void {
   let execCallbackAfterNumRun: false | number = options.lazy ? false : sources.length;
   let pendingCallback = false;
-  const watcherContext: WatcherContext<T>[] = [];
+  const watcherContext: Array<WatcherContext<T>> = [];
 
   function execCallback() {
     cb.apply(
       vm,
       watcherContext.reduce<[T[], T[]]>(
         (acc, ctx) => {
-          acc[0].push(ctx.value);
-          acc[1].push(ctx.oldValue);
+          acc[0].push((ctx.value === initValue ? ctx.getter() : ctx.value) as T);
+          acc[1].push((ctx.oldValue === initValue ? undefined : ctx.oldValue) as T);
           return acc;
         },
         [[], []]
@@ -166,14 +170,16 @@ function createMuiltSourceWatcher<T>(
   const flush = () => {
     if (!pendingCallback) {
       pendingCallback = true;
-      flushWatcherCallback(
-        vm,
-        () => {
-          pendingCallback = false;
-          execCallback();
-        },
-        options.flush
-      );
+      vm.$nextTick(() => {
+        flushWatcherCallback(
+          vm,
+          () => {
+            pendingCallback = false;
+            execCallback();
+          },
+          options.flush
+        );
+      });
     }
   };
 
@@ -184,7 +190,11 @@ function createMuiltSourceWatcher<T>(
     } else {
       getter = source as () => T;
     }
-    const watcherCtx = {} as WatcherContext<T>;
+    const watcherCtx = {
+      getter,
+      value: initValue,
+      oldValue: initValue,
+    } as WatcherContext<T>;
     // must push watcherCtx before create watcherStopHandle
     watcherContext.push(watcherCtx);
 
@@ -200,7 +210,8 @@ function createMuiltSourceWatcher<T>(
         immediate: !options.lazy,
         deep: options.deep,
         // @ts-ignore
-        sync: options.flush === 'sync',
+        // always set to true, so we can fully control the schedule
+        sync: true,
       }
     );
   });
@@ -233,12 +244,15 @@ export function watch<T>(
   };
   let vm = getCurrentVM();
   if (!vm) {
-    const Vue = getCurrentVue();
-    const silent = Vue.config.silent;
-    Vue.config.silent = true;
-    vm = new Vue();
-    Vue.config.silent = silent;
-    opts.flush = 'auto';
+    if (!fallbackVM) {
+      const Vue = getCurrentVue();
+      const silent = Vue.config.silent;
+      Vue.config.silent = true;
+      fallbackVM = new Vue();
+      Vue.config.silent = silent;
+    }
+    vm = fallbackVM;
+    opts.flush = 'sync';
   }
 
   if (!hasWatchEnv(vm)) installWatchEnv(vm);
