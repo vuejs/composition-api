@@ -242,6 +242,7 @@ describe('setup', () => {
       setup() {
         return {
           name: null,
+          initialUndef: undefined,
           nested: {
             object: {
               msg: 'foo'
@@ -277,4 +278,5 @@ describe('setup', () => {
       expect(vm.$el.textContent).toBe('2, 3');
     }).then(done);
   })
+
 });

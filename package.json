@@ -43,7 +43,8 @@
     "vue": "^2.0.0"
   },
   "dependencies": {
-    "tslib": "^1.9.3"
+    "tslib": "^1.9.3",
+    "vue": "^2.6.10"
   },
   "jest": {
     "verbose": true,
