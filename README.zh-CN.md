@@ -29,6 +29,8 @@
 
 # 安装
 
+> `vue-function-api` 需要同时装有 `2.6.x` 版本以上的 `vue`
+
 **npm**
 ```bash
 npm install vue-function-api --save

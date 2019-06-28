@@ -29,6 +29,8 @@ Future-Oriented Programming, `vue-function-api` provides function api from `Vue3
 
 # Installation
 
+> `vue-function-api` requires minimum version `2.6.x` of `vue` as peer dependency
+
 **npm**
 ```bash
 npm install vue-function-api --save
