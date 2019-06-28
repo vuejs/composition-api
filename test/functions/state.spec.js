@@ -57,7 +57,7 @@ describe('Hooks state', () => {
     }).then(done);
   });
 
-  it.only('should be unwrapping(nested property inside a reactive object)', () => {
+  it('should be unwrapping(nested property inside a reactive object)', () => {
     new Vue({
       setup() {
         const count = value(0);
