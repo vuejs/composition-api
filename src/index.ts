@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue';
-import { Context } from './types/vue';
+import { SetupContext } from './types/vue';
 import { currentVue } from './runtimeContext';
 import { Wrapper } from './wrappers';
 import { install } from './install';
@@ -10,7 +10,7 @@ declare module 'vue/types/options' {
     setup?: (
       this: undefined,
       props: { [x: string]: any },
-      context: Context
+      context: SetupContext
     ) => object | null | undefined | void;
   }
 }

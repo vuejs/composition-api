@@ -1,6 +1,6 @@
 // import Vue from 'vue';
 import Vue, { ComponentOptions } from 'vue';
-import { Context } from '../types/vue';
+import { SetupContext } from '../types/vue';
 
 export type PropType<T> = T;
 
@@ -11,7 +11,7 @@ type ComponentOptionsWithSetup<Props> = Omit<ComponentOptions<Vue>, 'props' | 's
   setup?: (
     this: undefined,
     props: { [K in keyof Props]: Props[K] },
-    context: Context
+    context: SetupContext
   ) => object | null | undefined | void;
 };
 

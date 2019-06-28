@@ -1,6 +1,6 @@
 import Vue, { VNode } from 'vue/';
 
-export interface Context {
+export interface SetupContext {
   readonly parent: Vue;
   readonly root: Vue;
   readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };

@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue';
-import { Context } from './types/vue';
+import { SetupContext } from './types/vue';
 import { isWrapper } from './helper';
 import { setCurrentVM } from './runtimeContext';
 import { isPlainObject, assert, proxy, isFunction } from './utils';
@@ -73,8 +73,8 @@ export function mixin(Vue: VueConstructor) {
     });
   }
 
-  function createContext(vm: any): Context {
-    const ctx = {} as Context;
+  function createContext(vm: any): SetupContext {
+    const ctx = {} as SetupContext;
     const props = [
       // 'el', // has workaround
       // 'options',
