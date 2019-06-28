@@ -1,13 +1,14 @@
 import { VueConstructor } from 'vue';
 import { getCurrentVue } from '../runtimeContext';
-import { ensureCurrentVMInFn } from '../helper';
-import { UnknownObject } from '../types/basic';
+import { state } from '../functions/state';
+import { Wrapper, ComputedWrapper } from '../wrappers';
+import { ensureCurrentVMInFn, isWrapper } from '../helper';
 import { hasOwn } from '../utils';
 
-function resolveInject(
-  provideKey: InjectKey,
-  vm: InstanceType<VueConstructor>
-): UnknownObject | void {
+const UNRESOLVED_INJECT = {};
+export interface Key<T> extends Symbol {}
+
+function resolveInject(provideKey: Key<any>, vm: InstanceType<VueConstructor>): any {
   let source = vm;
   while (source) {
     // @ts-ignore
@@ -18,29 +19,36 @@ function resolveInject(
     source = source.$parent;
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    getCurrentVue().util.warn(`Injection "${String(provideKey)}" not found`, vm);
-  }
+  return UNRESOLVED_INJECT;
 }
 
-type InjectKey = string | symbol;
-type ProvideOption = { [key: string]: any } | (() => { [key: string]: any });
-
-export function provide(provideOption: ProvideOption) {
-  if (!provideOption) {
-    return;
+export function provide<T>(key: Key<T>, value: T | Wrapper<T>) {
+  const vm: any = ensureCurrentVMInFn('provide');
+  if (!vm._provided) {
+    vm._provided = {};
   }
-
-  const vm = ensureCurrentVMInFn('provide');
-  (vm as any)._provided =
-    typeof provideOption === 'function' ? provideOption.call(vm) : provideOption;
+  vm._provided[key as any] = value;
 }
 
-export function inject(injectKey: InjectKey) {
-  if (!injectKey) {
+export function inject<T>(key: Key<T>): Wrapper<T> | void {
+  if (!key) {
     return;
   }
 
   const vm = ensureCurrentVMInFn('inject');
-  return resolveInject(injectKey, vm);
+  const val = resolveInject(key, vm);
+  if (val !== UNRESOLVED_INJECT) {
+    if (isWrapper<T>(val)) {
+      return val;
+    }
+    const reactiveVal = state<T>(val);
+    return new ComputedWrapper<T>({
+      read: () => reactiveVal,
+      write() {
+        getCurrentVue().util.warn(`The injectd value can't be re-assigned`, vm);
+      },
+    });
+  } else if (process.env.NODE_ENV !== 'production') {
+    getCurrentVue().util.warn(`Injection "${String(key)}" not found`, vm);
+  }
 }

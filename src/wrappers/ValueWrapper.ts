@@ -6,16 +6,16 @@ interface ValueInternal<T> {
 }
 
 export default class ValueWrapper<V> extends AbstractWrapper<V> {
-  constructor(private _internal: ValueInternal<V>) {
+  constructor(private internal: ValueInternal<V>) {
     super();
   }
 
   get value() {
-    return this._internal.$$state;
+    return this.internal.$$state;
   }
 
   set value(v: V) {
-    this._internal.$$state = v;
+    this.internal.$$state = v;
   }
 
   exposeToDevtool() {

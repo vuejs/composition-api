@@ -22,14 +22,19 @@ beforeEach(() => {
 });
 
 describe('Hooks provide/inject', () => {
+  beforeEach(() => {
+    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
+  });
+  afterEach(() => {
+    warn.mockRestore();
+  });
+
   it('should work', () => {
     new Vue({
       template: `<child/>`,
       setup() {
-        provide({
-          foo: 1,
-          bar: false,
-        });
+        provide('foo', 1);
+        provide('bar', false);
       },
       components: {
         child: {
@@ -45,19 +50,18 @@ describe('Hooks provide/inject', () => {
   });
 
   it('should work for reactive value', done => {
+    const Msg = Symbol();
     const app = new Vue({
       template: `<child/>`,
       setup() {
-        provide({
-          msg: value('hello'),
-        });
+        provide(Msg, value('hello'));
       },
       components: {
         child: {
           template: `<div>{{ msg }}</div>`,
           setup() {
             return {
-              msg: inject('msg'),
+              msg: inject(Msg),
             };
           },
         },
@@ -68,5 +72,55 @@ describe('Hooks provide/inject', () => {
     waitForUpdate(() => {
       expect(app.$el.textContent).toBe('bar');
     }).then(done);
+  });
+
+  it('should return wrapper values', done => {
+    const State = Symbol();
+    const app = new Vue({
+      template: `<child/>`,
+      setup() {
+        provide(State, { msg: 'foo' });
+      },
+      components: {
+        child: {
+          template: `<div>{{ state.msg }}</div>`,
+          setup() {
+            const obj = inject(State);
+            expect(obj.value.msg).toBe('foo');
+
+            return {
+              state: obj,
+            };
+          },
+        },
+      },
+    }).$mount();
+
+    app.$children[0].state.msg = 'bar';
+    waitForUpdate(() => {
+      expect(app.$el.textContent).toBe('bar');
+    }).then(done);
+  });
+
+  it('should warn when assign to a injected value', () => {
+    const State = Symbol();
+    new Vue({
+      template: `<child/>`,
+      setup() {
+        provide(State, { msg: 'foo' });
+      },
+      components: {
+        child: {
+          setup() {
+            const obj = inject(State);
+            expect(obj.value.msg).toBe('foo');
+            obj.value = {};
+            expect(warn.mock.calls[0][0]).toMatch(
+              "[Vue warn]: The injectd value can't be re-assigned."
+            );
+          },
+        },
+      },
+    }).$mount();
   });
 });

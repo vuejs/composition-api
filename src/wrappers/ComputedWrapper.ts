@@ -8,16 +8,16 @@ interface ComputedInternal<T> {
 }
 
 export default class ComputedWrapper<V> extends AbstractWrapper<V> {
-  constructor(private _internal: ComputedInternal<V>) {
+  constructor(private internal: ComputedInternal<V>) {
     super();
   }
 
   get value() {
-    return this._internal.read();
+    return this.internal.read();
   }
 
   set value(val: V) {
-    if (!this._internal.write) {
+    if (!this.internal.write) {
       if (process.env.NODE_ENV !== 'production') {
         getCurrentVue().util.warn(
           'Computed property' +
@@ -27,7 +27,7 @@ export default class ComputedWrapper<V> extends AbstractWrapper<V> {
         );
       }
     } else {
-      this._internal.write(val);
+      this.internal.write(val);
     }
   }
 
