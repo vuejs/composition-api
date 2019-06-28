@@ -237,7 +237,7 @@ describe('setup', () => {
     }).$mount();
   });
 
-  it('should make returned plain value reactive', done => {
+  it('should make returned plain value reactive (value)', done => {
     const vm = new Vue({
       setup() {
         return {
@@ -247,19 +247,34 @@ describe('setup', () => {
               msg: 'foo'
             }
           },
-          foo: {
-            bar: 0
+        };
+      },
+      template: '<div>{{ name }}, {{ nested.object.msg }}</div>',
+    }).$mount();
+    expect(vm.$el.textContent).toBe(', foo');
+    vm.name = 'foo';
+    vm.nested.object.msg = 'bar';
+    waitForUpdate(() => {
+      expect(vm.$el.textContent).toBe('foo, bar');
+    }).then(done);
+  })
+
+  it('should make returned plain value reactive (object)', done => {
+    const vm = new Vue({
+      setup() {
+        return {
+          form: {
+            a: 1,
+            b: 2
           }
         };
       },
-      template: '<div>{{ name }}, {{ nested.object.msg }}, {{ foo.bar }}</div>',
+      template: '<div>{{ form.a }}, {{ form.b }}</div>',
     }).$mount();
-    expect(vm.$el.textContent).toBe(', foo, 0');
-    vm.name = 'foo';
-    vm.nested.object.msg = 'bar';
-    vm.foo = { bar: 1 };
+    expect(vm.$el.textContent).toBe('1, 2');
+    vm.form = { a: 2, b: 3 };
     waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('foo, bar, 1');
+      expect(vm.$el.textContent).toBe('2, 3');
     }).then(done);
   })
 });
