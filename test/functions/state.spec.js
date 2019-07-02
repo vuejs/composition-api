@@ -33,25 +33,12 @@ describe('Hooks state', () => {
         };
       },
       render(h) {
-        return h('div', [
-          h('span', this.state.count),
-          h(
-            'button',
-            {
-              on: {
-                click: () => {
-                  this.state.count++;
-                },
-              },
-            },
-            '+'
-          ),
-        ]);
+        return h('div', [h('span', this.state.count)]);
       },
     }).$mount();
 
     expect(app.$el.querySelector('span').textContent).toBe('0');
-    app.$el.querySelector('button').click();
+    app.state.count++;
     waitForUpdate(() => {
       expect(app.$el.querySelector('span').textContent).toBe('1');
     }).then(done);
