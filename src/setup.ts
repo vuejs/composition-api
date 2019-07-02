@@ -7,13 +7,13 @@ import { value } from './functions/state';
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
-    created: vuexInit,
+    created: functionApiInit,
   });
 
   /**
    * Vuex init hook, injected into each instances init hooks list.
    */
-  function vuexInit(this: any) {
+  function functionApiInit(this: any) {
     const vm = this;
     const { setup } = vm.$options;
     if (!setup) {
@@ -58,8 +58,7 @@ export function mixin(Vue: VueConstructor) {
 
     Object.keys(binding).forEach(name => {
       let bindingValue = binding[name];
-      if (bindingValue === undefined)
-        return;
+      if (bindingValue === undefined) return;
       // make plain value reactive
       if (!isWrapper(bindingValue) && !isFunction(bindingValue) && !Object.isFrozen(bindingValue)) {
         bindingValue = value(bindingValue);
