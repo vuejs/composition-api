@@ -1,17 +1,12 @@
 // import Vue from 'vue';
-import Vue, { ComponentOptions, PropOptions, PropType } from 'vue';
+import Vue, { ComponentOptions } from 'vue';
+import { PropsDefinition } from 'vue/types/options';
 import { SetupContext } from '../types/vue';
 
 // export type PropType<T> = T;
 
 // type FullPropType<T> = T extends { required: boolean } ? T : T | undefined;
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-type PropValidator<T> = PropOptions<T> | PropType<T>;
-type RecordPropsDefinition<T> = {
-  [K in keyof T]: PropValidator<T[K]>;
-};
-type ArrayPropsDefinition<T> = (keyof T)[];
-type PropsDefinition<T> = ArrayPropsDefinition<T> | RecordPropsDefinition<T>;
 type ComponentOptionsWithSetup<Props> = Omit<ComponentOptions<Vue>, 'props' | 'setup'> & {
   props?: PropsDefinition<Props>;
   setup?: (
