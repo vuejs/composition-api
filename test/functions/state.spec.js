@@ -45,36 +45,32 @@ describe('Hooks state', () => {
   });
 
   it('should be unwrapping(nested property inside a reactive object)', () => {
-    new Vue({
-      setup() {
-        const count = value(0);
-        const count1 = value(0);
-        const obj = state({
-          count,
-          a: {
-            b: count1,
-            c: 0,
-          },
-        });
-
-        expect(obj.count).toBe(0);
-        expect(obj.a.b).toBe(0);
-        expect(obj.a.c).toBe(0);
-
-        obj.count++;
-        expect(obj.count).toBe(1);
-        expect(count.value).toBe(1);
-        expect(count1.value).toBe(0);
-
-        count.value++;
-        count1.value++;
-        obj.a.b++;
-        obj.a.c = 3;
-        expect(obj.count).toBe(2);
-        expect(count1.value).toBe(2);
-        expect(obj.a.b).toBe(2);
-        expect(obj.a.c).toBe(3);
+    const count = value(0);
+    const count1 = value(0);
+    const obj = state({
+      count,
+      a: {
+        b: count1,
+        c: 0,
       },
     });
+
+    expect(obj.count).toBe(0);
+    expect(obj.a.b).toBe(0);
+    expect(obj.a.c).toBe(0);
+
+    obj.count++;
+    expect(obj.count).toBe(1);
+    expect(count.value).toBe(1);
+    expect(count1.value).toBe(0);
+
+    count.value++;
+    count1.value++;
+    obj.a.b++;
+    obj.a.c = 3;
+    expect(obj.count).toBe(2);
+    expect(count1.value).toBe(2);
+    expect(obj.a.b).toBe(2);
+    expect(obj.a.c).toBe(3);
   });
 });

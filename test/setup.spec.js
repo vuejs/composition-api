@@ -11,17 +11,18 @@ describe('setup', () => {
     warn.mockRestore();
   });
 
-  it('should reveive props as first params', done => {
+  it('should reveive props as first params', () => {
+    let props;
     new Vue({
       props: ['a'],
-      setup(props) {
-        expect(props.a).toBe(1);
-        done();
+      setup(_props) {
+        props = _props;
       },
       propsData: {
         a: 1,
       },
-    });
+    }).$mount();
+    expect(props.a).toBe(1);
   });
 
   it('should reveive context second params', done => {
@@ -244,8 +245,8 @@ describe('setup', () => {
           name: null,
           nested: {
             object: {
-              msg: 'foo'
-            }
+              msg: 'foo',
+            },
           },
         };
       },
@@ -257,7 +258,7 @@ describe('setup', () => {
     waitForUpdate(() => {
       expect(vm.$el.textContent).toBe('foo, bar');
     }).then(done);
-  })
+  });
 
   it('should make returned plain value reactive (object)', done => {
     const vm = new Vue({
@@ -265,8 +266,8 @@ describe('setup', () => {
         return {
           form: {
             a: 1,
-            b: 2
-          }
+            b: 2,
+          },
         };
       },
       template: '<div>{{ form.a }}, {{ form.b }}</div>',
@@ -276,5 +277,5 @@ describe('setup', () => {
     waitForUpdate(() => {
       expect(vm.$el.textContent).toBe('2, 3');
     }).then(done);
-  })
+  });
 });

@@ -76,6 +76,7 @@ describe('Hooks provide/inject', () => {
 
   it('should return wrapper values', done => {
     const State = Symbol();
+    let obj;
     const app = new Vue({
       template: `<child/>`,
       setup() {
@@ -85,9 +86,7 @@ describe('Hooks provide/inject', () => {
         child: {
           template: `<div>{{ state.msg }}</div>`,
           setup() {
-            const obj = inject(State);
-            expect(obj.value.msg).toBe('foo');
-
+            obj = inject(State);
             return {
               state: obj,
             };
@@ -95,7 +94,7 @@ describe('Hooks provide/inject', () => {
         },
       },
     }).$mount();
-
+    expect(obj.value.msg).toBe('foo');
     app.$children[0].state.msg = 'bar';
     waitForUpdate(() => {
       expect(app.$el.textContent).toBe('bar');
@@ -104,6 +103,7 @@ describe('Hooks provide/inject', () => {
 
   it('should warn when assign to a injected value', () => {
     const State = Symbol();
+    let obj;
     new Vue({
       template: `<child/>`,
       setup() {
@@ -112,15 +112,14 @@ describe('Hooks provide/inject', () => {
       components: {
         child: {
           setup() {
-            const obj = inject(State);
-            expect(obj.value.msg).toBe('foo');
-            obj.value = {};
-            expect(warn.mock.calls[0][0]).toMatch(
-              "[Vue warn]: The injectd value can't be re-assigned."
-            );
+            obj = inject(State);
           },
+          template: `<div/>`,
         },
       },
     }).$mount();
+    expect(obj.value.msg).toBe('foo');
+    obj.value = {};
+    expect(warn.mock.calls[0][0]).toMatch("[Vue warn]: The injectd value can't be re-assigned");
   });
 });
