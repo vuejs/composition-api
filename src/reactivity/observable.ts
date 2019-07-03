@@ -80,17 +80,17 @@ export function observable<T = any>(obj: T): T {
   let observed: T;
   if (Vue.observable) {
     observed = Vue.observable(obj);
+  } else {
+    const silent = Vue.config.silent;
+    Vue.config.silent = true;
+    const vm = new Vue({
+      data: {
+        $$state: obj,
+      },
+    });
+    Vue.config.silent = silent;
+    observed = vm._data.$$state;
   }
-
-  const silent = Vue.config.silent;
-  Vue.config.silent = true;
-  const vm = new Vue({
-    data: {
-      $$state: obj,
-    },
-  });
-  Vue.config.silent = silent;
-  observed = vm._data.$$state;
 
   def(observed, ObservableIdentifierKey, ObservableIdentifier);
   setupAccessControl(observed);
