@@ -1,6 +1,6 @@
 import { VueConstructor } from 'vue';
 import { SetupContext } from './types/vue';
-import { isWrapper } from './helper';
+import { isWrapper } from './wrappers';
 import { setCurrentVM } from './runtimeContext';
 import { isPlainObject, assert, proxy, isFunction } from './utils';
 import { value } from './functions/state';

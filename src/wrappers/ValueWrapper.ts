@@ -1,4 +1,4 @@
-import { proxy } from '../utils';
+import { proxy, def } from '../utils';
 import AbstractWrapper from './AbstractWrapper';
 
 interface ValueInternal<T> {
@@ -6,16 +6,19 @@ interface ValueInternal<T> {
 }
 
 export default class ValueWrapper<V> extends AbstractWrapper<V> {
-  constructor(private internal: ValueInternal<V>) {
+  private _internal!: ValueInternal<V>;
+
+  constructor(internal: ValueInternal<V>) {
     super();
+    def(this, '_internal', internal);
   }
 
   get value() {
-    return this.internal.$$state;
+    return this._internal.$$state;
   }
 
   set value(v: V) {
-    this.internal.$$state = v;
+    this._internal.$$state = v;
   }
 
   exposeToDevtool() {

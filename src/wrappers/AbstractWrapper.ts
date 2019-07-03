@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { getCurrentVue } from '../runtimeContext';
-import { proxy, hasOwn } from '../utils';
+import { proxy, hasOwn, def } from '../utils';
 
 export default abstract class AbstractWrapper<V> {
   protected _propName?: string;
@@ -8,8 +8,8 @@ export default abstract class AbstractWrapper<V> {
   abstract value: V;
 
   setVmProperty(vm: Vue, propName: string) {
-    this._vm = vm;
-    this._propName = propName;
+    def(this, '_vm', vm);
+    def(this, '_propName', propName);
 
     const props = vm.$options.props;
     const methods = vm.$options.methods;

@@ -1,7 +1,7 @@
 import Vue, { VueConstructor } from 'vue';
 import { Wrapper } from '../wrappers';
 import { isArray, assert } from '../utils';
-import { isWrapper } from '../helper';
+import { isWrapper } from '../wrappers';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 

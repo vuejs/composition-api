@@ -1,1 +1,1 @@
-export type UnknownObject = { [x: string]: any };
+export type AnyObject = Record<string | symbol, any>;

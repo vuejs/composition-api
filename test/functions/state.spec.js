@@ -52,12 +52,14 @@ describe('Hooks state', () => {
       a: {
         b: count1,
         c: 0,
+        d: [count1],
       },
     });
 
     expect(obj.count).toBe(0);
     expect(obj.a.b).toBe(0);
     expect(obj.a.c).toBe(0);
+    expect(obj.a.d[0]).toBe(0);
 
     obj.count++;
     expect(obj.count).toBe(1);
@@ -71,6 +73,15 @@ describe('Hooks state', () => {
     expect(obj.count).toBe(2);
     expect(count1.value).toBe(2);
     expect(obj.a.b).toBe(2);
+    expect(obj.a.c).toBe(3);
+    expect(obj.a.d[0]).toBe(2);
+
+    const wrapperC = value(1);
+    obj.a.c = wrapperC;
+    expect(obj.a.c).toBe(1);
+
+    wrapperC.value++;
+    obj.a.c++;
     expect(obj.a.c).toBe(3);
   });
 });

@@ -17,6 +17,15 @@ export function proxy(target: any, key: string, getter: Function, setter?: Funct
   Object.defineProperty(target, key, sharedPropertyDefinition);
 }
 
+export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
+  Object.defineProperty(obj, key, {
+    value: val,
+    enumerable: !!enumerable,
+    writable: true,
+    configurable: true,
+  });
+}
+
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 export function hasOwn(obj: Object | any[], key: string): boolean {
   return hasOwnProperty.call(obj, key);
@@ -28,6 +37,10 @@ export function assert(condition: any, msg: string) {
 
 export function isArray<T>(x: unknown): x is T[] {
   return toString(x) === '[object Array]';
+}
+
+export function isObject(val: unknown): val is Record<any, any> {
+  return val !== null && typeof val === 'object';
 }
 
 export function isPlainObject<T extends Object = {}>(x: unknown): x is T {

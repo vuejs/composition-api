@@ -1,14 +1,14 @@
-import { VueConstructor } from 'vue';
+import Vue from 'vue';
 import { getCurrentVue } from '../runtimeContext';
 import { state } from '../functions/state';
-import { Wrapper, ComputedWrapper } from '../wrappers';
-import { ensureCurrentVMInFn, isWrapper } from '../helper';
+import { isWrapper, Wrapper, ComputedWrapper } from '../wrappers';
+import { ensureCurrentVMInFn } from '../helper';
 import { hasOwn } from '../utils';
 
 const UNRESOLVED_INJECT = {};
 export interface Key<T> extends Symbol {}
 
-function resolveInject(provideKey: Key<any>, vm: InstanceType<VueConstructor>): any {
+function resolveInject(provideKey: Key<any>, vm: Vue): any {
   let source = vm;
   while (source) {
     // @ts-ignore
