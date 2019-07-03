@@ -406,5 +406,5 @@ console.log(count.value) // 2
 # 其他
 
 - `vue-function-api` 会一直保持与 `Vue3.x` 的兼容性，当 `3.0` 发布时，您可以无缝替换掉本库。
-- `vue-function-api` 的实现只依赖 `Vue2.x` 本身，不伦 `Vue3.x` 的发布与否，都不会影响您正常使用本库。
+- `vue-function-api` 的实现只依赖 `Vue2.x` 本身，不论 `Vue3.x` 的发布与否，都不会影响您正常使用本库。
 - 由于 `Vue2.x` 的公共 API 限制，`vue-function-api` 无法避免的会产生一些额外的内存负载。如果您的应用并不工作在极端内存环境下，无需关心此项。
