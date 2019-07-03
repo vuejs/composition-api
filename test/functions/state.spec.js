@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, state, value } = require('../../src');
+const { plugin, state, value, watch } = require('../../src');
 
 Vue.use(plugin);
 
@@ -43,45 +43,136 @@ describe('Hooks state', () => {
       expect(app.$el.querySelector('span').textContent).toBe('1');
     }).then(done);
   });
+});
 
-  it('should be unwrapping(nested property inside a reactive object)', () => {
-    const count = value(0);
-    const count1 = value(0);
+describe('reactivity/value', () => {
+  it('should hold a value', () => {
+    const a = value(1);
+    expect(a.value).toBe(1);
+    a.value = 2;
+    expect(a.value).toBe(2);
+  });
+
+  it('should be reactive', () => {
+    const a = value(1);
+    let dummy;
+    watch(a, () => {
+      dummy = a.value;
+    });
+    expect(dummy).toBe(1);
+    a.value = 2;
+    expect(dummy).toBe(2);
+  });
+
+  it('should make nested properties reactive', () => {
+    const a = value({
+      count: 1,
+    });
+    let dummy;
+    watch(
+      a,
+      () => {
+        dummy = a.value.count;
+      },
+      { deep: true }
+    );
+    expect(dummy).toBe(1);
+    a.value.count = 2;
+    expect(dummy).toBe(2);
+  });
+
+  it('should work like a normal property when nested in an observable(1)', () => {
+    const a = value(1);
     const obj = state({
-      count,
-      a: {
-        b: count1,
-        c: 0,
+      a,
+      b: {
+        c: a,
+        d: [a],
+      },
+    });
+    let dummy1;
+    let dummy2;
+    let dummy3;
+    watch(
+      () => obj,
+      () => {
+        dummy1 = obj.a;
+        dummy2 = obj.b.c;
+        dummy3 = obj.b.d[0];
+      },
+      { deep: true }
+    );
+    expect(dummy1).toBe(1);
+    expect(dummy2).toBe(1);
+    expect(dummy3).toBe(1);
+    a.value++;
+    expect(dummy1).toBe(2);
+    expect(dummy2).toBe(2);
+    expect(dummy3).toBe(2);
+    obj.a++;
+    expect(dummy1).toBe(3);
+    expect(dummy2).toBe(3);
+    expect(dummy3).toBe(3);
+  });
+
+  it('should work like a normal property when nested in an observable(2)', () => {
+    const count = value(1);
+    const count1 = value(1);
+    const obj = state({
+      a: count,
+      b: {
+        c: 1,
         d: [count1],
       },
     });
 
-    expect(obj.count).toBe(0);
-    expect(obj.a.b).toBe(0);
-    expect(obj.a.c).toBe(0);
-    expect(obj.a.d[0]).toBe(0);
+    // let dummy1;
+    let dummy2;
+    // let dummy3;
+    watch(
+      () => obj,
+      () => {
+        dummy1 = obj.a;
+        dummy2 = obj.b.c;
+        dummy3 = obj.b.d[0];
+      },
+      { deep: true }
+    );
+    expect(dummy1).toBe(1);
+    expect(dummy2).toBe(1);
+    expect(dummy3).toBe(1);
+    expect(obj.a).toBe(1);
+    expect(obj.b.c).toBe(1);
+    expect(obj.b.d[0]).toBe(1);
 
-    obj.count++;
-    expect(obj.count).toBe(1);
-    expect(count.value).toBe(1);
-    expect(count1.value).toBe(0);
+    obj.a++;
+    expect(dummy1).toBe(2);
+    expect(dummy2).toBe(1);
+    expect(dummy3).toBe(1);
+    expect(obj.a).toBe(2);
+    expect(count.value).toBe(2);
+    expect(count1.value).toBe(1);
 
     count.value++;
     count1.value++;
-    obj.a.b++;
-    obj.a.c = 3;
-    expect(obj.count).toBe(2);
-    expect(count1.value).toBe(2);
-    expect(obj.a.b).toBe(2);
-    expect(obj.a.c).toBe(3);
-    expect(obj.a.d[0]).toBe(2);
+    obj.b.d[0]++;
+    obj.b.c = 3;
+    expect(dummy1).toBe(3);
+    expect(dummy2).toBe(3);
+    expect(dummy3).toBe(3);
+    expect(obj.a).toBe(3);
+    expect(count1.value).toBe(3);
+    expect(obj.b.c).toBe(3);
+    expect(obj.b.d[0]).toBe(3);
 
     const wrapperC = value(1);
-    obj.a.c = wrapperC;
-    expect(obj.a.c).toBe(1);
+    obj.b.c = wrapperC;
+    expect(dummy2).toBe(1);
+    expect(obj.b.c).toBe(1);
 
-    wrapperC.value++;
-    obj.a.c++;
-    expect(obj.a.c).toBe(3);
+    obj.b.c++;
+    expect(dummy2).toBe(2);
+    expect(wrapperC.value).toBe(2);
+    expect(obj.b.c).toBe(2);
   });
 });

@@ -60,6 +60,8 @@ function defineAccessControl(target: AnyObject, key: any) {
       if (isWrapper(newVal)) {
         isValueWrapper = true;
         rawVal = newVal;
+        // trigger observer
+        setter.call(target, newVal);
         return;
       }
 
