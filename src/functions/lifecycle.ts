@@ -15,6 +15,7 @@ function createLifeCycles(lifeCyclehooks: string[], name: string) {
   };
 }
 
+export const onBeforeCreate = createLifeCycle('beforeCreate')
 export const onCreated = createLifeCycle('created');
 export const onBeforeMount = createLifeCycle('beforeMount');
 export const onMounted = createLifeCycle('mounted');
