@@ -2,7 +2,7 @@ import { VueConstructor } from 'vue';
 import { SetupContext } from './types/vue';
 import { isWrapper } from './wrappers';
 import { setCurrentVM } from './runtimeContext';
-import { isPlainObject, assert, proxy, isFunction } from './utils';
+import { isPlainObject, assert, proxy } from './utils';
 import { value } from './functions/state';
 
 export function mixin(Vue: VueConstructor) {
@@ -58,17 +58,12 @@ export function mixin(Vue: VueConstructor) {
 
     Object.keys(binding).forEach(name => {
       let bindingValue = binding[name];
-      if (bindingValue === undefined) return;
       // make plain value reactive
-      if (!isWrapper(bindingValue) && !isFunction(bindingValue) && !Object.isFrozen(bindingValue)) {
+      if (!isWrapper(bindingValue)) {
         bindingValue = value(bindingValue);
       }
       // bind to vm
-      if (isWrapper(bindingValue)) {
-        bindingValue.setVmProperty(vm, name);
-      } else {
-        vm[name] = bindingValue;
-      }
+      bindingValue.setVmProperty(vm, name);
     });
   }
 
