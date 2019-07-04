@@ -2,7 +2,7 @@ import VueInstance, { VueConstructor } from 'vue';
 import { SetupContext } from './types/vue';
 import { isWrapper } from './wrappers';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
-import { isPlainObject, assert, proxy, warn, logError } from './utils';
+import { isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
 import { value } from './functions/state';
 
 export function mixin(Vue: VueConstructor) {
@@ -54,27 +54,33 @@ export function mixin(Vue: VueConstructor) {
     }
 
     if (!binding) return;
-    if (!isPlainObject(binding)) {
-      if (process.env.NODE_ENV !== 'production') {
-        assert(
-          false,
-          `"setup" must return a "Object", get "${Object.prototype.toString
-            .call(binding)
-            .slice(8, -1)}"`
-        );
-      }
+
+    if (isFunction(binding)) {
+      vm.$options.render = () => binding(vm.$props, ctx);
       return;
     }
 
-    Object.keys(binding).forEach(name => {
-      let bindingValue = binding[name];
-      // make plain value reactive
-      if (!isWrapper(bindingValue)) {
-        bindingValue = value(bindingValue);
-      }
-      // bind to vm
-      bindingValue.setVmProperty(vm, name);
-    });
+    if (isPlainObject(binding)) {
+      Object.keys(binding).forEach(name => {
+        let bindingValue = binding[name];
+        // make plain value reactive
+        if (!isWrapper(bindingValue)) {
+          bindingValue = value(bindingValue);
+        }
+        // bind to vm
+        bindingValue.setVmProperty(vm, name);
+      });
+      return;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      assert(
+        false,
+        `"setup" must return a "Object" or a "Function", get "${Object.prototype.toString
+          .call(binding)
+          .slice(8, -1)}"`
+      );
+    }
   }
 
   function createSetupContext(vm: VueInstance & { [x: string]: any }): SetupContext {

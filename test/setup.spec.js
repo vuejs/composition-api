@@ -323,4 +323,75 @@ describe('setup', () => {
     expect(spy).toHaveBeenNthCalledWith(1, 1);
     expect(spy).toHaveBeenNthCalledWith(2, 2);
   });
+
+  it('inline render function should receive proper params', () => {
+    let p, c;
+    const vm = new Vue({
+      template: `<child msg="foo" a="1" b="2"></child>`,
+      components: {
+        child: {
+          name: 'child',
+          props: ['msg'],
+          setup() {
+            return (props, ctx) => {
+              p = props;
+              c = ctx;
+              return null;
+            };
+          },
+        },
+      },
+    }).$mount();
+    expect(p).toEqual({
+      msg: 'foo',
+    });
+    expect(c).toBeDefined();
+    expect(c.root).toBe(vm);
+    expect(c.attrs).toEqual({
+      a: '1',
+      b: '2',
+    });
+  });
+
+  it('inline render function should work', done => {
+    const vm = new Vue({
+      props: ['msg'],
+      template: '<div>1</div>',
+      setup(_, { _vm }) {
+        const h = _vm.$createElement;
+        const count = value(0);
+        const increment = () => {
+          count.value++;
+        };
+
+        return props =>
+          h('div', [
+            h('span', props.msg),
+            h(
+              'button',
+              {
+                on: {
+                  click: increment,
+                },
+              },
+              count.value
+            ),
+          ]);
+      },
+      propsData: {
+        msg: 'foo',
+      },
+    }).$mount();
+    expect(vm.$el.querySelector('span').textContent).toBe('foo');
+    expect(vm.$el.querySelector('button').textContent).toBe('0');
+    vm.$el.querySelector('button').click();
+    waitForUpdate(() => {
+      expect(vm.$el.querySelector('button').textContent).toBe('1');
+      vm.msg = 'bar';
+    })
+      .then(() => {
+        expect(vm.$el.querySelector('span').textContent).toBe('bar');
+      })
+      .then(done);
+  });
 });
