@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, state, value, watch } = require('../../src');
+const { plugin, state, value, watch, set } = require('../../src');
 
 Vue.use(plugin);
 
@@ -81,7 +81,7 @@ describe('reactivity/value', () => {
     expect(dummy).toBe(2);
   });
 
-  it('should work like a normal property when nested in an observable(1)', () => {
+  it('should work like a normal property when nested in an observable(same ref)', () => {
     const a = value(1);
     const obj = state({
       a,
@@ -115,64 +115,108 @@ describe('reactivity/value', () => {
     expect(dummy3).toBe(3);
   });
 
-  it('should work like a normal property when nested in an observable(2)', () => {
+  it('should work like a normal property when nested in an observable(different ref)', () => {
     const count = value(1);
     const count1 = value(1);
     const obj = state({
       a: count,
       b: {
-        c: 1,
-        d: [count1],
+        c: count1,
       },
     });
 
-    // let dummy1;
+    let dummy1;
     let dummy2;
-    // let dummy3;
     watch(
       () => obj,
       () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
-        dummy3 = obj.b.d[0];
       },
       { deep: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
-    expect(dummy3).toBe(1);
     expect(obj.a).toBe(1);
     expect(obj.b.c).toBe(1);
-    expect(obj.b.d[0]).toBe(1);
-
     obj.a++;
     expect(dummy1).toBe(2);
     expect(dummy2).toBe(1);
-    expect(dummy3).toBe(1);
-    expect(obj.a).toBe(2);
     expect(count.value).toBe(2);
     expect(count1.value).toBe(1);
-
     count.value++;
-    count1.value++;
-    obj.b.d[0]++;
-    obj.b.c = 3;
     expect(dummy1).toBe(3);
-    expect(dummy2).toBe(3);
-    expect(dummy3).toBe(3);
-    expect(obj.a).toBe(3);
-    expect(count1.value).toBe(3);
-    expect(obj.b.c).toBe(3);
-    expect(obj.b.d[0]).toBe(3);
-
-    const wrapperC = value(1);
-    obj.b.c = wrapperC;
-    expect(dummy2).toBe(1);
-    expect(obj.b.c).toBe(1);
-
-    obj.b.c++;
+    expect(count.value).toBe(3);
+    count1.value++;
     expect(dummy2).toBe(2);
-    expect(wrapperC.value).toBe(2);
-    expect(obj.b.c).toBe(2);
+    expect(count1.value).toBe(2);
+  });
+
+  it('should work like a normal property when nested in an observable(wrapper overwrite)', () => {
+    const obj = state({
+      a: {
+        b: 1,
+      },
+    });
+
+    let dummy;
+    watch(
+      () => obj,
+      () => {
+        dummy = obj.a.b;
+      },
+      { deep: true, lazy: true }
+    );
+    expect(dummy).toBeUndefined();
+    const wrapperC = value(1);
+    obj.a.b = wrapperC;
+    expect(dummy).toBe(1);
+    obj.a.b++;
+    expect(dummy).toBe(2);
+  });
+
+  it('should work like a normal property when nested in an observable(new property of object)', () => {
+    const count = value(1);
+    const obj = state({
+      a: {},
+      b: [],
+    });
+    let dummy;
+    watch(
+      () => obj,
+      () => {
+        dummy = obj.a.foo;
+      },
+      { deep: true }
+    );
+    expect(dummy).toBe(undefined);
+    set(obj.a, 'foo', count);
+    expect(dummy).toBe(1);
+    count.value++;
+    expect(dummy).toBe(2);
+    obj.a.foo++;
+    expect(dummy).toBe(3);
+  });
+
+  it('should work like a normal property when nested in an observable(new property of array)', () => {
+    const count = value(1);
+    const obj = state({
+      a: [],
+    });
+    let dummy;
+    watch(
+      () => obj,
+      () => {
+        dummy = obj.a[0];
+      },
+      { deep: true }
+    );
+    expect(dummy).toBe(undefined);
+    set(obj.a, 0, count);
+    expect(dummy).toBe(1);
+    count.value++;
+    expect(dummy).toBe(2);
+    obj.a[0]++;
+    expect(dummy).toBe(3);
   });
 });

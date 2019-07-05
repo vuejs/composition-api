@@ -26,6 +26,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 }
 
 export { plugin, Wrapper };
+export { set } from './reactivity';
 export * from './ts-api';
 export * from './functions/state';
 export * from './functions/lifecycle';

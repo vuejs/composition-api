@@ -8,10 +8,14 @@ const AccessControlIdentifier = {};
 const ObservableIdentifier = {};
 
 function setupAccessControl(target: AnyObject) {
-  if (!isObject(target)) {
+  if (!isObject(target) || isWrapper(target)) {
     return;
   }
-  if (hasOwn(target, AccessControIdentifierlKey) && target.__ac__ === AccessControlIdentifier) {
+
+  if (
+    hasOwn(target, AccessControIdentifierlKey) &&
+    target[AccessControIdentifierlKey] === AccessControlIdentifier
+  ) {
     return;
   }
 
@@ -22,57 +26,62 @@ function setupAccessControl(target: AnyObject) {
   }
 }
 
-function defineAccessControl(target: AnyObject, key: any) {
+/**
+ * Auto unwrapping when acccess property
+ */
+export function defineAccessControl(target: AnyObject, key: any, val?: any) {
+  let getter: (() => any) | undefined;
+  let setter: ((x: any) => void) | undefined;
   const property = Object.getOwnPropertyDescriptor(target, key);
-  if (!property) {
-    return;
+  if (property) {
+    if (property.configurable === false) {
+      return;
+    }
+    getter = property.get;
+    setter = property.set;
+    val = target[key];
   }
 
-  if (property.configurable === false) {
-    return;
-  }
-
-  let rawVal = target[key];
-  let isValueWrapper = isWrapper(rawVal);
-
-  // we are sure that get and set exist.
-  const getter = property.get!;
-  const setter = property.set!;
-
-  setupAccessControl(target[key]);
+  setupAccessControl(val);
   Object.defineProperty(target, key, {
     enumerable: true,
     configurable: true,
     get: function getterHandler() {
-      if (isValueWrapper) {
-        return rawVal.value;
+      const value = getter ? getter.call(target) : val;
+      if (isWrapper(value)) {
+        return value.value;
       } else {
-        return getter.call(target);
+        return value;
       }
     },
     set: function setterHandler(newVal) {
-      if (isValueWrapper) {
-        rawVal.value = newVal;
-        setupAccessControl(newVal);
-        return;
-      }
+      if (getter && !setter) return;
 
-      if (isWrapper(newVal)) {
-        isValueWrapper = true;
-        rawVal = newVal;
-        // trigger observer
+      const value = getter ? getter.call(target) : val;
+      if (isWrapper(value)) {
+        if (isWrapper(newVal)) {
+          val = newVal;
+        } else {
+          value.value = newVal;
+        }
+      } else if (setter) {
         setter.call(target, newVal);
-        return;
+      } else if (isWrapper(newVal)) {
+        val = newVal;
       }
-
-      setter.call(target, newVal);
       setupAccessControl(newVal);
     },
   });
 }
 
+export function isObservable(obj: any): boolean {
+  return (
+    hasOwn(obj, ObservableIdentifierKey) && obj[ObservableIdentifierKey] === ObservableIdentifier
+  );
+}
+
 export function observable<T = any>(obj: T): T {
-  if (!isObject(obj)) {
+  if (!isObject(obj) || isObservable(obj)) {
     return obj;
   }
 

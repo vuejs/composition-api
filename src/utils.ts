@@ -36,7 +36,7 @@ export function assert(condition: any, msg: string) {
 }
 
 export function isArray<T>(x: unknown): x is T[] {
-  return toString(x) === '[object Array]';
+  return Array.isArray(x);
 }
 
 export function isObject(val: unknown): val is Record<any, any> {
