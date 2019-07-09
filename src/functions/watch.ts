@@ -219,17 +219,17 @@ function createMuiltSourceWatcher<T>(
   return stop;
 }
 
-export function watch<T>(
+export function watch<T = any>(
   source: watchedValue<T>,
   cb: watcherCallBack<T>,
   options?: Partial<WatcherOption>
 ): () => void;
-export function watch<T>(
+export function watch<T = any>(
   source: Array<watchedValue<T>>,
   cb: watcherCallBack<T[]>,
   options?: Partial<WatcherOption>
 ): () => void;
-export function watch<T>(
+export function watch<T = any>(
   source: watchedValue<T> | Array<watchedValue<T>>,
   cb: watcherCallBack<T> | watcherCallBack<T[]>,
   options: Partial<WatcherOption> = {}

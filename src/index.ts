@@ -8,7 +8,7 @@ import { mixin } from './setup';
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
     setup?: (
-      this: undefined,
+      this: void,
       props: { [x: string]: any },
       context: SetupContext
     ) => object | null | undefined | void;

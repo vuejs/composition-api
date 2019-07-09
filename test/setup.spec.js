@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, value } = require('../src');
+const { plugin, value, computed } = require('../src');
 
 Vue.use(plugin);
 
@@ -9,6 +9,115 @@ describe('setup', () => {
   });
   afterEach(() => {
     warn.mockRestore();
+  });
+
+  it('should be called before `methods` gets resolved(no methods option)', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: value(1),
+        };
+      },
+      data() {
+        return {
+          b: this.a,
+        };
+      },
+    }).$mount();
+    expect(vm.a).toBe(1);
+    expect(vm.b).toBe(1);
+  });
+
+  it('should be called before `methods` gets resolved(empty methods option)', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: value(1),
+        };
+      },
+      data() {
+        return {
+          b: this.a,
+        };
+      },
+      methods: {},
+    }).$mount();
+    expect(vm.a).toBe(1);
+    expect(vm.b).toBe(1);
+  });
+
+  it('should be called before `methods` gets resolved(multiple methods)', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: value(0),
+        };
+      },
+      created() {
+        this.m1();
+        this.m2();
+        this.m3();
+      },
+      methods: {
+        m1() {
+          this.a++;
+        },
+        m2() {
+          this.a++;
+        },
+        m3() {
+          this.a++;
+        },
+      },
+    }).$mount();
+    expect(vm.a).toBe(3);
+  });
+
+  it('should work with `methods` and `data` options', done => {
+    let calls = 0;
+    const vm = new Vue({
+      template: `<div>{{a}}{{b}}{{c}}</div>`,
+      setup() {
+        return {
+          a: value(1),
+        };
+      },
+      beforeUpdate() {
+        calls++;
+      },
+      created() {
+        this.m();
+      },
+      data() {
+        return {
+          b: this.a,
+          c: 0,
+        };
+      },
+      methods: {
+        m() {
+          this.c = this.a;
+        },
+      },
+    }).$mount();
+    expect(vm.a).toBe(1);
+    expect(vm.b).toBe(1);
+    expect(vm.c).toBe(1);
+    vm.a = 2;
+    waitForUpdate(() => {
+      expect(calls).toBe(1);
+      expect(vm.a).toBe(2);
+      expect(vm.b).toBe(1);
+      expect(vm.c).toBe(1);
+      vm.b = 2;
+    })
+      .then(() => {
+        expect(calls).toBe(2);
+        expect(vm.a).toBe(2);
+        expect(vm.b).toBe(2);
+        expect(vm.c).toBe(1);
+      })
+      .then(done);
   });
 
   it('should reveive props as first params', () => {
@@ -44,26 +153,7 @@ describe('setup', () => {
     });
   });
 
-  it('warn for exist property(data)', () => {
-    new Vue({
-      data() {
-        return {
-          a: 1,
-        };
-      },
-      setup() {
-        const a = value();
-        return {
-          a,
-        };
-      },
-    });
-    expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: The setup binding property "a" is already declared as a data.'
-    );
-  });
-
-  it('warn for exist property(prop)', () => {
+  it('warn for existing props', () => {
     new Vue({
       props: {
         a: {},
@@ -80,49 +170,12 @@ describe('setup', () => {
     );
   });
 
-  it('warn for exist property(method)', () => {
+  it('warn for existing instance properties', () => {
     new Vue({
-      methods: {
-        a() {},
-      },
-      setup() {
-        const a = value();
+      setup(_, { _vm }) {
+        _vm.a = 1;
         return {
-          a,
-        };
-      },
-    });
-    expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: The setup binding property "a" is already declared as a method.'
-    );
-  });
-
-  it('warn for exist property(computed)', () => {
-    new Vue({
-      computed: {
-        a() {},
-      },
-      setup() {
-        const a = value();
-        return {
-          a,
-        };
-      },
-    });
-    expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: The setup binding property "a" is already declared as a computed.'
-    );
-  });
-
-  it('warn for exist property', () => {
-    new Vue({
-      beforeCreate() {
-        this.a = 1;
-      },
-      setup() {
-        const a = value();
-        return {
-          a,
+          a: value(),
         };
       },
     });
@@ -210,17 +263,15 @@ describe('setup', () => {
           template: `<span>{{ localMsg }}</span>`,
           props: ['msg'],
           setup(props) {
-            return { localMsg: props.msg };
-          },
-          computed: {
-            computedMsg() {
-              return this.msg + ' world';
-            },
+            return { localMsg: props.msg, computedMsg: computed(() => props.msg + ' world') };
           },
         },
       },
     }).$mount();
     const child = vm.$children[0];
+    expect(child.localMsg).toBe('hello');
+    expect(child.computedMsg).toBe('hello world');
+    expect(calls).toBe(0);
     vm.msg = 'hi';
     waitForUpdate(() => {
       expect(child.localMsg).toBe('hello');

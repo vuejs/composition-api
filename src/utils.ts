@@ -11,9 +11,9 @@ const sharedPropertyDefinition = {
   set: noopFn,
 };
 
-export function proxy(target: any, key: string, getter: Function, setter?: Function) {
-  sharedPropertyDefinition.get = getter;
-  sharedPropertyDefinition.set = setter || noopFn;
+export function proxy(target: any, key: string, { get, set }: { get?: Function; set?: Function }) {
+  sharedPropertyDefinition.get = get || noopFn;
+  sharedPropertyDefinition.set = set || noopFn;
   Object.defineProperty(target, key, sharedPropertyDefinition);
 }
 

@@ -25,14 +25,12 @@ export default class ValueWrapper<V> extends AbstractWrapper<V> {
     if (process.env.NODE_ENV !== 'production') {
       const vm = this._vm!;
       const name = this._propName!;
-      proxy(
-        vm._data,
-        name,
-        () => this.value,
-        (val: any) => {
+      proxy(vm._data, name, {
+        get: () => this.value,
+        set: (val: any) => {
           this.value = val;
-        }
-      );
+        },
+      });
     }
   }
 }
