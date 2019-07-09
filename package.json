@@ -77,7 +77,7 @@
       "^.+\\.[jt]s$": "<rootDir>/test/tsTransform.js"
     },
     "testMatch": [
-      "<rootDir>/test/**/*.spec.js"
+      "<rootDir>/test/**/*.spec.{js,ts}"
     ]
   },
   "prettier": {
