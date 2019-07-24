@@ -15,7 +15,11 @@ declare module 'vue/types/options' {
   }
 }
 
-const _install = (Vue: VueConstructor) => install(Vue, mixin);
+const defaultOptions = {
+  props: [],
+};
+const _install = (Vue: VueConstructor, options: Options = defaultOptions) =>
+  install(Vue, mixin, options);
 const plugin = {
   install: _install,
 };

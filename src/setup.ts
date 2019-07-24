@@ -72,7 +72,7 @@ function waitPropsResolved(vm: VueInstance, cb: (v: VueInstance, props: Record<a
   });
 }
 
-export function mixin(Vue: VueConstructor) {
+export function mixin(Vue: VueConstructor, options: Options) {
   // We define the setup hook on prototype,
   // which avoids Object.defineProperty calls for each instance created.
   proxy(Vue.prototype, SetupHookEvent, {
@@ -154,7 +154,7 @@ export function mixin(Vue: VueConstructor) {
 
   function createSetupContext(vm: VueInstance & { [x: string]: any }): SetupContext {
     const ctx = {} as SetupContext;
-    const props = ['parent', 'root', 'refs', 'slots', 'attrs'];
+    const props = ['parent', 'root', 'refs', 'slots', 'attrs', ...options.props];
     const methodReturnVoid = ['emit'];
     props.forEach(key => {
       proxy(ctx, key, {

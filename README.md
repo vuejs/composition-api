@@ -56,6 +56,9 @@ import Vue from 'vue'
 import { plugin } from 'vue-function-api'
 
 Vue.use(plugin)
+
+// Optionally pass in some options
+Vue.use(plugin, { props: ['router'] })
 ```
 
 After installing the plugin you can use the new [function API](#API) to compose your component.
@@ -338,6 +341,21 @@ Full properties list:
 * slots
 * attrs
 * emit
+
+You can bind other properties using `props` option on install：
+
+```js
+import Vue from 'vue'
+import { plugin } from 'vue-function-api'
+
+Vue.use(plugin, { props: ['router'] })
+
+const MyComponent = {
+  setup(props, context) {
+    context.router === context.root.$router // true
+  }
+}
+```
 
 # Misc
 

@@ -58,6 +58,9 @@ import Vue from 'vue'
 import { plugin } from 'vue-function-api'
 
 Vue.use(plugin)
+
+// 也可以传入一个可选的选项对象
+Vue.use(plugin, { props: ['router'] })
 ```
 
 安装插件后，您就可以使用新的[函数式 API](#API)来书写组件了。
@@ -325,6 +328,21 @@ const Descendent = {
 * slots
 * attrs
 * emit
+
+可以在安装时通过 `props` 选项绑定其他实例属性：
+
+```js
+import Vue from 'vue'
+import { plugin } from 'vue-function-api'
+
+Vue.use(plugin, { props: ['router'] })
+
+const MyComponent = {
+  setup(props, context) {
+    context.router === context.root.$router // true
+  }
+}
+```
 
 ## Wrapper (包装对象)
 > 以下内容引自 [尤雨溪知乎专栏](https://zhuanlan.zhihu.com/p/68477600)

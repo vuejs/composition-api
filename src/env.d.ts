@@ -4,6 +4,10 @@ declare global {
   interface Window {
     Vue: VueConstructor;
   }
+
+  interface Options {
+    props?: Array;
+  }
 }
 
 declare module 'vue/types/vue' {

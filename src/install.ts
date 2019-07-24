@@ -34,7 +34,11 @@ function mergeData(to: AnyObject, from?: AnyObject): Object {
   return to;
 }
 
-export function install(Vue: VueConstructor, _install: (Vue: VueConstructor) => void) {
+export function install(
+  Vue: VueConstructor,
+  _install: (Vue: VueConstructor, options: Options) => void,
+  options: Options
+) {
   if (currentVue && currentVue === Vue) {
     if (process.env.NODE_ENV !== 'production') {
       assert(false, 'already installed. Vue.use(plugin) should be called only once');
@@ -52,5 +56,5 @@ export function install(Vue: VueConstructor, _install: (Vue: VueConstructor) => 
   };
 
   setCurrentVue(Vue);
-  _install(Vue);
+  _install(Vue, options);
 }
