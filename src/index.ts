@@ -1,7 +1,7 @@
 import Vue, { VueConstructor } from 'vue';
 import { SetupContext } from './types/vue';
 import { currentVue } from './runtimeContext';
-import { Wrapper } from './wrappers';
+import { Wrapper, isWrapper } from './wrappers';
 import { install } from './install';
 import { mixin } from './setup';
 
@@ -25,7 +25,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
   _install(window.Vue);
 }
 
-export { plugin, Wrapper };
+export { plugin, Wrapper, isWrapper };
 export { set } from './reactivity';
 export * from './ts-api';
 export * from './functions/state';
