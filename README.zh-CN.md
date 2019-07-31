@@ -329,19 +329,23 @@ const Descendent = {
 * attrs
 * emit
 
-可以在安装时通过 `props` 选项绑定其他实例属性：
+你也可以在安装时通过 `props` 选项绑定其他实例属性：
 
 ```js
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import { plugin } from 'vue-function-api'
 
 Vue.use(plugin, { props: ['router'] })
 
-const MyComponent = {
+const router = new VueRouter()
+
+new Vue({
+  router,
   setup(props, context) {
     context.router === context.root.$router // true
   }
-}
+})
 ```
 
 ## Wrapper (包装对象)
