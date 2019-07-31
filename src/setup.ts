@@ -154,7 +154,7 @@ export function mixin(Vue: VueConstructor, options: Options) {
 
   function createSetupContext(vm: VueInstance & { [x: string]: any }): SetupContext {
     const ctx = {} as SetupContext;
-    const props = ['parent', 'root', 'refs', 'slots', 'attrs', ...options.props];
+    const props = ['parent', 'root', 'refs', 'slots', 'attrs'].concat(options.props);
     const methodReturnVoid = ['emit'];
     props.forEach(key => {
       proxy(ctx, key, {
