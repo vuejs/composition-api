@@ -57,7 +57,7 @@ import { plugin } from 'vue-function-api'
 
 Vue.use(plugin)
 
-// Optionally pass in some options
+// Optionally, pass in some options
 Vue.use(plugin, { props: ['router'] })
 ```
 
@@ -346,15 +346,19 @@ You can bind other properties using `props` option on install：
 
 ```js
 import Vue from 'vue'
+import VueRouter from 'vue-router'
 import { plugin } from 'vue-function-api'
 
 Vue.use(plugin, { props: ['router'] })
 
-const MyComponent = {
+const router = new VueRouter()
+
+new Vue({
+  router,
   setup(props, context) {
     context.router === context.root.$router // true
   }
-}
+})
 ```
 
 # Misc
