@@ -12,11 +12,15 @@ let disableSetup = false;
 // `cb` should be called right after props get resolved
 function waitPropsResolved(vm: VueInstance, cb: (v: VueInstance, props: Record<any, any>) => void) {
   const safeRunCb = (props: Record<any, any>) => {
+    let callOnce = false;
     // Running `cb` under the scope of a dep.Target, otherwise the `Observable`
     // in `cb` will be unexpectedly colleced by the current dep.Target.
     const dispose = watch(
       () => {
-        cb(vm, props);
+        if (!callOnce) {
+          callOnce = true;
+          cb(vm, props);
+        }
       },
       noopFn,
       { lazy: false, deep: false, flush: 'sync' }

@@ -368,4 +368,27 @@ describe('Hooks watch', () => {
       expect(spy).toHaveBeenCalledWith(2, 1);
     }).then(done);
   });
+
+  it('should not collect wrong deps in watch', done => {
+    const vm = new Vue({
+      setup() {
+        const a = value(1);
+        const b = value(9);
+        watch(a, (newValue, oldValue) => {
+          spy(newValue, oldValue);
+          b.value++;
+        });
+        return {
+          a,
+          b,
+        };
+      },
+      template: `<div>{{a}} {{b}}</div>`,
+    }).$mount();
+    expect(spy.mock.calls.length).toBe(1);
+    vm.b++;
+    waitForUpdate(() => {
+      expect(spy.mock.calls.length).toBe(1);
+    }).then(done);
+  });
 });
