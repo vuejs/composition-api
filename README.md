@@ -342,8 +342,8 @@ Full properties list:
 # Misc
 
 - `vue-function-api` will keep updated with `Vue3.x` API. When `3.0` released, you can replace this library seamlessly.
-- `vue-function-api` only relies on `Vue2.x` itself. Wheather `Vue3.x` is released or not, it's not affect you using this library.
-- Due the the limitation of `Vue2.x`'s public API. `vue-function-api` inevitably introduce some extract workload. It doesn't concern you if you are now working on extreme environment.
+- `vue-function-api` only relies on `Vue2.x` itself. Whether you decide to upgrade `Vue3.x` or not, using this library will not impact `Vue2.x` functionality.
+- Due the the limitation of `Vue2.x`'s public API. `vue-function-api` inevitably introduces some extra workload. This shouldn't concern you unless are already pushing your environment to the extreme.
 
 
 [wrapper]: https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#why-do-we-need-value-wrappers
