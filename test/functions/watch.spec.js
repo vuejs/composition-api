@@ -183,7 +183,7 @@ describe('Hooks watch', () => {
     obj.a = 2;
     waitForUpdate(() => {
       expect(spy.mock.calls.length).toBe(2);
-      expect(spy).toHaveBeenCalledWith(2, 1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
 
@@ -220,8 +220,8 @@ describe('Hooks watch', () => {
     }).$mount();
     a.value = 2;
     waitForUpdate(() => {
-      expect(spy1).toHaveBeenCalledWith(2, 1);
-      expect(spy).toHaveBeenCalledWith(2, 1);
+      expect(spy1).toHaveBeenLastCalledWith(2, 1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
 
@@ -240,7 +240,7 @@ describe('Hooks watch', () => {
     expect(spy).not.toHaveBeenCalled();
     vm.a = 2;
     waitForUpdate(() => {
-      expect(spy).toHaveBeenCalledWith(2, 1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
 
@@ -261,11 +261,11 @@ describe('Hooks watch', () => {
     vm.a.b = 2;
     expect(spy).not.toHaveBeenCalled();
     waitForUpdate(() => {
-      expect(spy).toHaveBeenCalledWith(vm.a, vm.a);
+      expect(spy).toHaveBeenLastCalledWith(vm.a, vm.a);
       vm.a = { b: 3 };
     })
       .then(() => {
-        expect(spy).toHaveBeenCalledWith(vm.a, oldA);
+        expect(spy).toHaveBeenLastCalledWith(vm.a, oldA);
       })
       .then(done);
   });
@@ -293,7 +293,7 @@ describe('Hooks watch', () => {
     vm.a = 2;
     waitForUpdate(() => {
       expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenCalledWith(2, 1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
 
@@ -320,7 +320,7 @@ describe('Hooks watch', () => {
     vm.a = 2;
     waitForUpdate(() => {
       expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenCalledWith(2, 1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
 
@@ -339,9 +339,9 @@ describe('Hooks watch', () => {
     }).$mount();
     expect(spy).not.toHaveBeenCalled();
     vm.a = 2;
-    expect(spy).toHaveBeenCalledWith(2, 1);
+    expect(spy).toHaveBeenLastCalledWith(2, 1);
     vm.a = 3;
-    expect(spy).toHaveBeenCalledWith(3, 2);
+    expect(spy).toHaveBeenLastCalledWith(3, 2);
     waitForUpdate(() => {
       expect(spy.mock.calls.length).toBe(2);
     }).then(done);
@@ -365,7 +365,20 @@ describe('Hooks watch', () => {
     vm['数据'] = 2;
     expect(spy).not.toHaveBeenCalled();
     waitForUpdate(() => {
-      expect(spy).toHaveBeenCalledWith(2, 1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
+  });
+
+  it('should allow to be triggered in setup', () => {
+    new Vue({
+      setup() {
+        const count = value(0);
+        watch(count, spy, { flush: 'sync' });
+        count.value++;
+      },
+    });
+    expect(spy.mock.calls.length).toBe(2);
+    expect(spy).toHaveBeenNthCalledWith(1, 0, undefined);
+    expect(spy).toHaveBeenNthCalledWith(2, 1, 0);
   });
 });

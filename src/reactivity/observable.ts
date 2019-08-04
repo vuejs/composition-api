@@ -2,11 +2,14 @@ import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isObject, def, hasOwn } from '../utils';
 import { isWrapper } from '../wrappers';
-import { ObservableIdentifierKey, AccessControIdentifierlKey } from '../symbols';
+import { AccessControIdentifierlKey, ObservableIdentifierKey } from '../symbols';
 
 const AccessControlIdentifier = {};
 const ObservableIdentifier = {};
-
+/**
+ * Proxing property access of target.
+ * We can do unwrapping and other things here.
+ */
 function setupAccessControl(target: AnyObject) {
   if (!isObject(target) || isWrapper(target)) {
     return;
@@ -19,11 +22,19 @@ function setupAccessControl(target: AnyObject) {
     return;
   }
 
-  def(target, AccessControIdentifierlKey, AccessControlIdentifier);
+  if (Object.isExtensible(target)) {
+    def(target, AccessControIdentifierlKey, AccessControlIdentifier);
+  }
   const keys = Object.keys(target);
   for (let i = 0; i < keys.length; i++) {
     defineAccessControl(target, keys[i]);
   }
+}
+
+function isObservable(obj: any): boolean {
+  return (
+    hasOwn(obj, ObservableIdentifierKey) && obj[ObservableIdentifierKey] === ObservableIdentifier
+  );
 }
 
 /**
@@ -74,12 +85,9 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
   });
 }
 
-export function isObservable(obj: any): boolean {
-  return (
-    hasOwn(obj, ObservableIdentifierKey) && obj[ObservableIdentifierKey] === ObservableIdentifier
-  );
-}
-
+/**
+ * Make obj reactivity
+ */
 export function observable<T = any>(obj: T): T {
   if (!isObject(obj) || isObservable(obj)) {
     return obj;
@@ -101,7 +109,9 @@ export function observable<T = any>(obj: T): T {
     observed = vm._data.$$state;
   }
 
-  def(observed, ObservableIdentifierKey, ObservableIdentifier);
+  if (Object.isExtensible(observed)) {
+    def(observed, ObservableIdentifierKey, ObservableIdentifier);
+  }
   setupAccessControl(observed);
   return observed;
 }
