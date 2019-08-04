@@ -1,6 +1,5 @@
 import Vue from 'vue';
-import { getCurrentVue } from '../runtimeContext';
-import { proxy, hasOwn, def } from '../utils';
+import { proxy, hasOwn, def, warn } from '../utils';
 
 export default abstract class AbstractWrapper<V> {
   protected _propName?: string;
@@ -12,7 +11,6 @@ export default abstract class AbstractWrapper<V> {
     def(this, '_propName', propName);
 
     const props = vm.$options.props;
-    const warn = getCurrentVue().util.warn;
     if (!(propName in vm) && !(props && hasOwn(props, propName))) {
       proxy(vm, propName, {
         get: () => this.value,

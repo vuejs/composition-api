@@ -1,5 +1,4 @@
-import { getCurrentVue } from '../runtimeContext';
-import { proxy, def } from '../utils';
+import { proxy, def, warn } from '../utils';
 import AbstractWrapper from './AbstractWrapper';
 
 interface ComputedInternal<T> {
@@ -22,7 +21,7 @@ export default class ComputedWrapper<V> extends AbstractWrapper<V> {
   set value(val: V) {
     if (!this._internal.write) {
       if (process.env.NODE_ENV !== 'production') {
-        getCurrentVue().util.warn(
+        warn(
           'Computed property' +
             (this._propName ? ` "${this._propName}"` : '') +
             ' was assigned to but it has no setter.',

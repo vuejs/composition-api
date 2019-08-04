@@ -1,9 +1,8 @@
 import Vue from 'vue';
-import { getCurrentVue } from '../runtimeContext';
 import { state } from '../functions/state';
 import { isWrapper, Wrapper, ComputedWrapper } from '../wrappers';
 import { ensureCurrentVMInFn } from '../helper';
-import { hasOwn } from '../utils';
+import { hasOwn, warn } from '../utils';
 
 const UNRESOLVED_INJECT = {};
 export interface Key<T> extends Symbol {}
@@ -45,10 +44,10 @@ export function inject<T>(key: Key<T>): Wrapper<T> | void {
     return new ComputedWrapper<T>({
       read: () => reactiveVal,
       write() {
-        getCurrentVue().util.warn(`The injectd value can't be re-assigned`, vm);
+        warn(`The injectd value can't be re-assigned`, vm);
       },
     });
   } else if (process.env.NODE_ENV !== 'production') {
-    getCurrentVue().util.warn(`Injection "${String(key)}" not found`, vm);
+    warn(`Injection "${String(key)}" not found`, vm);
   }
 }

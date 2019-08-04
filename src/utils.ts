@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 const toString = (x: any) => Object.prototype.toString.call(x);
 
 export const hasSymbol = typeof Symbol === 'function' && Symbol.for;
@@ -49,4 +51,19 @@ export function isPlainObject<T extends Object = {}>(x: unknown): x is T {
 
 export function isFunction(x: unknown): x is Function {
   return typeof x === 'function';
+}
+
+export function warn(msg: string, vm?: Vue) {
+  Vue.util.warn(msg, vm);
+}
+
+export function logError(err: Error, vm: Vue, info: string) {
+  if (process.env.NODE_ENV !== 'production') {
+    warn(`Error in ${info}: "${err.toString()}"`, vm);
+  }
+  if (typeof window !== 'undefined' && typeof console !== 'undefined') {
+    console.error(err);
+  } else {
+    throw err;
+  }
 }

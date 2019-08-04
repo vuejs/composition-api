@@ -11,7 +11,32 @@ describe('setup', () => {
     warn.mockRestore();
   });
 
-  it('should be called before `methods` gets resolved(no methods option)', () => {
+  it('should works', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: value(1),
+        };
+      },
+    }).$mount();
+    expect(vm.a).toBe(1);
+  });
+
+  it('should be overrided by data option of plain object', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: value(1),
+        };
+      },
+      data: {
+        a: 2,
+      },
+    }).$mount();
+    expect(vm.a).toBe(2);
+  });
+
+  it("should access setup's value in data", () => {
     const vm = new Vue({
       setup() {
         return {
@@ -26,51 +51,6 @@ describe('setup', () => {
     }).$mount();
     expect(vm.a).toBe(1);
     expect(vm.b).toBe(1);
-  });
-
-  it('should be called before `methods` gets resolved(empty methods option)', () => {
-    const vm = new Vue({
-      setup() {
-        return {
-          a: value(1),
-        };
-      },
-      data() {
-        return {
-          b: this.a,
-        };
-      },
-      methods: {},
-    }).$mount();
-    expect(vm.a).toBe(1);
-    expect(vm.b).toBe(1);
-  });
-
-  it('should be called before `methods` gets resolved(multiple methods)', () => {
-    const vm = new Vue({
-      setup() {
-        return {
-          a: value(0),
-        };
-      },
-      created() {
-        this.m1();
-        this.m2();
-        this.m3();
-      },
-      methods: {
-        m1() {
-          this.a++;
-        },
-        m2() {
-          this.a++;
-        },
-        m3() {
-          this.a++;
-        },
-      },
-    }).$mount();
-    expect(vm.a).toBe(3);
   });
 
   it('should work with `methods` and `data` options', done => {
