@@ -10,7 +10,10 @@
   "umd:main": "dist/vue-function-api.umd.js",
   "module": "dist/vue-function-api.module.js",
   "typings": "dist/index.d.ts",
-  "author": "liximomo",
+  "author": {
+    "name": "liximomo",
+    "email": "liximomo@gmail.com"
+  },
   "license": "MIT",
   "sideEffects": false,
   "files": [
