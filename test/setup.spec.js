@@ -114,23 +114,21 @@ describe('setup', () => {
     expect(props.a).toBe(1);
   });
 
-  it('should reveive context second params', done => {
-    new Vue({
+  it('should reveive context second params', () => {
+    let context;
+    const vm = new Vue({
       setup(_, ctx) {
-        expect(ctx).toBeDefined();
-        expect('parent' in ctx).toBe(true);
-        expect(ctx).toEqual(
-          expect.objectContaining({
-            root: expect.any(Object),
-            refs: expect.any(Object),
-            slots: expect.any(Object),
-            attrs: expect.any(Object),
-            emit: expect.any(Function),
-          })
-        );
-        done();
+        context = ctx;
       },
     });
+    expect(context).toBeDefined();
+    expect('parent' in context).toBe(true);
+    expect(context.root).toBe(vm.$root);
+    expect(context.parent).toBe(vm.$parent);
+    expect(context.refs).toBe(vm.$refs);
+    expect(context.slots).toBe(vm.$scopedSlots);
+    expect(context.attrs).toBe(vm.$attrs);
+    expect(typeof context.emit === 'function').toBe(true);
   });
 
   it('warn for existing props', () => {

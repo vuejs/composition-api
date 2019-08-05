@@ -79,27 +79,41 @@ export function mixin(Vue: VueConstructor) {
 
   function createSetupContext(vm: VueInstance & { [x: string]: any }): SetupContext {
     const ctx = {} as SetupContext;
-    const props = ['parent', 'root', 'refs', 'slots', 'attrs'];
+    const props: Array<string | [string, string]> = [
+      'root',
+      'parent',
+      'refs',
+      ['slots', 'scopedSlots'],
+      'attrs',
+    ];
     const methodReturnVoid = ['emit'];
     props.forEach(key => {
-      proxy(ctx, key, {
-        get: () => vm[`$${key}`],
+      let targetKey: string;
+      let srcKey: string;
+      if (Array.isArray(key)) {
+        [targetKey, srcKey] = key;
+      } else {
+        targetKey = srcKey = key;
+      }
+      srcKey = `$${srcKey}`;
+      proxy(ctx, targetKey, {
+        get: () => vm[srcKey],
         set() {
-          warn(`Cannot assign to '${key}' because it is a read-only property`, vm);
+          warn(`Cannot assign to '${targetKey}' because it is a read-only property`, vm);
         },
       });
     });
-    methodReturnVoid.forEach(key =>
+    methodReturnVoid.forEach(key => {
+      const srcKey = `$${key}`;
       proxy(ctx, key, {
         get() {
-          const vmKey = `$${key}`;
           return (...args: any[]) => {
-            const fn: Function = vm[vmKey];
+            const fn: Function = vm[srcKey];
             fn.apply(vm, args);
           };
         },
-      })
-    );
+      });
+    });
     if (process.env.NODE_ENV === 'test') {
       (ctx as any)._vm = vm;
     }
