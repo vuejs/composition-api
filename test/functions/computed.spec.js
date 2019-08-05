@@ -166,4 +166,31 @@ describe('Hooks computed', () => {
     });
     expect(() => vm.a).toThrowError('rethrow');
   });
+
+  it('Mixins should not break computed properties', () => {
+    const ExampleComponent = Vue.extend({
+      props: ['test'],
+      render: h => h('div'),
+      setup: props => ({ example: computed(() => props.test) }),
+    });
+
+    Vue.mixin({
+      computed: {
+        foobar() {
+          return 'test';
+        },
+      },
+    });
+
+    const app = new Vue({
+      render: h =>
+        h('div', [
+          h(ExampleComponent, { props: { test: 'A' } }),
+          h(ExampleComponent, { props: { test: 'B' } }),
+        ]),
+    }).$mount();
+
+    expect(app.$children[0].example).toBe('A');
+    expect(app.$children[1].example).toBe('B');
+  });
 });
