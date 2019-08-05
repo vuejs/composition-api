@@ -16,7 +16,7 @@ export function setCurrentVue(vue: VueConstructor) {
   currentVue = vue;
 }
 
-export function getCurrentVM() {
+export function getCurrentVM(): Vue | null {
   return currentVM;
 }
 

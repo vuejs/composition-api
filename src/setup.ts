@@ -1,7 +1,7 @@
 import VueInstance, { VueConstructor } from 'vue';
 import { SetupContext } from './types/vue';
 import { isWrapper } from './wrappers';
-import { setCurrentVM } from './runtimeContext';
+import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { isPlainObject, assert, proxy, warn, logError } from './utils';
 import { value } from './functions/state';
 
@@ -43,13 +43,14 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
     let binding: any;
+    let preVm = getCurrentVM();
     setCurrentVM(vm);
     try {
       binding = setup(props, ctx);
     } catch (err) {
       logError(err, vm, 'setup()');
     } finally {
-      setCurrentVM(null);
+      setCurrentVM(preVm);
     }
 
     if (!binding) return;

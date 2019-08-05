@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, value, computed } = require('../src');
+const { plugin, value, computed, onCreated } = require('../src');
 
 Vue.use(plugin);
 
@@ -308,5 +308,23 @@ describe('setup', () => {
     waitForUpdate(() => {
       expect(vm.$el.textContent).toBe('2, 3');
     }).then(done);
+  });
+
+  it('current vue should exist in nested setup call', () => {
+    const spy = jest.fn();
+    new Vue({
+      setup() {
+        new Vue({
+          setup() {
+            onCreated(() => spy(1));
+          },
+        });
+
+        onCreated(() => spy(2));
+      },
+    });
+    expect(spy.mock.calls.length).toBe(2);
+    expect(spy).toHaveBeenNthCalledWith(1, 1);
+    expect(spy).toHaveBeenNthCalledWith(2, 2);
   });
 });
