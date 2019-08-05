@@ -2,7 +2,7 @@
 
 > [通过基于函数的 API 来复用组件逻辑](https://zhuanlan.zhihu.com/p/68477600)
 
-面向未来编程(Future-Oriented Programming)，`vue-function-api` 提供 Vue3 中的组件逻辑复用机制帮助开发者开发下一代 vue 应用程序，允许开发者利用 Vue3 的响应性 API 建设未来 Vue 生态。
+`vue-function-api` 使开发者们可以在 `Vue2.x` 中使用 `Vue3` 引入的**基于函数**的**逻辑复用机制**。
 
 [**English Version**](./README.md)
 
@@ -284,7 +284,7 @@ const MyComponent = {
 ```
 
 ## provide, inject
-▸ **provide**(value: *`Object`*)
+▸ **provide**(key: *`string` | `symbol`*, value: *`any`*)
 
 ▸ **inject**(key: *`string` | `symbol`*)
 
@@ -301,9 +301,7 @@ const Ancestor = {
   setup() {
     // providing a value can make it reactive
     const count = value(0)
-    provide({
-      [CountSymbol]: count
-    })
+    provide(CountSymbol, count)
   }
 }
 
@@ -405,6 +403,4 @@ console.log(count.value) // 2
 
 # 其他
 
-- `vue-function-api` 会一直保持与 `Vue3.x` 的兼容性，当 `3.0` 发布时，您可以无缝替换掉本库。
-- `vue-function-api` 的实现只依赖 `Vue2.x` 本身，不论 `Vue3.x` 的发布与否，都不会影响您正常使用本库。
 - 由于 `Vue2.x` 的公共 API 限制，`vue-function-api` 无法避免的会产生一些额外的内存负载。如果您的应用并不工作在极端内存环境下，无需关心此项。

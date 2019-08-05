@@ -2,7 +2,7 @@
 
 > [Function-based Component API RFC](https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md)
 
-Future-Oriented Programming, `vue-function-api` provides function api from `Vue3.x` to `Vue2.x` for developing next-generation Vue applications.
+`vue-function-api` provides a way to use **function api** from `Vue3` in `Vue2.x`.
 
 [**中文文档**](./README.zh-CN.md)
 
@@ -281,7 +281,7 @@ const MyComponent = {
 ```
 
 ## provide, inject
-▸ **provide**(value: *`Object`*)
+▸ **provide**(key: *`string` | `symbol`*, value: *`any`*)
 
 ▸ **inject**(key: *`string` | `symbol`*)
 
@@ -298,9 +298,7 @@ const Ancestor = {
   setup() {
     // providing a value can make it reactive
     const count = value(0)
-    provide({
-      [CountSymbol]: count
-    })
+    provide(CountSymbol, count)
   }
 }
 
@@ -341,8 +339,6 @@ Full properties list:
 
 # Misc
 
-- `vue-function-api` will keep updated with `Vue3.x` API. When `3.0` released, you can replace this library seamlessly.
-- `vue-function-api` only relies on `Vue2.x` itself. Whether you decide to upgrade `Vue3.x` or not, using this library will not impact `Vue2.x` functionality.
 - Due the the limitation of `Vue2.x`'s public API. `vue-function-api` inevitably introduces some extra workload. This shouldn't concern you unless are already pushing your environment to the extreme.
 
 
