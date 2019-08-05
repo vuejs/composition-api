@@ -1,3 +1,12 @@
+# 2.1.1
+* Add a new signature of `provide`: `provide(key, value)`.
+* Fix multiple `provide` invoking per component.
+* Fix order of `setup` invoking.
+* `onErrorCaptured` not triggered ([#25](/vuejs/vue-function-api/issues/25)).
+* Fix `this` losing in nested setup call ([#38](/vuejs/vue-function-api/issues/38)).
+* Fix some edge cases of unwarpping.
+* Change `context.slots`'s value. It now proxies to `$scopeSlots` instead of `$slots`.
+
 # 2.0.6
 ## Fixed
 * watch callback is called repeatedly with multi-sources
