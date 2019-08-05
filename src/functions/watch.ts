@@ -1,4 +1,4 @@
-import Vue, { VueConstructor } from 'vue';
+import { VueInstance } from '../types/vue';
 import { Wrapper } from '../wrappers';
 import { isArray, assert } from '../utils';
 import { isWrapper } from '../wrappers';
@@ -22,7 +22,7 @@ interface WatcherContext<T> {
   watcherStopHandle: Function;
 }
 
-let fallbackVM: Vue;
+let fallbackVM: VueInstance;
 
 function hasWatchEnv(vm: any) {
   return vm[WatcherPreFlushQueueKey] !== undefined;
@@ -81,7 +81,7 @@ function flushWatcherCallback(vm: any, fn: Function, mode: FlushMode) {
 }
 
 function createSingleSourceWatcher<T>(
-  vm: InstanceType<VueConstructor>,
+  vm: VueInstance,
   source: watchedValue<T>,
   cb: watcherCallBack<T>,
   options: WatcherOption
@@ -128,7 +128,7 @@ function createSingleSourceWatcher<T>(
 }
 
 function createMuiltSourceWatcher<T>(
-  vm: InstanceType<VueConstructor>,
+  vm: VueInstance,
   sources: Array<watchedValue<T>>,
   cb: watcherCallBack<T[]>,
   options: WatcherOption

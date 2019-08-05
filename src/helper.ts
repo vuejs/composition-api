@@ -1,8 +1,8 @@
-import { VueConstructor } from 'vue';
+import { VueInstance } from './types/vue';
 import { getCurrentVue, getCurrentVM } from './runtimeContext';
 import { assert } from './utils';
 
-export function ensureCurrentVMInFn(hook: string): InstanceType<VueConstructor> {
+export function ensureCurrentVMInFn(hook: string): VueInstance {
   const vm = getCurrentVM();
   if (process.env.NODE_ENV !== 'production') {
     assert(vm, `"${hook}" get called outside of "setup()"`);

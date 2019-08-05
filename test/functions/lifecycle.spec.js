@@ -8,12 +8,41 @@ const {
   onUpdated,
   onBeforeDestroy,
   onDestroyed,
+  onErrorCaptured,
 } = require('../../src');
 
 Vue.use(plugin);
 
 describe('Hooks lifecycle', () => {
   describe('created', () => {
+    it('work with created option', () => {
+      const spy = jest.fn();
+      new Vue({
+        created() {
+          spy('option');
+        },
+        setup() {
+          onCreated(() => spy('hook'));
+        },
+      });
+      expect(spy.mock.calls.length).toBe(2);
+      expect(spy).toHaveBeenNthCalledWith(1, 'option');
+      expect(spy).toHaveBeenNthCalledWith(2, 'hook');
+    });
+
+    it('can register multiple callbacks', () => {
+      const spy = jest.fn();
+      new Vue({
+        setup() {
+          onCreated(() => spy('first'));
+          onCreated(() => spy('second'));
+        },
+      });
+      expect(spy.mock.calls.length).toBe(2);
+      expect(spy).toHaveBeenNthCalledWith(1, 'first');
+      expect(spy).toHaveBeenNthCalledWith(2, 'second');
+    });
+
     it('should have completed observation', () => {
       const spy = jest.fn();
       new Vue({
@@ -333,6 +362,46 @@ describe('Hooks lifecycle', () => {
       vm.$destroy();
       expect(spy).toHaveBeenCalled();
       expect(spy.mock.calls.length).toBe(1);
+    });
+  });
+
+  describe('errorCaptured', () => {
+    let globalSpy;
+
+    beforeEach(() => {
+      globalSpy = Vue.config.errorHandler = jest.fn();
+    });
+
+    afterEach(() => {
+      Vue.config.errorHandler = null;
+    });
+
+    it('should capture error from child component', () => {
+      const spy = jest.fn();
+
+      let child;
+      let err;
+      const Child = {
+        setup(_, { _vm }) {
+          child = _vm;
+          onCreated(() => {
+            err = new Error('child');
+            throw err;
+          });
+        },
+        render() {},
+      };
+
+      new Vue({
+        setup() {
+          onErrorCaptured(spy);
+        },
+        render: h => h(Child),
+      }).$mount();
+
+      expect(spy).toHaveBeenCalledWith(err, child, 'created hook');
+      // should propagate by default
+      expect(globalSpy).toHaveBeenCalledWith(err, child, 'created hook');
     });
   });
 });

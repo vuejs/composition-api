@@ -1,18 +1,30 @@
+import { VueConstructor } from 'vue';
+import { VueInstance } from '../types/vue';
+import { getCurrentVue } from '../runtimeContext';
 import { ensureCurrentVMInFn } from '../helper';
 
 const genName = (name: string) => `on${name[0].toUpperCase() + name.slice(1)}`;
 function createLifeCycle(lifeCyclehook: string) {
   return (callback: Function) => {
     const vm = ensureCurrentVMInFn(genName(lifeCyclehook));
-    vm.$on(`hook:${lifeCyclehook}`, callback);
+    injectHookOption(getCurrentVue(), vm, lifeCyclehook, callback);
   };
 }
 
 function createLifeCycles(lifeCyclehooks: string[], name: string) {
   return (callback: Function) => {
+    const currentVue = getCurrentVue();
     const vm = ensureCurrentVMInFn(name);
-    lifeCyclehooks.forEach(lifeCyclehook => vm.$on(`hook:${lifeCyclehook}`, callback));
+    lifeCyclehooks.forEach(lifeCyclehook =>
+      injectHookOption(currentVue, vm, lifeCyclehook, callback)
+    );
   };
+}
+
+function injectHookOption(Vue: VueConstructor, vm: VueInstance, hook: string, val: Function) {
+  const options = vm.$options as any;
+  const mergeFn = Vue.config.optionMergeStrategies[hook];
+  options[hook] = mergeFn(options[hook], val);
 }
 
 export const onCreated = createLifeCycle('created');

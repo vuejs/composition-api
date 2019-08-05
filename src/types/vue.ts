@@ -1,4 +1,6 @@
-import Vue, { VNode } from 'vue/';
+import Vue, { VueConstructor, VNode } from 'vue/';
+
+export type VueInstance = InstanceType<VueConstructor>;
 
 export interface SetupContext {
   readonly parent: Vue;
