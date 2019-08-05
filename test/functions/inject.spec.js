@@ -33,7 +33,10 @@ describe('Hooks provide/inject', () => {
     new Vue({
       template: `<child/>`,
       setup() {
-        provide('foo', 1);
+        const count = value(1);
+        provide({
+          foo: count,
+        });
         provide('bar', false);
       },
       components: {

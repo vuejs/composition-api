@@ -1,1 +1,1 @@
-export type AnyObject = Record<string | symbol, any>;
+export type AnyObject = Record<string | number | symbol, any>;

@@ -1,8 +1,9 @@
 import Vue from 'vue';
+import { AnyObject } from '../types/basic';
 import { state } from '../functions/state';
 import { isWrapper, Wrapper, ComputedWrapper } from '../wrappers';
 import { ensureCurrentVMInFn } from '../helper';
-import { hasOwn, warn } from '../utils';
+import { hasOwn, warn, isObject } from '../utils';
 
 const UNRESOLVED_INJECT = {};
 export interface Key<T> extends Symbol {}
@@ -21,12 +22,19 @@ function resolveInject(provideKey: Key<any>, vm: Vue): any {
   return UNRESOLVED_INJECT;
 }
 
-export function provide<T>(key: Key<T>, value: T | Wrapper<T>) {
+export function provide(data: AnyObject): void;
+export function provide<T>(key: Key<T>, value: T | Wrapper<T>): void;
+export function provide<T>(keyOrData: Key<T> | AnyObject, value?: T | Wrapper<T>): void {
   const vm: any = ensureCurrentVMInFn('provide');
   if (!vm._provided) {
     vm._provided = {};
   }
-  vm._provided[key as any] = value;
+
+  if (isObject(keyOrData)) {
+    Object.assign(vm._provided, keyOrData);
+  } else {
+    vm._provided[keyOrData] = value;
+  }
 }
 
 export function inject<T>(key: Key<T>): Wrapper<T> | void {
