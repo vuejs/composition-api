@@ -1,4 +1,5 @@
 # 2.1.1
+* Export `set` from `vue-function-api`. Using exported `set` whenever you need to use [Vue.set](https://vuejs.org/v2/api/#Vue-set) or [vm.$set](https://vuejs.org/v2/api/#vm-set). The custom `set` ensures that auto-unwrapping works for the new property.
 * Add a new signature of `provide`: `provide(key, value)`.
 * Fix multiple `provide` invoking per component.
 * Fix order of `setup` invoking.
