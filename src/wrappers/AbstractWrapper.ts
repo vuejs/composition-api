@@ -19,7 +19,7 @@ export default abstract class AbstractWrapper<V> {
         },
       });
       if (process.env.NODE_ENV !== 'production') {
-        // after data has resolved, expose bindings to vm._data.
+        // expose bindings after state has been resolved to prevent repeated works
         vm.$nextTick(() => {
           this.exposeToDevtool();
         });
