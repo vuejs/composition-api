@@ -41,6 +41,8 @@ function isObservable(obj: any): boolean {
  * Auto unwrapping when acccess property
  */
 export function defineAccessControl(target: AnyObject, key: any, val?: any) {
+  if (key === '__ob__') return;
+
   let getter: (() => any) | undefined;
   let setter: ((x: any) => void) | undefined;
   const property = Object.getOwnPropertyDescriptor(target, key);
@@ -50,7 +52,9 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     }
     getter = property.get;
     setter = property.set;
-    val = target[key];
+    if ((!getter || setter) /* not only have getter */ && arguments.length === 2) {
+      val = target[key];
+    }
   }
 
   setupAccessControl(val);
