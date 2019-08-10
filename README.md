@@ -17,6 +17,7 @@
   - [Todo App Compare with Vue2 API](https://codesandbox.io/s/todo-example-6d7ep)
   - [CodePen Live Demo](https://codepen.io/liximomo/pen/dBOvgg)
   - [Single-File Component](#single-file-Component)
+- [TypeScript](#TypeScript)
 - [API](#API)
   -  [setup](#setup)
   -  [value](#value)
@@ -110,6 +111,23 @@ After installing the plugin you can use the new [function API](#API) to compose 
     },
   };
 </script>
+```
+
+
+# TypeScript
+To let TypeScript properly infer types inside Vue component options, you need to define components with `Vue.component`、`Vue.extend` or `createComponent`:
+
+```ts
+import Vue from 'vue'
+
+const Component = createComponent({
+  // type inference enabled
+})
+
+const Component = {
+  // this will NOT have type inference,
+  // because TypeScript can't tell this is options for a Vue component.
+}
 ```
 
 # API
