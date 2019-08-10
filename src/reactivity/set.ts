@@ -34,8 +34,6 @@ export function set<T>(target: any, key: any, val: T): T {
   }
   if (isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key);
-    // IMPORTANT: define access control before trigger watcher
-    defineAccessControl(target, key, val);
     target.splice(key, 1, val);
     return val;
   }

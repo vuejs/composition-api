@@ -4,48 +4,18 @@ const { plugin, state, value, watch, set } = require('../../src');
 Vue.use(plugin);
 
 describe('Hooks value', () => {
-  it('should proxy and be reactive', done => {
-    const vm = new Vue({
+  it('should work with array', () => {
+    let arr;
+    new Vue({
       setup() {
-        return {
-          name: value(null),
-          msg: value('foo'),
-        };
+        arr = value([2]);
+        arr.value.push(3);
+        arr.value.unshift(1);
       },
-      template: '<div>{{name}}, {{ msg }}</div>',
-    }).$mount();
-    vm.name = 'foo';
-    vm.msg = 'bar';
-    waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('foo, bar');
-    }).then(done);
+    });
+    expect(arr.value).toEqual([1, 2, 3]);
   });
-});
 
-describe('Hooks state', () => {
-  it('should work', done => {
-    const app = new Vue({
-      setup() {
-        return {
-          state: state({
-            count: 0,
-          }),
-        };
-      },
-      render(h) {
-        return h('div', [h('span', this.state.count)]);
-      },
-    }).$mount();
-
-    expect(app.$el.querySelector('span').textContent).toBe('0');
-    app.state.count++;
-    waitForUpdate(() => {
-      expect(app.$el.querySelector('span').textContent).toBe('1');
-    }).then(done);
-  });
-});
-
-describe('reactivity/value', () => {
   it('should hold a value', () => {
     const a = value(1);
     expect(a.value).toBe(1);
@@ -80,39 +50,58 @@ describe('reactivity/value', () => {
     a.value.count = 2;
     expect(dummy).toBe(2);
   });
+});
 
+describe('Hooks state', () => {
+  it('should work', done => {
+    const app = new Vue({
+      setup() {
+        return {
+          state: state({
+            count: 0,
+          }),
+        };
+      },
+      render(h) {
+        return h('div', [h('span', this.state.count)]);
+      },
+    }).$mount();
+
+    expect(app.$el.querySelector('span').textContent).toBe('0');
+    app.state.count++;
+    waitForUpdate(() => {
+      expect(app.$el.querySelector('span').textContent).toBe('1');
+    }).then(done);
+  });
+});
+
+describe('value/unwrapping', () => {
   it('should work like a normal property when nested in an observable(same ref)', () => {
     const a = value(1);
     const obj = state({
       a,
       b: {
         c: a,
-        d: [a],
       },
     });
     let dummy1;
     let dummy2;
-    let dummy3;
     watch(
       () => obj,
       () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
-        dummy3 = obj.b.d[0];
       },
       { deep: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
-    expect(dummy3).toBe(1);
     a.value++;
     expect(dummy1).toBe(2);
     expect(dummy2).toBe(2);
-    expect(dummy3).toBe(2);
     obj.a++;
     expect(dummy1).toBe(3);
     expect(dummy2).toBe(3);
-    expect(dummy3).toBe(3);
   });
 
   it('should work like a normal property when nested in an observable(different ref)', () => {
@@ -195,28 +184,6 @@ describe('reactivity/value', () => {
     count.value++;
     expect(dummy).toBe(2);
     obj.a.foo++;
-    expect(dummy).toBe(3);
-  });
-
-  it('should work like a normal property when nested in an observable(new property of array)', () => {
-    const count = value(1);
-    const obj = state({
-      a: [],
-    });
-    let dummy;
-    watch(
-      () => obj,
-      () => {
-        dummy = obj.a[0];
-      },
-      { deep: true }
-    );
-    expect(dummy).toBe(undefined);
-    set(obj.a, 0, count);
-    expect(dummy).toBe(1);
-    count.value++;
-    expect(dummy).toBe(2);
-    obj.a[0]++;
     expect(dummy).toBe(3);
   });
 });

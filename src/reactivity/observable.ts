@@ -11,7 +11,7 @@ const ObservableIdentifier = {};
  * We can do unwrapping and other things here.
  */
 function setupAccessControl(target: AnyObject) {
-  if (!isObject(target) || isWrapper(target)) {
+  if (!isObject(target) || Array.isArray(target) || isWrapper(target)) {
     return;
   }
 
