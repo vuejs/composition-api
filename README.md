@@ -357,7 +357,7 @@ Full properties list:
 
 # Misc
 
-- Due the the limitation of `Vue2.x`'s public API. `vue-function-api` inevitably introduces some extra workload. This shouldn't concern you unless are already pushing your environment to the extreme.
+- Due to the limitation of `Vue2.x`'s public API, `vue-function-api` inevitably introduces some extra workload. This shouldn't concern you unless you are already pushing your environment to the extreme.
 
 
 [wrapper]: https://github.com/vuejs/rfcs/blob/function-apis/active-rfcs/0000-function-api.md#why-do-we-need-value-wrappers
