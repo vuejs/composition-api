@@ -45,6 +45,10 @@ export function isObject(val: unknown): val is Record<any, any> {
   return val !== null && typeof val === 'object';
 }
 
+export function isDOM(val: unknown): val is HTMLElement {
+  return val instanceof HTMLElement;
+}
+
 export function isPlainObject<T extends Object = {}>(x: unknown): x is T {
   return toString(x) === '[object Object]';
 }
