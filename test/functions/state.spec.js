@@ -1,4 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
+const { JSDOM } = require('jsdom');
 const { plugin, state, value, watch, set } = require('../../src');
 
 Vue.use(plugin);
@@ -185,5 +186,19 @@ describe('value/unwrapping', () => {
     expect(dummy).toBe(2);
     obj.a.foo++;
     expect(dummy).toBe(3);
+  });
+
+  it('should not break when storing DOM elements', () => {
+    const el = value(null);
+    const window = new JSDOM(``).window;
+    const document = window.document;
+    const select = document.createElement('select');
+
+    // This test passes… but it's not properly testing the condition because
+    // 1. JSDOM's HTMLSelectElement doesn't actually behave identically
+    // 2. expect(select).toBeInstanceOf(HTMLSelectElement) // fails
+    // 3. expect(select).toBeInstanceOf(window.HTMLSelectElement) // passes
+
+    expect(() => (el.value = select)).not.toThrow();
   });
 });
