@@ -1,7 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, state, value, watch, set } = require('../../src');
-
-Vue.use(plugin);
+const { state, value, watch, set } = require('../../src');
 
 describe('Hooks value', () => {
   it('should work with array', () => {

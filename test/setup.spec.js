@@ -1,7 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, value, computed, onCreated } = require('../src');
-
-Vue.use(plugin);
+const { value, computed, onCreated } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {

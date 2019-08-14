@@ -1,7 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, inject, provide, value } = require('../../src');
-
-Vue.use(plugin);
+const { inject, provide, value } = require('../../src');
 
 let injected;
 const injectedComp = {

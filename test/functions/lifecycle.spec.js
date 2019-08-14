@@ -1,6 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
 const {
-  plugin,
   onCreated,
   onBeforeMount,
   onMounted,
@@ -10,8 +9,6 @@ const {
   onDestroyed,
   onErrorCaptured,
 } = require('../../src');
-
-Vue.use(plugin);
 
 describe('Hooks lifecycle', () => {
   describe('created', () => {

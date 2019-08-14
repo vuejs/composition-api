@@ -1,7 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, value, computed } = require('../../src');
-
-Vue.use(plugin);
+const { value, computed } = require('../../src');
 
 describe('Hooks computed', () => {
   beforeEach(() => {

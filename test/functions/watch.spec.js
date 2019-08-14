@@ -1,7 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { plugin, value, state, watch } = require('../../src');
-
-Vue.use(plugin);
+const { value, state, watch } = require('../../src');
 
 describe('Hooks watch', () => {
   let spy;
