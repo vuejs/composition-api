@@ -23,8 +23,8 @@ function resolveInject(provideKey: Key<any>, vm: Vue): any {
 }
 
 export function provide(data: AnyObject): void;
-export function provide<T>(key: Key<T>, value: T | Wrapper<T>): void;
-export function provide<T>(keyOrData: Key<T> | AnyObject, value?: T | Wrapper<T>): void {
+export function provide<T>(key: Key<T> | string, value: T | Wrapper<T>): void;
+export function provide<T>(keyOrData: Key<T> | string | AnyObject, value?: T | Wrapper<T>): void {
   const vm: any = ensureCurrentVMInFn('provide');
   if (!vm._provided) {
     vm._provided = {};
@@ -37,13 +37,13 @@ export function provide<T>(keyOrData: Key<T> | AnyObject, value?: T | Wrapper<T>
   }
 }
 
-export function inject<T>(key: Key<T>): Wrapper<T> | void {
+export function inject<T>(key: Key<T> | string): Wrapper<T> | void {
   if (!key) {
     return;
   }
 
   const vm = ensureCurrentVMInFn('inject');
-  const val = resolveInject(key, vm);
+  const val = resolveInject(key as Key<T>, vm);
   if (val !== UNRESOLVED_INJECT) {
     if (isWrapper<T>(val)) {
       return val;
