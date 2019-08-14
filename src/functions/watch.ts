@@ -1,6 +1,7 @@
-import { VueInstance } from '../types/vue';
+import { ComponentInstance } from '../ts-api';
 import { Wrapper } from '../wrappers';
 import { isArray, assert } from '../utils';
+import { createComponentInstance } from '../helper';
 import { isWrapper } from '../wrappers';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
@@ -22,7 +23,7 @@ interface WatcherContext<T> {
   watcherStopHandle: Function;
 }
 
-let fallbackVM: VueInstance;
+let fallbackVM: ComponentInstance;
 
 function hasWatchEnv(vm: any) {
   return vm[WatcherPreFlushQueueKey] !== undefined;
@@ -81,7 +82,7 @@ function flushWatcherCallback(vm: any, fn: Function, mode: FlushMode) {
 }
 
 function createSingleSourceWatcher<T>(
-  vm: VueInstance,
+  vm: ComponentInstance,
   source: watchedValue<T>,
   cb: watcherCallBack<T>,
   options: WatcherOption
@@ -128,7 +129,7 @@ function createSingleSourceWatcher<T>(
 }
 
 function createMuiltSourceWatcher<T>(
-  vm: VueInstance,
+  vm: ComponentInstance,
   sources: Array<watchedValue<T>>,
   cb: watcherCallBack<T[]>,
   options: WatcherOption
@@ -245,11 +246,7 @@ export function watch<T = any>(
   let vm = getCurrentVM();
   if (!vm) {
     if (!fallbackVM) {
-      const Vue = getCurrentVue();
-      const silent = Vue.config.silent;
-      Vue.config.silent = true;
-      fallbackVM = new Vue();
-      Vue.config.silent = silent;
+      fallbackVM = createComponentInstance(getCurrentVue());
     }
     vm = fallbackVM;
     opts.flush = 'sync';

@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue';
-import { VueInstance } from '../types/vue';
+import { ComponentInstance } from '../ts-api';
 import { getCurrentVue } from '../runtimeContext';
 import { ensureCurrentVMInFn } from '../helper';
 
@@ -21,7 +21,7 @@ function createLifeCycles(lifeCyclehooks: string[], name: string) {
   };
 }
 
-function injectHookOption(Vue: VueConstructor, vm: VueInstance, hook: string, val: Function) {
+function injectHookOption(Vue: VueConstructor, vm: ComponentInstance, hook: string, val: Function) {
   const options = vm.$options as any;
   const mergeFn = Vue.config.optionMergeStrategies[hook];
   options[hook] = mergeFn(options[hook], val);

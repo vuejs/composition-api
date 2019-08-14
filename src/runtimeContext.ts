@@ -1,8 +1,9 @@
-import Vue, { VueConstructor } from 'vue';
+import { VueConstructor } from 'vue';
+import { ComponentInstance } from './ts-api';
 import { assert } from './utils';
 
 let currentVue: VueConstructor | null = null;
-let currentVM: Vue | null = null;
+let currentVM: ComponentInstance | null = null;
 
 export function getCurrentVue(): VueConstructor {
   if (process.env.NODE_ENV !== 'production') {
@@ -16,12 +17,12 @@ export function setCurrentVue(vue: VueConstructor) {
   currentVue = vue;
 }
 
-export function getCurrentVM(): Vue | null {
+export function getCurrentVM(): ComponentInstance | null {
   return currentVM;
 }
 
-export function setCurrentVM(vue: Vue | null) {
-  currentVM = vue;
+export function setCurrentVM(vm: ComponentInstance | null) {
+  currentVM = vm;
 }
 
-export { currentVue };
+export { currentVue, currentVM };

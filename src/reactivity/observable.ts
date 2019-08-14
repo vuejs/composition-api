@@ -1,7 +1,7 @@
 import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isObject, def, hasOwn } from '../utils';
-import { isVueInstance } from '../helper';
+import { isComponentInstance, createComponentInstance } from '../helper';
 import { isWrapper } from '../wrappers';
 import { AccessControIdentifierlKey, ObservableIdentifierKey } from '../symbols';
 
@@ -12,7 +12,12 @@ const ObservableIdentifier = {};
  * We can do unwrapping and other things here.
  */
 function setupAccessControl(target: AnyObject) {
-  if (!isObject(target) || Array.isArray(target) || isWrapper(target) || isVueInstance(target)) {
+  if (
+    !isObject(target) ||
+    Array.isArray(target) ||
+    isWrapper(target) ||
+    isComponentInstance(target)
+  ) {
     return;
   }
 
@@ -103,14 +108,11 @@ export function observable<T = any>(obj: T): T {
   if (Vue.observable) {
     observed = Vue.observable(obj);
   } else {
-    const silent = Vue.config.silent;
-    Vue.config.silent = true;
-    const vm = new Vue({
+    const vm = createComponentInstance(Vue, {
       data: {
         $$state: obj,
       },
     });
-    Vue.config.silent = silent;
     observed = vm._data.$$state;
   }
 

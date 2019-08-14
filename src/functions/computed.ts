@@ -1,19 +1,22 @@
-import { compoundComputed } from '../helper';
+import { getCurrentVue } from '../runtimeContext';
+import { createComponentInstance } from '../helper';
 import { Wrapper, ComputedWrapper } from '../wrappers';
 
 export function computed<T>(getter: () => T, setter?: (x: T) => void): Wrapper<T> {
-  const computedHost = compoundComputed({
-    $$state: {
-      get: getter,
-      set: setter,
+  const computedHost = createComponentInstance(getCurrentVue(), {
+    computed: {
+      $$state: {
+        get: getter,
+        set: setter,
+      },
     },
   });
 
   return new ComputedWrapper({
-    read: () => computedHost.$$state,
+    read: () => (computedHost as any).$$state,
     ...(setter && {
       write: (v: T) => {
-        computedHost.$$state = v;
+        (computedHost as any).$$state = v;
       },
     }),
   });

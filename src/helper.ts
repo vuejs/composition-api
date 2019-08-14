@@ -1,8 +1,9 @@
-import { VueInstance } from './types/vue';
-import { currentVue, getCurrentVue, getCurrentVM } from './runtimeContext';
+import Vue, { ComponentOptions, VueConstructor } from 'vue';
+import { ComponentInstance } from './ts-api';
+import { currentVue, getCurrentVM } from './runtimeContext';
 import { assert } from './utils';
 
-export function ensureCurrentVMInFn(hook: string): VueInstance {
+export function ensureCurrentVMInFn(hook: string): ComponentInstance {
   const vm = getCurrentVM();
   if (process.env.NODE_ENV !== 'production') {
     assert(vm, `"${hook}" get called outside of "setup()"`);
@@ -10,24 +11,17 @@ export function ensureCurrentVMInFn(hook: string): VueInstance {
   return vm!;
 }
 
-export function compoundComputed(computed: {
-  [key: string]:
-    | (() => any)
-    | {
-        get?: () => any;
-        set?: (v: any) => void;
-      };
-}) {
-  const Vue = getCurrentVue();
-  const silent = Vue.config.silent;
-  Vue.config.silent = true;
-  const reactive = new Vue({
-    computed,
-  });
-  Vue.config.silent = silent;
-  return reactive;
+export function createComponentInstance<V extends Vue = Vue>(
+  Ctor: VueConstructor<V>,
+  options: ComponentOptions<V> = {}
+) {
+  const silent = Ctor.config.silent;
+  Ctor.config.silent = true;
+  const vm = new Ctor(options);
+  Ctor.config.silent = silent;
+  return vm;
 }
 
-export function isVueInstance(obj: any) {
+export function isComponentInstance(obj: any) {
   return currentVue && obj instanceof currentVue;
 }

@@ -1,5 +1,5 @@
-import VueInstance, { VueConstructor } from 'vue';
-import { SetupContext } from './types/vue';
+import { VueConstructor } from 'vue';
+import { ComponentInstance, SetupContext } from './ts-api';
 import { isWrapper } from './wrappers';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
@@ -13,7 +13,7 @@ export function mixin(Vue: VueConstructor) {
   /**
    * Vuex init hook, injected into each instances init hooks list.
    */
-  function functionApiInit(this: VueInstance) {
+  function functionApiInit(this: ComponentInstance) {
     const vm = this;
     const $options = vm.$options;
     const { setup } = $options;
@@ -39,7 +39,7 @@ export function mixin(Vue: VueConstructor) {
     };
   }
 
-  function initSetup(vm: VueInstance, props: Record<any, any> = {}) {
+  function initSetup(vm: ComponentInstance, props: Record<any, any> = {}) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
     let binding: any;
@@ -83,7 +83,7 @@ export function mixin(Vue: VueConstructor) {
     }
   }
 
-  function createSetupContext(vm: VueInstance & { [x: string]: any }): SetupContext {
+  function createSetupContext(vm: ComponentInstance & { [x: string]: any }): SetupContext {
     const ctx = {} as SetupContext;
     const props: Array<string | [string, string]> = [
       'root',
