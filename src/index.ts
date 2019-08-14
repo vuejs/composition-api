@@ -21,6 +21,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
   _install(window.Vue);
 }
 
+export { default as createElement } from './createElement';
 export { plugin, Wrapper };
 export { set } from './reactivity';
 export { createComponent, PropType } from './ts-api';

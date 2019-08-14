@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { value, computed, onCreated } = require('../src');
+const { value, computed, onCreated, createElement: h } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -354,11 +354,11 @@ describe('setup', () => {
   });
 
   it('inline render function should work', done => {
+    // let createELement;
     const vm = new Vue({
       props: ['msg'],
       template: '<div>1</div>',
-      setup(_, { _vm }) {
-        const h = _vm.$createElement;
+      setup() {
         const count = value(0);
         const increment = () => {
           count.value++;
