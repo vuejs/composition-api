@@ -1,5 +1,5 @@
 import { VueInstance } from './types/vue';
-import { getCurrentVue, getCurrentVM } from './runtimeContext';
+import { currentVue, getCurrentVue, getCurrentVM } from './runtimeContext';
 import { assert } from './utils';
 
 export function ensureCurrentVMInFn(hook: string): VueInstance {
@@ -26,4 +26,8 @@ export function compoundComputed(computed: {
   });
   Vue.config.silent = silent;
   return reactive;
+}
+
+export function isVueInstance(obj: any) {
+  return currentVue && obj instanceof currentVue;
 }

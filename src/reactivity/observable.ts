@@ -1,6 +1,7 @@
 import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isObject, def, hasOwn } from '../utils';
+import { isVueInstance } from '../helper';
 import { isWrapper } from '../wrappers';
 import { AccessControIdentifierlKey, ObservableIdentifierKey } from '../symbols';
 
@@ -11,7 +12,7 @@ const ObservableIdentifier = {};
  * We can do unwrapping and other things here.
  */
 function setupAccessControl(target: AnyObject) {
-  if (!isObject(target) || Array.isArray(target) || isWrapper(target)) {
+  if (!isObject(target) || Array.isArray(target) || isWrapper(target) || isVueInstance(target)) {
     return;
   }
 
