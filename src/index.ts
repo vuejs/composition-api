@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue';
-import { SetupFunction } from './ts-api';
+import { SetupFunction, SetupContext } from './ts-api';
 import { currentVue } from './runtimeContext';
 import { Wrapper } from './wrappers';
 import { install } from './install';
@@ -22,7 +22,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 }
 
 export { default as createElement } from './createElement';
-export { plugin, Wrapper };
+export { plugin, Wrapper, SetupContext };
 export { set } from './reactivity';
 export { createComponent, PropType } from './ts-api';
 export * from './functions/state';
