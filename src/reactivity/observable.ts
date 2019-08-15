@@ -2,7 +2,7 @@ import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isObject, def, hasOwn } from '../utils';
 import { isComponentInstance, createComponentInstance } from '../helper';
-import { isWrapper } from '../wrappers';
+import { isWrapper, UnwrapValue } from '../wrappers';
 import { AccessControIdentifierlKey, ObservableIdentifierKey } from '../symbols';
 
 const AccessControlIdentifier = {};
@@ -98,9 +98,9 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
 /**
  * Make obj reactivity
  */
-export function observable<T = any>(obj: T): T {
+export function observable<T = any>(obj: T): UnwrapValue<T> {
   if (!isObject(obj) || isObservable(obj)) {
-    return obj;
+    return obj as UnwrapValue<T>;
   }
 
   const Vue = getCurrentVue();
@@ -120,5 +120,5 @@ export function observable<T = any>(obj: T): T {
     def(observed, ObservableIdentifierKey, ObservableIdentifier);
   }
   setupAccessControl(observed);
-  return observed;
+  return observed as UnwrapValue<T>;
 }

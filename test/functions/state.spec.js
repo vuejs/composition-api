@@ -74,6 +74,28 @@ describe('Hooks state', () => {
 });
 
 describe('value/unwrapping', () => {
+  it('should work', () => {
+    const obj = state({
+      a: value(0),
+    });
+    const objWrapper = value(obj);
+    let dummy;
+    watch(
+      () => obj,
+      () => {
+        dummy = obj.a;
+      },
+      { deep: true }
+    );
+    expect(dummy).toBe(0);
+    expect(obj.a).toBe(0);
+    expect(objWrapper.value.a).toBe(0);
+    obj.a++;
+    expect(dummy).toBe(1);
+    objWrapper.value.a++;
+    expect(dummy).toBe(2);
+  });
+
   it('should work like a normal property when nested in an observable(same ref)', () => {
     const a = value(1);
     const obj = state({
@@ -155,11 +177,11 @@ describe('value/unwrapping', () => {
       { deep: true, lazy: true }
     );
     expect(dummy).toBeUndefined();
-    const wrapperC = value(1);
+    const wrapperC = value(2);
     obj.a.b = wrapperC;
-    expect(dummy).toBe(1);
-    obj.a.b++;
     expect(dummy).toBe(2);
+    obj.a.b++;
+    expect(dummy).toBe(3);
   });
 
   it('should work like a normal property when nested in an observable(new property of object)', () => {
