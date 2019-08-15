@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import { AnyObject } from '../types/basic';
-import { state } from '../functions/state';
 import { isWrapper, Wrapper, ComputedWrapper } from '../wrappers';
 import { ensureCurrentVMInFn } from '../helper';
 import { hasOwn, warn, isObject } from '../utils';
@@ -48,9 +47,8 @@ export function inject<T>(key: Key<T> | string): Wrapper<T> | void {
     if (isWrapper<T>(val)) {
       return val;
     }
-    const reactiveVal = state<T>(val);
     return new ComputedWrapper<T>({
-      read: () => reactiveVal,
+      read: () => val,
       write() {
         warn(`The injectd value can't be re-assigned`, vm);
       },
