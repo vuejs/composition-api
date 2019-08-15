@@ -6,8 +6,8 @@ import { isWrapper } from '../wrappers';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
-const initValue = {};
-type InitValue = typeof initValue;
+const INIT_VALUE = {};
+type InitValue = typeof INIT_VALUE;
 type watcherCallBack<T> = (newVal: T, oldVal: T) => void;
 type watchedValue<T> = Wrapper<T> | (() => T);
 type FlushMode = 'pre' | 'post' | 'sync';
@@ -25,6 +25,14 @@ interface WatcherContext<T> {
 
 let fallbackVM: ComponentInstance;
 
+function flushPreQueue(this: any) {
+  flushQueue(this, WatcherPreFlushQueueKey);
+}
+
+function flushPostQueue(this: any) {
+  flushQueue(this, WatcherPostFlushQueueKey);
+}
+
 function hasWatchEnv(vm: any) {
   return vm[WatcherPreFlushQueueKey] !== undefined;
 }
@@ -32,14 +40,8 @@ function hasWatchEnv(vm: any) {
 function installWatchEnv(vm: any) {
   vm[WatcherPreFlushQueueKey] = [];
   vm[WatcherPostFlushQueueKey] = [];
-  vm.$on('hook:beforeUpdate', createFlusher(WatcherPreFlushQueueKey));
-  vm.$on('hook:updated', createFlusher(WatcherPostFlushQueueKey));
-}
-
-function createFlusher(key: any) {
-  return function(this: any) {
-    flushQueue(this, key);
-  };
+  vm.$on('hook:beforeUpdate', flushPreQueue);
+  vm.$on('hook:updated', flushPostQueue);
 }
 
 function flushQueue(vm: any, key: any) {
@@ -50,34 +52,36 @@ function flushQueue(vm: any, key: any) {
   queue.length = 0;
 }
 
-function flushWatcherCallback(vm: any, fn: Function, mode: FlushMode) {
-  // flush all when beforeUpdate and updated are not fired
-  function fallbackFlush() {
-    vm.$nextTick(() => {
-      if (vm[WatcherPreFlushQueueKey].length) {
-        flushQueue(vm, WatcherPreFlushQueueKey);
-      }
-      if (vm[WatcherPostFlushQueueKey].length) {
-        flushQueue(vm, WatcherPostFlushQueueKey);
-      }
-    });
-  }
+function scheduleFlush(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
+  if (vm === fallbackVM) {
+    // no render pipeline, ignore flush mode
+    fn();
+  } else {
+    // flush all when beforeUpdate and updated are not fired
+    const fallbackFlush = () => {
+      vm.$nextTick(() => {
+        if (vm[WatcherPreFlushQueueKey].length) {
+          flushQueue(vm, WatcherPreFlushQueueKey);
+        }
+        if (vm[WatcherPostFlushQueueKey].length) {
+          flushQueue(vm, WatcherPostFlushQueueKey);
+        }
+      });
+    };
 
-  switch (mode) {
-    case 'pre':
-      fallbackFlush();
-      vm[WatcherPreFlushQueueKey].push(fn);
-      break;
-    case 'post':
-      fallbackFlush();
-      vm[WatcherPostFlushQueueKey].push(fn);
-      break;
-    case 'sync':
-      fn();
-      break;
-    default:
-      assert(false, `flush must be one of ["post", "pre", "sync"], but got ${mode}`);
-      break;
+    switch (mode) {
+      case 'pre':
+        fallbackFlush();
+        vm[WatcherPreFlushQueueKey].push(fn);
+        break;
+      case 'post':
+        fallbackFlush();
+        vm[WatcherPostFlushQueueKey].push(fn);
+        break;
+      default:
+        assert(false, `flush must be one of ["post", "pre", "sync"], but got ${mode}`);
+        break;
+    }
   }
 }
 
@@ -94,6 +98,8 @@ function createSingleSourceWatcher<T>(
     getter = source as () => T;
   }
 
+  // `callbackRef` is used to handle firty sync callbck.
+  // The subsequent callbcks will redirect to `flush`.
   let callbackRef = (n: T, o: T) => {
     callbackRef = flush;
 
@@ -104,15 +110,19 @@ function createSingleSourceWatcher<T>(
     }
   };
 
-  const flush = (n: T, o: T) => {
-    flushWatcherCallback(
-      vm,
-      () => {
-        cb(n, o);
-      },
-      options.flush
-    );
-  };
+  const flushMode = options.flush;
+  const flush =
+    flushMode === 'sync'
+      ? (n: T, o: T) => cb(n, o)
+      : (n: T, o: T) => {
+          scheduleFlush(
+            vm,
+            () => {
+              cb(n, o);
+            },
+            flushMode
+          );
+        };
 
   return vm.$watch(
     getter,
@@ -123,7 +133,7 @@ function createSingleSourceWatcher<T>(
       immediate: !options.lazy,
       deep: options.deep,
       // @ts-ignore
-      sync: options.flush === 'sync',
+      sync: flushMode === 'sync',
     }
   );
 }
@@ -134,27 +144,30 @@ function createMuiltSourceWatcher<T>(
   cb: watcherCallBack<T[]>,
   options: WatcherOption
 ): () => void {
-  let execCallbackAfterNumRun: false | number = options.lazy ? false : sources.length;
-  let pendingCallback = false;
   const watcherContext: Array<WatcherContext<T>> = [];
-
-  function execCallback() {
+  const execCallback = () => {
     cb.apply(
       vm,
       watcherContext.reduce<[T[], T[]]>(
         (acc, ctx) => {
-          acc[0].push((ctx.value === initValue ? ctx.getter() : ctx.value) as T);
-          acc[1].push((ctx.oldValue === initValue ? undefined : ctx.oldValue) as T);
+          const newVal: T = (ctx.value = (ctx.value === INIT_VALUE
+            ? ctx.getter()
+            : ctx.value) as any);
+          const oldVal: T = (ctx.oldValue === INIT_VALUE ? newVal : ctx.oldValue) as any;
+          ctx.oldValue = newVal;
+          acc[0].push(newVal);
+          acc[1].push(oldVal);
           return acc;
         },
         [[], []]
       )
     );
-  }
-  function stop() {
-    watcherContext.forEach(ctx => ctx.watcherStopHandle());
-  }
+  };
+  const stop = () => watcherContext.forEach(ctx => ctx.watcherStopHandle());
 
+  let execCallbackAfterNumRun: false | number = options.lazy ? false : sources.length;
+  // `callbackRef` is used to handle firty sync callbck.
+  // The subsequent callbcks will redirect to `flush`.
   let callbackRef = () => {
     if (execCallbackAfterNumRun !== false) {
       if (--execCallbackAfterNumRun === 0) {
@@ -168,21 +181,26 @@ function createMuiltSourceWatcher<T>(
     }
   };
 
-  const flush = () => {
-    if (!pendingCallback) {
-      pendingCallback = true;
-      vm.$nextTick(() => {
-        flushWatcherCallback(
-          vm,
-          () => {
-            pendingCallback = false;
-            execCallback();
-          },
-          options.flush
-        );
-      });
-    }
-  };
+  let pendingCallback = false;
+  const flushMode = options.flush;
+  const flush =
+    flushMode === 'sync'
+      ? execCallback
+      : () => {
+          if (!pendingCallback) {
+            pendingCallback = true;
+            vm.$nextTick(() => {
+              scheduleFlush(
+                vm,
+                () => {
+                  pendingCallback = false;
+                  execCallback();
+                },
+                flushMode
+              );
+            });
+          }
+        };
 
   sources.forEach(source => {
     let getter: () => T;
@@ -193,8 +211,8 @@ function createMuiltSourceWatcher<T>(
     }
     const watcherCtx = {
       getter,
-      value: initValue,
-      oldValue: initValue,
+      value: INIT_VALUE,
+      oldValue: INIT_VALUE,
     } as WatcherContext<T>;
     // must push watcherCtx before create watcherStopHandle
     watcherContext.push(watcherCtx);
@@ -203,8 +221,10 @@ function createMuiltSourceWatcher<T>(
       getter,
       (n: T, o: T) => {
         watcherCtx.value = n;
-        watcherCtx.oldValue = o;
-
+        // only update oldValue at frist, susquent updates at execCallback
+        if (watcherCtx.oldValue === INIT_VALUE) {
+          watcherCtx.oldValue = o;
+        }
         callbackRef();
       },
       {
@@ -249,10 +269,9 @@ export function watch<T = any>(
       fallbackVM = createComponentInstance(getCurrentVue());
     }
     vm = fallbackVM;
-    opts.flush = 'sync';
+  } else if (!hasWatchEnv(vm)) {
+    installWatchEnv(vm);
   }
-
-  if (!hasWatchEnv(vm)) installWatchEnv(vm);
 
   if (isArray(source)) {
     return createMuiltSourceWatcher(vm, source, cb as watcherCallBack<T[]>, opts);

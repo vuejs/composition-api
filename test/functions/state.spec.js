@@ -21,7 +21,7 @@ describe('Hooks value', () => {
     expect(a.value).toBe(2);
   });
 
-  it('should be reactive', () => {
+  it('should be reactive', done => {
     const a = value(1);
     let dummy;
     watch(a, () => {
@@ -29,10 +29,12 @@ describe('Hooks value', () => {
     });
     expect(dummy).toBe(1);
     a.value = 2;
-    expect(dummy).toBe(2);
+    waitForUpdate(() => {
+      expect(dummy).toBe(2);
+    }).then(done);
   });
 
-  it('should make nested properties reactive', () => {
+  it('should make nested properties reactive', done => {
     const a = value({
       count: 1,
     });
@@ -46,7 +48,9 @@ describe('Hooks value', () => {
     );
     expect(dummy).toBe(1);
     a.value.count = 2;
-    expect(dummy).toBe(2);
+    waitForUpdate(() => {
+      expect(dummy).toBe(2);
+    }).then(done);
   });
 });
 
@@ -85,7 +89,7 @@ describe('value/unwrapping', () => {
       () => {
         dummy = obj.a;
       },
-      { deep: true }
+      { deep: true, flush: 'sync' }
     );
     expect(dummy).toBe(0);
     expect(obj.a).toBe(0);
@@ -112,7 +116,7 @@ describe('value/unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true }
+      { deep: true, flush: 'sync' }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -142,7 +146,7 @@ describe('value/unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true }
+      { deep: true, flush: 'sync' }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -174,7 +178,7 @@ describe('value/unwrapping', () => {
       () => {
         dummy = obj.a.b;
       },
-      { deep: true, lazy: true }
+      { deep: true, lazy: true, flush: 'sync' }
     );
     expect(dummy).toBeUndefined();
     const wrapperC = value(2);
@@ -196,7 +200,7 @@ describe('value/unwrapping', () => {
       () => {
         dummy = obj.a.foo;
       },
-      { deep: true }
+      { deep: true, flush: 'sync' }
     );
     expect(dummy).toBe(undefined);
     set(obj.a, 'foo', count);
