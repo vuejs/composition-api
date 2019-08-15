@@ -1,3 +1,10 @@
+# 2.2.0
+* Improve typescript support.
+* Export `createElement`.
+* Export `SetupContext`.
+* Support returning a render function from `setup`.
+* Allow string keys in `provide`/`inject`.
+
 # 2.1.2
 * Remove auto-unwrapping for Array ([#53](https://github.com/vuejs/vue-function-api/issues/53)).
 
