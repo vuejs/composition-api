@@ -1,6 +1,6 @@
 import { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps';
-import { UnwrapValue } from '../reactivity';
+import { UnwrapRef } from '../reactivity';
 
 export type Data = { [key: string]: unknown };
 
@@ -24,14 +24,14 @@ type ComponentRenderProxy<P = {}, S = {}, PublicProps = P> = {
 type VueConstructorProxy<PropsOptions, RawBindings> = {
   new (): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
-    UnwrapValue<RawBindings>,
+    UnwrapRef<RawBindings>,
     ExtractPropTypes<PropsOptions, false>
   >;
 };
 
 type VueProxy<PropsOptions, RawBindings> = Vue2ComponentOptions<
   never,
-  UnwrapValue<RawBindings>,
+  UnwrapRef<RawBindings>,
   never,
   never,
   PropsOptions,

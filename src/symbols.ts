@@ -7,4 +7,7 @@ function createSymbol(name: string): string {
 export const WatcherPreFlushQueueKey = createSymbol('vfa.key.preFlushQueue');
 export const WatcherPostFlushQueueKey = createSymbol('vfa.key.postFlushQueue');
 export const AccessControIdentifierlKey = createSymbol('vfa.key.accessControIdentifier');
-export const ObservableIdentifierKey = createSymbol('vfa.key.observableIdentifier');
+export const ReactiveIdentifierKey = createSymbol('vfa.key.reactiveleIdentifier');
+
+// must be a string, symbol key is ignored in reactive
+export const RefKey = 'vfa.key.refKey';

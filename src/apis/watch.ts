@@ -46,7 +46,7 @@ function flushQueue(vm: any, key: any) {
 
 function scheduleTask(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
   if (vm === fallbackVM) {
-    // no render pipeline, ignore flush mode
+    // with a current active instance, ignore flush mode
     fn();
   } else {
     // flush all when beforeUpdate and updated are not fired

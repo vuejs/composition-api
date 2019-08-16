@@ -52,6 +52,44 @@ describe('api/ref', () => {
       expect(dummy).toBe(2);
     }).then(done);
   });
+
+  it('should not unwrap a ref', () => {
+    const a = ref(0);
+    const b = ref(a);
+    expect(a.value).toBe(0);
+    expect(b.value).toBe(a);
+  });
+
+  it('should not unwrap a ref when re-assign', () => {
+    const a = ref('foo');
+    expect(a.value).toBe('foo');
+    const b = ref();
+    a.value = b;
+    expect(a.value).toBe(b);
+  });
+
+  it('should unwrap ref in a nested object', () => {
+    const a = ref(0);
+    const b = ref({
+      count: a,
+    });
+    expect(b.value.count).toBe(0);
+    a.value++;
+    expect(b.value.count).toBe(1);
+  });
+
+  it('should unwrap when re-assign', () => {
+    const a = ref();
+    const b = ref(a);
+    expect(b.value).toBe(a);
+    const c = ref(0);
+    b.value = {
+      count: c,
+    };
+    expect(b.value.count).toBe(0);
+    c.value++;
+    expect(b.value.count).toBe(1);
+  });
 });
 
 describe('api/reactive', () => {

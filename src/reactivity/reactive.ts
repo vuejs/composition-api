@@ -2,11 +2,11 @@ import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isObject, def, hasOwn } from '../utils';
 import { isComponentInstance, createComponentInstance } from '../helper';
-import { AccessControIdentifierlKey, ObservableIdentifierKey } from '../symbols';
-import { isRef, UnwrapValue } from './ref';
+import { AccessControIdentifierlKey, ReactiveIdentifierKey, RefKey } from '../symbols';
+import { isRef, UnwrapRef } from './ref';
 
 const AccessControlIdentifier = {};
-const ObservableIdentifier = {};
+const ReactiveIdentifier = {};
 /**
  * Proxing property access of target.
  * We can do unwrapping and other things here.
@@ -33,9 +33,7 @@ function setupAccessControl(target: AnyObject) {
 }
 
 export function isReactive(obj: any): boolean {
-  return (
-    hasOwn(obj, ObservableIdentifierKey) && obj[ObservableIdentifierKey] === ObservableIdentifier
-  );
+  return hasOwn(obj, ReactiveIdentifierKey) && obj[ReactiveIdentifierKey] === ReactiveIdentifier;
 }
 
 /**
@@ -64,7 +62,8 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     configurable: true,
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val;
-      if (isRef(value)) {
+      // if the key is equak RefKey, skip the unwrap logic
+      if (key !== RefKey && isRef(value)) {
         return value.value;
       } else {
         return value;
@@ -74,7 +73,8 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
       if (getter && !setter) return;
 
       const value = getter ? getter.call(target) : val;
-      if (isRef(value)) {
+      // if the key is equak RefKey, skip the unwrap logic
+      if (key !== RefKey && isRef(value)) {
         if (isRef(newVal)) {
           val = newVal;
         } else {
@@ -93,9 +93,9 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
 /**
  * Make obj reactivity
  */
-export function reactive<T = any>(obj: T): UnwrapValue<T> {
+export function reactive<T = any>(obj: T): UnwrapRef<T> {
   if (!isObject(obj) || isReactive(obj)) {
-    return obj as UnwrapValue<T>;
+    return obj as UnwrapRef<T>;
   }
 
   const Vue = getCurrentVue();
@@ -112,8 +112,8 @@ export function reactive<T = any>(obj: T): UnwrapValue<T> {
   }
 
   if (Object.isExtensible(observed)) {
-    def(observed, ObservableIdentifierKey, ObservableIdentifier);
+    def(observed, ReactiveIdentifierKey, ReactiveIdentifier);
   }
   setupAccessControl(observed);
-  return observed as UnwrapValue<T>;
+  return observed as UnwrapRef<T>;
 }
