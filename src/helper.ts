@@ -1,5 +1,5 @@
 import Vue, { ComponentOptions, VueConstructor } from 'vue';
-import { ComponentInstance } from './ts-api';
+import { ComponentInstance } from './component';
 import { currentVue, getCurrentVM } from './runtimeContext';
 import { assert } from './utils';
 

@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue';
-import { ComponentInstance, SetupContext, SetupFunction, Data } from './ts-api';
+import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
 import { Ref, isRef } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { hasOwn, isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';

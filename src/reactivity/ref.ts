@@ -1,4 +1,4 @@
-import { Data } from '../ts-api';
+import { Data } from '../component';
 import { proxy, isPlainObject } from '../utils';
 import { reactive, isReactive } from './reactive';
 

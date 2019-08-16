@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue';
-import { ComponentInstance } from './ts-api';
+import { ComponentInstance } from './component';
 import { assert } from './utils';
 
 let currentVue: VueConstructor | null = null;

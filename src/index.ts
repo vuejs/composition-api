@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue';
-import { Data, SetupFunction, SetupContext } from './ts-api';
+import { Data, SetupFunction, SetupContext } from './component';
 import { currentVue } from './runtimeContext';
 import { install } from './install';
 import { mixin } from './setup';
@@ -22,7 +22,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 
 export { default as createElement } from './createElement';
 export { plugin, SetupContext };
-export { createComponent, PropType } from './ts-api';
+export { createComponent, PropType } from './component';
 
 export * from './apis/state';
 export * from './apis/lifecycle';

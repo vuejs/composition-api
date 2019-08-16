@@ -1,4 +1,4 @@
-import { ComponentInstance } from '../ts-api';
+import { ComponentInstance } from '../component';
 import { Ref, isRef } from '../reactivity';
 import { isArray, assert } from '../utils';
 import { createComponentInstance } from '../helper';
