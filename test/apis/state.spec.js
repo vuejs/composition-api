@@ -1,7 +1,7 @@
 const Vue = require('vue/dist/vue.common.js');
 const { reactive, ref, watch, set, toRefs } = require('../../src');
 
-describe('ref', () => {
+describe('api/ref', () => {
   it('should work with array', () => {
     let arr;
     new Vue({
@@ -54,7 +54,7 @@ describe('ref', () => {
   });
 });
 
-describe('reactive', () => {
+describe('api/reactive', () => {
   it('should work', done => {
     const app = new Vue({
       setup() {
@@ -74,6 +74,24 @@ describe('reactive', () => {
     waitForUpdate(() => {
       expect(app.$el.querySelector('span').textContent).toBe('1');
     }).then(done);
+  });
+});
+
+describe('api/toRefs', () => {
+  it('should work', () => {
+    const state = reactive({
+      foo: 1,
+      bar: 2,
+    });
+
+    const stateAsRefs = toRefs(state);
+    expect(stateAsRefs.foo.value).toBe(1);
+    expect(stateAsRefs.bar.value).toBe(2);
+    state.foo++;
+    expect(stateAsRefs.foo.value).toBe(2);
+
+    stateAsRefs.foo.value++;
+    expect(state.foo).toBe(3);
   });
 });
 
@@ -209,23 +227,5 @@ describe('unwrapping', () => {
     expect(dummy).toBe(2);
     obj.a.foo++;
     expect(dummy).toBe(3);
-  });
-});
-
-describe('toRefs', () => {
-  it('should work', () => {
-    const state = reactive({
-      foo: 1,
-      bar: 2,
-    });
-
-    const stateAsRefs = toRefs(state);
-    expect(stateAsRefs.foo.value).toBe(1);
-    expect(stateAsRefs.bar.value).toBe(2);
-    state.foo++;
-    expect(stateAsRefs.foo.value).toBe(2);
-
-    stateAsRefs.foo.value++;
-    expect(state.foo).toBe(3);
   });
 });

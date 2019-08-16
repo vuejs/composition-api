@@ -1,25 +1,18 @@
 import { ComponentInstance } from '../component';
 import { Ref, isRef } from '../reactivity';
-import { isArray, assert } from '../utils';
+import { assert, noopFn } from '../utils';
 import { createComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
-const INIT_VALUE = {};
-type InitValue = typeof INIT_VALUE;
+type WatcherFun<T> = () => T;
 type watcherCallBack<T> = (newVal: T, oldVal: T) => void;
-type watchedValue<T> = Ref<T> | (() => T);
+type watcherSource<T> = Ref<T> | WatcherFun<T>;
 type FlushMode = 'pre' | 'post' | 'sync';
 interface WatcherOption {
   lazy: boolean;
   deep: boolean;
   flush: FlushMode;
-}
-interface WatcherContext<T> {
-  getter: () => T;
-  value: T | InitValue;
-  oldValue: T | InitValue;
-  watcherStopHandle: Function;
 }
 
 let fallbackVM: ComponentInstance;
@@ -51,7 +44,7 @@ function flushQueue(vm: any, key: any) {
   queue.length = 0;
 }
 
-function scheduleFlush(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
+function scheduleTask(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
   if (vm === fallbackVM) {
     // no render pipeline, ignore flush mode
     fn();
@@ -84,50 +77,92 @@ function scheduleFlush(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) 
   }
 }
 
-function createSingleSourceWatcher<T>(
+function createWatcher<T>(
   vm: ComponentInstance,
-  source: watchedValue<T>,
-  cb: watcherCallBack<T>,
+  source: watcherSource<T>,
+  cb: watcherCallBack<T> | null,
   options: WatcherOption
 ): () => void {
+  const flushMode = options.flush;
   let getter: () => T;
-  if (isRef<T>(source)) {
-    getter = () => source.value;
-  } else {
+  let effect: watcherCallBack<T>;
+  let autorun: boolean;
+
+  if (cb === null) {
+    autorun = true;
+    effect = noopFn;
     getter = source as () => T;
+  } else {
+    autorun = false;
+    effect = cb;
+    if (isRef<T>(source)) {
+      getter = () => source.value;
+    } else {
+      getter = source as () => T;
+    }
   }
 
-  // `callbackRef` is used to handle firty sync callbck.
-  // The subsequent callbcks will redirect to `flush`.
-  let callbackRef = (n: T, o: T) => {
-    callbackRef = flush;
-
-    if (!options.lazy) {
-      cb(n, o);
-    } else {
-      flush(n, o);
+  if (autorun) {
+    if (flushMode === 'sync') {
+      return vm.$watch(getter, effect, {
+        immediate: true,
+        deep: options.deep,
+        // @ts-ignore
+        sync: true,
+      });
     }
-  };
 
-  const flushMode = options.flush;
+    let stopRef: Function;
+    scheduleTask(
+      vm,
+      () => {
+        stopRef = vm.$watch(
+          getter,
+          options.lazy
+            ? flush
+            : (n: T, o: T) => {
+                shiftCallback(n, o);
+              },
+          {
+            deep: options.deep,
+          }
+        );
+      },
+      flushMode
+    );
+
+    return () => {
+      stopRef && stopRef();
+    };
+  }
+
   const flush =
     flushMode === 'sync'
-      ? (n: T, o: T) => cb(n, o)
+      ? effect
       : (n: T, o: T) => {
-          scheduleFlush(
+          scheduleTask(
             vm,
             () => {
-              cb(n, o);
+              effect(n, o);
             },
             flushMode
           );
         };
 
+  // `shiftCallback` is used to handle firty sync effect.
+  // The subsequent callbcks will redirect to `flush`.
+  let shiftCallback = (n: T, o: T) => {
+    shiftCallback = flush;
+    effect(n, o);
+  };
+
   return vm.$watch(
     getter,
-    (n: T, o: T) => {
-      callbackRef(n, o);
-    },
+    options.lazy
+      ? flush
+      : (n: T, o: T) => {
+          shiftCallback(n, o);
+        },
     {
       immediate: !options.lazy,
       deep: options.deep,
@@ -137,130 +172,35 @@ function createSingleSourceWatcher<T>(
   );
 }
 
-function createMuiltSourceWatcher<T>(
-  vm: ComponentInstance,
-  sources: Array<watchedValue<T>>,
-  cb: watcherCallBack<T[]>,
-  options: WatcherOption
-): () => void {
-  const watcherContext: Array<WatcherContext<T>> = [];
-  const execCallback = () => {
-    cb.apply(
-      vm,
-      watcherContext.reduce<[T[], T[]]>(
-        (acc, ctx) => {
-          const newVal: T = (ctx.value = (ctx.value === INIT_VALUE
-            ? ctx.getter()
-            : ctx.value) as any);
-          const oldVal: T = (ctx.oldValue === INIT_VALUE ? newVal : ctx.oldValue) as any;
-          ctx.oldValue = newVal;
-          acc[0].push(newVal);
-          acc[1].push(oldVal);
-          return acc;
-        },
-        [[], []]
-      )
-    );
-  };
-  const stop = () => watcherContext.forEach(ctx => ctx.watcherStopHandle());
-
-  let execCallbackAfterNumRun: false | number = options.lazy ? false : sources.length;
-  // `callbackRef` is used to handle firty sync callbck.
-  // The subsequent callbcks will redirect to `flush`.
-  let callbackRef = () => {
-    if (execCallbackAfterNumRun !== false) {
-      if (--execCallbackAfterNumRun === 0) {
-        execCallbackAfterNumRun = false;
-        callbackRef = flush;
-        execCallback();
-      }
-    } else {
-      callbackRef = flush;
-      flush();
-    }
-  };
-
-  let pendingCallback = false;
-  const flushMode = options.flush;
-  const flush =
-    flushMode === 'sync'
-      ? execCallback
-      : () => {
-          if (!pendingCallback) {
-            pendingCallback = true;
-            vm.$nextTick(() => {
-              scheduleFlush(
-                vm,
-                () => {
-                  pendingCallback = false;
-                  execCallback();
-                },
-                flushMode
-              );
-            });
-          }
-        };
-
-  sources.forEach(source => {
-    let getter: () => T;
-    if (isRef<T>(source)) {
-      getter = () => source.value;
-    } else {
-      getter = source as () => T;
-    }
-    const watcherCtx = {
-      getter,
-      value: INIT_VALUE,
-      oldValue: INIT_VALUE,
-    } as WatcherContext<T>;
-    // must push watcherCtx before create watcherStopHandle
-    watcherContext.push(watcherCtx);
-
-    watcherCtx.watcherStopHandle = vm.$watch(
-      getter,
-      (n: T, o: T) => {
-        watcherCtx.value = n;
-        // only update oldValue at frist, susquent updates at execCallback
-        if (watcherCtx.oldValue === INIT_VALUE) {
-          watcherCtx.oldValue = o;
-        }
-        callbackRef();
-      },
-      {
-        immediate: !options.lazy,
-        deep: options.deep,
-        // @ts-ignore
-        // always set to true, so we can fully control the schedule
-        sync: true,
-      }
-    );
-  });
-
-  return stop;
-}
-
 export function watch<T = any>(
-  source: watchedValue<T>,
+  source: WatcherFun<void>,
+  options?: Omit<Partial<WatcherOption>, 'lazy'>
+): () => void;
+export function watch<T = any>(
+  source: watcherSource<T>,
   cb: watcherCallBack<T>,
   options?: Partial<WatcherOption>
 ): () => void;
 export function watch<T = any>(
-  source: Array<watchedValue<T>>,
-  cb: watcherCallBack<T[]>,
+  source: WatcherFun<void> | watcherSource<T>,
+  cb?: Partial<WatcherOption> | watcherCallBack<T>,
   options?: Partial<WatcherOption>
-): () => void;
-export function watch<T = any>(
-  source: watchedValue<T> | Array<watchedValue<T>>,
-  cb: watcherCallBack<T> | watcherCallBack<T[]>,
-  options: Partial<WatcherOption> = {}
 ): () => void {
+  let callbck: watcherCallBack<T> | null = null;
+  if (typeof source === 'function' && (arguments.length === 1 || typeof cb !== 'function')) {
+    options = cb as Partial<WatcherOption>;
+    callbck = null;
+  } else {
+    callbck = cb as watcherCallBack<T>;
+  }
+
   const opts: WatcherOption = {
     ...{
       lazy: false,
       deep: false,
       flush: 'post',
     },
-    ...options,
+    ...(options || {}),
   };
   let vm = getCurrentVM();
   if (!vm) {
@@ -272,8 +212,5 @@ export function watch<T = any>(
     installWatchEnv(vm);
   }
 
-  if (isArray(source)) {
-    return createMuiltSourceWatcher(vm, source, cb as watcherCallBack<T[]>, opts);
-  }
-  return createSingleSourceWatcher(vm, source, cb as watcherCallBack<T>, opts);
+  return createWatcher(vm, source as watcherSource<T>, callbck, opts);
 }

@@ -1,7 +1,7 @@
 const Vue = require('vue/dist/vue.common.js');
 const { ref, reactive, watch } = require('../../src');
 
-describe('Hooks watch', () => {
+describe('api/watch', () => {
   let spy;
   beforeEach(() => {
     spy = jest.fn();
@@ -147,7 +147,7 @@ describe('Hooks watch', () => {
   });
 
   it('should flush after render', done => {
-    let rerenderText;
+    let rerenderedText;
     const vm = new Vue({
       setup() {
         const a = ref(1);
@@ -155,7 +155,7 @@ describe('Hooks watch', () => {
           a,
           (newVal, oldVal) => {
             spy(newVal, oldVal);
-            rerenderText = vm.$el.textContent;
+            rerenderedText = vm.$el.textContent;
           },
           { lazy: true }
         );
@@ -170,7 +170,7 @@ describe('Hooks watch', () => {
     expect(spy).not.toHaveBeenCalled();
     vm.a = 2;
     waitForUpdate(() => {
-      expect(rerenderText).toBe('2');
+      expect(rerenderedText).toBe('2');
       expect(spy.mock.calls.length).toBe(1);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
@@ -261,153 +261,64 @@ describe('Hooks watch', () => {
     expect(spy).toHaveBeenNthCalledWith(2, 1, 0);
   });
 
-  describe('Multiple sources', () => {
-    let obj1, obj2;
-    it('do not store the intermediate state', done => {
-      new Vue({
-        setup() {
-          obj1 = reactive({ a: 1 });
-          obj2 = reactive({ a: 2 });
-          watch([() => obj1.a, () => obj2.a], spy);
-          return {
-            obj1,
-            obj2,
-          };
-        },
-        template: `<div>{{obj1.a}} {{obj2.a}}</div>`,
-      }).$mount();
-      expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenLastCalledWith([1, 2], [undefined, undefined]);
-      obj1.a = 2;
-      obj2.a = 3;
-
-      obj1.a = 3;
-      obj2.a = 4;
-      waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(2);
-        expect(spy).toHaveBeenLastCalledWith([3, 4], [1, 2]);
-        obj2.a = 5;
-        obj2.a = 6;
-      })
-        .then(() => {
-          expect(spy.mock.calls.length).toBe(3);
-          expect(spy).toHaveBeenLastCalledWith([3, 6], [3, 4]);
-        })
-        .then(done);
-    });
-
-    it('basic usage(lazy=false, flush=none-sync)', done => {
+  describe('autorun', () => {
+    let renderedText;
+    it('should work', done => {
       const vm = new Vue({
         setup() {
-          const a = ref(1);
-          const b = ref(1);
-          watch([a, b], spy, { lazy: false, flush: 'post' });
+          const count = ref(0);
+          watch(() => {
+            spy(count.value);
+            renderedText = vm.$el.textContent;
+          });
 
           return {
-            a,
-            b,
+            count,
           };
         },
-        template: `<div>{{a}} {{b}}</div>`,
-      }).$mount();
-      expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenLastCalledWith([1, 1], [undefined, undefined]);
-      vm.a = 2;
-      expect(spy.mock.calls.length).toBe(1);
-      waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(2);
-        expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
-        vm.a = 3;
-        vm.b = 3;
-      })
-        .then(() => {
-          expect(spy.mock.calls.length).toBe(3);
-          expect(spy).toHaveBeenLastCalledWith([3, 3], [2, 1]);
-        })
-        .then(done);
-    });
-
-    it('basic usage(lazy=true, flush=none-sync)', done => {
-      const vm = new Vue({
-        setup() {
-          const a = ref(1);
-          const b = ref(1);
-          watch([a, b], spy, { lazy: true, flush: 'post' });
-
-          return {
-            a,
-            b,
-          };
+        render(h) {
+          return h('div', this.count);
         },
-        template: `<div>{{a}} {{b}}</div>`,
       }).$mount();
-      vm.a = 2;
       expect(spy).not.toHaveBeenCalled();
       waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(1);
-        expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
-        vm.a = 3;
-        vm.b = 3;
+        expect(renderedText).toBe('0');
+        expect(spy).toHaveBeenLastCalledWith(0);
+        vm.count++;
       })
         .then(() => {
-          expect(spy.mock.calls.length).toBe(2);
-          expect(spy).toHaveBeenLastCalledWith([3, 3], [2, 1]);
+          expect(renderedText).toBe('1');
+          expect(spy).toHaveBeenLastCalledWith(1);
         })
         .then(done);
     });
 
-    it('basic usage(lazy=false, flush=sync)', () => {
+    it('autorun with options', () => {
       const vm = new Vue({
         setup() {
-          const a = ref(1);
-          const b = ref(1);
-          watch([a, b], spy, { lazy: false, flush: 'sync' });
+          const count = ref(0);
+          watch(
+            () => {
+              spy(count.value);
+            },
+            {
+              flush: 'sync',
+            }
+          );
 
           return {
-            a,
-            b,
+            count,
           };
         },
       });
-      expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenLastCalledWith([1, 1], [undefined, undefined]);
-      vm.a = 2;
-      expect(spy.mock.calls.length).toBe(2);
-      expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
-      vm.a = 3;
-      vm.b = 3;
-      expect(spy.mock.calls.length).toBe(4);
-      expect(spy).toHaveBeenNthCalledWith(3, [3, 1], [2, 1]);
-      expect(spy).toHaveBeenNthCalledWith(4, [3, 3], [3, 1]);
-    });
-
-    it('basic usage(lazy=true, flush=sync)', () => {
-      const vm = new Vue({
-        setup() {
-          const a = ref(1);
-          const b = ref(1);
-          watch([a, b], spy, { lazy: true, flush: 'sync' });
-
-          return {
-            a,
-            b,
-          };
-        },
-      });
-      expect(spy).not.toHaveBeenCalled();
-      vm.a = 2;
-      expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
-      vm.a = 3;
-      vm.b = 3;
-      expect(spy.mock.calls.length).toBe(3);
-      expect(spy).toHaveBeenNthCalledWith(2, [3, 1], [2, 1]);
-      expect(spy).toHaveBeenNthCalledWith(3, [3, 3], [3, 1]);
+      expect(spy).toHaveBeenLastCalledWith(0);
+      vm.count++;
+      expect(spy).toHaveBeenLastCalledWith(1);
     });
   });
 
   describe('Out of setup', () => {
-    it('basic', done => {
+    it('should work', done => {
       const obj = reactive({ a: 1 });
       watch(() => obj.a, spy);
       expect(spy).toHaveBeenLastCalledWith(1, undefined);
@@ -415,20 +326,6 @@ describe('Hooks watch', () => {
       waitForUpdate(() => {
         expect(spy.mock.calls.length).toBe(2);
         expect(spy).toHaveBeenLastCalledWith(2, 1);
-      }).then(done);
-    });
-
-    it('multiple sources', done => {
-      const obj1 = reactive({ a: 1 });
-      const obj2 = reactive({ a: 2 });
-      watch([() => obj1.a, () => obj2.a], spy);
-      expect(spy.mock.calls.length).toBe(1);
-      expect(spy).toHaveBeenLastCalledWith([1, 2], [undefined, undefined]);
-      obj1.a = 2;
-      obj2.a = 3;
-      waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(2);
-        expect(spy).toHaveBeenLastCalledWith([2, 3], [1, 2]);
       }).then(done);
     });
   });
