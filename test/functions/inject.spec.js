@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { inject, provide, value, state } = require('../../src');
+const { inject, provide, value, reactive } = require('../../src');
 
 let injected;
 const injectedComp = {
@@ -81,7 +81,7 @@ describe('Hooks provide/inject', () => {
     const app = new Vue({
       template: `<child/>`,
       setup() {
-        provide(State, state({ msg: 'foo' }));
+        provide(State, reactive({ msg: 'foo' }));
       },
       components: {
         child: {

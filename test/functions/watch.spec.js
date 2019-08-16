@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { value, state, watch } = require('../../src');
+const { value, reactive, watch } = require('../../src');
 
 describe('Hooks watch', () => {
   let spy;
@@ -266,8 +266,8 @@ describe('Hooks watch', () => {
     it('do not store the intermediate state', done => {
       new Vue({
         setup() {
-          obj1 = state({ a: 1 });
-          obj2 = state({ a: 2 });
+          obj1 = reactive({ a: 1 });
+          obj2 = reactive({ a: 2 });
           watch([() => obj1.a, () => obj2.a], spy);
           return {
             obj1,
@@ -408,7 +408,7 @@ describe('Hooks watch', () => {
 
   describe('Out of setup', () => {
     it('basic', done => {
-      const obj = state({ a: 1 });
+      const obj = reactive({ a: 1 });
       watch(() => obj.a, spy);
       expect(spy).toHaveBeenLastCalledWith(1, undefined);
       obj.a = 2;
@@ -419,8 +419,8 @@ describe('Hooks watch', () => {
     });
 
     it('multiple sources', done => {
-      const obj1 = state({ a: 1 });
-      const obj2 = state({ a: 2 });
+      const obj1 = reactive({ a: 1 });
+      const obj2 = reactive({ a: 2 });
       watch([() => obj1.a, () => obj2.a], spy);
       expect(spy.mock.calls.length).toBe(1);
       expect(spy).toHaveBeenLastCalledWith([1, 2], [undefined, undefined]);

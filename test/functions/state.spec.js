@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { state, value, watch, set } = require('../../src');
+const { reactive, value, watch, set } = require('../../src');
 
 describe('Hooks value', () => {
   it('should work with array', () => {
@@ -59,7 +59,7 @@ describe('Hooks state', () => {
     const app = new Vue({
       setup() {
         return {
-          state: state({
+          state: reactive({
             count: 0,
           }),
         };
@@ -79,7 +79,7 @@ describe('Hooks state', () => {
 
 describe('value/unwrapping', () => {
   it('should work', () => {
-    const obj = state({
+    const obj = reactive({
       a: value(0),
     });
     const objWrapper = value(obj);
@@ -102,7 +102,7 @@ describe('value/unwrapping', () => {
 
   it('should work like a normal property when nested in an observable(same ref)', () => {
     const a = value(1);
-    const obj = state({
+    const obj = reactive({
       a,
       b: {
         c: a,
@@ -131,7 +131,7 @@ describe('value/unwrapping', () => {
   it('should work like a normal property when nested in an observable(different ref)', () => {
     const count = value(1);
     const count1 = value(1);
-    const obj = state({
+    const obj = reactive({
       a: count,
       b: {
         c: count1,
@@ -166,7 +166,7 @@ describe('value/unwrapping', () => {
   });
 
   it('should work like a normal property when nested in an observable(wrapper overwrite)', () => {
-    const obj = state({
+    const obj = reactive({
       a: {
         b: 1,
       },
@@ -190,7 +190,7 @@ describe('value/unwrapping', () => {
 
   it('should work like a normal property when nested in an observable(new property of object)', () => {
     const count = value(1);
-    const obj = state({
+    const obj = reactive({
       a: {},
       b: [],
     });
