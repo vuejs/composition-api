@@ -32,9 +32,7 @@ describe('Hooks provide/inject', () => {
       template: `<child/>`,
       setup() {
         const count = ref(1);
-        provide({
-          foo: count,
-        });
+        provide('foo', count);
         provide('bar', false);
       },
       components: {

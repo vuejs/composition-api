@@ -1,4 +1,3 @@
-// import Vue, { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
 import { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps';
 import { UnwrapValue } from '../reactivity';
