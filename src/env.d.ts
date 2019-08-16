@@ -1,4 +1,5 @@
 import { VueConstructor } from 'vue';
+import { VfaState } from './vmStateManager';
 
 declare global {
   interface Window {
@@ -8,7 +9,9 @@ declare global {
 
 declare module 'vue/types/vue' {
   interface Vue {
+    readonly _uid: number;
     readonly _data: Record<string, any>;
+    __secret_vfa_state__?: VfaState;
   }
 
   interface VueConstructor {

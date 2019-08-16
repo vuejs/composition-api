@@ -4,6 +4,7 @@ import { Ref, isRef } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { hasOwn, isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
 import { ref } from './apis/state';
+import vmStateManager from './vmStateManager';
 
 function asVmProperty(vm: ComponentInstance, propName: string, ref: Ref<unknown>) {
   const props = vm.$options.props;
@@ -35,9 +36,61 @@ function asVmProperty(vm: ComponentInstance, propName: string, ref: Ref<unknown>
   }
 }
 
+function updateTemplateRef(vm: ComponentInstance) {
+  const rawBindings = vmStateManager.get(vm, 'rawBindings') || {};
+  if (!rawBindings || !Object.keys(rawBindings).length) return;
+
+  const refs = vm.$refs;
+  const oldRefKeys = vmStateManager.get(vm, 'refs') || [];
+  for (let index = 0; index < oldRefKeys.length; index++) {
+    const key = oldRefKeys[index];
+    if (!refs[key]) {
+      (rawBindings[key] as Ref<any>).value = null;
+    }
+  }
+
+  const newKeys = Object.keys(refs);
+  const validNewKyes = [];
+  for (let index = 0; index < newKeys.length; index++) {
+    const key = newKeys[index];
+    const setupValue = rawBindings[key];
+    if (refs[key] && setupValue && isRef(setupValue)) {
+      setupValue.value = refs[key];
+      validNewKyes.push(key);
+    }
+  }
+  vmStateManager.set(vm, 'refs', validNewKyes);
+}
+
+function activateCurrentInstance(
+  vm: ComponentInstance,
+  fn: (vm_: ComponentInstance) => any,
+  onError?: (err: Error) => void
+) {
+  let preVm = getCurrentVM();
+  setCurrentVM(vm);
+  try {
+    return fn(vm);
+  } catch (err) {
+    if (onError) {
+      onError(err);
+    } else {
+      throw err;
+    }
+  } finally {
+    setCurrentVM(preVm);
+  }
+}
+
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
     beforeCreate: functionApiInit,
+    mounted(this: ComponentInstance) {
+      updateTemplateRef(this);
+    },
+    updated(this: ComponentInstance) {
+      updateTemplateRef(this);
+    },
   });
 
   /**
@@ -46,7 +99,14 @@ export function mixin(Vue: VueConstructor) {
   function functionApiInit(this: ComponentInstance) {
     const vm = this;
     const $options = vm.$options;
-    const { setup } = $options;
+    const { setup, render } = $options;
+
+    if (render) {
+      // keep currentInstance accessible for createElement
+      $options.render = function(...args: any): any {
+        return activateCurrentInstance(vm, () => render.apply(this, args));
+      };
+    }
 
     if (!setup) {
       return;
@@ -73,24 +133,25 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null;
-    let preVm = getCurrentVM();
-    setCurrentVM(vm);
-    try {
-      binding = setup(props, ctx);
-    } catch (err) {
-      logError(err, vm, 'setup()');
-    } finally {
-      setCurrentVM(preVm);
-    }
+    activateCurrentInstance(
+      vm,
+      () => {
+        binding = setup(props, ctx);
+      },
+      err => logError(err, vm, 'setup()')
+    );
 
     if (!binding) return;
 
     if (isFunction(binding)) {
-      vm.$options.render = () => (binding as any)(vm.$props, ctx);
+      // keep currentInstance accessible for createElement
+      vm.$options.render = () =>
+        activateCurrentInstance(vm, vm_ => (binding as any)(vm_.$props, ctx));
       return;
     }
 
     if (isPlainObject(binding)) {
+      vmStateManager.set(vm, 'rawBindings', binding);
       Object.keys(binding).forEach(name => {
         let bindingValue = (binding as any)[name];
         // make plain value reactive
