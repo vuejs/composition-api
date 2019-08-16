@@ -123,7 +123,6 @@ describe('setup', () => {
     expect('parent' in context).toBe(true);
     expect(context.root).toBe(vm.$root);
     expect(context.parent).toBe(vm.$parent);
-    expect(context.refs).toBe(vm.$refs);
     expect(context.slots).toBe(vm.$scopedSlots);
     expect(context.attrs).toBe(vm.$attrs);
     expect(typeof context.emit === 'function').toBe(true);

@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue';
-import { SetupFunction, SetupContext } from './ts-api';
+import { Data, SetupFunction, SetupContext } from './ts-api';
 import { currentVue } from './runtimeContext';
 import { Wrapper } from './wrappers';
 import { install } from './install';
@@ -7,7 +7,7 @@ import { mixin } from './setup';
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
-    setup?: SetupFunction<{}, {}>;
+    setup?: SetupFunction<Data, Data>;
   }
 }
 

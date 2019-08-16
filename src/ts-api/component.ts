@@ -41,11 +41,10 @@ type VueProxy<PropsOptions, RawBindings> = Vue2ComponentOptions<
   VueConstructorProxy<PropsOptions, RawBindings>;
 
 export interface SetupContext {
-  readonly parent: ComponentInstance;
-  readonly root: ComponentInstance;
-  readonly refs: { [key: string]: ComponentInstance | Element | ComponentInstance[] | Element[] };
-  readonly slots: { [key: string]: VNode[] | undefined };
   readonly attrs: Record<string, string>;
+  readonly slots: { [key: string]: VNode[] | undefined };
+  readonly parent: ComponentInstance | null;
+  root: ComponentInstance;
 
   emit(event: string, ...args: any[]): void;
 }
