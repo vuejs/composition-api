@@ -1,6 +1,6 @@
 import { getCurrentVue } from '../runtimeContext';
 import { isArray } from '../utils';
-import { defineAccessControl } from './observable';
+import { defineAccessControl } from './reactive';
 
 function isUndef(v: any): boolean {
   return v === undefined || v === null;

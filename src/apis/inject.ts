@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { AnyObject } from '../types/basic';
-import { isWrapper, Wrapper, ComputedWrapper } from '../wrappers';
+import { isRef, Ref, createRef } from '../reactivity';
 import { ensureCurrentVMInFn } from '../helper';
 import { hasOwn, warn, isObject } from '../utils';
 
@@ -22,8 +22,8 @@ function resolveInject(provideKey: Key<any>, vm: Vue): any {
 }
 
 export function provide(data: AnyObject): void;
-export function provide<T>(key: Key<T> | string, value: T | Wrapper<T>): void;
-export function provide<T>(keyOrData: Key<T> | string | AnyObject, value?: T | Wrapper<T>): void {
+export function provide<T>(key: Key<T> | string, value: T | Ref<T>): void;
+export function provide<T>(keyOrData: Key<T> | string | AnyObject, value?: T | Ref<T>): void {
   const vm: any = ensureCurrentVMInFn('provide');
   if (!vm._provided) {
     vm._provided = {};
@@ -36,7 +36,7 @@ export function provide<T>(keyOrData: Key<T> | string | AnyObject, value?: T | W
   }
 }
 
-export function inject<T>(key: Key<T> | string): Wrapper<T> | void {
+export function inject<T>(key: Key<T> | string): Ref<T> | void {
   if (!key) {
     return;
   }
@@ -44,12 +44,12 @@ export function inject<T>(key: Key<T> | string): Wrapper<T> | void {
   const vm = ensureCurrentVMInFn('inject');
   const val = resolveInject(key as Key<T>, vm);
   if (val !== UNRESOLVED_INJECT) {
-    if (isWrapper<T>(val)) {
+    if (isRef<T>(val)) {
       return val;
     }
-    return new ComputedWrapper<T>({
-      read: () => val,
-      write() {
+    return createRef<T>({
+      get: () => val,
+      set() {
         warn(`The injectd value can't be re-assigned`, vm);
       },
     });

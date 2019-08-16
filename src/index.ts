@@ -1,7 +1,6 @@
 import Vue, { VueConstructor } from 'vue';
 import { Data, SetupFunction, SetupContext } from './ts-api';
 import { currentVue } from './runtimeContext';
-import { Wrapper } from './wrappers';
 import { install } from './install';
 import { mixin } from './setup';
 
@@ -22,11 +21,11 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 }
 
 export { default as createElement } from './createElement';
-export { plugin, Wrapper, SetupContext };
-export { set } from './reactivity';
+export { plugin, SetupContext };
 export { createComponent, PropType } from './ts-api';
-export * from './functions/state';
-export * from './functions/lifecycle';
-export * from './functions/watch';
-export * from './functions/computed';
-export * from './functions/inject';
+
+export * from './apis/state';
+export * from './apis/lifecycle';
+export * from './apis/watch';
+export * from './apis/computed';
+export * from './apis/inject';

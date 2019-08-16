@@ -1,9 +1,39 @@
 import { VueConstructor } from 'vue';
-import { ComponentInstance, SetupContext } from './ts-api';
-import { isWrapper } from './wrappers';
+import { ComponentInstance, SetupContext, SetupFunction, Data } from './ts-api';
+import { Ref, isRef } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
-import { isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
-import { value } from './functions/state';
+import { hasOwn, isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
+import { ref } from './apis/state';
+
+function asVmProperty(vm: ComponentInstance, propName: string, ref: Ref<unknown>) {
+  const props = vm.$options.props;
+  if (!(propName in vm) && !(props && hasOwn(props, propName))) {
+    proxy(vm, propName, {
+      get: () => ref.value,
+      set: (val: unknown) => {
+        ref.value = val;
+      },
+    });
+    if (process.env.NODE_ENV !== 'production') {
+      // expose binding to Vue Devtool as a data property
+      // delay this until state has been resolved to prevent repeated works
+      vm.$nextTick(() => {
+        proxy(vm._data, name, {
+          get: () => ref.value,
+          set: (val: unknown) => {
+            ref.value = val;
+          },
+        });
+      });
+    }
+  } else if (process.env.NODE_ENV !== 'production') {
+    if (props && hasOwn(props, propName)) {
+      warn(`The setup binding property "${propName}" is already declared as a prop.`, vm);
+    } else {
+      warn(`The setup binding property "${propName}" is already declared.`, vm);
+    }
+  }
+}
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -42,7 +72,7 @@ export function mixin(Vue: VueConstructor) {
   function initSetup(vm: ComponentInstance, props: Record<any, any> = {}) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
-    let binding: any;
+    let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null;
     let preVm = getCurrentVM();
     setCurrentVM(vm);
     try {
@@ -56,19 +86,18 @@ export function mixin(Vue: VueConstructor) {
     if (!binding) return;
 
     if (isFunction(binding)) {
-      vm.$options.render = () => binding(vm.$props, ctx);
+      vm.$options.render = () => (binding as any)(vm.$props, ctx);
       return;
     }
 
     if (isPlainObject(binding)) {
       Object.keys(binding).forEach(name => {
-        let bindingValue = binding[name];
+        let bindingValue = (binding as any)[name];
         // make plain value reactive
-        if (!isWrapper(bindingValue)) {
-          bindingValue = value(bindingValue);
+        if (!isRef(bindingValue)) {
+          bindingValue = ref(bindingValue);
         }
-        // bind to vm
-        bindingValue.setVmProperty(vm, name);
+        asVmProperty(vm, name, bindingValue);
       });
       return;
     }

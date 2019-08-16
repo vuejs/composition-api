@@ -1,12 +1,12 @@
 const Vue = require('vue/dist/vue.common.js');
-const { reactive, value, watch, set } = require('../../src');
+const { reactive, ref, watch, set, toRefs } = require('../../src');
 
-describe('Hooks value', () => {
+describe('ref', () => {
   it('should work with array', () => {
     let arr;
     new Vue({
       setup() {
-        arr = value([2]);
+        arr = ref([2]);
         arr.value.push(3);
         arr.value.unshift(1);
       },
@@ -15,14 +15,14 @@ describe('Hooks value', () => {
   });
 
   it('should hold a value', () => {
-    const a = value(1);
+    const a = ref(1);
     expect(a.value).toBe(1);
     a.value = 2;
     expect(a.value).toBe(2);
   });
 
   it('should be reactive', done => {
-    const a = value(1);
+    const a = ref(1);
     let dummy;
     watch(a, () => {
       dummy = a.value;
@@ -35,7 +35,7 @@ describe('Hooks value', () => {
   });
 
   it('should make nested properties reactive', done => {
-    const a = value({
+    const a = ref({
       count: 1,
     });
     let dummy;
@@ -54,7 +54,7 @@ describe('Hooks value', () => {
   });
 });
 
-describe('Hooks state', () => {
+describe('reactive', () => {
   it('should work', done => {
     const app = new Vue({
       setup() {
@@ -77,12 +77,12 @@ describe('Hooks state', () => {
   });
 });
 
-describe('value/unwrapping', () => {
+describe('unwrapping', () => {
   it('should work', () => {
     const obj = reactive({
-      a: value(0),
+      a: ref(0),
     });
-    const objWrapper = value(obj);
+    const objWrapper = ref(obj);
     let dummy;
     watch(
       () => obj,
@@ -101,7 +101,7 @@ describe('value/unwrapping', () => {
   });
 
   it('should work like a normal property when nested in an observable(same ref)', () => {
-    const a = value(1);
+    const a = ref(1);
     const obj = reactive({
       a,
       b: {
@@ -129,8 +129,8 @@ describe('value/unwrapping', () => {
   });
 
   it('should work like a normal property when nested in an observable(different ref)', () => {
-    const count = value(1);
-    const count1 = value(1);
+    const count = ref(1);
+    const count1 = ref(1);
     const obj = reactive({
       a: count,
       b: {
@@ -181,7 +181,7 @@ describe('value/unwrapping', () => {
       { deep: true, lazy: true, flush: 'sync' }
     );
     expect(dummy).toBeUndefined();
-    const wrapperC = value(2);
+    const wrapperC = ref(2);
     obj.a.b = wrapperC;
     expect(dummy).toBe(2);
     obj.a.b++;
@@ -189,7 +189,7 @@ describe('value/unwrapping', () => {
   });
 
   it('should work like a normal property when nested in an observable(new property of object)', () => {
-    const count = value(1);
+    const count = ref(1);
     const obj = reactive({
       a: {},
       b: [],
@@ -209,5 +209,23 @@ describe('value/unwrapping', () => {
     expect(dummy).toBe(2);
     obj.a.foo++;
     expect(dummy).toBe(3);
+  });
+});
+
+describe('toRefs', () => {
+  it('should work', () => {
+    const state = reactive({
+      foo: 1,
+      bar: 2,
+    });
+
+    const stateAsRefs = toRefs(state);
+    expect(stateAsRefs.foo.value).toBe(1);
+    expect(stateAsRefs.bar.value).toBe(2);
+    state.foo++;
+    expect(stateAsRefs.foo.value).toBe(2);
+
+    stateAsRefs.foo.value++;
+    expect(state.foo).toBe(3);
   });
 });

@@ -1,6 +1,6 @@
 import { AnyObject } from './types/basic';
 import { hasSymbol, hasOwn, isPlainObject, assert } from './utils';
-import { isWrapper } from './wrappers';
+import { isRef } from './reactivity';
 import { setCurrentVue, currentVue } from './runtimeContext';
 import { VueConstructor } from 'vue';
 
@@ -25,8 +25,8 @@ function mergeData(to: AnyObject, from?: AnyObject): Object {
       to[key] = fromVal;
     } else if (
       toVal !== fromVal &&
-      (isPlainObject(toVal) && !isWrapper(toVal)) &&
-      (isPlainObject(fromVal) && !isWrapper(toVal))
+      (isPlainObject(toVal) && !isRef(toVal)) &&
+      (isPlainObject(fromVal) && !isRef(toVal))
     ) {
       mergeData(toVal, fromVal);
     }

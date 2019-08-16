@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { value, computed, onCreated, createElement: h } = require('../src');
+const { ref, computed, onCreated, createElement: h } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe('setup', () => {
     const vm = new Vue({
       setup() {
         return {
-          a: value(1),
+          a: ref(1),
         };
       },
     }).$mount();
@@ -24,7 +24,7 @@ describe('setup', () => {
     const vm = new Vue({
       setup() {
         return {
-          a: value(1),
+          a: ref(1),
         };
       },
       data: {
@@ -38,7 +38,7 @@ describe('setup', () => {
     const vm = new Vue({
       setup() {
         return {
-          a: value(1),
+          a: ref(1),
         };
       },
       data() {
@@ -57,7 +57,7 @@ describe('setup', () => {
       template: `<div>{{a}}{{b}}{{c}}</div>`,
       setup() {
         return {
-          a: value(1),
+          a: ref(1),
         };
       },
       beforeUpdate() {
@@ -134,7 +134,7 @@ describe('setup', () => {
         a: {},
       },
       setup() {
-        const a = value();
+        const a = ref();
         return {
           a,
         };
@@ -150,7 +150,7 @@ describe('setup', () => {
       setup(_, { _vm }) {
         _vm.a = 1;
         return {
-          a: value(),
+          a: ref(),
         };
       },
     });
@@ -228,7 +228,7 @@ describe('setup', () => {
     const vm = new Vue({
       template: `<child :msg="msg"></child>`,
       setup() {
-        return { msg: value('hello') };
+        return { msg: ref('hello') };
       },
       beforeUpdate() {
         calls++;
@@ -358,7 +358,7 @@ describe('setup', () => {
       props: ['msg'],
       template: '<div>1</div>',
       setup() {
-        const count = value(0);
+        const count = ref(0);
         const increment = () => {
           count.value++;
         };

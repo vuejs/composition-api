@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { value, computed } = require('../../src');
+const { ref, computed } = require('../../src');
 
 describe('Hooks computed', () => {
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe('Hooks computed', () => {
     const vm = new Vue({
       template: '<div>{{ b }}</div>',
       setup() {
-        const a = value(1);
+        const a = ref(1);
         const b = computed(() => a.value + 1);
         return {
           a,
@@ -34,8 +34,11 @@ describe('Hooks computed', () => {
     const vm = new Vue({
       template: '<div>{{ b }}</div>',
       setup() {
-        const a = value(1);
-        const b = computed(() => a.value + 1, v => (a.value = v - 1));
+        const a = ref(1);
+        const b = computed({
+          get: () => a.value + 1,
+          set: v => (a.value = v - 1),
+        });
         return {
           a,
           b,
@@ -68,7 +71,7 @@ describe('Hooks computed', () => {
     });
     vm.b = 2;
     expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: Computed property "b" was assigned to but it has no setter.'
+      '[Vue warn]: Computed property was assigned to but it has no setter.'
     );
   });
 
@@ -76,7 +79,7 @@ describe('Hooks computed', () => {
     const spy = jest.fn();
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         const b = computed(() => a.value + 1);
         return {
           a,
@@ -95,7 +98,7 @@ describe('Hooks computed', () => {
     const spy = jest.fn();
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         const b = computed(() => {
           spy();
           return a.value + 1;
@@ -117,7 +120,7 @@ describe('Hooks computed', () => {
     const Comp = Vue.extend({
       template: `<div>{{ b }} {{ c }}</div>`,
       setup() {
-        const a = value(1);
+        const a = ref(1);
         const b = computed(() => {
           return a.value + 1;
         });

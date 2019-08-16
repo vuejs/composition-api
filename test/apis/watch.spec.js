@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { value, reactive, watch } = require('../../src');
+const { ref, reactive, watch } = require('../../src');
 
 describe('Hooks watch', () => {
   let spy;
@@ -14,7 +14,7 @@ describe('Hooks watch', () => {
   it('should work', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(a, spy);
         return {
           a,
@@ -36,7 +36,7 @@ describe('Hooks watch', () => {
   it('basic usage(value warpper)', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(a, spy, { flush: 'pre' });
 
         return {
@@ -58,7 +58,7 @@ describe('Hooks watch', () => {
   it('basic usage(function)', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(() => a.value, spy);
 
         return {
@@ -79,7 +79,7 @@ describe('Hooks watch', () => {
 
   it('multiple cbs (after option merge)', done => {
     const spy1 = jest.fn();
-    const a = value(1);
+    const a = ref(1);
     const Test = Vue.extend({
       setup() {
         watch(a, spy1);
@@ -104,7 +104,7 @@ describe('Hooks watch', () => {
   it('with option: lazy', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(a, spy, { lazy: true });
 
         return {
@@ -123,7 +123,7 @@ describe('Hooks watch', () => {
   it('with option: deep', done => {
     const vm = new Vue({
       setup() {
-        const a = value({ b: 1 });
+        const a = ref({ b: 1 });
         watch(a, spy, { lazy: true, deep: true });
 
         return {
@@ -150,7 +150,7 @@ describe('Hooks watch', () => {
     let rerenderText;
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(
           a,
           (newVal, oldVal) => {
@@ -179,7 +179,7 @@ describe('Hooks watch', () => {
   it('should flush before render', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(
           a,
           (newVal, oldVal) => {
@@ -206,7 +206,7 @@ describe('Hooks watch', () => {
   it('should flush synchronously', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(a, spy, { lazy: true, flush: 'sync' });
         return {
           a,
@@ -229,7 +229,7 @@ describe('Hooks watch', () => {
   it('should support watching unicode paths', done => {
     const vm = new Vue({
       setup() {
-        const a = value(1);
+        const a = ref(1);
         watch(a, spy, { lazy: true });
 
         return {
@@ -251,7 +251,7 @@ describe('Hooks watch', () => {
   it('should allow to be triggered in setup', () => {
     new Vue({
       setup() {
-        const count = value(0);
+        const count = ref(0);
         watch(count, spy, { flush: 'sync' });
         count.value++;
       },
@@ -299,8 +299,8 @@ describe('Hooks watch', () => {
     it('basic usage(lazy=false, flush=none-sync)', done => {
       const vm = new Vue({
         setup() {
-          const a = value(1);
-          const b = value(1);
+          const a = ref(1);
+          const b = ref(1);
           watch([a, b], spy, { lazy: false, flush: 'post' });
 
           return {
@@ -330,8 +330,8 @@ describe('Hooks watch', () => {
     it('basic usage(lazy=true, flush=none-sync)', done => {
       const vm = new Vue({
         setup() {
-          const a = value(1);
-          const b = value(1);
+          const a = ref(1);
+          const b = ref(1);
           watch([a, b], spy, { lazy: true, flush: 'post' });
 
           return {
@@ -359,8 +359,8 @@ describe('Hooks watch', () => {
     it('basic usage(lazy=false, flush=sync)', () => {
       const vm = new Vue({
         setup() {
-          const a = value(1);
-          const b = value(1);
+          const a = ref(1);
+          const b = ref(1);
           watch([a, b], spy, { lazy: false, flush: 'sync' });
 
           return {
@@ -384,8 +384,8 @@ describe('Hooks watch', () => {
     it('basic usage(lazy=true, flush=sync)', () => {
       const vm = new Vue({
         setup() {
-          const a = value(1);
-          const b = value(1);
+          const a = ref(1);
+          const b = ref(1);
           watch([a, b], spy, { lazy: true, flush: 'sync' });
 
           return {

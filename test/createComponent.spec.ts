@@ -1,24 +1,27 @@
 const Vue = require('vue/dist/vue.common.js');
-import { plugin, createComponent, value, PropType } from '../src';
+import { plugin, createComponent, createElement as h, ref } from '../src';
 
 Vue.use(plugin);
 
 it('should work', () => {
   const Child = createComponent({
-    template: `<span>{{ localMsg }}</span>`,
-    props: (['msg'] as any) as PropType<{ msg: string }>,
-    setup(props) {
-      return { localMsg: props.msg };
+    props: { msg: String },
+    setup() {
+      return props => h('span', props.msg);
     },
   });
 
   const App = createComponent({
-    template: `<div><Child :msg="msg"></Child></div>`,
     setup() {
-      return { msg: value('hello') };
-    },
-    components: {
-      Child,
+      const msg = ref('hello');
+      return () =>
+        h('div', [
+          h(Child, {
+            props: {
+              msg: msg.value,
+            },
+          }),
+        ]);
     },
   });
   const vm = new Vue(App).$mount();

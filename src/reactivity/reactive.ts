@@ -2,8 +2,8 @@ import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isObject, def, hasOwn } from '../utils';
 import { isComponentInstance, createComponentInstance } from '../helper';
-import { isWrapper, UnwrapValue } from '../wrappers';
 import { AccessControIdentifierlKey, ObservableIdentifierKey } from '../symbols';
+import { isRef, UnwrapValue } from './ref';
 
 const AccessControlIdentifier = {};
 const ObservableIdentifier = {};
@@ -12,12 +12,7 @@ const ObservableIdentifier = {};
  * We can do unwrapping and other things here.
  */
 function setupAccessControl(target: AnyObject) {
-  if (
-    !isObject(target) ||
-    Array.isArray(target) ||
-    isWrapper(target) ||
-    isComponentInstance(target)
-  ) {
+  if (!isObject(target) || Array.isArray(target) || isRef(target) || isComponentInstance(target)) {
     return;
   }
 
@@ -37,7 +32,7 @@ function setupAccessControl(target: AnyObject) {
   }
 }
 
-function isObservable(obj: any): boolean {
+export function isReactive(obj: any): boolean {
   return (
     hasOwn(obj, ObservableIdentifierKey) && obj[ObservableIdentifierKey] === ObservableIdentifier
   );
@@ -69,7 +64,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     configurable: true,
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val;
-      if (isWrapper(value)) {
+      if (isRef(value)) {
         return value.value;
       } else {
         return value;
@@ -79,15 +74,15 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
       if (getter && !setter) return;
 
       const value = getter ? getter.call(target) : val;
-      if (isWrapper(value)) {
-        if (isWrapper(newVal)) {
+      if (isRef(value)) {
+        if (isRef(newVal)) {
           val = newVal;
         } else {
           value.value = newVal;
         }
       } else if (setter) {
         setter.call(target, newVal);
-      } else if (isWrapper(newVal)) {
+      } else if (isRef(newVal)) {
         val = newVal;
       }
       setupAccessControl(newVal);
@@ -98,8 +93,8 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
 /**
  * Make obj reactivity
  */
-export function observable<T = any>(obj: T): UnwrapValue<T> {
-  if (!isObject(obj) || isObservable(obj)) {
+export function reactive<T = any>(obj: T): UnwrapValue<T> {
+  if (!isObject(obj) || isReactive(obj)) {
     return obj as UnwrapValue<T>;
   }
 

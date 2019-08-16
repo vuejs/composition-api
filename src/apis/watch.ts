@@ -1,15 +1,14 @@
 import { ComponentInstance } from '../ts-api';
-import { Wrapper } from '../wrappers';
+import { Ref, isRef } from '../reactivity';
 import { isArray, assert } from '../utils';
 import { createComponentInstance } from '../helper';
-import { isWrapper } from '../wrappers';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
 const INIT_VALUE = {};
 type InitValue = typeof INIT_VALUE;
 type watcherCallBack<T> = (newVal: T, oldVal: T) => void;
-type watchedValue<T> = Wrapper<T> | (() => T);
+type watchedValue<T> = Ref<T> | (() => T);
 type FlushMode = 'pre' | 'post' | 'sync';
 interface WatcherOption {
   lazy: boolean;
@@ -92,7 +91,7 @@ function createSingleSourceWatcher<T>(
   options: WatcherOption
 ): () => void {
   let getter: () => T;
-  if (isWrapper<T>(source)) {
+  if (isRef<T>(source)) {
     getter = () => source.value;
   } else {
     getter = source as () => T;
@@ -204,7 +203,7 @@ function createMuiltSourceWatcher<T>(
 
   sources.forEach(source => {
     let getter: () => T;
-    if (isWrapper<T>(source)) {
+    if (isRef<T>(source)) {
       getter = () => source.value;
     } else {
       getter = source as () => T;
