@@ -1,4 +1,4 @@
-import { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
+import Vue, { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps';
 import { UnwrapRef } from '../reactivity';
 
@@ -68,7 +68,8 @@ export interface ComponentOptions<
 // object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
 export function createComponent<PropsOptions, RawBindings>(
-  options: ComponentOptions<PropsOptions, RawBindings>
+  options: ComponentOptions<PropsOptions, RawBindings> &
+    Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptions<never, never>>
 ): VueProxy<PropsOptions, RawBindings>;
 // implementation, close to no-op
 export function createComponent(options: any) {
