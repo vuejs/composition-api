@@ -113,9 +113,12 @@ function createWatcher<T>(
     }
 
     let stopRef: Function;
+    let hasEnded: boolean = false;
     scheduleTask(
       vm,
       () => {
+        if (hasEnded) return;
+
         stopRef = vm.$watch(
           getter,
           options.lazy
@@ -132,6 +135,7 @@ function createWatcher<T>(
     );
 
     return () => {
+      hasEnded = true;
       stopRef && stopRef();
     };
   }
