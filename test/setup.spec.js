@@ -264,29 +264,7 @@ describe('setup', () => {
     }).$mount();
   });
 
-  it('should make returned plain value reactive (value)', done => {
-    const vm = new Vue({
-      setup() {
-        return {
-          name: null,
-          nested: {
-            object: {
-              msg: 'foo',
-            },
-          },
-        };
-      },
-      template: '<div>{{ name }}, {{ nested.object.msg }}</div>',
-    }).$mount();
-    expect(vm.$el.textContent).toBe(', foo');
-    vm.name = 'foo';
-    vm.nested.object.msg = 'bar';
-    waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('foo, bar');
-    }).then(done);
-  });
-
-  it('should make returned plain value reactive (object)', done => {
+  it('should not make returned non-reactive object reactive', done => {
     const vm = new Vue({
       setup() {
         return {
@@ -299,10 +277,19 @@ describe('setup', () => {
       template: '<div>{{ form.a }}, {{ form.b }}</div>',
     }).$mount();
     expect(vm.$el.textContent).toBe('1, 2');
-    vm.form = { a: 2, b: 3 };
+
+    // should not trigger a re-render
+    vm.form.a = 2;
     waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('2, 3');
-    }).then(done);
+      expect(vm.$el.textContent).toBe('1, 2');
+
+      // should trigger a re-render
+      vm.form = { a: 2, b: 3 };
+    })
+      .then(() => {
+        expect(vm.$el.textContent).toBe('2, 3');
+      })
+      .then(done);
   });
 
   it('current vue should exist in nested setup call', () => {

@@ -1,28 +1,29 @@
 import { VueConstructor } from 'vue';
 import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
-import { Ref, isRef } from './reactivity';
+import { Ref, isRef, isReactive, nonReactive } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { hasOwn, isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
 
-function asVmProperty(vm: ComponentInstance, propName: string, ref: Ref<unknown>) {
+function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<unknown>) {
   const props = vm.$options.props;
   if (!(propName in vm) && !(props && hasOwn(props, propName))) {
     proxy(vm, propName, {
-      get: () => ref.value,
+      get: () => propValue.value,
       set: (val: unknown) => {
-        ref.value = val;
+        propValue.value = val;
       },
     });
+
     if (process.env.NODE_ENV !== 'production') {
       // expose binding to Vue Devtool as a data property
       // delay this until state has been resolved to prevent repeated works
       vm.$nextTick(() => {
-        proxy(vm._data, name, {
-          get: () => ref.value,
+        proxy(vm._data, propName, {
+          get: () => propValue.value,
           set: (val: unknown) => {
-            ref.value = val;
+            propValue.value = val;
           },
         });
       });
@@ -154,9 +155,14 @@ export function mixin(Vue: VueConstructor) {
       vmStateManager.set(vm, 'rawBindings', binding);
       Object.keys(binding).forEach(name => {
         let bindingValue = (binding as any)[name];
-        // make plain value reactive
+        // only make primitive value reactive
         if (!isRef(bindingValue)) {
-          bindingValue = ref(bindingValue);
+          if (isReactive(bindingValue)) {
+            bindingValue = ref(bindingValue);
+          } else {
+            // a non-reactive should not don't get reactivity
+            bindingValue = ref(nonReactive(bindingValue));
+          }
         }
         asVmProperty(vm, name, bindingValue);
       });

@@ -45,7 +45,7 @@ export function isObject(val: unknown): val is Record<any, any> {
   return val !== null && typeof val === 'object';
 }
 
-export function isPlainObject<T extends Object = {}>(x: unknown): x is T {
+export function isPlainObject(x: unknown): x is Record<any, any> {
   return toString(x) === '[object Object]';
 }
 

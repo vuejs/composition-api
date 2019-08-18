@@ -52,6 +52,106 @@ describe('api/ref', () => {
       expect(dummy).toBe(2);
     }).then(done);
   });
+});
+
+describe('api/reactive', () => {
+  it('should work', done => {
+    const app = new Vue({
+      setup() {
+        return {
+          state: reactive({
+            count: 0,
+          }),
+        };
+      },
+      render(h) {
+        return h('div', [h('span', this.state.count)]);
+      },
+    }).$mount();
+
+    expect(app.$el.querySelector('span').textContent).toBe('0');
+    app.state.count++;
+    waitForUpdate(() => {
+      expect(app.$el.querySelector('span').textContent).toBe('1');
+    }).then(done);
+  });
+});
+
+describe('api/toRefs', () => {
+  it('should work', done => {
+    const state = reactive({
+      foo: 1,
+      bar: 2,
+    });
+
+    let dummy;
+    watch(
+      () => state,
+      () => {
+        dummy = state.foo;
+      }
+    );
+    const stateAsRefs = toRefs(state);
+    expect(dummy).toBe(1);
+    expect(stateAsRefs.foo.value).toBe(1);
+    expect(stateAsRefs.bar.value).toBe(2);
+    state.foo++;
+    waitForUpdate(() => {
+      dummy = 2;
+      expect(stateAsRefs.foo.value).toBe(2);
+      stateAsRefs.foo.value++;
+    })
+      .then(() => {
+        dummy = 3;
+        expect(state.foo).toBe(3);
+      })
+      .then(done);
+  });
+
+  it('should proxy plain object but not make it a reactive', () => {
+    const spy = jest.fn();
+    const state = {
+      foo: 1,
+      bar: 2,
+    };
+
+    watch(() => state, spy, { flush: 'sync', lazy: true });
+    const stateAsRefs = toRefs(state);
+
+    expect(stateAsRefs.foo.value).toBe(1);
+    expect(stateAsRefs.bar.value).toBe(2);
+    state.foo++;
+    expect(stateAsRefs.foo.value).toBe(2);
+
+    stateAsRefs.foo.value++;
+    expect(state.foo).toBe(3);
+
+    expect(spy).not.toHaveBeenCalled();
+  });
+});
+
+describe('unwrapping', () => {
+  it('should work', () => {
+    const obj = reactive({
+      a: ref(0),
+    });
+    const objWrapper = ref(obj);
+    let dummy;
+    watch(
+      () => obj,
+      () => {
+        dummy = obj.a;
+      },
+      { deep: true, flush: 'sync' }
+    );
+    expect(dummy).toBe(0);
+    expect(obj.a).toBe(0);
+    expect(objWrapper.value.a).toBe(0);
+    obj.a++;
+    expect(dummy).toBe(1);
+    objWrapper.value.a++;
+    expect(dummy).toBe(2);
+  });
 
   it('should not unwrap a ref', () => {
     const a = ref(0);
@@ -90,73 +190,8 @@ describe('api/ref', () => {
     c.value++;
     expect(b.value.count).toBe(1);
   });
-});
 
-describe('api/reactive', () => {
-  it('should work', done => {
-    const app = new Vue({
-      setup() {
-        return {
-          state: reactive({
-            count: 0,
-          }),
-        };
-      },
-      render(h) {
-        return h('div', [h('span', this.state.count)]);
-      },
-    }).$mount();
-
-    expect(app.$el.querySelector('span').textContent).toBe('0');
-    app.state.count++;
-    waitForUpdate(() => {
-      expect(app.$el.querySelector('span').textContent).toBe('1');
-    }).then(done);
-  });
-});
-
-describe('api/toRefs', () => {
-  it('should work', () => {
-    const state = reactive({
-      foo: 1,
-      bar: 2,
-    });
-
-    const stateAsRefs = toRefs(state);
-    expect(stateAsRefs.foo.value).toBe(1);
-    expect(stateAsRefs.bar.value).toBe(2);
-    state.foo++;
-    expect(stateAsRefs.foo.value).toBe(2);
-
-    stateAsRefs.foo.value++;
-    expect(state.foo).toBe(3);
-  });
-});
-
-describe('unwrapping', () => {
-  it('should work', () => {
-    const obj = reactive({
-      a: ref(0),
-    });
-    const objWrapper = ref(obj);
-    let dummy;
-    watch(
-      () => obj,
-      () => {
-        dummy = obj.a;
-      },
-      { deep: true, flush: 'sync' }
-    );
-    expect(dummy).toBe(0);
-    expect(obj.a).toBe(0);
-    expect(objWrapper.value.a).toBe(0);
-    obj.a++;
-    expect(dummy).toBe(1);
-    objWrapper.value.a++;
-    expect(dummy).toBe(2);
-  });
-
-  it('should work like a normal property when nested in an observable(same ref)', () => {
+  it('should keep reactivity(same ref)', () => {
     const a = ref(1);
     const obj = reactive({
       a,
@@ -184,7 +219,7 @@ describe('unwrapping', () => {
     expect(dummy2).toBe(3);
   });
 
-  it('should work like a normal property when nested in an observable(different ref)', () => {
+  it('should keep reactivity(different ref)', () => {
     const count = ref(1);
     const count1 = ref(1);
     const obj = reactive({
@@ -221,30 +256,7 @@ describe('unwrapping', () => {
     expect(count1.value).toBe(2);
   });
 
-  it('should work like a normal property when nested in an observable(wrapper overwrite)', () => {
-    const obj = reactive({
-      a: {
-        b: 1,
-      },
-    });
-
-    let dummy;
-    watch(
-      () => obj,
-      () => {
-        dummy = obj.a.b;
-      },
-      { deep: true, lazy: true, flush: 'sync' }
-    );
-    expect(dummy).toBeUndefined();
-    const wrapperC = ref(2);
-    obj.a.b = wrapperC;
-    expect(dummy).toBe(2);
-    obj.a.b++;
-    expect(dummy).toBe(3);
-  });
-
-  it('should work like a normal property when nested in an observable(new property of object)', () => {
+  it('should keep reactivity(new property of object)', () => {
     const count = ref(1);
     const obj = reactive({
       a: {},
@@ -265,5 +277,33 @@ describe('unwrapping', () => {
     expect(dummy).toBe(2);
     obj.a.foo++;
     expect(dummy).toBe(3);
+  });
+
+  it('ref should be replaced)', () => {
+    const bRef = ref(1);
+    const obj = reactive({
+      a: {
+        b: bRef,
+      },
+    });
+
+    let dummy;
+    watch(
+      () => obj,
+      () => {
+        dummy = obj.a.b;
+      },
+      { deep: true, lazy: true, flush: 'sync' }
+    );
+    expect(dummy).toBeUndefined();
+    const replacedRef = ref(2);
+    obj.a.b = replacedRef;
+    expect(dummy).toBe(2);
+    obj.a.b++;
+    expect(replacedRef.value).toBe(3);
+    expect(dummy).toBe(3);
+
+    // bRef.value should not change
+    expect(bRef.value).toBe(1);
   });
 });

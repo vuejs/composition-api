@@ -1,7 +1,7 @@
 import { Data } from '../component';
 import { RefKey } from '../symbols';
 import { proxy, isPlainObject } from '../utils';
-import { reactive, isReactive } from './reactive';
+import { reactive } from './reactive';
 
 type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
 
@@ -134,12 +134,12 @@ type Refs<Data> = {
 }
 
 export function toRefs<T extends Data = Data>(obj: T): Refs<T> {
-  if (!isPlainObject(obj) || !isReactive(obj)) return obj as any;
+  if (!isPlainObject(obj)) return obj as any;
 
   const res: Refs<T> = {} as any;
   Object.keys(obj).forEach(key => {
     let val = obj[key];
-    // make plain value reactive
+    // use ref to proxy the property
     if (!isRef(val)) {
       val = createRef({
         get: () => obj[key],
