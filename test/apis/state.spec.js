@@ -306,4 +306,35 @@ describe('unwrapping', () => {
     // bRef.value should not change
     expect(bRef.value).toBe(1);
   });
+
+  it('should not unwrap ref in Array index', () => {
+    const a = ref(0);
+    const state = reactive({
+      list: [a],
+    });
+
+    expect(state.list[0]).toBe(a);
+    expect(state.list[0].value).toBe(0);
+  });
+
+  it('should now unwrap plain object when using set at Array', () => {
+    const state = reactive({
+      list: [],
+    });
+
+    let dummy;
+    watch(
+      () => state.list,
+      () => {
+        dummy = state.list[0].count;
+      },
+      { lazy: true, flush: 'sync' }
+    );
+    expect(dummy).toBeUndefined();
+    const a = ref(0);
+    set(state.list, 0, {
+      count: a,
+    });
+    expect(dummy).toBe(a);
+  });
 });
