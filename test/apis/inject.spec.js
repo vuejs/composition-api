@@ -121,4 +121,30 @@ describe('Hooks provide/inject', () => {
     obj.value = {};
     expect(warn.mock.calls[0][0]).toMatch("[Vue warn]: The injectd value can't be re-assigned");
   });
+
+  it('should work when combined with 2.x provide option', () => {
+    const State = Symbol();
+    let obj1;
+    let obj2;
+    new Vue({
+      template: `<child/>`,
+      setup() {
+        provide(State, { msg: 'foo' });
+      },
+      provide: {
+        X: { msg: 'bar' },
+      },
+      components: {
+        child: {
+          setup() {
+            obj1 = inject(State);
+            obj2 = inject('X');
+          },
+          template: `<div/>`,
+        },
+      },
+    }).$mount();
+    expect(obj1.value.msg).toBe('foo');
+    expect(obj2.value.msg).toBe('bar');
+  });
 });

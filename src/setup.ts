@@ -97,6 +97,7 @@ export function mixin(Vue: VueConstructor) {
   /**
    * Vuex init hook, injected into each instances init hooks list.
    */
+
   function functionApiInit(this: ComponentInstance) {
     const vm = this;
     const $options = vm.$options;
@@ -121,6 +122,12 @@ export function mixin(Vue: VueConstructor) {
       }
       return;
     }
+
+    const provideCache = {};
+    Object.defineProperty(vm, '_provided', {
+      get: () => provideCache,
+      set: v => Object.assign(provideCache, v),
+    });
 
     const { data } = $options;
     // wapper the data option, so we can invoke setup before data get resolved
