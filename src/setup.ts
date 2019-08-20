@@ -123,12 +123,6 @@ export function mixin(Vue: VueConstructor) {
       return;
     }
 
-    const provideCache = {};
-    Object.defineProperty(vm, '_provided', {
-      get: () => provideCache,
-      set: v => Object.assign(provideCache, v),
-    });
-
     const { data } = $options;
     // wapper the data option, so we can invoke setup before data get resolved
     $options.data = function wrappedData() {
