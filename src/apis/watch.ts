@@ -5,9 +5,14 @@ import { createComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
-type WatcherFun<T> = () => T;
+type FnWithReturnValue<T> = () => T;
+type SimpleEffect = FnWithReturnValue<void>;
+type StopHandle = FnWithReturnValue<void>;
 type WatcherCallBack<T> = (newVal: T, oldVal: T) => void;
-type WatcherSource<T> = Ref<T> | WatcherFun<T>;
+type WatcherSource<T> = Ref<T> | FnWithReturnValue<T>;
+type MapSources<T> = {
+  [K in keyof T]: T[K] extends WatcherSource<infer V> ? V : never;
+};
 type FlushMode = 'pre' | 'post' | 'sync';
 interface WatcherOption {
   lazy: boolean;
@@ -77,34 +82,18 @@ function scheduleTask(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
   }
 }
 
-function createWatcher<T>(
+function createWatcher(
   vm: ComponentInstance,
-  source: WatcherSource<T>,
-  cb: WatcherCallBack<T> | null,
+  source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
+  cb: WatcherCallBack<any> | null,
   options: WatcherOption
 ): () => void {
   const flushMode = options.flush;
-  let getter: () => T;
-  let effect: WatcherCallBack<T>;
-  let autorun: boolean;
 
+  // effect watch
   if (cb === null) {
-    autorun = true;
-    effect = noopFn;
-    getter = source as () => T;
-  } else {
-    autorun = false;
-    effect = cb;
-    if (isRef<T>(source)) {
-      getter = () => source.value;
-    } else {
-      getter = source as () => T;
-    }
-  }
-
-  if (autorun) {
     if (flushMode === 'sync') {
-      return vm.$watch(getter, effect, {
+      return vm.$watch(source as SimpleEffect, noopFn, {
         immediate: true,
         deep: options.deep,
         // @ts-ignore
@@ -119,7 +108,7 @@ function createWatcher<T>(
       () => {
         if (hasEnded) return;
 
-        stopRef = vm.$watch(getter, effect, {
+        stopRef = vm.$watch(source as SimpleEffect, noopFn, {
           deep: options.deep,
         });
       },
@@ -132,14 +121,23 @@ function createWatcher<T>(
     };
   }
 
+  let getter: () => any;
+  if (Array.isArray(source)) {
+    getter = () => source.map(s => (isRef(s) ? s.value : s()));
+  } else if (isRef(source)) {
+    getter = () => source.value;
+  } else {
+    getter = source as () => any;
+  }
+
   const flush =
     flushMode === 'sync'
-      ? effect
-      : (n: T, o: T) => {
+      ? cb
+      : (n: any, o: any) => {
           scheduleTask(
             vm,
             () => {
-              effect(n, o);
+              cb(n, o);
             },
             flushMode
           );
@@ -147,16 +145,16 @@ function createWatcher<T>(
 
   // `shiftCallback` is used to handle firty sync effect.
   // The subsequent callbcks will redirect to `flush`.
-  let shiftCallback = (n: T, o: T) => {
+  let shiftCallback = (n: any, o: any) => {
     shiftCallback = flush;
-    effect(n, o);
+    cb(n, o);
   };
 
   return vm.$watch(
     getter,
     options.lazy
       ? flush
-      : (n: T, o: T) => {
+      : (n: any, o: any) => {
           shiftCallback(n, o);
         },
     {
@@ -169,23 +167,28 @@ function createWatcher<T>(
 }
 
 export function watch<T = any>(
-  source: WatcherFun<void>,
+  source: SimpleEffect,
   options?: Omit<Partial<WatcherOption>, 'lazy'>
-): () => void;
+): StopHandle;
 export function watch<T = any>(
   source: WatcherSource<T>,
   cb: WatcherCallBack<T>,
   options?: Partial<WatcherOption>
-): () => void;
-export function watch<T = any>(
-  source: WatcherFun<void> | WatcherSource<T>,
-  cb?: Partial<WatcherOption> | WatcherCallBack<T>,
+): StopHandle;
+export function watch<T extends WatcherSource<unknown>[]>(
+  sources: T,
+  cb: (newValues: MapSources<T>, oldValues: MapSources<T>) => any,
   options?: Partial<WatcherOption>
-): () => void {
-  let callbck: WatcherCallBack<T> | null = null;
+): StopHandle;
+export function watch(
+  source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
+  cb?: Partial<WatcherOption> | WatcherCallBack<any>,
+  options?: Partial<WatcherOption>
+): StopHandle {
+  let callbck: WatcherCallBack<unknown> | null = null;
   if (typeof cb === 'function') {
     // source watch
-    callbck = cb as WatcherCallBack<T>;
+    callbck = cb as WatcherCallBack<unknown>;
   } else {
     // effect watch
     options = cb as Partial<WatcherOption>;
@@ -210,5 +213,5 @@ export function watch<T = any>(
     installWatchEnv(vm);
   }
 
-  return createWatcher(vm, source as WatcherSource<T>, callbck, opts);
+  return createWatcher(vm, source, callbck, opts);
 }
