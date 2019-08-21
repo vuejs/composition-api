@@ -48,7 +48,27 @@ describe('Hooks provide/inject', () => {
     expect(injected).toEqual([1, false]);
   });
 
-  it('should work for reactive value', done => {
+  it('should return a default value when inject not found', () => {
+    let injected;
+    new Vue({
+      template: `<child/>`,
+      components: {
+        child: {
+          template: `<div>{{ msg }}</div>`,
+          setup() {
+            injected = inject('not-existed-inject-key', 'foo');
+            return {
+              injected,
+            };
+          },
+        },
+      },
+    }).$mount();
+
+    expect(injected).toBe('foo');
+  });
+
+  it('should work for ref value', done => {
     const Msg = Symbol();
     const app = new Vue({
       template: `<child/>`,
@@ -73,7 +93,7 @@ describe('Hooks provide/inject', () => {
     }).then(done);
   });
 
-  it('should return wrapper values', done => {
+  it('should work for reactive value', done => {
     const State = Symbol();
     let obj;
     const app = new Vue({
@@ -93,33 +113,11 @@ describe('Hooks provide/inject', () => {
         },
       },
     }).$mount();
-    expect(obj.value.msg).toBe('foo');
+    expect(obj.msg).toBe('foo');
     app.$children[0].state.msg = 'bar';
     waitForUpdate(() => {
       expect(app.$el.textContent).toBe('bar');
     }).then(done);
-  });
-
-  it('should warn when assign to a injected value', () => {
-    const State = Symbol();
-    let obj;
-    new Vue({
-      template: `<child/>`,
-      setup() {
-        provide(State, { msg: 'foo' });
-      },
-      components: {
-        child: {
-          setup() {
-            obj = inject(State);
-          },
-          template: `<div/>`,
-        },
-      },
-    }).$mount();
-    expect(obj.value.msg).toBe('foo');
-    obj.value = {};
-    expect(warn.mock.calls[0][0]).toMatch("[Vue warn]: The injectd value can't be re-assigned");
   });
 
   it('should work when combined with 2.x provide option', () => {
@@ -144,7 +142,7 @@ describe('Hooks provide/inject', () => {
         },
       },
     }).$mount();
-    expect(obj1.value.msg).toBe('foo');
-    expect(obj2.value.msg).toBe('bar');
+    expect(obj1.msg).toBe('foo');
+    expect(obj2.msg).toBe('bar');
   });
 });

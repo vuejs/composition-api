@@ -1,5 +1,4 @@
 import { ComponentInstance } from '../component';
-import { isRef, Ref, createRef } from '../reactivity';
 import { ensureCurrentVMInFn } from '../helper';
 import { hasOwn, warn } from '../utils';
 
@@ -20,18 +19,7 @@ function resolveInject(provideKey: InjectionKey<any>, vm: ComponentInstance): an
   return NOT_FOUND;
 }
 
-function createInjectValue<T>(value: T, vm: ComponentInstance): Ref<T> {
-  return isRef<T>(value)
-    ? value
-    : createRef<T>({
-        get: () => value,
-        set() {
-          warn(`The injectd value can't be re-assigned`, vm);
-        },
-      });
-}
-
-export function provide<T>(key: InjectionKey<T> | string, value: T | Ref<T>): void {
+export function provide<T>(key: InjectionKey<T> | string, value: T): void {
   const vm: any = ensureCurrentVMInFn('provide');
   if (!vm._provided) {
     const provideCache = {};
@@ -44,17 +32,18 @@ export function provide<T>(key: InjectionKey<T> | string, value: T | Ref<T>): vo
   vm._provided[key as string] = value;
 }
 
-export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): Ref<T> | void {
+export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T;
+export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | void {
   if (!key) {
-    return;
+    return defaultValue;
   }
 
   const vm = ensureCurrentVMInFn('inject');
   const val = resolveInject(key as InjectionKey<T>, vm);
   if (val !== NOT_FOUND) {
-    return createInjectValue(val, vm);
-  } else if (defaultValue) {
-    return createInjectValue(defaultValue, vm);
+    return val;
+  } else if (defaultValue !== undefined) {
+    return defaultValue;
   } else if (process.env.NODE_ENV !== 'production') {
     warn(`Injection "${String(key)}" not found`, vm);
   }
