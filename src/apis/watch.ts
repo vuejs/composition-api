@@ -6,8 +6,8 @@ import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
 type WatcherFun<T> = () => T;
-type watcherCallBack<T> = (newVal: T, oldVal: T) => void;
-type watcherSource<T> = Ref<T> | WatcherFun<T>;
+type WatcherCallBack<T> = (newVal: T, oldVal: T) => void;
+type WatcherSource<T> = Ref<T> | WatcherFun<T>;
 type FlushMode = 'pre' | 'post' | 'sync';
 interface WatcherOption {
   lazy: boolean;
@@ -79,13 +79,13 @@ function scheduleTask(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
 
 function createWatcher<T>(
   vm: ComponentInstance,
-  source: watcherSource<T>,
-  cb: watcherCallBack<T> | null,
+  source: WatcherSource<T>,
+  cb: WatcherCallBack<T> | null,
   options: WatcherOption
 ): () => void {
   const flushMode = options.flush;
   let getter: () => T;
-  let effect: watcherCallBack<T>;
+  let effect: WatcherCallBack<T>;
   let autorun: boolean;
 
   if (cb === null) {
@@ -119,17 +119,9 @@ function createWatcher<T>(
       () => {
         if (hasEnded) return;
 
-        stopRef = vm.$watch(
-          getter,
-          options.lazy
-            ? flush
-            : (n: T, o: T) => {
-                shiftCallback(n, o);
-              },
-          {
-            deep: options.deep,
-          }
-        );
+        stopRef = vm.$watch(getter, effect, {
+          deep: options.deep,
+        });
       },
       flushMode
     );
@@ -181,21 +173,23 @@ export function watch<T = any>(
   options?: Omit<Partial<WatcherOption>, 'lazy'>
 ): () => void;
 export function watch<T = any>(
-  source: watcherSource<T>,
-  cb: watcherCallBack<T>,
+  source: WatcherSource<T>,
+  cb: WatcherCallBack<T>,
   options?: Partial<WatcherOption>
 ): () => void;
 export function watch<T = any>(
-  source: WatcherFun<void> | watcherSource<T>,
-  cb?: Partial<WatcherOption> | watcherCallBack<T>,
+  source: WatcherFun<void> | WatcherSource<T>,
+  cb?: Partial<WatcherOption> | WatcherCallBack<T>,
   options?: Partial<WatcherOption>
 ): () => void {
-  let callbck: watcherCallBack<T> | null = null;
-  if (typeof source === 'function' && (arguments.length === 1 || typeof cb !== 'function')) {
+  let callbck: WatcherCallBack<T> | null = null;
+  if (typeof cb === 'function') {
+    // source watch
+    callbck = cb as WatcherCallBack<T>;
+  } else {
+    // effect watch
     options = cb as Partial<WatcherOption>;
     callbck = null;
-  } else {
-    callbck = cb as watcherCallBack<T>;
   }
 
   const opts: WatcherOption = {
@@ -204,7 +198,7 @@ export function watch<T = any>(
       deep: false,
       flush: 'post',
     },
-    ...(options || {}),
+    ...options,
   };
   let vm = getCurrentVM();
   if (!vm) {
@@ -216,5 +210,5 @@ export function watch<T = any>(
     installWatchEnv(vm);
   }
 
-  return createWatcher(vm, source as watcherSource<T>, callbck, opts);
+  return createWatcher(vm, source as WatcherSource<T>, callbck, opts);
 }

@@ -293,7 +293,7 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('autorun with options', () => {
+    it('autorun - sync', () => {
       const vm = new Vue({
         setup() {
           const count = ref(0);
