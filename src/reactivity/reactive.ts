@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
-import { isPlainObject, def, hasOwn } from '../utils';
+import { isPlainObject, def, hasOwn, warn } from '../utils';
 import { isComponentInstance, createComponentInstance } from '../helper';
 import {
   AccessControIdentifierlKey,
@@ -127,6 +127,12 @@ function observe<T>(obj: T): T {
  * Make obj reactivity
  */
 export function reactive<T = any>(obj: T): UnwrapRef<T> {
+  if (process.env.NODE_ENV !== 'production' && !obj) {
+    warn('"reactive()" is called without provide an "object".');
+    // @ts-ignore
+    return;
+  }
+
   if (!isPlainObject(obj) || isReactive(obj) || isNonReactive(obj) || !Object.isExtensible(obj)) {
     return obj as any;
   }

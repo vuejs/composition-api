@@ -75,6 +75,19 @@ describe('api/reactive', () => {
       expect(app.$el.querySelector('span').textContent).toBe('1');
     }).then(done);
   });
+
+  it('should warn for non-object params', () => {
+    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
+    reactive();
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: "reactive()" is called without provide an "object".'
+    );
+    reactive(false);
+    expect(warn.mock.calls[1][0]).toMatch(
+      '[Vue warn]: "reactive()" is called without provide an "object".'
+    );
+    warn.mockRestore();
+  });
 });
 
 describe('api/toRefs', () => {

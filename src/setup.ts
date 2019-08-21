@@ -173,7 +173,7 @@ export function mixin(Vue: VueConstructor) {
     if (process.env.NODE_ENV !== 'production') {
       assert(
         false,
-        `"setup" must return a "Object" or a "Function", get "${Object.prototype.toString
+        `"setup" must return a "Object" or a "Function", got "${Object.prototype.toString
           .call(binding)
           .slice(8, -1)}"`
       );
