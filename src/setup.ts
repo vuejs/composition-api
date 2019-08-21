@@ -97,6 +97,7 @@ export function mixin(Vue: VueConstructor) {
   /**
    * Vuex init hook, injected into each instances init hooks list.
    */
+
   function functionApiInit(this: ComponentInstance) {
     const vm = this;
     const $options = vm.$options;

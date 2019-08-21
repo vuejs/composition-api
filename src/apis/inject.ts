@@ -34,7 +34,11 @@ function createInjectValue<T>(value: T, vm: ComponentInstance): Ref<T> {
 export function provide<T>(key: InjectionKey<T> | string, value: T | Ref<T>): void {
   const vm: any = ensureCurrentVMInFn('provide');
   if (!vm._provided) {
-    vm._provided = {};
+    const provideCache = {};
+    Object.defineProperty(vm, '_provided', {
+      get: () => provideCache,
+      set: v => Object.assign(provideCache, v),
+    });
   }
 
   vm._provided[key as string] = value;
