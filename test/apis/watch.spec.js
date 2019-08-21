@@ -2,6 +2,7 @@ const Vue = require('vue/dist/vue.common.js');
 const { ref, reactive, watch } = require('../../src');
 
 describe('api/watch', () => {
+  const anyFn = expect.any(Function);
   let spy;
   beforeEach(() => {
     spy = jest.fn();
@@ -22,14 +23,14 @@ describe('api/watch', () => {
       },
       template: `<div>{{a}}</div>`,
     }).$mount();
-    expect(spy.mock.calls.length).toBe(1);
-    expect(spy).toHaveBeenLastCalledWith(1, undefined);
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(1, undefined, anyFn);
     vm.a = 2;
     vm.a = 3;
-    expect(spy.mock.calls.length).toBe(1);
+    expect(spy).toBeCalledTimes(1);
     waitForUpdate(() => {
-      expect(spy.mock.calls.length).toBe(2);
-      expect(spy).toHaveBeenLastCalledWith(3, 1);
+      expect(spy).toBeCalledTimes(2);
+      expect(spy).toHaveBeenLastCalledWith(3, 1, anyFn);
     }).then(done);
   });
 
@@ -37,7 +38,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, spy, { flush: 'pre' });
+        watch(a, (n, o) => spy(n, o), { flush: 'pre' });
 
         return {
           a,
@@ -45,12 +46,12 @@ describe('api/watch', () => {
       },
       template: `<div>{{a}}</div>`,
     }).$mount();
-    expect(spy.mock.calls.length).toBe(1);
+    expect(spy).toBeCalledTimes(1);
     expect(spy).toHaveBeenLastCalledWith(1, undefined);
     vm.a = 2;
-    expect(spy.mock.calls.length).toBe(1);
+    expect(spy).toBeCalledTimes(1);
     waitForUpdate(() => {
-      expect(spy.mock.calls.length).toBe(2);
+      expect(spy).toBeCalledTimes(2);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -59,7 +60,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(() => a.value, spy);
+        watch(() => a.value, (n, o) => spy(n, o));
 
         return {
           a,
@@ -67,12 +68,12 @@ describe('api/watch', () => {
       },
       template: `<div>{{a}}</div>`,
     }).$mount();
-    expect(spy.mock.calls.length).toBe(1);
+    expect(spy).toBeCalledTimes(1);
     expect(spy).toHaveBeenLastCalledWith(1, undefined);
     vm.a = 2;
-    expect(spy.mock.calls.length).toBe(1);
+    expect(spy).toBeCalledTimes(1);
     waitForUpdate(() => {
-      expect(spy.mock.calls.length).toBe(2);
+      expect(spy).toBeCalledTimes(2);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -82,12 +83,12 @@ describe('api/watch', () => {
     const a = ref(1);
     const Test = Vue.extend({
       setup() {
-        watch(a, spy1);
+        watch(a, (n, o) => spy1(n, o));
       },
     });
     new Test({
       setup() {
-        watch(a, spy);
+        watch(a, (n, o) => spy(n, o));
         return {
           a,
         };
@@ -105,7 +106,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, spy, { lazy: true });
+        watch(a, (n, o) => spy(n, o), { lazy: true });
 
         return {
           a,
@@ -124,7 +125,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref({ b: 1 });
-        watch(a, spy, { lazy: true, deep: true });
+        watch(a, (n, o) => spy(n, o), { lazy: true, deep: true });
 
         return {
           a,
@@ -171,7 +172,7 @@ describe('api/watch', () => {
     vm.a = 2;
     waitForUpdate(() => {
       expect(rerenderedText).toBe('2');
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -198,7 +199,7 @@ describe('api/watch', () => {
     }).$mount();
     vm.a = 2;
     waitForUpdate(() => {
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -207,7 +208,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, spy, { lazy: true, flush: 'sync' });
+        watch(a, (n, o) => spy(n, o), { lazy: true, flush: 'sync' });
         return {
           a,
         };
@@ -222,7 +223,7 @@ describe('api/watch', () => {
     vm.a = 3;
     expect(spy).toHaveBeenLastCalledWith(3, 2);
     waitForUpdate(() => {
-      expect(spy.mock.calls.length).toBe(2);
+      expect(spy).toBeCalledTimes(2);
     }).then(done);
   });
 
@@ -230,7 +231,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, spy, { lazy: true });
+        watch(a, (n, o) => spy(n, o), { lazy: true });
 
         return {
           数据: a,
@@ -252,22 +253,24 @@ describe('api/watch', () => {
     new Vue({
       setup() {
         const count = ref(0);
-        watch(count, spy, { flush: 'sync' });
+        watch(count, (n, o) => spy(n, o), { flush: 'sync' });
         count.value++;
       },
     });
-    expect(spy.mock.calls.length).toBe(2);
+    expect(spy).toBeCalledTimes(2);
     expect(spy).toHaveBeenNthCalledWith(1, 0, undefined);
     expect(spy).toHaveBeenNthCalledWith(2, 1, 0);
   });
 
-  describe('autorun', () => {
+  describe('simple effect', () => {
     let renderedText;
     it('should work', done => {
+      let onCleanup;
       const vm = new Vue({
         setup() {
           const count = ref(0);
-          watch(() => {
+          watch(_onCleanup => {
+            onCleanup = _onCleanup;
             spy(count.value);
             renderedText = vm.$el.textContent;
           });
@@ -282,6 +285,7 @@ describe('api/watch', () => {
       }).$mount();
       expect(spy).not.toHaveBeenCalled();
       waitForUpdate(() => {
+        expect(onCleanup).toEqual(anyFn);
         expect(renderedText).toBe('0');
         expect(spy).toHaveBeenLastCalledWith(0);
         vm.count++;
@@ -293,7 +297,7 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('autorun - sync', () => {
+    it('sync=true', () => {
       const vm = new Vue({
         setup() {
           const count = ref(0);
@@ -324,7 +328,7 @@ describe('api/watch', () => {
         setup() {
           obj1 = reactive({ a: 1 });
           obj2 = reactive({ a: 2 });
-          watch([() => obj1.a, () => obj2.a], spy);
+          watch([() => obj1.a, () => obj2.a], (n, o) => spy(n, o));
           return {
             obj1,
             obj2,
@@ -332,7 +336,7 @@ describe('api/watch', () => {
         },
         template: `<div>{{obj1.a}} {{obj2.a}}</div>`,
       }).$mount();
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith([1, 2], undefined);
       obj1.a = 2;
       obj2.a = 3;
@@ -340,13 +344,13 @@ describe('api/watch', () => {
       obj1.a = 3;
       obj2.a = 4;
       waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(2);
+        expect(spy).toBeCalledTimes(2);
         expect(spy).toHaveBeenLastCalledWith([3, 4], [1, 2]);
         obj2.a = 5;
         obj2.a = 6;
       })
         .then(() => {
-          expect(spy.mock.calls.length).toBe(3);
+          expect(spy).toBeCalledTimes(3);
           expect(spy).toHaveBeenLastCalledWith([3, 6], [3, 4]);
         })
         .then(done);
@@ -357,7 +361,7 @@ describe('api/watch', () => {
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], spy, { lazy: false, flush: 'post' });
+          watch([a, b], (n, o) => spy(n, o), { lazy: false, flush: 'post' });
 
           return {
             a,
@@ -366,18 +370,18 @@ describe('api/watch', () => {
         },
         template: `<div>{{a}} {{b}}</div>`,
       }).$mount();
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith([1, 1], undefined);
       vm.a = 2;
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(2);
+        expect(spy).toBeCalledTimes(2);
         expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
         vm.a = 3;
         vm.b = 3;
       })
         .then(() => {
-          expect(spy.mock.calls.length).toBe(3);
+          expect(spy).toBeCalledTimes(3);
           expect(spy).toHaveBeenLastCalledWith([3, 3], [2, 1]);
         })
         .then(done);
@@ -388,7 +392,7 @@ describe('api/watch', () => {
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], spy, { lazy: true, flush: 'post' });
+          watch([a, b], (n, o) => spy(n, o), { lazy: true, flush: 'post' });
 
           return {
             a,
@@ -400,13 +404,13 @@ describe('api/watch', () => {
       vm.a = 2;
       expect(spy).not.toHaveBeenCalled();
       waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(1);
+        expect(spy).toBeCalledTimes(1);
         expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
         vm.a = 3;
         vm.b = 3;
       })
         .then(() => {
-          expect(spy.mock.calls.length).toBe(2);
+          expect(spy).toBeCalledTimes(2);
           expect(spy).toHaveBeenLastCalledWith([3, 3], [2, 1]);
         })
         .then(done);
@@ -417,7 +421,7 @@ describe('api/watch', () => {
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], spy, { lazy: false, flush: 'sync' });
+          watch([a, b], (n, o) => spy(n, o), { lazy: false, flush: 'sync' });
 
           return {
             a,
@@ -425,10 +429,10 @@ describe('api/watch', () => {
           };
         },
       });
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith([1, 1], undefined);
       vm.a = 2;
-      expect(spy.mock.calls.length).toBe(2);
+      expect(spy).toBeCalledTimes(2);
       expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
       vm.a = 3;
       vm.b = 3;
@@ -442,7 +446,7 @@ describe('api/watch', () => {
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], spy, { lazy: true, flush: 'sync' });
+          watch([a, b], (n, o) => spy(n, o), { lazy: true, flush: 'sync' });
 
           return {
             a,
@@ -452,11 +456,11 @@ describe('api/watch', () => {
       });
       expect(spy).not.toHaveBeenCalled();
       vm.a = 2;
-      expect(spy.mock.calls.length).toBe(1);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1]);
       vm.a = 3;
       vm.b = 3;
-      expect(spy.mock.calls.length).toBe(3);
+      expect(spy).toBeCalledTimes(3);
       expect(spy).toHaveBeenNthCalledWith(2, [3, 1], [2, 1]);
       expect(spy).toHaveBeenNthCalledWith(3, [3, 3], [3, 1]);
     });
@@ -465,13 +469,89 @@ describe('api/watch', () => {
   describe('Out of setup', () => {
     it('should work', done => {
       const obj = reactive({ a: 1 });
-      watch(() => obj.a, spy);
+      watch(() => obj.a, (n, o) => spy(n, o));
       expect(spy).toHaveBeenLastCalledWith(1, undefined);
       obj.a = 2;
       waitForUpdate(() => {
-        expect(spy.mock.calls.length).toBe(2);
+        expect(spy).toBeCalledTimes(2);
         expect(spy).toHaveBeenLastCalledWith(2, 1);
       }).then(done);
+    });
+
+    it('simple effect', done => {
+      const obj = reactive({ a: 1 });
+      watch(() => spy(obj.a));
+      expect(spy).not.toHaveBeenCalled();
+      waitForUpdate(() => {
+        expect(spy).toBeCalledTimes(1);
+        expect(spy).toHaveBeenLastCalledWith(1);
+        obj.a = 2;
+      })
+        .then(() => {
+          expect(spy).toBeCalledTimes(2);
+          expect(spy).toHaveBeenLastCalledWith(2);
+        })
+        .then(done);
+    });
+  });
+
+  describe('cleanup', () => {
+    function getAsyncValue(val) {
+      let handle;
+      let resolve;
+      const p = new Promise(_resolve => {
+        resolve = _resolve;
+        handle = setTimeout(() => {
+          resolve(val);
+        }, 0);
+      });
+
+      p.cancel = () => {
+        clearTimeout(handle);
+        resolve('canceled');
+      };
+      return p;
+    }
+
+    it('work with a single getter', done => {
+      const id = ref(1);
+      const promises = [];
+      watch(onCleanup => {
+        const val = getAsyncValue(id.value);
+        promises.push(val);
+        onCleanup(() => {
+          val.cancel();
+        });
+      });
+      waitForUpdate(() => {
+        id.value = 2;
+      })
+        .thenWaitFor(async next => {
+          const values = await Promise.all(promises);
+          expect(values).toEqual(['canceled', 2]);
+          next();
+        })
+        .then(done);
+    });
+
+    it('work with callback ', done => {
+      const id = ref(1);
+      const promises = [];
+      watch(id, (newVal, oldVal, onCleanup) => {
+        const val = getAsyncValue(newVal);
+        promises.push(val);
+        onCleanup(() => {
+          val.cancel();
+        });
+      });
+      id.value = 2;
+      waitForUpdate()
+        .thenWaitFor(async next => {
+          const values = await Promise.all(promises);
+          expect(values).toEqual(['canceled', 2]);
+          next();
+        })
+        .then(done);
     });
   });
 });

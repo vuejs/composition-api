@@ -1,19 +1,26 @@
 import { ComponentInstance } from '../component';
 import { Ref, isRef } from '../reactivity';
-import { assert, noopFn } from '../utils';
+import { assert, noopFn, logError } from '../utils';
 import { createComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
-type FnWithReturnValue<T> = () => T;
-type SimpleEffect = FnWithReturnValue<void>;
-type StopHandle = FnWithReturnValue<void>;
-type WatcherCallBack<T> = (newVal: T, oldVal: T) => void;
-type WatcherSource<T> = Ref<T> | FnWithReturnValue<T>;
+type CleanupRegistrator = (invalidate: () => void) => void;
+
+type SimpleEffect = (onCleanup: CleanupRegistrator) => void;
+
+type StopHandle = () => void;
+
+type WatcherCallBack<T> = (newVal: T, oldVal: T, onCleanup: CleanupRegistrator) => void;
+
+type WatcherSource<T> = Ref<T> | (() => T);
+
 type MapSources<T> = {
   [K in keyof T]: T[K] extends WatcherSource<infer V> ? V : never;
 };
+
 type FlushMode = 'pre' | 'post' | 'sync';
+
 interface WatcherOption {
   lazy: boolean;
   deep: boolean;
@@ -49,36 +56,31 @@ function flushQueue(vm: any, key: any) {
   queue.length = 0;
 }
 
-function scheduleTask(vm: any, fn: Function, mode: Exclude<FlushMode, 'sync'>) {
-  if (vm === fallbackVM) {
-    // with a current active instance, ignore flush mode
-    fn();
-  } else {
-    // flush all when beforeUpdate and updated are not fired
-    const fallbackFlush = () => {
-      vm.$nextTick(() => {
-        if (vm[WatcherPreFlushQueueKey].length) {
-          flushQueue(vm, WatcherPreFlushQueueKey);
-        }
-        if (vm[WatcherPostFlushQueueKey].length) {
-          flushQueue(vm, WatcherPostFlushQueueKey);
-        }
-      });
-    };
+function queueFlushJob(vm: any, fn: () => void, mode: Exclude<FlushMode, 'sync'>) {
+  // flush all when beforeUpdate and updated are not fired
+  const fallbackFlush = () => {
+    vm.$nextTick(() => {
+      if (vm[WatcherPreFlushQueueKey].length) {
+        flushQueue(vm, WatcherPreFlushQueueKey);
+      }
+      if (vm[WatcherPostFlushQueueKey].length) {
+        flushQueue(vm, WatcherPostFlushQueueKey);
+      }
+    });
+  };
 
-    switch (mode) {
-      case 'pre':
-        fallbackFlush();
-        vm[WatcherPreFlushQueueKey].push(fn);
-        break;
-      case 'post':
-        fallbackFlush();
-        vm[WatcherPostFlushQueueKey].push(fn);
-        break;
-      default:
-        assert(false, `flush must be one of ["post", "pre", "sync"], but got ${mode}`);
-        break;
-    }
+  switch (mode) {
+    case 'pre':
+      fallbackFlush();
+      vm[WatcherPreFlushQueueKey].push(fn);
+      break;
+    case 'post':
+      fallbackFlush();
+      vm[WatcherPostFlushQueueKey].push(fn);
+      break;
+    default:
+      assert(false, `flush must be one of ["post", "pre", "sync"], but got ${mode}`);
+      break;
   }
 }
 
@@ -89,11 +91,29 @@ function createWatcher(
   options: WatcherOption
 ): () => void {
   const flushMode = options.flush;
+  let cleanup: () => void;
+  const registerCleanup: CleanupRegistrator = (fn: () => void) => {
+    cleanup = () => {
+      try {
+        fn();
+      } catch (error) {
+        logError(error, vm, 'onCleanup()');
+      }
+    };
+  };
 
   // effect watch
   if (cb === null) {
+    const getter = () => {
+      // cleanup before running cb again
+      if (cleanup) {
+        cleanup();
+      }
+
+      (source as SimpleEffect)(registerCleanup);
+    };
     if (flushMode === 'sync') {
-      return vm.$watch(source as SimpleEffect, noopFn, {
+      return vm.$watch(getter, noopFn, {
         immediate: true,
         deep: options.deep,
         // @ts-ignore
@@ -103,17 +123,20 @@ function createWatcher(
 
     let stopRef: Function;
     let hasEnded: boolean = false;
-    scheduleTask(
-      vm,
-      () => {
-        if (hasEnded) return;
+    const doWatch = () => {
+      if (hasEnded) return;
 
-        stopRef = vm.$watch(source as SimpleEffect, noopFn, {
-          deep: options.deep,
-        });
-      },
-      flushMode
-    );
+      stopRef = vm.$watch(getter, noopFn, {
+        deep: options.deep,
+      });
+    };
+
+    /* without a current active instance, ignore pre|post mode */
+    if (vm === fallbackVM) {
+      vm.$nextTick(doWatch);
+    } else {
+      queueFlushJob(vm, doWatch, flushMode);
+    }
 
     return () => {
       hasEnded = true;
@@ -130,40 +153,42 @@ function createWatcher(
     getter = source as () => any;
   }
 
-  const flush =
-    flushMode === 'sync'
-      ? cb
-      : (n: any, o: any) => {
-          scheduleTask(
+  const applyCb = (n: any, o: any) => {
+    // cleanup before running cb again
+    if (cleanup) {
+      cleanup();
+    }
+
+    cb(n, o, registerCleanup);
+  };
+
+  const callback =
+    flushMode === 'sync' ||
+    /* without a current active instance, ignore pre|post mode */
+    vm === fallbackVM
+      ? applyCb
+      : (n: any, o: any) =>
+          queueFlushJob(
             vm,
             () => {
-              cb(n, o);
+              applyCb(n, o);
             },
             flushMode
           );
-        };
 
   // `shiftCallback` is used to handle firty sync effect.
-  // The subsequent callbcks will redirect to `flush`.
+  // The subsequent callbcks will redirect to `callback`.
   let shiftCallback = (n: any, o: any) => {
-    shiftCallback = flush;
-    cb(n, o);
+    shiftCallback = callback;
+    applyCb(n, o);
   };
 
-  return vm.$watch(
-    getter,
-    options.lazy
-      ? flush
-      : (n: any, o: any) => {
-          shiftCallback(n, o);
-        },
-    {
-      immediate: !options.lazy,
-      deep: options.deep,
-      // @ts-ignore
-      sync: flushMode === 'sync',
-    }
-  );
+  return vm.$watch(getter, options.lazy ? callback : shiftCallback, {
+    immediate: !options.lazy,
+    deep: options.deep,
+    // @ts-ignore
+    sync: flushMode === 'sync',
+  });
 }
 
 export function watch<T = any>(
@@ -177,7 +202,7 @@ export function watch<T = any>(
 ): StopHandle;
 export function watch<T extends WatcherSource<unknown>[]>(
   sources: T,
-  cb: (newValues: MapSources<T>, oldValues: MapSources<T>) => any,
+  cb: (newValues: MapSources<T>, oldValues: MapSources<T>, onCleanup: CleanupRegistrator) => any,
   options?: Partial<WatcherOption>
 ): StopHandle;
 export function watch(
