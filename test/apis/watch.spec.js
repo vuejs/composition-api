@@ -534,6 +534,31 @@ describe('api/watch', () => {
         .then(done);
     });
 
+    it('should not collect reactive in onCleanup', done => {
+      const ref1 = ref(1);
+      const ref2 = ref(1);
+      watch(onCleanup => {
+        spy(ref1.value);
+        onCleanup(() => {
+          ref2.value = ref2.value + 1;
+        });
+      });
+      waitForUpdate(() => {
+        expect(spy).toBeCalledTimes(1);
+        expect(spy).toHaveBeenLastCalledWith(1);
+        ref1.value++;
+      })
+        .then(() => {
+          expect(spy).toBeCalledTimes(2);
+          expect(spy).toHaveBeenLastCalledWith(2);
+          ref2.value = 10;
+        })
+        .then(() => {
+          expect(spy).toBeCalledTimes(2);
+        })
+        .then(done);
+    });
+
     it('work with callback ', done => {
       const id = ref(1);
       const promises = [];

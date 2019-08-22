@@ -1,6 +1,6 @@
 import { ComponentInstance } from '../component';
 import { Ref, isRef } from '../reactivity';
-import { assert, noopFn, logError } from '../utils';
+import { assert, logError, noopFn } from '../utils';
 import { createComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
@@ -104,20 +104,21 @@ function createWatcher(
 
   // effect watch
   if (cb === null) {
-    const getter = () => {
-      // cleanup before running cb again
+    const getter = () => (source as SimpleEffect)(registerCleanup);
+    // cleanup before running getter again
+    const runBefore = () => {
       if (cleanup) {
         cleanup();
       }
-
-      (source as SimpleEffect)(registerCleanup);
     };
+
     if (flushMode === 'sync') {
       return vm.$watch(getter, noopFn, {
         immediate: true,
         deep: options.deep,
         // @ts-ignore
         sync: true,
+        before: runBefore,
       });
     }
 
@@ -127,7 +128,10 @@ function createWatcher(
       if (hasEnded) return;
 
       stopRef = vm.$watch(getter, noopFn, {
+        immediate: false,
         deep: options.deep,
+        // @ts-ignore
+        before: runBefore,
       });
     };
 

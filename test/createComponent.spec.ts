@@ -1,7 +1,5 @@
+import { createComponent, createElement as h, ref } from '../src';
 const Vue = require('vue/dist/vue.common.js');
-import { plugin, createComponent, createElement as h, ref } from '../src';
-
-Vue.use(plugin);
 
 it('should work', () => {
   const Child = createComponent({
