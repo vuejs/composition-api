@@ -71,7 +71,7 @@ const Component = {
 
 # Limitations
 
-## Unwrap
+## `Ref` Unwrap
 
 `Unwrap` is not working with Array index.
 
@@ -135,4 +135,102 @@ b.list.push(
 );
 // unwrapped
 b.list[1].count === 1; // true
+```
+
+---
+
+## `watch()` API
+
+`onTrack` and `onTrigger` are not available in `WatchOptions`.
+
+---
+
+## Template Refs
+
+> ✅ Support &nbsp;&nbsp;&nbsp;&nbsp;❌ Not Support
+
+✅ String ref && return it from `setup()`:
+
+```html
+<template>
+  <div ref="root"></div>
+</template>
+
+<script>
+  export default {
+    setup() {
+      const root = ref(null);
+
+      onMounted(() => {
+        // the DOM element will be assigned to the ref after initial render
+        console.log(root.value); // <div/>
+      });
+
+      return {
+        root,
+      };
+    },
+  };
+</script>
+```
+
+✅ String ref && return it from `setup()` && Render Function / JSX:
+
+```jsx
+export default {
+  setup() {
+    const root = ref(null);
+
+    onMounted(() => {
+      // the DOM element will be assigned to the ref after initial render
+      console.log(root.value); // <div/>
+    });
+
+    return {
+      root,
+    };
+  },
+  render() {
+    // with JSX
+    return () => <div ref="root" />;
+  },
+};
+```
+
+❌ Function ref:
+
+```html
+<template>
+  <div :ref="el => root = el"></div>
+</template>
+
+<script>
+  export default {
+    setup() {
+      const root = ref(null);
+
+      return {
+        root,
+      };
+    },
+  };
+</script>
+```
+
+❌ Render Function / JSX:
+
+```jsx
+export default {
+  setup() {
+    const root = ref(null);
+
+    return () =>
+      h('div', {
+        ref: root,
+      });
+
+    // with JSX
+    return () => <div ref={root} />;
+  },
+};
 ```
