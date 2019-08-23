@@ -51,16 +51,16 @@ function updateTemplateRef(vm: ComponentInstance) {
   }
 
   const newKeys = Object.keys(refs);
-  const validNewKyes = [];
+  const validNewKeys = [];
   for (let index = 0; index < newKeys.length; index++) {
     const key = newKeys[index];
     const setupValue = rawBindings[key];
     if (refs[key] && setupValue && isRef(setupValue)) {
       setupValue.value = refs[key];
-      validNewKyes.push(key);
+      validNewKeys.push(key);
     }
   }
-  vmStateManager.set(vm, 'refs', validNewKyes);
+  vmStateManager.set(vm, 'refs', validNewKeys);
 }
 
 function activateCurrentInstance(
@@ -124,7 +124,7 @@ export function mixin(Vue: VueConstructor) {
     }
 
     const { data } = $options;
-    // wapper the data option, so we can invoke setup before data get resolved
+    // wrapper the data option, so we can invoke setup before data get resolved
     $options.data = function wrappedData() {
       initSetup(vm, vm.$props);
       return typeof data === 'function' ? data.call(vm, vm) : data || {};

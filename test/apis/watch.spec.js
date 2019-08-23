@@ -34,7 +34,7 @@ describe('api/watch', () => {
     }).then(done);
   });
 
-  it('basic usage(value warpper)', done => {
+  it('basic usage(value wrapper)', done => {
     const vm = new Vue({
       setup() {
         const a = ref(1);

@@ -180,8 +180,8 @@ function createWatcher(
             flushMode
           );
 
-  // `shiftCallback` is used to handle firty sync effect.
-  // The subsequent callbcks will redirect to `callback`.
+  // `shiftCallback` is used to handle dirty sync effect.
+  // The subsequent callbacks will redirect to `callback`.
   let shiftCallback = (n: any, o: any) => {
     shiftCallback = callback;
     applyCb(n, o);
@@ -214,14 +214,14 @@ export function watch(
   cb?: Partial<WatcherOption> | WatcherCallBack<any>,
   options?: Partial<WatcherOption>
 ): StopHandle {
-  let callbck: WatcherCallBack<unknown> | null = null;
+  let callback: WatcherCallBack<unknown> | null = null;
   if (typeof cb === 'function') {
     // source watch
-    callbck = cb as WatcherCallBack<unknown>;
+    callback = cb as WatcherCallBack<unknown>;
   } else {
     // effect watch
     options = cb as Partial<WatcherOption>;
-    callbck = null;
+    callback = null;
   }
 
   const opts: WatcherOption = {
@@ -242,5 +242,5 @@ export function watch(
     installWatchEnv(vm);
   }
 
-  return createWatcher(vm, source, callbck, opts);
+  return createWatcher(vm, source, callback, opts);
 }
