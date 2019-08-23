@@ -146,10 +146,9 @@ export function mixin(Vue: VueConstructor) {
     if (!binding) return;
 
     if (isFunction(binding)) {
-      // keep typescript happy with the binding type.
-      const bindingFunc = binding;
       // keep currentInstance accessible for createElement
-      vm.$options.render = () => activateCurrentInstance(vm, vm_ => bindingFunc(vm_.$props, ctx));
+      vm.$options.render = () =>
+        activateCurrentInstance(vm, vm_ => (binding as any)(vm_.$props, ctx));
       return;
     }
 
