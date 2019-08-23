@@ -33,14 +33,13 @@ export function computed<T>(options: Option<T>['get'] | Option<T>): Ref<T> {
   });
 
   return createRef<T>({
-    get: () => (computedHost as any).$$state,
+    get: () => computedHost.$$state,
     set: (v: T) => {
       if (process.env.NODE_ENV !== 'production' && !set) {
         warn('Computed property was assigned to but it has no setter.', vm!);
         return;
       }
-
-      (computedHost as any).$$state = v;
+      computedHost.$$state = v;
     },
   });
 }
