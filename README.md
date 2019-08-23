@@ -58,6 +58,7 @@ To let TypeScript properly infer types inside Vue component options, you need to
 
 ```ts
 import Vue from 'vue';
+import { createComponent } from 'vue-function-api';
 
 const Component = createComponent({
   // type inference enabled

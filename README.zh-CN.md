@@ -58,6 +58,7 @@ Vue.use(VueFunctionApi);
 
 ```ts
 import Vue from 'vue';
+import { createComponent } from 'vue-function-api';
 
 const Component = createComponent({
   // 启用类型推断
