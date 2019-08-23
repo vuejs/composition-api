@@ -98,7 +98,7 @@ describe('setup', () => {
       .then(done);
   });
 
-  it('should reveive props as first params', () => {
+  it('should receive props as first params', () => {
     let props;
     new Vue({
       props: ['a'],
@@ -112,7 +112,7 @@ describe('setup', () => {
     expect(props.a).toBe(1);
   });
 
-  it('should reveive SetupContext second params', () => {
+  it('should receive SetupContext second params', () => {
     let context;
     const vm = new Vue({
       setup(_, ctx) {
@@ -343,7 +343,7 @@ describe('setup', () => {
   });
 
   it('inline render function should work', done => {
-    // let createELement;
+    // let createElement;
     const vm = new Vue({
       props: ['msg'],
       template: '<div>1</div>',

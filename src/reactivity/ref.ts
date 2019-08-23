@@ -100,7 +100,7 @@ export function createRef<T>(options: RefOption<T>) {
 
 type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
 
-// without init value, explict typed: a = ref<{ a: number }>()
+// without init value, explicit typed: a = ref<{ a: number }>()
 // typeof a will be Ref<{ a: number } | undefined>
 export function ref<T = undefined>(): Ref<T | undefined>;
 // with init value: a = ref({ a: ref(0) })
@@ -138,16 +138,16 @@ export function toRefs<T extends Data = Data>(obj: T): Refs<T> {
 
   const res: Refs<T> = {} as any;
   Object.keys(obj).forEach(key => {
-    let val = obj[key];
+    let val: any = obj[key];
     // use ref to proxy the property
     if (!isRef(val)) {
-      val = createRef({
+      val = createRef<any>({
         get: () => obj[key],
-        set: v => (obj[key as keyof T] = v as any),
+        set: v => (obj[key as keyof T] = v),
       });
     }
     // todo
-    res[key as keyof T] = val as any;
+    res[key as keyof T] = val;
   });
 
   return res;
