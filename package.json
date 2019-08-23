@@ -23,8 +23,7 @@
     "start": "cross-env TARGET=es rollup -c -w",
     "build": "rollup -c",
     "test": "cross-env NODE_ENV=test jest",
-    "prepub": "npm run test && npm run build",
-    "pub": "npm publish"
+    "release": "bash scripts/release.sh"
   },
   "bugs": {
     "url": "https://github.com/vuejs/vue-function-api/issues"
