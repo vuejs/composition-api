@@ -84,7 +84,7 @@ const state = reactive({
 // 无法 unwrap, `.value` 是必需的
 state.list[0].value === 0; // true
 
-state.list.push(ref(1);
+state.list.push(ref(1));
 // 无法 unwrap, `.value` 是必需的
 state.list[1].value === 1; // true
 ```
