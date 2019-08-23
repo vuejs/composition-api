@@ -45,9 +45,9 @@ You must explicitly install `vue-function-api` via `Vue.use()`:
 
 ```js
 import Vue from 'vue';
-import { plugin } from 'vue-function-api';
+import VueFunctionApi from 'vue-function-api';
 
-Vue.use(plugin);
+Vue.use(VueFunctionApi);
 ```
 
 After installing the plugin you can use the [Composition API](https://vue-composition-api-rfc.netlify.com/) to compose your component.
@@ -217,7 +217,7 @@ export default {
 </script>
 ```
 
-❌ Render Function / JSX:
+❌ Render Function / JSX in `setup()`:
 
 ```jsx
 export default {
@@ -233,4 +233,43 @@ export default {
     return () => <div ref={root} />;
   },
 };
+```
+
+If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+
+> ⚠️**Warning**: The `SetupContext.refs` won't existed in `Vue3.0`. `Vue-function-api` provide it as a workaround here.
+
+```js
+export default {
+  setup(initProps, setupContext) {
+    const refs = setupContext.refs;
+    onMounted(() => {
+      // the DOM element will be assigned to the ref after initial render
+      console.log(refs.root); // <div/>
+    });
+
+    return () =>
+      h('div', {
+        ref: 'root',
+      });
+
+    // with JSX
+    return () => <div ref="root" />;
+  },
+};
+```
+
+You may also need to augment the `SetupContext` when wokring with TypeScript:
+
+```ts
+import Vue from 'vue';
+import VueFunctionApi from 'vue-function-api';
+
+Vue.use(VueFunctionApi);
+
+declare module 'vue-function-api/dist/component/component' {
+  interface SetupContext {
+    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
+  }
+}
 ```

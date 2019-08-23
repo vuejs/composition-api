@@ -45,9 +45,9 @@ yarn add vue-function-api
 
 ```js
 import Vue from 'vue';
-import { plugin } from 'vue-function-api';
+import VueFunctionApi from 'vue-function-api';
 
-Vue.use(plugin);
+Vue.use(VueFunctionApi);
 ```
 
 安装插件后，您就可以使用新的[Composition API](https://vue-composition-api-rfc.netlify.com/)来开发组件了。
@@ -233,4 +233,43 @@ export default {
     return () => <div ref={root} />;
   },
 };
+```
+
+如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 vue2 中的 `this.$refs`:
+
+> ⚠️**警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `Vue-function-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
+
+```js
+export default {
+  setup(initProps, setupContext) {
+    const refs = setupContext.refs;
+    onMounted(() => {
+      // the DOM element will be assigned to the ref after initial render
+      console.log(refs.root); // <div/>
+    });
+
+    return () =>
+      h('div', {
+        ref: 'root',
+      });
+
+    // with JSX
+    return () => <div ref="root" />;
+  },
+};
+```
+
+如果项目使用了 TypeScript 中，你还需要扩展 `SetupContext` 类型:
+
+```ts
+import Vue from 'vue';
+import VueFunctionApi from 'vue-function-api';
+
+Vue.use(VueFunctionApi);
+
+declare module 'vue-function-api/dist/component/component' {
+  interface SetupContext {
+    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
+  }
+}
 ```

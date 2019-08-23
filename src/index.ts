@@ -20,8 +20,9 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
   _install(window.Vue);
 }
 
+export default plugin;
 export { default as createElement } from './createElement';
-export { plugin, SetupContext };
+export { SetupContext };
 export { createComponent, PropType } from './component';
 
 export * from './apis/state';

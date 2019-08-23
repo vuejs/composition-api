@@ -47,6 +47,7 @@ function genConfig({ outFile, format, mode }) {
       globals: {
         vue: 'Vue',
       },
+      exports: 'named',
       name: format === 'umd' ? 'vueFunctionApi' : undefined,
     },
     external: ['vue'],

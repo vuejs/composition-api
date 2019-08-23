@@ -43,7 +43,7 @@ export interface SetupContext {
   readonly attrs: Record<string, string>;
   readonly slots: { [key: string]: VNode[] | undefined };
   readonly parent: ComponentInstance | null;
-  root: ComponentInstance;
+  readonly root: ComponentInstance;
 
   emit(event: string, ...args: any[]): void;
 }
