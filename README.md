@@ -57,7 +57,7 @@ After installing the plugin you can use the [Composition API](https://vue-compos
 To let TypeScript properly infer types inside Vue component options, you need to define components with `createComponent`:
 
 ```ts
-import Vue from 'vue';
+import { createComponent } from 'vue-function-api';
 
 const Component = createComponent({
   // type inference enabled

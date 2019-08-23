@@ -57,7 +57,7 @@ Vue.use(VueFunctionApi);
 为了让 TypeScript 正确的推到类型，我们必须使用 `createComponent` 来定义组件:
 
 ```ts
-import Vue from 'vue';
+import { createComponent } from 'vue-function-api';
 
 const Component = createComponent({
   // 启用类型推断
