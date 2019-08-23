@@ -1,4 +1,4 @@
-# Vue Function API
+# Vue Composition API
 
 > [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
 
