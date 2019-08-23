@@ -56,7 +56,7 @@ function setupAccessControl(target: AnyObject): void {
 }
 
 /**
- * Auto unwrapping when acccess property
+ * Auto unwrapping when access property
  */
 export function defineAccessControl(target: AnyObject, key: any, val?: any) {
   if (key === '__ob__') return;
@@ -81,7 +81,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     configurable: true,
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val;
-      // if the key is euqal to RefKey, skip the unwrap logic
+      // if the key is equal to RefKey, skip the unwrap logic
       if (key !== RefKey && isRef(value)) {
         return value.value;
       } else {
@@ -92,7 +92,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
       if (getter && !setter) return;
 
       const value = getter ? getter.call(target) : val;
-      // If the key is euqal to RefKey, skip the unwrap logic
+      // If the key is equal to RefKey, skip the unwrap logic
       // If and only if "value" is ref and "newVal" is not a ref,
       // the assignment should be proxied to "value" ref.
       if (key !== RefKey && isRef(value) && !isRef(newVal)) {
@@ -151,7 +151,7 @@ export function nonReactive<T = any>(obj: T): T {
     return obj;
   }
 
-  // set the vue obserable flag at obj
+  // set the vue observable flag at obj
   (obj as any).__ob__ = (observe({}) as any).__ob__;
   // mark as nonReactive
   def(obj, NonReactiveIdentifierKey, NonReactiveIdentifier);
