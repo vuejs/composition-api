@@ -2,7 +2,7 @@
 
 > [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
 
-`vue-function-api` 使开发者们可以在 `Vue2.x` 中使用 `Vue3` 引入的**基于函数**的**逻辑复用机制**。
+`@vue/composition-api` 使开发者们可以在 `Vue2.x` 中使用 `Vue3` 引入的**基于函数**的**逻辑复用机制**。
 
 [**English Version**](./README.md)
 
@@ -15,39 +15,39 @@
 - [TypeScript](#TypeScript)
 - [限制](#限制)
 - [API](https://vue-composition-api-rfc.netlify.com/api.html)
-- [Changelog](https://github.com/vuejs/vue-function-api/blob/master/CHANGELOG.md)
+- [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
 
 # 安装
 
 **npm**
 
 ```bash
-npm install vue-function-api --save
+npm install @vue/composition-api --save
 ```
 
 **yarn**
 
 ```bash
-yarn add vue-function-api
+yarn add @vue/composition-api
 ```
 
 **CDN**
 
 ```html
-<script src="https://unpkg.com/vue-function-api/dist/vue-function-api.umd.js"></script>
+<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
 ```
 
-通过全局变量 `window.vueFunctionApi` 来使用。
+通过全局变量 `window.vueCompositionApi` 来使用。
 
 # 使用
 
-您必须显式地通过 `Vue.use()` 来安装 `vue-function-api`:
+在使用任何 `@vue/composition-api` 提供的能力前，必须先通过 `Vue.use()` 进行安装:
 
 ```js
 import Vue from 'vue';
-import VueFunctionApi from 'vue-function-api';
+import VueCompositionApi from '@vue/composition-api';
 
-Vue.use(VueFunctionApi);
+Vue.use(VueCompositionApi);
 ```
 
 安装插件后，您就可以使用新的[Composition API](https://vue-composition-api-rfc.netlify.com/)来开发组件了。
@@ -57,7 +57,7 @@ Vue.use(VueFunctionApi);
 为了让 TypeScript 正确的推到类型，我们必须使用 `createComponent` 来定义组件:
 
 ```ts
-import { createComponent } from 'vue-function-api';
+import { createComponent } from '@vue/composition-api';
 
 const Component = createComponent({
   // 启用类型推断
@@ -237,7 +237,7 @@ export default {
 
 如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 vue2 中的 `this.$refs`:
 
-> :warning: **警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `Vue-function-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
+> :warning: **警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `@vue/composition-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
 
 ```js
 export default {
@@ -263,11 +263,11 @@ export default {
 
 ```ts
 import Vue from 'vue';
-import VueFunctionApi from 'vue-function-api';
+import VueCompositionApi from '@vue/composition-api';
 
-Vue.use(VueFunctionApi);
+Vue.use(VueCompositionApi);
 
-declare module 'vue-function-api/dist/component/component' {
+declare module '@vue/composition-api/dist/component/component' {
   interface SetupContext {
     readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
   }

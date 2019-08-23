@@ -34,7 +34,7 @@ export function hasOwn(obj: Object | any[], key: string): boolean {
 }
 
 export function assert(condition: any, msg: string) {
-  if (!condition) throw new Error(`[vue-function-api] ${msg}`);
+  if (!condition) throw new Error(`[vue-composition-api] ${msg}`);
 }
 
 export function isArray<T>(x: unknown): x is T[] {

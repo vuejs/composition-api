@@ -1,21 +1,3 @@
-# 3.0.0-beta.0
-
-`vue-function-api` v3.0.0 reflects the new [Composition API](https://vue-composition-api-rfc.netlify.com/) RFC. 
-The version is limited to beta until the RFC has been merged.
-
-## Changed
-* rename `value` to `ref`.
-* rename `state` to `reactive`.
-* remove `ref` from `SetupContext`.
-* export `plugin` as `default export`
-  ```js
-  import VueFunctionApi from 'vue-function-api';
-  Vue.use(VueFunctionApi);
-  ```
-
-## Added
-* new APIs `toRefs` and `isRef`.
-
 # 2.2.0
 * Improve typescript support.
 * Export `createElement`.
@@ -24,15 +6,15 @@ The version is limited to beta until the RFC has been merged.
 * Allow string keys in `provide`/`inject`.
 
 # 2.1.2
-* Remove auto-unwrapping for Array ([#53](https://github.com/vuejs/vue-function-api/issues/53)).
+* Remove auto-unwrapping for Array ([#53](https://github.com/vuejs/composition-api/issues/53)).
 
 # 2.1.1
-* Export `set` from `vue-function-api`. Using exported `set` whenever you need to use [Vue.set](https://vuejs.org/v2/api/#Vue-set) or [vm.$set](https://vuejs.org/v2/api/#vm-set). The custom `set` ensures that auto-unwrapping works for the new property.
+* Export `set()` function. Using exported `set` whenever you need to use [Vue.set](https://vuejs.org/v2/api/#Vue-set) or [vm.$set](https://vuejs.org/v2/api/#vm-set). The custom `set` ensures that auto-unwrapping works for the new property.
 * Add a new signature of `provide`: `provide(key, value)`.
 * Fix multiple `provide` invoking per component.
 * Fix order of `setup` invoking.
-* `onErrorCaptured` not triggered ([#25](https://github.com/vuejs/vue-function-api/issues/25)).
-* Fix `this` losing in nested setup call ([#38](https://github.com/vuejs/vue-function-api/issues/38)).
+* `onErrorCaptured` not triggered ([#25](https://github.com/vuejs/composition-api/issues/25)).
+* Fix `this` losing in nested setup call ([#38](https://github.com/vuejs/composition-api/issues/38)).
 * Fix some edge cases of unwarpping.
 * Change `context.slots`'s value. It now proxies to `$scopeSlots` instead of `$slots`.
 

@@ -2,7 +2,7 @@
 
 > [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
 
-`vue-function-api` provides a way to use Vue3's **Composition api** in `Vue2.x`.
+`@vue/composition-api` provides a way to use Vue3's **Composition api** in `Vue2.x`.
 
 [**中文文档**](./README.zh-CN.md)
 
@@ -15,39 +15,39 @@
 - [TypeScript](#TypeScript)
 - [Limitations](#Limitations)
 - [API](https://vue-composition-api-rfc.netlify.com/api.html)
-- [Changelog](https://github.com/vuejs/vue-function-api/blob/master/CHANGELOG.md)
+- [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
 
 # Installation
 
 **npm**
 
 ```bash
-npm install vue-function-api --save
+npm install @vue/composition-api --save
 ```
 
 **yarn**
 
 ```bash
-yarn add vue-function-api
+yarn add @vue/composition-api
 ```
 
 **CDN**
 
 ```html
-<script src="https://unpkg.com/vue-function-api/dist/vue-function-api.umd.js"></script>
+<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
 ```
 
-By using the global variable `window.vueFunctionApi`
+By using the global variable `window.vueCompositionApi`
 
 # Usage
 
-You must explicitly install `vue-function-api` via `Vue.use()`:
+You must install `@vue/composition-api` via `Vue.use()` before using other APIs:
 
 ```js
 import Vue from 'vue';
-import VueFunctionApi from 'vue-function-api';
+import VueCompositionApi from '@vue/composition-api';
 
-Vue.use(VueFunctionApi);
+Vue.use(VueCompositionApi);
 ```
 
 After installing the plugin you can use the [Composition API](https://vue-composition-api-rfc.netlify.com/) to compose your component.
@@ -57,7 +57,7 @@ After installing the plugin you can use the [Composition API](https://vue-compos
 To let TypeScript properly infer types inside Vue component options, you need to define components with `createComponent`:
 
 ```ts
-import { createComponent } from 'vue-function-api';
+import { createComponent } from '@vue/composition-api';
 
 const Component = createComponent({
   // type inference enabled
@@ -240,7 +240,7 @@ export default {
 
 If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
 
-> :warning: **Warning**: The `SetupContext.refs` won't existed in `Vue3.0`. `Vue-function-api` provide it as a workaround here.
+> :warning: **Warning**: The `SetupContext.refs` won't existed in `Vue3.0`. `@vue/composition-api` provide it as a workaround here.
 
 ```js
 export default {
@@ -266,11 +266,11 @@ You may also need to augment the `SetupContext` when wokring with TypeScript:
 
 ```ts
 import Vue from 'vue';
-import VueFunctionApi from 'vue-function-api';
+import VueCompositionApi from '@vue/composition-api';
 
-Vue.use(VueFunctionApi);
+Vue.use(VueCompositionApi);
 
-declare module 'vue-function-api/dist/component/component' {
+declare module '@vue/composition-api/dist/component/component' {
   interface SetupContext {
     readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
   }

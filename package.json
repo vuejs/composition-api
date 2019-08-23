@@ -1,14 +1,15 @@
 {
-  "name": "vue-function-api",
+  "name": "@vue/composition-api",
   "version": "3.0.0-beta.0",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
     "vue",
+    "composition-api",
     "function-api"
   ],
-  "main": "dist/vue-function-api.js",
-  "umd:main": "dist/vue-function-api.umd.js",
-  "module": "dist/vue-function-api.module.js",
+  "main": "dist/vue-composition-api.js",
+  "umd:main": "dist/vue-composition-api.umd.js",
+  "module": "dist/vue-composition-api.module.js",
   "typings": "dist/index.d.ts",
   "author": {
     "name": "liximomo",
@@ -26,9 +27,9 @@
     "release": "bash scripts/release.sh"
   },
   "bugs": {
-    "url": "https://github.com/vuejs/vue-function-api/issues"
+    "url": "https://github.com/vuejs/composition-api/issues"
   },
-  "homepage": "https://github.com/vuejs/vue-function-api#readme",
+  "homepage": "https://github.com/vuejs/composition-api#readme",
   "devDependencies": {
     "@types/jest": "^24.0.13",
     "@types/node": "^12.0.2",
