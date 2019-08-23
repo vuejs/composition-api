@@ -3,7 +3,7 @@ import { getCurrentVue } from '../runtimeContext';
 import { isPlainObject, def, hasOwn, warn } from '../utils';
 import { isComponentInstance, createComponentInstance } from '../helper';
 import {
-  AccessControIdentifierlKey,
+  AccessControlIdentifierKey,
   ReactiveIdentifierKey,
   NonReactiveIdentifierKey,
   RefKey,
@@ -40,14 +40,14 @@ function setupAccessControl(target: AnyObject): void {
   }
 
   if (
-    hasOwn(target, AccessControIdentifierlKey) &&
-    target[AccessControIdentifierlKey] === AccessControlIdentifier
+    hasOwn(target, AccessControlIdentifierKey) &&
+    target[AccessControlIdentifierKey] === AccessControlIdentifier
   ) {
     return;
   }
 
   if (Object.isExtensible(target)) {
-    def(target, AccessControIdentifierlKey, AccessControlIdentifier);
+    def(target, AccessControlIdentifierKey, AccessControlIdentifier);
   }
   const keys = Object.keys(target);
   for (let i = 0; i < keys.length; i++) {
