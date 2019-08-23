@@ -1,7 +1,7 @@
 # 3.0.0-beta.0
 
 `vue-function-api` v3.0.0 reflects the new [Composition API](https://vue-composition-api-rfc.netlify.com/) RFC. 
-The vesion is limited to beta until the RFC has been merged.
+The version is limited to beta until the RFC has been merged.
 
 ## Changed
 * rename `value` to `ref`.
