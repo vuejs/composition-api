@@ -1,3 +1,8 @@
+# 0.1.0
+**The package has been renamed to `@vue/composition-api` to be consistent with RFC.**
+
+The `@vue/composition-api` reflects the [Composition API](https://vue-composition-api-rfc.netlify.com/) RFC.
+
 # 2.2.0
 * Improve typescript support.
 * Export `createElement`.
