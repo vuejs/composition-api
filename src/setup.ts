@@ -154,10 +154,9 @@ export function mixin(Vue: VueConstructor) {
     }
 
     if (isPlainObject(binding)) {
-      const bindingObj = binding;
       vmStateManager.set(vm, 'rawBindings', binding);
       Object.keys(binding).forEach(name => {
-        let bindingValue = bindingObj[name];
+        let bindingValue = (binding as any)[name];
         // only make primitive value reactive
         if (!isRef(bindingValue)) {
           if (isReactive(bindingValue)) {
