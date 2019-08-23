@@ -147,9 +147,11 @@ b.list[1].count === 1; // true
 
 ## Template Refs
 
-> ✅ Support &nbsp;&nbsp;&nbsp;&nbsp;❌ Not Support
+> :white_check_mark:
+ Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Support
 
-✅ String ref && return it from `setup()`:
+:white_check_mark:
+ String ref && return it from `setup()`:
 
 ```html
 <template>
@@ -174,7 +176,8 @@ b.list[1].count === 1; // true
 </script>
 ```
 
-✅ String ref && return it from `setup()` && Render Function / JSX:
+:white_check_mark:
+ String ref && return it from `setup()` && Render Function / JSX:
 
 ```jsx
 export default {
@@ -197,7 +200,7 @@ export default {
 };
 ```
 
-❌ Function ref:
+:x: Function ref:
 
 ```html
 <template>
@@ -217,7 +220,7 @@ export default {
 </script>
 ```
 
-❌ Render Function / JSX in `setup()`:
+:x: Render Function / JSX in `setup()`:
 
 ```jsx
 export default {
@@ -237,7 +240,7 @@ export default {
 
 If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
 
-> ⚠️**Warning**: The `SetupContext.refs` won't existed in `Vue3.0`. `Vue-function-api` provide it as a workaround here.
+> :warning: **Warning**: The `SetupContext.refs` won't existed in `Vue3.0`. `Vue-function-api` provide it as a workaround here.
 
 ```js
 export default {

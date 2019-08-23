@@ -147,9 +147,9 @@ b.list[1].count === 1; // true
 
 ## Template Refs
 
-> ✅ Support &nbsp;&nbsp;&nbsp;&nbsp;❌ Not Support
+> :white_check_mark: Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Support
 
-✅ String ref && return it from `setup()`:
+:white_check_mark: String ref && return it from `setup()`:
 
 ```html
 <template>
@@ -174,7 +174,7 @@ b.list[1].count === 1; // true
 </script>
 ```
 
-✅ String ref && return it from `setup()` && Render Function / JSX:
+:white_check_mark: String ref && return it from `setup()` && Render Function / JSX:
 
 ```jsx
 export default {
@@ -197,7 +197,7 @@ export default {
 };
 ```
 
-❌ Function ref:
+:x: Function ref:
 
 ```html
 <template>
@@ -217,7 +217,7 @@ export default {
 </script>
 ```
 
-❌ Render Function / JSX:
+:x: Render Function / JSX:
 
 ```jsx
 export default {
@@ -237,7 +237,7 @@ export default {
 
 如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 vue2 中的 `this.$refs`:
 
-> ⚠️**警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `Vue-function-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
+> :warning: **警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `Vue-function-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
 
 ```js
 export default {
