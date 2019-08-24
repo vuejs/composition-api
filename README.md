@@ -148,7 +148,7 @@ b.list[1].count === 1; // true
 ## Template Refs
 
 > :white_check_mark:
- Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Support
+ Support &nbsp;&nbsp;&nbsp;&nbsp;:x: No Support
 
 :white_check_mark:
  String ref && return it from `setup()`:
@@ -240,7 +240,7 @@ export default {
 
 If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
 
-> :warning: **Warning**: The `SetupContext.refs` won't existed in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
+> :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
 ```js
 export default {
@@ -262,7 +262,7 @@ export default {
 };
 ```
 
-You may also need to augment the `SetupContext` when wokring with TypeScript:
+You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
 import Vue from 'vue';
