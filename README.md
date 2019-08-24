@@ -84,7 +84,7 @@ const state = reactive({
 // no unwrap, `.value` is required
 state.list[0].value === 0; // true
 
-state.list.push(ref(1);
+state.list.push(ref(1));
 //  no unwrap, `.value` is required
 state.list[1].value === 1; // true
 ```
