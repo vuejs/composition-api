@@ -148,7 +148,7 @@ b.list[1].count === 1; // true
 ## Template Refs
 
 > :white_check_mark:
- Support &nbsp;&nbsp;&nbsp;&nbsp;:x: No Support
+ Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
 :white_check_mark:
  String ref && return it from `setup()`:
