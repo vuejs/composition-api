@@ -2,7 +2,7 @@ import { VueConstructor } from 'vue';
 import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
 import { Ref, isRef, isReactive, nonReactive } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
-import { hasOwn, isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
+import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
 
@@ -135,13 +135,9 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null;
-    activateCurrentInstance(
-      vm,
-      () => {
-        binding = setup(props, ctx);
-      },
-      err => logError(err, vm, 'setup()')
-    );
+    activateCurrentInstance(vm, () => {
+      binding = setup(props, ctx);
+    });
 
     if (!binding) return;
 
