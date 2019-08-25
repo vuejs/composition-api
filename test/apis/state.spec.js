@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { reactive, ref, watch, set, toRefs } = require('../../src');
+const { reactive, ref, watch, set, toRefs, computed } = require('../../src');
 
 describe('api/ref', () => {
   it('should work with array', () => {
@@ -349,5 +349,20 @@ describe('unwrapping', () => {
       count: a,
     });
     expect(dummy).toBe(a);
+  });
+
+  it('should not call the computed property until accessing it', () => {
+    const spy = jest.fn();
+    const state = reactive({
+      count: 1,
+      double: computed(() => {
+        spy();
+        return state.count * 2;
+      }),
+    });
+
+    expect(spy).not.toHaveBeenCalled();
+    expect(state.double).toBe(2);
+    expect(spy).toHaveBeenCalled();
   });
 });
