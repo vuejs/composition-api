@@ -95,7 +95,10 @@ class RefImpl<T> implements Ref<T> {
 }
 
 export function createRef<T>(options: RefOption<T>) {
-  return new RefImpl<T>(options);
+  // seal the ref, this could prevent ref from being observed
+  // It's safe to seal the ref, since we really shoulnd't extend it.
+  // related issues: #79
+  return Object.seal(new RefImpl<T>(options));
 }
 
 type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
