@@ -142,16 +142,18 @@ export function mixin(Vue: VueConstructor) {
     if (!binding) return;
 
     if (isFunction(binding)) {
+      // keep typescript happy with the binding type.
+      const bindingFunc = binding;
       // keep currentInstance accessible for createElement
-      vm.$options.render = () =>
-        activateCurrentInstance(vm, vm_ => (binding as any)(vm_.$props, ctx));
+      vm.$options.render = () => activateCurrentInstance(vm, vm_ => bindingFunc(vm_.$props, ctx));
       return;
     }
 
     if (isPlainObject(binding)) {
+      const bindingObj = binding;
       vmStateManager.set(vm, 'rawBindings', binding);
       Object.keys(binding).forEach(name => {
-        let bindingValue = (binding as any)[name];
+        let bindingValue = bindingObj[name];
         // only make primitive value reactive
         if (!isRef(bindingValue)) {
           if (isReactive(bindingValue)) {

@@ -41,7 +41,7 @@ export function set<T>(target: any, key: any, val: T): T {
     target[key] = val;
     return val;
   }
-  const ob = (target as any).__ob__;
+  const ob = target.__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' &&
       warn(
