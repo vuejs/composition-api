@@ -27,7 +27,7 @@ type VueConstructorProxy<PropsOptions, RawBindings> = {
     UnwrapRef<RawBindings>,
     ExtractPropTypes<PropsOptions, false>
   >;
-};
+} & VueConstructor<never>;
 
 type VueProxy<PropsOptions, RawBindings> = Vue2ComponentOptions<
   never,
