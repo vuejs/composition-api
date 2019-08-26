@@ -8,6 +8,9 @@
   }
 
   const MyComponent = createComponent<Props>({
+    props: {
+      msg: {}  // required by vue 2 runtime
+    },
     setup(props) {
       return () => h('div', props.msg)
     }
