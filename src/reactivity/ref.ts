@@ -3,8 +3,13 @@ import { RefKey } from '../symbols';
 import { proxy, isPlainObject } from '../utils';
 import { reactive } from './reactive';
 
-type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
-
+type BailTypes =
+  | Function
+  | Map<any, any>
+  | Set<any>
+  | WeakMap<any, any>
+  | WeakSet<any>
+  | Array<any>;
 export interface Ref<T> {
   value: T;
 }
