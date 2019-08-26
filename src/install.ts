@@ -1,13 +1,13 @@
-import { UnknownObject } from './types/basic';
+import { AnyObject } from './types/basic';
 import { hasSymbol, hasOwn, isPlainObject, assert } from './utils';
-import { isWrapper } from './helper';
+import { isRef } from './reactivity';
 import { setCurrentVue, currentVue } from './runtimeContext';
 import { VueConstructor } from 'vue';
 
 /**
  * Helper that recursively merges two data objects together.
  */
-function mergeData(to: UnknownObject, from?: UnknownObject): Object {
+function mergeData(to: AnyObject, from?: AnyObject): Object {
   if (!from) return to;
   let key: any;
   let toVal: any;
@@ -25,8 +25,8 @@ function mergeData(to: UnknownObject, from?: UnknownObject): Object {
       to[key] = fromVal;
     } else if (
       toVal !== fromVal &&
-      (isPlainObject(toVal) && !isWrapper(toVal)) &&
-      (isPlainObject(fromVal) && !isWrapper(toVal))
+      (isPlainObject(toVal) && !isRef(toVal)) &&
+      (isPlainObject(fromVal) && !isRef(toVal))
     ) {
       mergeData(toVal, fromVal);
     }

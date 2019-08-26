@@ -1,17 +1,12 @@
 import Vue, { VueConstructor } from 'vue';
-import { SetupContext } from './types/vue';
+import { Data, SetupFunction, SetupContext } from './component';
 import { currentVue } from './runtimeContext';
-import { Wrapper } from './wrappers';
 import { install } from './install';
 import { mixin } from './setup';
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
-    setup?: (
-      this: undefined,
-      props: { [x: string]: any },
-      context: SetupContext
-    ) => object | null | undefined | void;
+    setup?: SetupFunction<Data, Data>;
   }
 }
 
@@ -25,10 +20,13 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
   _install(window.Vue);
 }
 
-export { plugin, Wrapper };
-export * from './ts-api';
-export * from './functions/state';
-export * from './functions/lifecycle';
-export * from './functions/watch';
-export * from './functions/computed';
-export * from './functions/inject';
+export default plugin;
+export { default as createElement } from './createElement';
+export { SetupContext };
+export { createComponent, PropType } from './component';
+
+export * from './apis/state';
+export * from './apis/lifecycle';
+export * from './apis/watch';
+export * from './apis/computed';
+export * from './apis/inject';

@@ -1,38 +1,15 @@
 const Vue = require('vue/dist/vue.common.js');
 const {
-  plugin,
-  onCreated,
   onBeforeMount,
   onMounted,
   onBeforeUpdate,
   onUpdated,
-  onBeforeDestroy,
-  onDestroyed,
+  onBeforeUnmount,
+  onUnmounted,
+  onErrorCaptured,
 } = require('../../src');
 
-Vue.use(plugin);
-
 describe('Hooks lifecycle', () => {
-  describe('created', () => {
-    it('should have completed observation', () => {
-      const spy = jest.fn();
-      new Vue({
-        data() {
-          return {
-            a: 1,
-          };
-        },
-        setup(_, { _vm }) {
-          onCreated(() => {
-            expect(_vm.a).toBe(1);
-            spy();
-          });
-        },
-      });
-      expect(spy).toHaveBeenCalled();
-    });
-  });
-
   describe('beforeMount', () => {
     it('should not have mounted', () => {
       const spy = jest.fn();
@@ -172,7 +149,7 @@ describe('Hooks lifecycle', () => {
         props: ['todo'],
         setup() {
           onBeforeUpdate(beforeUpdate);
-          onDestroyed(destroyed);
+          onUnmounted(destroyed);
         },
       });
 
@@ -264,7 +241,7 @@ describe('Hooks lifecycle', () => {
         props: ['todo'],
         setup() {
           onUpdated(updated);
-          onDestroyed(destroyed);
+          onUnmounted(destroyed);
         },
       });
 
@@ -294,13 +271,13 @@ describe('Hooks lifecycle', () => {
     });
   });
 
-  describe('beforeDestroy', () => {
+  describe('beforeUnmount', () => {
     it('should be called before destroy', () => {
       const spy = jest.fn();
       const vm = new Vue({
         render() {},
         setup(_, { _vm }) {
-          onBeforeDestroy(() => {
+          onBeforeUnmount(() => {
             expect(_vm._isBeingDestroyed).toBe(false);
             expect(_vm._isDestroyed).toBe(false);
             spy();
@@ -315,13 +292,13 @@ describe('Hooks lifecycle', () => {
     });
   });
 
-  describe('destroyed', () => {
+  describe('unmounted', () => {
     it('should be called after destroy', () => {
       const spy = jest.fn();
       const vm = new Vue({
         render() {},
         setup(_, { _vm }) {
-          onDestroyed(() => {
+          onUnmounted(() => {
             expect(_vm._isBeingDestroyed).toBe(true);
             expect(_vm._isDestroyed).toBe(true);
             spy();
@@ -333,6 +310,44 @@ describe('Hooks lifecycle', () => {
       vm.$destroy();
       expect(spy).toHaveBeenCalled();
       expect(spy.mock.calls.length).toBe(1);
+    });
+  });
+
+  describe('errorCaptured', () => {
+    let globalSpy;
+
+    beforeEach(() => {
+      globalSpy = Vue.config.errorHandler = jest.fn();
+    });
+
+    afterEach(() => {
+      Vue.config.errorHandler = null;
+    });
+
+    it('should capture error from child component', () => {
+      const spy = jest.fn();
+
+      let child;
+      let err;
+      const Child = {
+        setup(_, { _vm }) {
+          child = _vm;
+          err = new Error('child');
+          throw err;
+        },
+        render() {},
+      };
+
+      new Vue({
+        setup() {
+          onErrorCaptured(spy);
+        },
+        render: h => h(Child),
+      }).$mount();
+
+      expect(spy).toHaveBeenCalledWith(err, child, 'data()');
+      // should propagate by default
+      expect(globalSpy).toHaveBeenCalledWith(err, child, 'data()');
     });
   });
 });
