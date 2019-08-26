@@ -1,3 +1,25 @@
+# 0.2.1
+* Declare your expected prop types directly in TypeScript:
+  ```js
+  import { createComponent, createElement as h } from '@vue/composition-api'
+
+  interface Props {
+    msg: string
+  }
+
+  const MyComponent = createComponent<Props>({
+    setup(props) {
+      return () => h('div', props.msg)
+    }
+  })
+  ```
+* Declare ref type in TypeScript:
+  ```js
+  const dateRef = ref<Date>(new Date);
+  ```
+* Fix `createComponent` not working with `import()` [#81](https://github.com/vuejs/composition-api/issues/81).
+* Fix `inject` type declaration [#83](https://github.com/vuejs/composition-api/issues/83).
+  
 # 0.2.0
 ## Fixed
 * `computed` property is called immediately in `reactive()` [#79](https://github.com/vuejs/composition-api/issues/79).
