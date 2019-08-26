@@ -56,7 +56,7 @@ export type SetupFunction<Props, RawBindings> = (
   ctx: SetupContext
 ) => RawBindings | RenderFunction<Props>;
 
-export interface ComponentOptions<
+interface ComponentOptions<
   PropsOptions = ComponentPropsOptions,
   RawBindings = Data,
   Props = ExtractPropTypes<PropsOptions>
@@ -65,10 +65,23 @@ export interface ComponentOptions<
   setup?: SetupFunction<Props, RawBindings>;
 }
 
+// Conditional returns can enforce identical types.
+// See here: https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650
+// prettier-ignore
+type Equal<Left, Right> =
+  (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right ? 1 : 0) ? true : false;
+
+type HasDefined<T> = Equal<T, unknown> extends true ? false : true;
+
 // object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
-export function createComponent<PropsOptions, RawBindings>(
-  options: ComponentOptions<PropsOptions, RawBindings> &
+export function createComponent<Props, RawBindings = Data, PropsOptions = ComponentPropsOptions>(
+  // prettier-ignore
+  options: (
+    // prefer the provided Props, otherwise infer it from PropsOptions
+    HasDefined<Props> extends true
+      ? ComponentOptions<PropsOptions, RawBindings, Props>
+      : ComponentOptions<PropsOptions, RawBindings>) &
     Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptions<never, never>>
 ): VueProxy<PropsOptions, RawBindings>;
 // implementation, close to no-op
