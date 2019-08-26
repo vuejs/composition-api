@@ -1,6 +1,7 @@
 import Vue, { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps';
 import { UnwrapRef } from '../reactivity';
+import { HasDefined } from '../types/basic';
 
 export type Data = { [key: string]: unknown };
 
@@ -64,14 +65,6 @@ interface ComponentOptions<
   props?: PropsOptions;
   setup?: SetupFunction<Props, RawBindings>;
 }
-
-// Conditional returns can enforce identical types.
-// See here: https://github.com/Microsoft/TypeScript/issues/27024#issuecomment-421529650
-// prettier-ignore
-type Equal<Left, Right> =
-  (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right ? 1 : 0) ? true : false;
-
-type HasDefined<T> = Equal<T, unknown> extends true ? false : true;
 
 // object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
