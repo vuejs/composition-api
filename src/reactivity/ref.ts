@@ -18,70 +18,70 @@ export interface Ref<T> {
 // Recursively unwraps nested value bindings.
 // Unfortunately TS cannot do recursive types, but this should be enough for
 // practical use cases...
-export type UnwrapRef<T> = T extends Ref<infer V>
+export type UnwrapRef<T> = T extends RefImpl<infer V>
   ? UnwrapRef2<V>
   : T extends BailTypes
       ? T // bail out on types that shouldn't be unwrapped
       : T extends object ? { [K in keyof T]: UnwrapRef2<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef2<T> = T extends Ref<infer V>
+type UnwrapRef2<T> = T extends RefImpl<infer V>
   ? UnwrapRef3<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef3<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef3<T> = T extends Ref<infer V>
+type UnwrapRef3<T> = T extends RefImpl<infer V>
   ? UnwrapRef4<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef4<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef4<T> = T extends Ref<infer V>
+type UnwrapRef4<T> = T extends RefImpl<infer V>
   ? UnwrapRef5<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef5<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef5<T> = T extends Ref<infer V>
+type UnwrapRef5<T> = T extends RefImpl<infer V>
   ? UnwrapRef6<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef6<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef6<T> = T extends Ref<infer V>
+type UnwrapRef6<T> = T extends RefImpl<infer V>
   ? UnwrapRef7<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef7<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef7<T> = T extends Ref<infer V>
+type UnwrapRef7<T> = T extends RefImpl<infer V>
   ? UnwrapRef8<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef8<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef8<T> = T extends Ref<infer V>
+type UnwrapRef8<T> = T extends RefImpl<infer V>
   ? UnwrapRef9<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef9<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef9<T> = T extends Ref<infer V>
+type UnwrapRef9<T> = T extends RefImpl<infer V>
   ? UnwrapRef10<V>
   : T extends BailTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef10<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef10<T> = T extends Ref<infer V>
+type UnwrapRef10<T> = T extends RefImpl<infer V>
   ? V // stop recursion
   : T
 
@@ -91,6 +91,9 @@ interface RefOption<T> {
 }
 class RefImpl<T> implements Ref<T> {
   public value!: T;
+  // avoid conflict with other objects which have value field.
+  // @ts-ignore
+  private __ref__ = true;
   constructor({ get, set }: RefOption<T>) {
     proxy(this, 'value', {
       get,
@@ -106,7 +109,7 @@ export function createRef<T>(options: RefOption<T>) {
   return Object.seal(new RefImpl<T>(options));
 }
 
-type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
+type RefValue<T> = T extends RefImpl<infer V> ? V : UnwrapRef<T>;
 
 // without init value, explicit typed: a = ref<{ a: number }>()
 // typeof a will be Ref<{ a: number } | undefined>
@@ -136,7 +139,7 @@ export function isRef<T>(value: any): value is Ref<T> {
 
 // prettier-ignore
 type Refs<Data> = {
-  [K in keyof Data]: Data[K] extends Ref<infer V> 
+  [K in keyof Data]: Data[K] extends RefImpl<infer V> 
     ? Ref<V>
     : Ref<Data[K]>
 }
