@@ -54,6 +54,8 @@ After installing the plugin you can use the [Composition API](https://vue-compos
 
 # TypeScript
 
+**Please upgrade to the latest TypeScript. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `ture`.**
+
 To let TypeScript properly infer types inside Vue component options, you need to define components with `createComponent`:
 
 ```ts
