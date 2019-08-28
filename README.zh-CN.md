@@ -98,7 +98,7 @@ const a = {
   count: ref(0),
 };
 const b = reactive({
-  list: [a], // a.count 将不会自动展开!!
+  list: [a], // `a.count` 将不会自动展开!!
 });
 
 // `count` 不会自动展开, `.value` 是必需的
