@@ -56,7 +56,7 @@ Vue.use(VueCompositionApi);
 
 **请使用最新版的 TypeScript，如果你使用了 `vetur`，请将 `vetur.useWorkspaceDependencies` 设为 `true`。**
 
-为了让 TypeScript 正确的推导类型，我们必须使用 `createComponent` 来定义组件:
+为了让 TypeScript 正确的推到类型，我们必须使用 `createComponent` 来定义组件:
 
 ```ts
 import { createComponent } from '@vue/composition-api';
@@ -261,7 +261,7 @@ export default {
 };
 ```
 
-如果项目使用了 TypeScript，你还需要扩展 `SetupContext` 类型:
+如果项目使用了 TypeScript 中，你还需要扩展 `SetupContext` 类型:
 
 ```ts
 import Vue from 'vue';
