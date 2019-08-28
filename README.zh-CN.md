@@ -50,7 +50,7 @@ import VueCompositionApi from '@vue/composition-api';
 Vue.use(VueCompositionApi);
 ```
 
-安装插件后，您就可以使用新的 [Composition API](https://vue-composition-api-rfc.netlify.com/) 来开发组件了。
+安装插件后，您就可以使用新的[Composition API](https://vue-composition-api-rfc.netlify.com/)来开发组件了。
 
 # TypeScript
 
@@ -98,7 +98,7 @@ const a = {
   count: ref(0),
 };
 const b = reactive({
-  list: [a], // `a.count` 将不会自动展开!!
+  list: [a], // a.count 将不会自动展开!!
 });
 
 // `count` 不会自动展开, `.value` 是必需的
@@ -143,7 +143,7 @@ b.list[1].count === 1; // true
 
 ## `watch()` API
 
-不支持 `onTrack` 和 `onTrigger` 选项。
+不支持 `onTrack` 和 `onTrigger` 选项.
 
 ---
 
@@ -237,7 +237,7 @@ export default {
 };
 ```
 
-如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 Vue 2.x 中的 `this.$refs`:
+如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 vue2 中的 `this.$refs`:
 
 > :warning: **警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `@vue/composition-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
 
