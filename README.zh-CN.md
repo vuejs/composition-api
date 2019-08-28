@@ -2,7 +2,7 @@
 
 > [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
 
-`@vue/composition-api` 使开发者们可以在 `Vue 2.x` 中使用 `Vue 3.0` 引入的**基于函数**的**逻辑复用机制**。
+`@vue/composition-api` 使开发者们可以在 `Vue2.x` 中使用 `Vue3` 引入的**基于函数**的**逻辑复用机制**。
 
 [**English Version**](./README.md)
 
@@ -67,7 +67,7 @@ const Component = createComponent({
 
 const Component = {
   // 无法进行选项的类型推断
-  // TypeScript 无法知道这是一个 Vue 组件的选项对象
+  // TypeScript 无法知道这是一个 vue 组件的选项对象
 };
 ```
 
@@ -239,7 +239,7 @@ export default {
 
 如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 Vue 2.x 中的 `this.$refs`:
 
-> :warning: **警告**: `SetupContext.refs` 并不属于 `Vue 3.0` 的一部分, `@vue/composition-api` 将其曝光在 `SetupContext` 中只是临时提供一种变通方案。
+> :warning: **警告**: `SetupContext.refs` 并不属于 `Vue3.0` 的一部分, `@vue/composition-api` 将其曝光在 `SetupContext` 中只是临时提供的一种变通方案。
 
 ```js
 export default {
