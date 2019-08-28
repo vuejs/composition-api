@@ -1,20 +1,41 @@
-# 3.0.0-beta.0
+# 0.2.1
+* Declare your expected prop types directly in TypeScript:
+  ```js
+  import { createComponent, createElement as h } from '@vue/composition-api'
 
-`vue-function-api` v3.0.0 reflects the new [Composition API](https://vue-composition-api-rfc.netlify.com/) RFC. 
-The version is limited to beta until the RFC has been merged.
+  interface Props {
+    msg: string
+  }
+
+  const MyComponent = createComponent<Props>({
+    props: {
+      msg: {}  // required by vue 2 runtime
+    },
+    setup(props) {
+      return () => h('div', props.msg)
+    }
+  })
+  ```
+* Declare ref type in TypeScript:
+  ```js
+  const dateRef = ref<Date>(new Date);
+  ```
+* Fix `createComponent` not working with `import()` [#81](https://github.com/vuejs/composition-api/issues/81).
+* Fix `inject` type declaration [#83](https://github.com/vuejs/composition-api/issues/83).
+  
+# 0.2.0
+## Fixed
+* `computed` property is called immediately in `reactive()` [#79](https://github.com/vuejs/composition-api/issues/79).
 
 ## Changed
-* rename `value` to `ref`.
-* rename `state` to `reactive`.
-* remove `ref` from `SetupContext`.
-* export `plugin` as `default export`
-  ```js
-  import VueFunctionApi from 'vue-function-api';
-  Vue.use(VueFunctionApi);
-  ```
+* rename `onBeforeDestroy()` to `onBeforeUnmount()` [lifecycle-hooks](https://vue-composition-api-rfc.netlify.com/api.html#lifecycle-hooks).
+* Remove `onCreated()` [lifecycle-hooks](https://vue-composition-api-rfc.netlify.com/api.html#lifecycle-hooks).
+* Remove `onDestroyed()` [lifecycle-hooks](https://vue-composition-api-rfc.netlify.com/api.html#lifecycle-hooks).
 
-## Added
-* new APIs `toRefs` and `isRef`.
+# 0.1.0
+**The package has been renamed to `@vue/composition-api` to be consistent with RFC.**
+
+The `@vue/composition-api` reflects the [Composition API](https://vue-composition-api-rfc.netlify.com/) RFC.
 
 # 2.2.0
 * Improve typescript support.
@@ -24,15 +45,15 @@ The version is limited to beta until the RFC has been merged.
 * Allow string keys in `provide`/`inject`.
 
 # 2.1.2
-* Remove auto-unwrapping for Array ([#53](https://github.com/vuejs/vue-function-api/issues/53)).
+* Remove auto-unwrapping for Array ([#53](https://github.com/vuejs/composition-api/issues/53)).
 
 # 2.1.1
-* Export `set` from `vue-function-api`. Using exported `set` whenever you need to use [Vue.set](https://vuejs.org/v2/api/#Vue-set) or [vm.$set](https://vuejs.org/v2/api/#vm-set). The custom `set` ensures that auto-unwrapping works for the new property.
+* Export `set()` function. Using exported `set` whenever you need to use [Vue.set](https://vuejs.org/v2/api/#Vue-set) or [vm.$set](https://vuejs.org/v2/api/#vm-set). The custom `set` ensures that auto-unwrapping works for the new property.
 * Add a new signature of `provide`: `provide(key, value)`.
 * Fix multiple `provide` invoking per component.
 * Fix order of `setup` invoking.
-* `onErrorCaptured` not triggered ([#25](https://github.com/vuejs/vue-function-api/issues/25)).
-* Fix `this` losing in nested setup call ([#38](https://github.com/vuejs/vue-function-api/issues/38)).
+* `onErrorCaptured` not triggered ([#25](https://github.com/vuejs/composition-api/issues/25)).
+* Fix `this` losing in nested setup call ([#38](https://github.com/vuejs/composition-api/issues/38)).
 * Fix some edge cases of unwarpping.
 * Change `context.slots`'s value. It now proxies to `$scopeSlots` instead of `$slots`.
 

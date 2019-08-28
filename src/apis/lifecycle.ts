@@ -27,16 +27,14 @@ function injectHookOption(Vue: VueConstructor, vm: ComponentInstance, hook: stri
   options[hook] = mergeFn(options[hook], val);
 }
 
-export const onCreated = createLifeCycle('created');
+// export const onCreated = createLifeCycle('created');
 export const onBeforeMount = createLifeCycle('beforeMount');
 export const onMounted = createLifeCycle('mounted');
 export const onBeforeUpdate = createLifeCycle('beforeUpdate');
 export const onUpdated = createLifeCycle('updated');
-export const onActivated = createLifeCycle('activated');
-export const onDeactivated = createLifeCycle('deactivated');
-export const onBeforeDestroy = createLifeCycle('beforeDestroy');
-export const onDestroyed = createLifeCycle('destroyed');
-export const onErrorCaptured = createLifeCycle('errorCaptured');
-
+export const onBeforeUnmount = createLifeCycle('beforeDestroy');
 // only one event will be fired between destroyed and deactivated when an unmount occurs
 export const onUnmounted = createLifeCycles(['destroyed', 'deactivated'], genName('unmounted'));
+export const onErrorCaptured = createLifeCycle('errorCaptured');
+export const onActivated = createLifeCycle('activated');
+export const onDeactivated = createLifeCycle('deactivated');

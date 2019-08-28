@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, computed, onCreated, createElement: h } = require('../src');
+const { ref, computed, createElement: h } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -301,11 +301,11 @@ describe('setup', () => {
       setup() {
         new Vue({
           setup() {
-            onCreated(() => spy(1));
+            spy(1);
           },
         });
 
-        onCreated(() => spy(2));
+        spy(2);
       },
     });
     expect(spy.mock.calls.length).toBe(2);

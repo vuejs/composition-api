@@ -1,6 +1,7 @@
 import Vue, { VueConstructor, VNode, ComponentOptions as Vue2ComponentOptions } from 'vue';
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps';
 import { UnwrapRef } from '../reactivity';
+import { HasDefined } from '../types/basic';
 
 export type Data = { [key: string]: unknown };
 
@@ -56,7 +57,7 @@ export type SetupFunction<Props, RawBindings> = (
   ctx: SetupContext
 ) => RawBindings | RenderFunction<Props>;
 
-export interface ComponentOptions<
+interface ComponentOptions<
   PropsOptions = ComponentPropsOptions,
   RawBindings = Data,
   Props = ExtractPropTypes<PropsOptions>
@@ -67,8 +68,13 @@ export interface ComponentOptions<
 
 // object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
-export function createComponent<PropsOptions, RawBindings>(
-  options: ComponentOptions<PropsOptions, RawBindings> &
+export function createComponent<Props, RawBindings = Data, PropsOptions = ComponentPropsOptions>(
+  // prettier-ignore
+  options: (
+    // prefer the provided Props, otherwise infer it from PropsOptions
+    HasDefined<Props> extends true
+      ? ComponentOptions<PropsOptions, RawBindings, Props>
+      : ComponentOptions<PropsOptions, RawBindings>) &
     Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptions<never, never>>
 ): VueProxy<PropsOptions, RawBindings>;
 // implementation, close to no-op

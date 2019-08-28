@@ -1,6 +1,7 @@
 import { Data } from '../component';
 import { RefKey } from '../symbols';
 import { proxy, isPlainObject } from '../utils';
+import { HasDefined } from '../types/basic';
 import { reactive } from './reactive';
 
 type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
@@ -95,7 +96,10 @@ class RefImpl<T> implements Ref<T> {
 }
 
 export function createRef<T>(options: RefOption<T>) {
-  return new RefImpl<T>(options);
+  // seal the ref, this could prevent ref from being observed
+  // It's safe to seal the ref, since we really shoulnd't extend it.
+  // related issues: #79
+  return Object.seal(new RefImpl<T>(options));
 }
 
 type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
@@ -103,12 +107,14 @@ type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
 // without init value, explicit typed: a = ref<{ a: number }>()
 // typeof a will be Ref<{ a: number } | undefined>
 export function ref<T = undefined>(): Ref<T | undefined>;
-// with init value: a = ref({ a: ref(0) })
-// typeof a will be Ref<{ a: number }>
-export function ref<T, R = RefValue<T>>(raw: T): Ref<R>;
 // with null as init value: a = ref<{ a: number }>(null);
 // typeof a will be Ref<{ a: number } | null>
-export function ref<T, R = RefValue<T>>(raw: T | null): Ref<R | null>;
+export function ref<T = null>(raw: null): Ref<T | null>;
+// with init value: a = ref({ a: ref(0) })
+// typeof a will be Ref<{ a: number }>
+export function ref<S, T = unknown, R = HasDefined<S> extends true ? S : RefValue<T>>(
+  raw: T
+): Ref<R>;
 // implementation
 export function ref(raw?: any): any {
   // if (isRef(raw)) {
