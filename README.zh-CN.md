@@ -73,9 +73,9 @@ const Component = {
 
 # 限制
 
-## `Ref` Unwrap
+## `Ref` 自动展开 (unwrap)
 
-数组索引属性无法进行自动的 `Unwrap`:
+数组索引属性无法进行自动展开:
 
 ### **不要**使用 `Array` 直接存取 `ref` 对象:
 
@@ -83,11 +83,11 @@ const Component = {
 const state = reactive({
   list: [ref(0)],
 });
-// 无法 unwrap, `.value` 是必需的
+// 无法自动展开, `.value` 是必需的
 state.list[0].value === 0; // true
 
 state.list.push(ref(1));
-// 无法 unwrap, `.value` 是必需的
+// 无法自动展开, `.value` 是必需的
 state.list[1].value === 1; // true
 ```
 
@@ -98,10 +98,10 @@ const a = {
   count: ref(0),
 };
 const b = reactive({
-  list: [a], // `a.count` 将不会 unwrap!!
+  list: [a], // `a.count` 将不会自动展开!!
 });
 
-// `count` 不会 unwrap, `.value` 是必需的
+// `count` 不会自动展开, `.value` 是必需的
 b.list[0].count.value === 0; // true
 ```
 
@@ -109,12 +109,12 @@ b.list[0].count.value === 0; // true
 const b = reactive({
   list: [
     {
-      count: ref(0), // 不会 unwrap!!
+      count: ref(0), // 不会自动展开!!
     },
   ],
 });
 
-// `count` 不会 unwrap, `.value` 是必需的
+// `count` 不会自动展开, `.value` 是必需的
 b.list[0].count.value === 0; // true
 ```
 
@@ -127,7 +127,7 @@ const a = reactive({
 const b = reactive({
   list: [a],
 });
-// unwrapped
+// 自动展开
 b.list[0].count === 0; // true
 
 b.list.push(
@@ -135,7 +135,7 @@ b.list.push(
     count: ref(1),
   })
 );
-// unwrapped
+// 自动展开
 b.list[1].count === 1; // true
 ```
 
