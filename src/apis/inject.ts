@@ -32,6 +32,7 @@ export function provide<T>(key: InjectionKey<T> | string, value: T): void {
   vm._provided[key as string] = value;
 }
 
+export function inject<T>(key: InjectionKey<T> | string): T | void;
 export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T;
 export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | void {
   if (!key) {

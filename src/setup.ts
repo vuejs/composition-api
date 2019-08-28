@@ -2,7 +2,7 @@ import { VueConstructor } from 'vue';
 import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
 import { Ref, isRef, isReactive, nonReactive } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
-import { hasOwn, isPlainObject, assert, proxy, warn, logError, isFunction } from './utils';
+import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
 
@@ -135,27 +135,25 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null;
-    activateCurrentInstance(
-      vm,
-      () => {
-        binding = setup(props, ctx);
-      },
-      err => logError(err, vm, 'setup()')
-    );
+    activateCurrentInstance(vm, () => {
+      binding = setup(props, ctx);
+    });
 
     if (!binding) return;
 
     if (isFunction(binding)) {
+      // keep typescript happy with the binding type.
+      const bindingFunc = binding;
       // keep currentInstance accessible for createElement
-      vm.$options.render = () =>
-        activateCurrentInstance(vm, vm_ => (binding as any)(vm_.$props, ctx));
+      vm.$options.render = () => activateCurrentInstance(vm, vm_ => bindingFunc(vm_.$props, ctx));
       return;
     }
 
     if (isPlainObject(binding)) {
+      const bindingObj = binding;
       vmStateManager.set(vm, 'rawBindings', binding);
       Object.keys(binding).forEach(name => {
-        let bindingValue = (binding as any)[name];
+        let bindingValue = bindingObj[name];
         // only make primitive value reactive
         if (!isRef(bindingValue)) {
           if (isReactive(bindingValue)) {
