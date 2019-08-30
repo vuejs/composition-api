@@ -112,25 +112,6 @@ describe('setup', () => {
     expect(props.a).toBe(1);
   });
 
-  it('should receive SetupContext second params', () => {
-    let context;
-    const vm = new Vue({
-      setup(_, ctx) {
-        context = ctx;
-      },
-    });
-    expect(context).toBeDefined();
-    expect('parent' in context).toBe(true);
-    expect(context.root).toBe(vm.$root);
-    expect(context.parent).toBe(vm.$parent);
-    expect(context.slots).toBe(vm.$scopedSlots);
-    expect(context.attrs).toBe(vm.$attrs);
-
-    // CAUTION: this will be removed in 3.0
-    expect(context.refs).toBe(vm.$refs);
-    expect(typeof context.emit === 'function').toBe(true);
-  });
-
   it('warn for existing props', () => {
     new Vue({
       props: {

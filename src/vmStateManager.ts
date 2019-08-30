@@ -3,6 +3,7 @@ import { ComponentInstance, Data } from './component';
 export interface VfaState {
   refs?: string[];
   rawBindings?: Data;
+  slots?: string[];
 }
 
 function set<K extends keyof VfaState>(vm: ComponentInstance, key: K, value: VfaState[K]): void {

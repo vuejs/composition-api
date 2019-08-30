@@ -2,6 +2,7 @@ import { VueConstructor } from 'vue';
 import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
 import { Ref, isRef, isReactive, nonReactive } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
+import { resolveSlots, createSlotProxy } from './helper';
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
@@ -61,6 +62,31 @@ function updateTemplateRef(vm: ComponentInstance) {
     }
   }
   vmStateManager.set(vm, 'refs', validNewKeys);
+}
+
+function resolveScopedSlots(vm: ComponentInstance, slotsProxy: { [x: string]: Function }): void {
+  const parentVode = (vm.$options as any)._parentVnode;
+  if (!parentVode) return;
+
+  const prevSlots = vmStateManager.get(vm, 'slots') || [];
+  const curSlots = resolveSlots(parentVode.data.scopedSlots, vm.$slots);
+  // remove staled slots
+  for (let index = 0; index < prevSlots.length; index++) {
+    const key = prevSlots[index];
+    if (!curSlots[key]) {
+      delete slotsProxy[key];
+    }
+  }
+
+  // proxy fresh slots
+  const slotNames = Object.keys(curSlots);
+  for (let index = 0; index < slotNames.length; index++) {
+    const key = slotNames[index];
+    if (!slotsProxy[key]) {
+      slotsProxy[key] = createSlotProxy(vm, key);
+    }
+  }
+  vmStateManager.set(vm, 'slots', slotNames);
 }
 
 function activateCurrentInstance(
@@ -134,21 +160,26 @@ export function mixin(Vue: VueConstructor) {
   function initSetup(vm: ComponentInstance, props: Record<any, any> = {}) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
+
+    // resolve scopedSlots and slots to functions
+    resolveScopedSlots(vm, ctx.slots);
+
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null;
     activateCurrentInstance(vm, () => {
       binding = setup(props, ctx);
     });
 
     if (!binding) return;
-
     if (isFunction(binding)) {
       // keep typescript happy with the binding type.
       const bindingFunc = binding;
       // keep currentInstance accessible for createElement
-      vm.$options.render = () => activateCurrentInstance(vm, vm_ => bindingFunc(vm_.$props, ctx));
+      vm.$options.render = () => {
+        resolveScopedSlots(vm, ctx.slots);
+        return activateCurrentInstance(vm, vm_ => bindingFunc(vm_.$props, ctx));
+      };
       return;
     }
-
     if (isPlainObject(binding)) {
       const bindingObj = binding;
       vmStateManager.set(vm, 'rawBindings', binding);
@@ -179,14 +210,10 @@ export function mixin(Vue: VueConstructor) {
   }
 
   function createSetupContext(vm: ComponentInstance & { [x: string]: any }): SetupContext {
-    const ctx = {} as SetupContext;
-    const props: Array<string | [string, string]> = [
-      'root',
-      'parent',
-      'refs',
-      ['slots', 'scopedSlots'],
-      'attrs',
-    ];
+    const ctx = {
+      slots: {},
+    } as SetupContext;
+    const props: Array<string | [string, string]> = ['root', 'parent', 'refs', 'attrs'];
     const methodReturnVoid = ['emit'];
     props.forEach(key => {
       let targetKey: string;

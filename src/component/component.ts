@@ -42,7 +42,7 @@ type VueProxy<PropsOptions, RawBindings> = Vue2ComponentOptions<
 
 export interface SetupContext {
   readonly attrs: Record<string, string>;
-  readonly slots: { [key: string]: VNode[] | undefined };
+  readonly slots: { [key: string]: (...args: any[]) => VNode[] };
   readonly parent: ComponentInstance | null;
   readonly root: ComponentInstance;
 
