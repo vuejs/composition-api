@@ -2,7 +2,7 @@
 
 > [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
 
-`@vue/composition-api` provides a way to use Vue3's **Composition api** in `Vue2.x`.
+`@vue/composition-api` provides a way to use `Vue 3.0`'s **Composition api** in `Vue 2.x`.
 
 [**中文文档**](./README.zh-CN.md)
 
@@ -87,7 +87,7 @@ const state = reactive({
 state.list[0].value === 0; // true
 
 state.list.push(ref(1));
-//  no unwrap, `.value` is required
+// no unwrap, `.value` is required
 state.list[1].value === 1; // true
 ```
 
@@ -98,7 +98,7 @@ const a = {
   count: ref(0),
 };
 const b = reactive({
-  list: [a], // a.count will not unwrap!!
+  list: [a], // `a.count` will not unwrap!!
 });
 
 // no unwrap for `count`, `.value` is required
@@ -150,7 +150,7 @@ b.list[1].count === 1; // true
 ## Template Refs
 
 > :white_check_mark:
- Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Support
+ Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
 :white_check_mark:
  String ref && return it from `setup()`:
@@ -242,7 +242,7 @@ export default {
 
 If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
 
-> :warning: **Warning**: The `SetupContext.refs` won't existed in `Vue3.0`. `@vue/composition-api` provide it as a workaround here.
+> :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
 ```js
 export default {
