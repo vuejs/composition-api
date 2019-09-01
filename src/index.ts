@@ -1,12 +1,19 @@
 import Vue, { VueConstructor } from 'vue';
-import { Data, SetupFunction, SetupContext } from './component';
+import { SetupFunction, SetupContext } from './component';
 import { currentVue } from './runtimeContext';
 import { install } from './install';
 import { mixin } from './setup';
 
 declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    setup?: SetupFunction<Data, Data>;
+  interface ComponentOptions<
+    V extends Vue,
+    Data = DefaultData<V>,
+    Methods = DefaultMethods<V>,
+    Computed = DefaultComputed,
+    PropsDef = PropsDefinition<DefaultProps>,
+    Props = DefaultProps
+  > {
+    setup?: SetupFunction<Props, Data>;
   }
 }
 
