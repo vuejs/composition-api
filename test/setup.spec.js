@@ -295,7 +295,7 @@ describe('setup', () => {
   });
 
   it('inline render function should receive proper params', () => {
-    let p, c;
+    let p;
     const vm = new Vue({
       template: `<child msg="foo" a="1" b="2"></child>`,
       components: {
@@ -303,24 +303,15 @@ describe('setup', () => {
           name: 'child',
           props: ['msg'],
           setup() {
-            return (props, ctx) => {
+            return props => {
               p = props;
-              c = ctx;
               return null;
             };
           },
         },
       },
     }).$mount();
-    expect(p).toEqual({
-      msg: 'foo',
-    });
-    expect(c).toBeDefined();
-    expect(c.root).toBe(vm);
-    expect(c.attrs).toEqual({
-      a: '1',
-      b: '2',
-    });
+    expect(p).toBe(undefined);
   });
 
   it('inline render function should work', done => {
@@ -328,13 +319,13 @@ describe('setup', () => {
     const vm = new Vue({
       props: ['msg'],
       template: '<div>1</div>',
-      setup() {
+      setup(props) {
         const count = ref(0);
         const increment = () => {
           count.value++;
         };
 
-        return props =>
+        return () =>
           h('div', [
             h('span', props.msg),
             h(

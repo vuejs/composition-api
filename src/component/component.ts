@@ -49,15 +49,13 @@ export interface SetupContext {
   emit(event: string, ...args: any[]): void;
 }
 
-type RenderFunction<Props> = (props: Props, ctx: SetupContext) => VNode;
-
 export type SetupFunction<Props, RawBindings> = (
   this: void,
   props: Props,
   ctx: SetupContext
-) => RawBindings | RenderFunction<Props>;
+) => RawBindings | (() => VNode | null);
 
-interface ComponentOptions<
+interface ComponentOptionsWithProps<
   PropsOptions = ComponentPropsOptions,
   RawBindings = Data,
   Props = ExtractPropTypes<PropsOptions>
@@ -66,16 +64,25 @@ interface ComponentOptions<
   setup?: SetupFunction<Props, RawBindings>;
 }
 
-// object format with object props declaration
+interface ComponentOptionsWithoutProps<Props = never, RawBindings = Data> {
+  props?: undefined;
+  setup?: SetupFunction<Props, RawBindings>;
+}
+
+// overload 1: object format with no props
+export function createComponent<RawBindings>(
+  options: ComponentOptionsWithoutProps<never, RawBindings>
+): VueProxy<never, RawBindings>;
+// overload 2: object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
 export function createComponent<Props, RawBindings = Data, PropsOptions = ComponentPropsOptions>(
   // prettier-ignore
   options: (
     // prefer the provided Props, otherwise infer it from PropsOptions
     HasDefined<Props> extends true
-      ? ComponentOptions<PropsOptions, RawBindings, Props>
-      : ComponentOptions<PropsOptions, RawBindings>) &
-    Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptions<never, never>>
+      ? ComponentOptionsWithProps<PropsOptions, RawBindings, Props>
+      : ComponentOptionsWithProps<PropsOptions, RawBindings>) &
+    Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptionsWithProps<never, never>>
 ): VueProxy<PropsOptions, RawBindings>;
 // implementation, close to no-op
 export function createComponent(options: any) {

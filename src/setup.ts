@@ -176,7 +176,7 @@ export function mixin(Vue: VueConstructor) {
       // keep currentInstance accessible for createElement
       vm.$options.render = () => {
         resolveScopedSlots(vm, ctx.slots);
-        return activateCurrentInstance(vm, vm_ => bindingFunc(vm_.$props, ctx));
+        return activateCurrentInstance(vm, () => bindingFunc());
       };
       return;
     }
