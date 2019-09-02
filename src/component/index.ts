@@ -1,2 +1,2 @@
 export { Data, createComponent, SetupFunction, SetupContext, ComponentInstance } from './component';
-export { PropType } from './componentProps';
+export { PropType, PropOptions } from './componentProps';

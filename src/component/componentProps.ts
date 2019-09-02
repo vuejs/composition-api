@@ -6,7 +6,7 @@ export type ComponentPropsOptions<P = Data> = {
 
 type Prop<T> = PropOptions<T> | PropType<T>;
 
-interface PropOptions<T = any> {
+export interface PropOptions<T = any> {
   type?: PropType<T> | null;
   required?: boolean;
   default?: T | null | undefined | (() => T | null | undefined);
