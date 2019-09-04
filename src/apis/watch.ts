@@ -91,7 +91,7 @@ function createWatcher(
   options: WatcherOption
 ): () => void {
   const flushMode = options.flush;
-  let cleanup: () => void;
+  let cleanup: (() => void) | null;
   const registerCleanup: CleanupRegistrator = (fn: () => void) => {
     cleanup = () => {
       try {
@@ -106,7 +106,7 @@ function createWatcher(
   if (cb === null) {
     const getter = () => (source as SimpleEffect)(registerCleanup);
     // cleanup before running getter again
-    const runBefore = () => {
+    const runCleanup = () => {
       if (cleanup) {
         cleanup();
       }
@@ -118,7 +118,7 @@ function createWatcher(
         deep: options.deep,
         // @ts-ignore
         sync: true,
-        before: runBefore,
+        before: runCleanup,
       });
     }
 
@@ -131,7 +131,7 @@ function createWatcher(
         immediate: false,
         deep: options.deep,
         // @ts-ignore
-        before: runBefore,
+        before: runCleanup,
       });
     };
 
@@ -144,7 +144,11 @@ function createWatcher(
 
     return () => {
       hasEnded = true;
-      stopRef && stopRef();
+      if (stopRef) {
+        stopRef();
+        runCleanup();
+        cleanup = null;
+      }
     };
   }
 
@@ -187,12 +191,20 @@ function createWatcher(
     applyCb(n, o);
   };
 
-  return vm.$watch(getter, options.lazy ? callback : shiftCallback, {
+  const stop = vm.$watch(getter, options.lazy ? callback : shiftCallback, {
     immediate: !options.lazy,
     deep: options.deep,
     // @ts-ignore
     sync: flushMode === 'sync',
   });
+
+  return () => {
+    stop();
+    if (cleanup) {
+      cleanup();
+      cleanup = null;
+    }
+  };
 }
 
 export function watch<T = any>(

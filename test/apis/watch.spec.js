@@ -513,7 +513,7 @@ describe('api/watch', () => {
       return p;
     }
 
-    it('work with a single getter', done => {
+    it('work with (single getter)', done => {
       const id = ref(1);
       const promises = [];
       watch(onCleanup => {
@@ -532,6 +532,37 @@ describe('api/watch', () => {
           next();
         })
         .then(done);
+    });
+
+    it('run cleanup when watch stops (single getter)', done => {
+      const spy = jest.fn();
+      const cleanup = jest.fn();
+      const stop = watch(onCleanup => {
+        spy();
+        onCleanup(cleanup);
+      });
+      waitForUpdate(() => {
+        expect(spy).toHaveBeenCalled();
+        stop();
+      })
+        .then(() => {
+          expect(cleanup).toHaveBeenCalled();
+        })
+        .then(done);
+    });
+
+    it('run cleanup when watch stops', () => {
+      const id = ref(1);
+      const spy = jest.fn();
+      const cleanup = jest.fn();
+      const stop = watch(id, (value, oldValue, onCleanup) => {
+        spy(value);
+        onCleanup(cleanup);
+      });
+
+      expect(spy).toHaveBeenCalledWith(1);
+      stop();
+      expect(cleanup).toHaveBeenCalled();
     });
 
     it('should not collect reactive in onCleanup', done => {
