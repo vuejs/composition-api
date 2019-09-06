@@ -44,7 +44,7 @@
     "rollup-plugin-terser": "^4.0.4",
     "rollup-plugin-typescript2": "^0.21.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.4.5",
+    "typescript": "^3.6.2",
     "vue": "^2.5.22"
   },
   "peerDependencies": {

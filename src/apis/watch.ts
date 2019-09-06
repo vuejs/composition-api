@@ -113,10 +113,10 @@ function createWatcher(
     };
 
     if (flushMode === 'sync') {
+      // @ts-ignore: use undocumented option "sync" ahd "before"
       return vm.$watch(getter, noopFn, {
         immediate: true,
         deep: options.deep,
-        // @ts-ignore
         sync: true,
         before: runCleanup,
       });
@@ -127,10 +127,10 @@ function createWatcher(
     const doWatch = () => {
       if (hasEnded) return;
 
+      // @ts-ignore: use undocumented option "before"
       stopRef = vm.$watch(getter, noopFn, {
         immediate: false,
         deep: options.deep,
-        // @ts-ignore
         before: runCleanup,
       });
     };
@@ -191,6 +191,7 @@ function createWatcher(
     applyCb(n, o);
   };
 
+  // @ts-ignore: use undocumented option "sync"
   const stop = vm.$watch(getter, options.lazy ? callback : shiftCallback, {
     immediate: !options.lazy,
     deep: options.deep,
