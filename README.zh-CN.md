@@ -55,8 +55,6 @@ Vue.use(VueCompositionApi);
 
 # TypeScript
 
-我们提供了一个配置好 TC/TSX 支持的[示例仓库](https://github.com/liximomo/vue-composition-api-tsx-example)来帮助你快速开始.
-
 **请使用最新版的 TypeScript，如果你使用了 `vetur`，请将 `vetur.useWorkspaceDependencies` 设为 `true`。**
 
 为了让 TypeScript 正确的推导类型，我们必须使用 `createComponent` 来定义组件:
@@ -75,6 +73,8 @@ const Component = {
 ```
 
 ## TSX
+
+:rocket: 这里有一个配置好 TC/TSX 支持的[示例仓库](https://github.com/liximomo/vue-composition-api-tsx-example)来帮助你快速开始.
 
 要支持 TSX，请创建一个类型定义文件并提供正确的 JSX 定义。内容如下：
 

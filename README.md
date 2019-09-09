@@ -55,8 +55,6 @@ After installing the plugin you can use the [Composition API](https://vue-compos
 
 # TypeScript
 
-We provide an Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support to help you start.
-
 **This plugin requires TypeScript version >3.5.1. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
 
 To let TypeScript properly infer types inside Vue component options, you need to define components with `createComponent`:
@@ -75,6 +73,8 @@ const Component = {
 ```
 
 ## TSX
+
+:rocket: An Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support is provided to help you start.
 
 To support TSX, create a declaration file with following content in your project.
 
