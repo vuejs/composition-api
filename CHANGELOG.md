@@ -1,7 +1,12 @@
+# 0.3.1
+
+- Fix cleaup callback not running when watcher stops [#113](https://github.com/vuejs/composition-api/issues/113).
+- Fix watcher callback not flushing at right timing [#120](https://github.com/vuejs/composition-api/issues/120).
+
 # 0.3.0
 
 - Improve TypeScript type definitions.
-- Fix `context.slots` not being avaliable before render [#84](https://github.com/vuejs/composition-api/issues/81).
+- Fix `context.slots` not being avaliable before render [#84](https://github.com/vuejs/composition-api/issues/84).
 
 ## Changed
 
