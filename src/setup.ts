@@ -46,8 +46,9 @@ function updateTemplateRef(vm: ComponentInstance) {
   const oldRefKeys = vmStateManager.get(vm, 'refs') || [];
   for (let index = 0; index < oldRefKeys.length; index++) {
     const key = oldRefKeys[index];
-    if (!refs[key]) {
-      (rawBindings[key] as Ref<any>).value = null;
+    const setupValue = rawBindings[key];
+    if (!refs[key] && setupValue && isRef(setupValue)) {
+      setupValue.value = null;
     }
   }
 

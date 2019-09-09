@@ -147,7 +147,7 @@ describe('api/watch', () => {
       .then(done);
   });
 
-  it('should flush after render', done => {
+  it('should flush after render (lazy=true)', done => {
     let rerenderedText;
     const vm = new Vue({
       setup() {
@@ -173,6 +173,35 @@ describe('api/watch', () => {
     waitForUpdate(() => {
       expect(rerenderedText).toBe('2');
       expect(spy).toBeCalledTimes(1);
+      expect(spy).toHaveBeenLastCalledWith(2, 1);
+    }).then(done);
+  });
+
+  it('should flush after render (lazy=false)', done => {
+    let rerenderedText;
+    var vm = new Vue({
+      setup() {
+        const a = ref(1);
+        watch(a, (newVal, oldVal) => {
+          spy(newVal, oldVal);
+          if (vm) {
+            rerenderedText = vm.$el.textContent;
+          }
+        });
+        return {
+          a,
+        };
+      },
+      render(h) {
+        return h('div', this.a);
+      },
+    }).$mount();
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toHaveBeenLastCalledWith(1, undefined);
+    vm.a = 2;
+    waitForUpdate(() => {
+      expect(rerenderedText).toBe('2');
+      expect(spy).toBeCalledTimes(2);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -260,6 +289,60 @@ describe('api/watch', () => {
     expect(spy).toBeCalledTimes(2);
     expect(spy).toHaveBeenNthCalledWith(1, 0, undefined);
     expect(spy).toHaveBeenNthCalledWith(2, 1, 0);
+  });
+
+  it('should run in a expected order', done => {
+    const result = [];
+    var vm = new Vue({
+      setup() {
+        const x = ref(0);
+
+        // prettier-ignore
+        watch(() => { void x.value; result.push('sync getter'); }, { flush: 'sync' });
+        // prettier-ignore
+        watch(() => { void x.value; result.push('pre getter'); }, { flush: 'pre' });
+        // prettier-ignore
+        watch(() => { void x.value; result.push('post getter'); }, { flush: 'post' });
+
+        // prettier-ignore
+        watch(x, () => { result.push('sync callback') }, { flush: 'sync' })
+        // prettier-ignore
+        watch(x, () => { result.push('pre callback') }, { flush: 'pre' })
+        // prettier-ignore
+        watch(x, () => { result.push('post callback') }, { flush: 'post' })
+
+        const inc = () => {
+          result.push('before inc');
+          x.value++;
+          result.push('after inc');
+        };
+
+        return { x, inc };
+      },
+      template: `<div>{{x}}</div>`,
+    }).$mount();
+    expect(result).toEqual(['sync getter', 'sync callback', 'pre callback', 'post callback']);
+    result.length = 0;
+
+    waitForUpdate(() => {
+      expect(result).toEqual(['pre getter', 'post getter']);
+      result.length = 0;
+
+      vm.inc();
+    })
+      .then(() => {
+        expect(result).toEqual([
+          'before inc',
+          'sync getter',
+          'sync callback',
+          'after inc',
+          'pre getter',
+          'pre callback',
+          'post getter',
+          'post callback',
+        ]);
+      })
+      .then(done);
   });
 
   describe('simple effect', () => {

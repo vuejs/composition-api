@@ -54,7 +54,10 @@ describe('ref', () => {
       vm.value = 'foo';
     })
       .then(() => {
-        // watcher callback gets invoked after this;
+        // vm updated. ref update occures after updated;
+      })
+      .then(() => {
+        // no render cycle, empty tick
       })
       .then(() => {
         expect(dummy1).toBe(null);

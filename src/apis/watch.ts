@@ -22,9 +22,15 @@ type MapSources<T> = {
 type FlushMode = 'pre' | 'post' | 'sync';
 
 interface WatcherOption {
-  lazy: boolean;
+  lazy: boolean; // whether or not to delay callcack invoking
   deep: boolean;
   flush: FlushMode;
+}
+
+export interface VueWatcher {
+  lazy: boolean;
+  get(): any;
+  teardown(): void;
 }
 
 let fallbackVM: ComponentInstance;
@@ -84,6 +90,31 @@ function queueFlushJob(vm: any, fn: () => void, mode: Exclude<FlushMode, 'sync'>
   }
 }
 
+function createVueWatcher(
+  vm: ComponentInstance,
+  getter: () => any,
+  callback: (n: any, o: any) => any,
+  options: {
+    deep: boolean;
+    sync: boolean;
+    immediateInvokeCallback?: boolean;
+    noRun?: boolean;
+    before?: () => void;
+  }
+): VueWatcher {
+  const index = vm._watchers.length;
+  // @ts-ignore: use undocumented options
+  vm.$watch(getter, callback, {
+    immediate: options.immediateInvokeCallback,
+    deep: options.deep,
+    lazy: options.noRun,
+    sync: options.sync,
+    before: options.before,
+  });
+
+  return vm._watchers[index];
+}
+
 function createWatcher(
   vm: ComponentInstance,
   source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
@@ -91,6 +122,7 @@ function createWatcher(
   options: WatcherOption
 ): () => void {
   const flushMode = options.flush;
+  const isSync = flushMode === 'sync';
   let cleanup: (() => void) | null;
   const registerCleanup: CleanupRegistrator = (fn: () => void) => {
     cleanup = () => {
@@ -101,54 +133,51 @@ function createWatcher(
       }
     };
   };
+  // cleanup before running getter again
+  const runCleanup = () => {
+    if (cleanup) {
+      cleanup();
+      cleanup = null;
+    }
+  };
+  const createScheduler = <T extends Function>(fn: T): T => {
+    if (isSync || /* without a current active instance, ignore pre|post mode */ vm === fallbackVM) {
+      return fn;
+    }
+    return (((...args: any[]) =>
+      queueFlushJob(
+        vm,
+        () => {
+          fn(...args);
+        },
+        flushMode as 'pre' | 'post'
+      )) as any) as T;
+  };
 
   // effect watch
   if (cb === null) {
     const getter = () => (source as SimpleEffect)(registerCleanup);
-    // cleanup before running getter again
-    const runCleanup = () => {
-      if (cleanup) {
-        cleanup();
-      }
-    };
+    const watcher = createVueWatcher(vm, getter, noopFn, {
+      noRun: true, // take control the initial gettet invoking
+      deep: options.deep,
+      sync: isSync,
+      before: runCleanup,
+    });
 
-    if (flushMode === 'sync') {
-      // @ts-ignore: use undocumented option "sync" ahd "before"
-      return vm.$watch(getter, noopFn, {
-        immediate: true,
-        deep: options.deep,
-        sync: true,
-        before: runCleanup,
-      });
-    }
+    // enable the watcher update
+    watcher.lazy = false;
 
-    let stopRef: Function;
-    let hasEnded: boolean = false;
-    const doWatch = () => {
-      if (hasEnded) return;
-
-      // @ts-ignore: use undocumented option "before"
-      stopRef = vm.$watch(getter, noopFn, {
-        immediate: false,
-        deep: options.deep,
-        before: runCleanup,
-      });
-    };
-
-    /* without a current active instance, ignore pre|post mode */
-    if (vm === fallbackVM) {
-      vm.$nextTick(doWatch);
+    const originGet = watcher.get.bind(watcher);
+    if (isSync) {
+      watcher.get();
     } else {
-      queueFlushJob(vm, doWatch, flushMode);
+      vm.$nextTick(originGet);
     }
+    watcher.get = createScheduler(originGet);
 
     return () => {
-      hasEnded = true;
-      if (stopRef) {
-        stopRef();
-        runCleanup();
-        cleanup = null;
-      }
+      watcher.teardown();
+      runCleanup();
     };
   }
 
@@ -163,48 +192,33 @@ function createWatcher(
 
   const applyCb = (n: any, o: any) => {
     // cleanup before running cb again
-    if (cleanup) {
-      cleanup();
-    }
-
+    runCleanup();
     cb(n, o, registerCleanup);
   };
-
-  const callback =
-    flushMode === 'sync' ||
-    /* without a current active instance, ignore pre|post mode */
-    vm === fallbackVM
-      ? applyCb
-      : (n: any, o: any) =>
-          queueFlushJob(
-            vm,
-            () => {
-              applyCb(n, o);
-            },
-            flushMode
-          );
-
-  // `shiftCallback` is used to handle dirty sync effect.
-  // The subsequent callbacks will redirect to `callback`.
-  let shiftCallback = (n: any, o: any) => {
-    shiftCallback = callback;
-    applyCb(n, o);
-  };
+  let callback = createScheduler(applyCb);
+  if (!options.lazy) {
+    const originalCallbck = callback;
+    // `shiftCallback` is used to handle the first sync effect run.
+    // The subsequent callbacks will redirect to `callback`.
+    let shiftCallback = (n: any, o: any) => {
+      shiftCallback = originalCallbck;
+      applyCb(n, o);
+    };
+    callback = (n: any, o: any) => {
+      shiftCallback(n, o);
+    };
+  }
 
   // @ts-ignore: use undocumented option "sync"
-  const stop = vm.$watch(getter, options.lazy ? callback : shiftCallback, {
+  const stop = vm.$watch(getter, callback, {
     immediate: !options.lazy,
     deep: options.deep,
-    // @ts-ignore
-    sync: flushMode === 'sync',
+    sync: isSync,
   });
 
   return () => {
     stop();
-    if (cleanup) {
-      cleanup();
-      cleanup = null;
-    }
+    runCleanup();
   };
 }
 
