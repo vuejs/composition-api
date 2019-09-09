@@ -13,6 +13,7 @@
 - [Installation](#Installation)
 - [Usage](#Usage)
 - [TypeScript](#TypeScript)
+  - [TSX](#tsx)
 - [Limitations](#Limitations)
 - [API](https://vue-composition-api-rfc.netlify.com/api.html)
 - [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
@@ -54,7 +55,9 @@ After installing the plugin you can use the [Composition API](https://vue-compos
 
 # TypeScript
 
-**Please upgrade to the latest TypeScript. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
+We provide an Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support to help you start.
+
+**This plugin requires TypeScript version >3.5.1. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
 
 To let TypeScript properly infer types inside Vue component options, you need to define components with `createComponent`:
 
@@ -69,6 +72,31 @@ const Component = {
   // this will NOT have type inference,
   // because TypeScript can't tell this is options for a Vue component.
 };
+```
+
+## TSX
+
+To support TSX, create a declaration file with following content in your project.
+
+```ts
+// file: shim-tsx.d.ts
+import Vue, { VNode } from 'vue';
+import { ComponentRenderProxy } from '@vue/composition-api';
+
+declare global {
+  namespace JSX {
+    // tslint:disable no-empty-interface
+    interface Element extends VNode {}
+    // tslint:disable no-empty-interface
+    interface ElementClass extends ComponentRenderProxy {}
+    interface ElementAttributesProperty {
+      $props: any; // specify the property name to use
+    }
+    interface IntrinsicElements {
+      [elem: string]: any;
+    }
+  }
+}
 ```
 
 # Limitations
@@ -150,10 +178,10 @@ b.list[1].count === 1; // true
 ## Template Refs
 
 > :white_check_mark:
- Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
+> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
 :white_check_mark:
- String ref && return it from `setup()`:
+String ref && return it from `setup()`:
 
 ```html
 <template>
@@ -179,7 +207,7 @@ b.list[1].count === 1; // true
 ```
 
 :white_check_mark:
- String ref && return it from `setup()` && Render Function / JSX:
+String ref && return it from `setup()` && Render Function / JSX:
 
 ```jsx
 export default {

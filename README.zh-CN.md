@@ -13,6 +13,7 @@
 - [安装](#安装)
 - [使用](#使用)
 - [TypeScript](#TypeScript)
+  - [TSX](#tsx)
 - [限制](#限制)
 - [API](https://vue-composition-api-rfc.netlify.com/api.html)
 - [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
@@ -54,6 +55,8 @@ Vue.use(VueCompositionApi);
 
 # TypeScript
 
+我们提供了一个配置好 TC/TSX 支持的[示例仓库](https://github.com/liximomo/vue-composition-api-tsx-example)来帮助你快速开始.
+
 **请使用最新版的 TypeScript，如果你使用了 `vetur`，请将 `vetur.useWorkspaceDependencies` 设为 `true`。**
 
 为了让 TypeScript 正确的推导类型，我们必须使用 `createComponent` 来定义组件:
@@ -69,6 +72,31 @@ const Component = {
   // 无法进行选项的类型推断
   // TypeScript 无法知道这是一个 Vue 组件的选项对象
 };
+```
+
+## TSX
+
+要支持 TSX，请创建一个类型定义文件并提供正确的 JSX 定义。内容如下：
+
+```ts
+// file: shim-tsx.d.ts`
+import Vue, { VNode } from 'vue';
+import { ComponentRenderProxy } from '@vue/composition-api';
+
+declare global {
+  namespace JSX {
+    // tslint:disable no-empty-interface
+    interface Element extends VNode {}
+    // tslint:disable no-empty-interface
+    interface ElementClass extends ComponentRenderProxy {}
+    interface ElementAttributesProperty {
+      $props: any; // specify the property name to use
+    }
+    interface IntrinsicElements {
+      [elem: string]: any;
+    }
+  }
+}
 ```
 
 # 限制

@@ -9,7 +9,7 @@ export type ComponentInstance = InstanceType<VueConstructor>;
 
 // public properties exposed on the proxy, which is used as the render context
 // in templates (as `this` in the render option)
-type ComponentRenderProxy<P = {}, S = {}, PublicProps = P> = {
+export type ComponentRenderProxy<P = {}, S = {}, PublicProps = P> = {
   $data: S;
   $props: PublicProps;
   $attrs: Data;
