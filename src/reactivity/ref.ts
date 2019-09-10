@@ -4,7 +4,7 @@ import { proxy, isPlainObject } from '../utils';
 import { HasDefined } from '../types/basic';
 import { reactive } from './reactive';
 
-type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
+type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any> | Promise<any>;
 
 export interface Ref<T> {
   value: T;
@@ -18,56 +18,56 @@ export type UnwrapRef<T> = T extends Ref<infer V>
   ? UnwrapRef2<V>
   : T extends BailTypes
       ? T // bail out on types that shouldn't be unwrapped
-      : T extends object ? { [K in keyof T]: UnwrapRef2<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef2<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef2<T> = T extends Ref<infer V>
   ? UnwrapRef3<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef3<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef3<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef3<T> = T extends Ref<infer V>
   ? UnwrapRef4<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef4<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef4<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef4<T> = T extends Ref<infer V>
   ? UnwrapRef5<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef5<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef5<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef5<T> = T extends Ref<infer V>
   ? UnwrapRef6<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef6<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef6<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef6<T> = T extends Ref<infer V>
   ? UnwrapRef7<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef7<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef7<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef7<T> = T extends Ref<infer V>
   ? UnwrapRef8<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef8<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef8<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef8<T> = T extends Ref<infer V>
   ? UnwrapRef9<V>
   : T extends BailTypes
       ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef9<T[K]> } : T
+      : T extends object ? T & { [K in keyof T]: UnwrapRef9<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef9<T> = T extends Ref<infer V>
