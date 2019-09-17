@@ -74,7 +74,7 @@ const Component = {
 
 ## TSX
 
-:rocket: 这里有一个配置好 TC/TSX 支持的[示例仓库](https://github.com/liximomo/vue-composition-api-tsx-example)来帮助你快速开始.
+:rocket: 这里有一个配置好 TS/TSX 支持的[示例仓库](https://github.com/liximomo/vue-composition-api-tsx-example)来帮助你快速开始.
 
 要支持 TSX，请创建一个类型定义文件并提供正确的 JSX 定义。内容如下：
 
