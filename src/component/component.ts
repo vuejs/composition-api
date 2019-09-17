@@ -75,7 +75,11 @@ export function createComponent<RawBindings>(
 ): VueProxy<never, RawBindings>;
 // overload 2: object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
-export function createComponent<Props, RawBindings = Data, PropsOptions = ComponentPropsOptions>(
+export function createComponent<
+  Props,
+  RawBindings = Data,
+  PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
+>(
   // prettier-ignore
   options: (
     // prefer the provided Props, otherwise infer it from PropsOptions

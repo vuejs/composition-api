@@ -59,7 +59,7 @@ describe('createComponent', () => {
         return () => null;
       },
     });
-    new Vue(App).$mount();
+    new Vue(App);
     expect.assertions(3);
   });
 
@@ -79,7 +79,7 @@ describe('createComponent', () => {
         return () => null;
       },
     });
-    new Vue(App).$mount();
+    new Vue(App);
     expect.assertions(3);
   });
 
@@ -91,7 +91,41 @@ describe('createComponent', () => {
         return () => null;
       },
     });
-    new Vue(App).$mount();
+    new Vue(App);
+    expect.assertions(2);
+  });
+
+  it('infer the required prop', () => {
+    const App = createComponent({
+      props: {
+        foo: {
+          type: String,
+          required: true,
+        },
+        bar: {
+          type: String,
+          default: 'default',
+        },
+        zoo: {
+          type: String,
+          required: false,
+        },
+      },
+      propsData: {
+        foo: 'foo',
+      },
+      setup(props) {
+        type PropsType = typeof props;
+        isSubType<{ readonly foo: string; readonly bar: string; readonly zoo?: string }, PropsType>(
+          true
+        );
+        isSubType<PropsType, { readonly foo: string; readonly bar: string; readonly zoo?: string }>(
+          true
+        );
+        return () => null;
+      },
+    });
+    new Vue(App);
     expect.assertions(2);
   });
 });
