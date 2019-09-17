@@ -216,7 +216,7 @@ export function mixin(Vue: VueConstructor) {
     const ctx = {
       slots: {},
     } as SetupContext;
-    const props: Array<string | [string, string]> = ['root', 'parent', 'refs', 'attrs'];
+    const props: Array<string | [string, string]> = ['root', 'parent', 'refs', 'attrs', 'listeners'];
     const methodReturnVoid = ['emit'];
     props.forEach(key => {
       let targetKey: string;
