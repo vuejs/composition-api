@@ -1,4 +1,6 @@
 import { createComponent, createElement as h, ref, SetupContext } from '../../src';
+import Router from 'vue-router';
+
 const Vue = require('vue/dist/vue.common.js');
 
 type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right
@@ -127,5 +129,19 @@ describe('createComponent', () => {
     });
     new Vue(App);
     expect.assertions(2);
+  });
+
+  describe('compatible with vue router', () => {
+    it('RouteConfig.component', () => {
+      new Router({
+        routes: [
+          {
+            path: '/',
+            name: 'root',
+            component: createComponent({}),
+          },
+        ],
+      });
+    });
   });
 });
