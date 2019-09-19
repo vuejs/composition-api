@@ -45,6 +45,7 @@ export interface SetupContext {
   readonly slots: { [key: string]: (...args: any[]) => VNode[] };
   readonly parent: ComponentInstance | null;
   readonly root: ComponentInstance;
+  readonly listeners: { [key: string]: Function };
 
   emit(event: string, ...args: any[]): void;
 }
