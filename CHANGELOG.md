@@ -1,3 +1,9 @@
+# 0.3.2
+
+- Improve TypeScript type infer for `props` option [#106](https://github.com/vuejs/composition-api/issues/106).
+- Fix return type of `createComponent` not being compatible with `vue-router` [#130](https://github.com/vuejs/composition-api/issues/130).
+- Expose `listeners` on `SetupContext` [#132](https://github.com/vuejs/composition-api/issues/132).
+
 # 0.3.1
 
 - Fix cleaup callback not running when watcher stops [#113](https://github.com/vuejs/composition-api/issues/113).
