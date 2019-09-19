@@ -26,7 +26,7 @@ function mergeData(to: AnyObject, from?: AnyObject): Object {
     } else if (
       toVal !== fromVal &&
       (isPlainObject(toVal) && !isRef(toVal)) &&
-      (isPlainObject(fromVal) && !isRef(toVal))
+      (isPlainObject(fromVal) && !isRef(fromVal))
     ) {
       mergeData(toVal, fromVal);
     }
