@@ -355,4 +355,46 @@ describe('setup', () => {
       })
       .then(done);
   });
+
+  describe('Bindings', ()=>{
+    it('should bind the vm when calling with parentesis', async ()=>{
+      let context = null;
+      const contextFunction = jest.fn(function (){
+        context = this
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction()"/></div>',
+        setup() {
+          return {
+            contextFunction
+          }
+        }
+      }).$mount();
+  
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context.$el).toBe(vm.$el);
+    });
+
+    it('should bind the vm when calling without parentesis', async ()=>{
+      let context = null;
+      const contextFunction = jest.fn(function (){
+        context = this
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction"/></div>',
+        setup() {
+          return {
+            contextFunction
+          }
+        }
+      }).$mount();
+  
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context.$el).toBe(vm.$el);
+    });
+  })
 });
