@@ -1,8 +1,10 @@
 import { Data } from './component';
 
-export type ComponentPropsOptions<P = Data> = {
-  [K in keyof P]: Prop<P[K], true | false> | null;
-};
+export type ComponentPropsOptions<P = Data> =
+  | {
+      [K in keyof P]: Prop<P[K], true | false> | null;
+    }
+  | readonly string[];
 
 type Prop<T, Required extends boolean> = PropOptions<T, Required> | PropType<T>;
 
@@ -14,6 +16,8 @@ export interface PropOptions<T = any, Required extends boolean = false> {
 }
 
 export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
+
+type PropKeys<O extends readonly string[]> = O[number];
 
 type PropConstructor<T> = { new (...args: any[]): T & object } | { (): T };
 
@@ -39,7 +43,9 @@ type InferPropType<T> = T extends null
         : T;
 
 // prettier-ignore
-export type ExtractPropTypes<O, MakeDefaultRequired extends boolean = true> = {
+export type ExtractPropTypes<O, MakeDefaultRequired extends boolean = true> = O extends readonly string[] ? {
+  [K in PropKeys<O>]: any;
+} : {
   readonly [K in RequiredKeys<O, MakeDefaultRequired>]: InferPropType<O[K]>;
 } & {
   readonly [K in OptionalKeys<O, MakeDefaultRequired>]?: InferPropType<O[K]>;
