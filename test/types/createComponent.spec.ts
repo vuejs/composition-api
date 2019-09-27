@@ -131,6 +131,17 @@ describe('createComponent', () => {
     expect.assertions(2);
   });
 
+  it('should accept tuple props', () => {
+    const App = createComponent({
+      props: ['p1', 'p2'] as const,
+      setup(props) {
+        props.p1;
+        props.p2;
+      },
+    });
+    new Vue(App);
+  });
+
   describe('compatible with vue router', () => {
     it('RouteConfig.component', () => {
       new Router({
