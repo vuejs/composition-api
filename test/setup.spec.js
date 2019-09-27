@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, computed, createElement: h, createComponent } = require('../src');
+const { ref, computed, createElement: h } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
