@@ -356,8 +356,8 @@ describe('setup', () => {
       .then(done);
   });
 
-  describe('Bindings', ()=>{
-    it('should bind the vm when calling with parentesis', async ()=>{
+  describe('Methods', () => {
+    it('binds methods when calling with parenthesis', async ()=>{
       let context = null;
       const contextFunction = jest.fn(function (){
         context = this
@@ -374,10 +374,10 @@ describe('setup', () => {
   
       await vm.$el.querySelector('button').click();
       expect(contextFunction).toBeCalled();
-      expect(context.$el).toBe(vm.$el);
+      expect(context).toBe(vm);
     });
 
-    it('should bind the vm when calling without parentesis', async ()=>{
+    it('binds methods when calling without parenthesis', async () => {
       let context = null;
       const contextFunction = jest.fn(function (){
         context = this
@@ -394,7 +394,7 @@ describe('setup', () => {
   
       await vm.$el.querySelector('button').click();
       expect(contextFunction).toBeCalled();
-      expect(context.$el).toBe(vm.$el);
+      expect(context).toBe(vm);
     });
   })
 });
