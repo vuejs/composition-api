@@ -167,10 +167,10 @@ b.list.push(
 b.list[1].count === 1; // true
 ```
 
-### ***Using*** `reactive` will mutate the origin object
+### `reactive` 会返回一个修改过的原始的对象
 
-This is an limitation of using Vue.observable in Vue 2.
-> Vue 3 it will return an new proxy object.
+此行为与 Vue 2 中的 `Vue.observable` 一致
+> Vue 3 中会返回一个新的的代理对象.
 
 ---
 
