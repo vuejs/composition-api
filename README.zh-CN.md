@@ -167,6 +167,11 @@ b.list.push(
 b.list[1].count === 1; // true
 ```
 
+### `reactive` 会返回一个修改过的原始的对象
+
+此行为与 Vue 2 中的 `Vue.observable` 一致
+> Vue 3 中会返回一个新的的代理对象.
+
 ---
 
 ## `watch()` API

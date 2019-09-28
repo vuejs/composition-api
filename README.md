@@ -167,6 +167,11 @@ b.list.push(
 b.list[1].count === 1; // true
 ```
 
+### ***Using*** `reactive` will mutate the origin object
+
+This is an limitation of using `Vue.observable` in Vue 2.
+> Vue 3 will return an new proxy object.
+
 ---
 
 ## `watch()` API
