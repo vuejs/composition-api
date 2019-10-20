@@ -170,7 +170,7 @@ describe('unwrapping', () => {
     const a = ref(0);
     const b = ref(a);
     expect(a.value).toBe(0);
-    expect(b.value).toBe(a);
+    expect(b.value).toBe(0);
   });
 
   it('should not unwrap a ref when re-assign', () => {
@@ -194,7 +194,7 @@ describe('unwrapping', () => {
   it('should unwrap when re-assign', () => {
     const a = ref();
     const b = ref(a);
-    expect(b.value).toBe(a);
+    expect(b.value).toBe(a.value);
     const c = ref(0);
     b.value = {
       count: c,

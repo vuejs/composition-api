@@ -117,9 +117,9 @@ export function ref<S, T = unknown, R = HasDefined<S> extends true ? S : RefValu
 ): Ref<R>;
 // implementation
 export function ref(raw?: any): any {
-  // if (isRef(raw)) {
-  //   return {} as any;
-  // }
+  if (isRef(raw)) {
+    return raw;
+  }
 
   const value = reactive({ [RefKey]: raw });
   return createRef({
