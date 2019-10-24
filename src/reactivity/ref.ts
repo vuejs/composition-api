@@ -14,11 +14,9 @@ export interface Ref<T> {
 // Recursively unwraps nested value bindings.
 // Unfortunately TS cannot do recursive types, but this should be enough for
 // practical use cases...
-export type UnwrapRef<T> = T extends Ref<infer V>
-  ? UnwrapRef2<V>
-  : T extends BailTypes
-      ? T // bail out on types that shouldn't be unwrapped
-      : T extends object ? { [K in keyof T]: UnwrapRef2<T[K]> } : T
+export type UnwrapRef<T> = T extends BailTypes
+  ? T // bail out on types that shouldn't be unwrapped
+  : T extends object ? { [K in keyof T]: UnwrapRef2<T[K]> } : T
 
 // prettier-ignore
 type UnwrapRef2<T> = T extends Ref<infer V>
@@ -134,7 +132,7 @@ export function isRef<T>(value: any): value is Ref<T> {
 
 // prettier-ignore
 type Refs<Data> = {
-  [K in keyof Data]: Data[K] extends Ref<infer V> 
+  [K in keyof Data]: Data[K] extends Ref<infer V>
     ? Ref<V>
     : Ref<Data[K]>
 }
