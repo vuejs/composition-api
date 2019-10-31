@@ -152,7 +152,7 @@ export function nonReactive<T = any>(obj: T): T {
   }
 
   // set the vue observable flag at obj
-  (obj as any).__ob__ = (observe({}) as any).__ob__;
+  def(obj, '__ob__', (observe({}) as any).__ob__);
   // mark as nonReactive
   def(obj, NonReactiveIdentifierKey, NonReactiveIdentifier);
 

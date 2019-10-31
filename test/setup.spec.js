@@ -276,6 +276,24 @@ describe('setup', () => {
       .then(done);
   });
 
+  it("should put a unenumerable '__ob__' for non-reactive object", () => {
+    const clone = obj => JSON.parse(JSON.stringify(obj));
+    const componentSetup = jest.fn(props => {
+      const internalOptions = clone(props.options);
+      return { internalOptions };
+    });
+    const ExternalComponent = {
+      props: ['options'],
+      setup: componentSetup,
+    };
+    new Vue({
+      components: { ExternalComponent },
+      setup: () => ({ options: {} }),
+      template: `<external-component :options="options"></external-component>`,
+    }).$mount();
+    expect(componentSetup).toReturn();
+  });
+
   it('current vue should exist in nested setup call', () => {
     const spy = jest.fn();
     new Vue({
