@@ -9,7 +9,7 @@ interface Option<T> {
 }
 
 // read-only
-export function computed<T>(getter: Option<T>['get']): Readonly<Ref<Readonly<T>>>;
+export function computed<T>(getter: Option<T>['get']): Readonly<Ref<T>>;
 // writable
 export function computed<T>(options: Option<T>): Ref<Readonly<T>>;
 // implement
