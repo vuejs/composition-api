@@ -53,6 +53,15 @@ Vue.use(VueCompositionApi);
 
 After installing the plugin you can use the [Composition API](https://vue-composition-api-rfc.netlify.com/) to compose your component.
 
+# Migration from vue-function-api
+
+### `value` in vue-function-api is `ref`
+
+```javascript
+-import { value, onMounted, onUnmounted } from 'vue-function-api'
++import { ref, onMounted, onUnmounted } from '@vue/composition-api'
+```
+
 # TypeScript
 
 **This plugin requires TypeScript version >3.5.1. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
