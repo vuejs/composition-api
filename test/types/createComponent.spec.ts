@@ -89,7 +89,7 @@ describe('createComponent', () => {
     const App = createComponent({
       setup(props, ctx) {
         isTypeEqual<SetupContext, typeof ctx>(true);
-        isTypeEqual<never, typeof props>(true);
+        isTypeEqual<unknown, typeof props>(true);
         return () => null;
       },
     });
