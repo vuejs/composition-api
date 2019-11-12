@@ -22,8 +22,8 @@ export type ComponentRenderProxy<P = {}, S = {}, PublicProps = P> = {
   S;
 
 // for Vetur and TSX support
-type VueConstructorProxy<PropsOptions, RawBindings> = {
-  new (): ComponentRenderProxy<
+type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
+  new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
     UnwrapRef<RawBindings>,
     ExtractPropTypes<PropsOptions, false>
