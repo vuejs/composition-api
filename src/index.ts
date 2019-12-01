@@ -24,7 +24,7 @@ export default plugin;
 export { default as createElement } from './createElement';
 export { SetupContext };
 export { createComponent, ComponentRenderProxy, PropType, PropOptions } from './component';
-// For getting a gold of the interal instance in setup() - useful for advanced
+// For getting a hold of the interal instance in setup() - useful for advanced
 // plugins
 export { getCurrentVM as getCurrentInstance } from './runtimeContext';
 
