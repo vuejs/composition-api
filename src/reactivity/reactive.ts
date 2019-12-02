@@ -99,7 +99,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
         value.value = newVal;
       } else if (setter) {
         setter.call(target, newVal);
-      } else if (isRef(newVal)) {
+      } else {
         val = newVal;
       }
       setupAccessControl(newVal);
