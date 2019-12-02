@@ -63,11 +63,12 @@ describe('serverPrefetch', () => {
     expect(html).toBe('<div data-server-rendered="true">42meow</div>');
   });
 
-  it('should use ssrContext', async () => {
+  it('should pass ssrContext', async () => {
     const child = {
-      setup() {
+      setup(props, { ssrContext }) {
         const content = ref();
-        const ssrContext = inject('ssrContext');
+
+        expect(ssrContext.foo).toBe('bar');
 
         onServerPrefetch(async () => {
           content.value = await fetch(ssrContext.foo);
@@ -82,24 +83,17 @@ describe('serverPrefetch', () => {
       },
     };
 
-    function createApp(context) {
-      return new Vue({
-        components: {
-          child,
-        },
-        setup() {
-          provide('ssrContext', context);
-        },
-        render(h) {
-          return h('child');
-        },
-      });
-    }
+    const app = new Vue({
+      components: {
+        child,
+      },
+      render(h) {
+        return h('child');
+      },
+    });
 
     const serverRenderer = createRenderer();
-    const context = { foo: 'bar' };
-    const app = createApp(context);
-    const html = await serverRenderer.renderToString(app, context);
+    const html = await serverRenderer.renderToString(app, { foo: 'bar' });
     expect(html).toBe('<div data-server-rendered="true">bar</div>');
   });
 

@@ -320,11 +320,11 @@ Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the
 import { onServerPrefetch } from '@vue/composition-api';
 
 export default {
-  setup () {
+  setup (props, { ssrContext }) {
     const result = ref();
 
     onServerPrefetch(async () => {
-      result.value = await callApi();
+      result.value = await callApi(ssrContext.someId);
     });
 
     return {
