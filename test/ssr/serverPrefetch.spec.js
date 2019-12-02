@@ -1,6 +1,6 @@
 const Vue = require('vue/dist/vue.common.js');
 const { createRenderer } = require('vue-server-renderer');
-const { ref, onServerPrefetch, getCurrentInstance } = require('../../src');
+const { ref, onServerPrefetch, getCurrentInstance, provide, inject } = require('../../src');
 
 function fetch(result) {
   return new Promise(resolve => {
@@ -61,6 +61,46 @@ describe('serverPrefetch', () => {
     const serverRenderer = createRenderer();
     const html = await serverRenderer.renderToString(app);
     expect(html).toBe('<div data-server-rendered="true">42meow</div>');
+  });
+
+  it('should use ssrContext', async () => {
+    const child = {
+      setup() {
+        const content = ref();
+        const ssrContext = inject('ssrContext');
+
+        onServerPrefetch(async () => {
+          content.value = await fetch(ssrContext.foo);
+        });
+
+        return {
+          content,
+        };
+      },
+      render(h) {
+        return h('div', this.content);
+      },
+    };
+
+    function createApp(context) {
+      return new Vue({
+        components: {
+          child,
+        },
+        setup() {
+          provide('ssrContext', context);
+        },
+        render(h) {
+          return h('child');
+        },
+      });
+    }
+
+    const serverRenderer = createRenderer();
+    const context = { foo: 'bar' };
+    const app = createApp(context);
+    const html = await serverRenderer.renderToString(app, context);
+    expect(html).toBe('<div data-server-rendered="true">bar</div>');
   });
 
   it('should not share context', async () => {
