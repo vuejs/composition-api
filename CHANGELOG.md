@@ -1,3 +1,8 @@
+# 0.3.4
+
+- Fixed `reactive` setter not working on the server.
+- New `isServer` setup context property.
+
 # 0.3.3
 
 - Fixed make `__ob__` unenumerable [#149](https://github.com/vuejs/composition-api/issues/149).
