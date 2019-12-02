@@ -38,3 +38,4 @@ export const onUnmounted = createLifeCycles(['destroyed', 'deactivated'], genNam
 export const onErrorCaptured = createLifeCycle('errorCaptured');
 export const onActivated = createLifeCycle('activated');
 export const onDeactivated = createLifeCycle('deactivated');
+export const onServerPrefetch = createLifeCycle('serverPrefetch');

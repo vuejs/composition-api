@@ -311,3 +311,25 @@ declare module '@vue/composition-api/dist/component/component' {
   }
 }
 ```
+
+## SSR
+
+Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
+
+```js
+import { onServerPrefetch } from '@vue/composition-api';
+
+export default {
+  setup (props, { ssrContext }) {
+    const result = ref();
+
+    onServerPrefetch(async () => {
+      result.value = await callApi(ssrContext.someId);
+    });
+
+    return {
+      result,
+    };
+  },
+};
+```
