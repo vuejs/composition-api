@@ -1,3 +1,8 @@
+# 0.3.3
+
+- Expose `getCurrentInstance` for advanced usage in Vue plugins.
+- New `onServerPrefetch` lifecycle hook and new `ssrContext` setup context property [#198](https://github.com/vuejs/composition-api/issues/198).
+
 # 0.3.2
 
 - Improve TypeScript type infer for `props` option [#106](https://github.com/vuejs/composition-api/issues/106).
