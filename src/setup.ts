@@ -222,6 +222,7 @@ export function mixin(Vue: VueConstructor) {
       'refs',
       'attrs',
       'listeners',
+      'isServer',
       'ssrContext',
     ];
     const methodReturnVoid = ['emit'];
