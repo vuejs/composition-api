@@ -1,5 +1,7 @@
 # 0.3.3
 
+- Fixed make `__ob__` unenumerable [#149](https://github.com/vuejs/composition-api/issues/149).
+- Fixed computed type
 - Expose `getCurrentInstance` for advanced usage in Vue plugins.
 - New `onServerPrefetch` lifecycle hook and new `ssrContext` setup context property [#198](https://github.com/vuejs/composition-api/issues/198).
 
