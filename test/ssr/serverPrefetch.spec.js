@@ -121,11 +121,19 @@ describe('serverPrefetch', () => {
     }
 
     const serverRenderer = createRenderer();
+    const promises = [];
+    // Parallel requests
     for (let i = 1; i < 3; i++) {
-      const app = createApp({ result: i });
-      const html = await serverRenderer.renderToString(app);
-      expect(html).toBe(`<div data-server-rendered="true">${i}</div>`);
+      promises.push(
+        new Promise(async resolve => {
+          const app = createApp({ result: i });
+          const html = await serverRenderer.renderToString(app);
+          expect(html).toBe(`<div data-server-rendered="true">${i}</div>`);
+          resolve();
+        })
+      );
     }
+    await Promise.all(promises);
     expect((instances[0] === instances[1]) === instances[2]).toBe(false);
   });
 });
