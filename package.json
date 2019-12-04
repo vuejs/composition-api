@@ -1,5 +1,5 @@
 {
-  "name": "@vue/composition-api",
+  "name": "@marketdial/composition-api",
   "version": "0.3.4",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
