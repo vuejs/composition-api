@@ -6,7 +6,10 @@ import { reactive } from './reactive';
 
 type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
 
+const _refBrand: unique symbol = Symbol();
+type _refBrand = typeof _refBrand;
 export interface Ref<T> {
+  readonly _refBrand: _refBrand;
   value: T;
 }
 
@@ -86,6 +89,7 @@ interface RefOption<T> {
   set?(x: T): void;
 }
 class RefImpl<T> implements Ref<T> {
+  readonly _refBrand: _refBrand = _refBrand;
   public value!: T;
   constructor({ get, set }: RefOption<T>) {
     proxy(this, 'value', {
@@ -134,7 +138,7 @@ export function isRef<T>(value: any): value is Ref<T> {
 
 // prettier-ignore
 type Refs<Data> = {
-  [K in keyof Data]: Data[K] extends Ref<infer V> 
+  [K in keyof Data]: Data[K] extends Ref<infer V>
     ? Ref<V>
     : Ref<Data[K]>
 }
