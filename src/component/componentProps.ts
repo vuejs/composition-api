@@ -43,4 +43,6 @@ export type ExtractPropTypes<O, MakeDefaultRequired extends boolean = true> = {
   readonly [K in RequiredKeys<O, MakeDefaultRequired>]: InferPropType<O[K]>;
 } & {
   readonly [K in OptionalKeys<O, MakeDefaultRequired>]?: InferPropType<O[K]>;
+} & {
+  readonly class?: string;
 };
