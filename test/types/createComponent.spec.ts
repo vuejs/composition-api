@@ -1,11 +1,9 @@
-import { createComponent, createElement as h, ref, SetupContext } from '../../src';
+import { createComponent, createElement as h, ref, SetupContext, PropType } from '../../src';
 import Router from 'vue-router';
 
 const Vue = require('vue/dist/vue.common.js');
 
-type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right
-  ? 1
-  : 0)
+type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends <U>() => U extends Right ? 1 : 0
   ? true
   : false;
 
@@ -78,6 +76,26 @@ describe('createComponent', () => {
         isTypeEqual<SetupContext, typeof ctx>(true);
         isSubType<PropsType, { b: string }>(true);
         isSubType<{ b: string }, PropsType>(true);
+        return () => null;
+      },
+    });
+    new Vue(App);
+    expect.assertions(3);
+  });
+
+  it('custom props type function', () => {
+    interface IPropsTypeFunction {
+      fn: (arg: boolean) => void;
+    }
+    const App = createComponent<IPropsTypeFunction>({
+      props: {
+        fn: Function as PropType<(arg: boolean) => void>,
+      },
+      setup(props, ctx) {
+        type PropsType = typeof props;
+        isTypeEqual<SetupContext, typeof ctx>(true);
+        isSubType<PropsType, { fn: (arg: boolean) => void }>(true);
+        isSubType<{ fn: (arg: boolean) => void }, PropsType>(true);
         return () => null;
       },
     });
