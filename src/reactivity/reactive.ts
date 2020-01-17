@@ -1,7 +1,7 @@
 import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isPlainObject, def, hasOwn, warn } from '../utils';
-import { isComponentInstance, createComponentInstance } from '../helper';
+import { isComponentInstance, defineComponentInstance } from '../helper';
 import {
   AccessControlIdentifierKey,
   ReactiveIdentifierKey,
@@ -113,7 +113,7 @@ function observe<T>(obj: T): T {
   if (Vue.observable) {
     observed = Vue.observable(obj);
   } else {
-    const vm = createComponentInstance(Vue, {
+    const vm = defineComponentInstance(Vue, {
       data: {
         $$state: obj,
       },

@@ -57,12 +57,12 @@ After installing the plugin you can use the [Composition API](https://vue-compos
 
 **This plugin requires TypeScript version >3.5.1. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
 
-To let TypeScript properly infer types inside Vue component options, you need to define components with `createComponent`:
+To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`:
 
 ```ts
-import { createComponent } from '@vue/composition-api';
+import { defineComponent } from '@vue/composition-api';
 
-const Component = createComponent({
+const Component = defineComponent({
   // type inference enabled
 });
 
