@@ -6,7 +6,7 @@ import { mixin } from './setup';
 
 declare module 'vue/types/options' {
   interface ComponentOptions<V extends Vue> {
-    setup?: SetupFunction<Data, Data>;
+    setup?: SetupFunction<Data, Data, Data>;
   }
 }
 

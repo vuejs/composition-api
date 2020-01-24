@@ -167,7 +167,7 @@ export function mixin(Vue: VueConstructor) {
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots);
 
-    let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null;
+    let binding: ReturnType<SetupFunction<Data, Data, Data>> | undefined | null;
     activateCurrentInstance(vm, () => {
       binding = setup(props, ctx);
     });

@@ -40,9 +40,9 @@ type VueProxy<PropsOptions, RawBindings> = Vue2ComponentOptions<
 > &
   VueConstructorProxy<PropsOptions, RawBindings>;
 
-export interface SetupContext {
+export interface SetupContext<ScopedSlots = Data> {
   readonly attrs: Record<string, string>;
-  readonly slots: { [key: string]: (...args: any[]) => VNode[] };
+  readonly slots: { [K in keyof ScopedSlots]: (props: ScopedSlots[K]) => VNode[] };
   readonly parent: ComponentInstance | null;
   readonly root: ComponentInstance;
   readonly listeners: { [key: string]: Function };
@@ -50,24 +50,25 @@ export interface SetupContext {
   emit(event: string, ...args: any[]): void;
 }
 
-export type SetupFunction<Props, RawBindings> = (
+export type SetupFunction<Props, RawBindings, ScopedSlots = Data> = (
   this: void,
   props: Props,
-  ctx: SetupContext
+  ctx: SetupContext<ScopedSlots>
 ) => RawBindings | (() => VNode | null);
 
 interface ComponentOptionsWithProps<
   PropsOptions = ComponentPropsOptions,
   RawBindings = Data,
-  Props = ExtractPropTypes<PropsOptions>
+  Props = ExtractPropTypes<PropsOptions>,
+  ScopedSlots = Data
 > {
   props?: PropsOptions;
-  setup?: SetupFunction<Props, RawBindings>;
+  setup?: SetupFunction<Props, RawBindings, ScopedSlots>;
 }
 
-interface ComponentOptionsWithoutProps<Props = never, RawBindings = Data> {
+interface ComponentOptionsWithoutProps<Props = never, RawBindings = Data, ScopedSlots = Data> {
   props?: undefined;
-  setup?: SetupFunction<Props, RawBindings>;
+  setup?: SetupFunction<Props, RawBindings, ScopedSlots>;
 }
 
 // overload 1: object format with no props
