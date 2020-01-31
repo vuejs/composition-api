@@ -2,13 +2,15 @@ import Vue from 'vue';
 
 const toString = (x: any) => Object.prototype.toString.call(x);
 
-export function isNative (Ctor: any): boolean {
-  return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
+export function isNative(Ctor: any): boolean {
+  return typeof Ctor === 'function' && /native code/.test(Ctor.toString());
 }
 
 export const hasSymbol =
-  typeof Symbol !== 'undefined' && isNative(Symbol) &&
-  typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys)
+  typeof Symbol !== 'undefined' &&
+  isNative(Symbol) &&
+  typeof Reflect !== 'undefined' &&
+  isNative(Reflect.ownKeys);
 
 export const noopFn: any = (_: any) => _;
 
@@ -34,9 +36,8 @@ export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
   });
 }
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
 export function hasOwn(obj: Object | any[], key: string): boolean {
-  return hasOwnProperty.call(obj, key);
+  return obj !== null && Object.hasOwnProperty.call(obj, key);
 }
 
 export function assert(condition: any, msg: string) {
