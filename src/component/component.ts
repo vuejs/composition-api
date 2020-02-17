@@ -22,8 +22,8 @@ export type ComponentRenderProxy<P = {}, S = {}, PublicProps = P> = {
   S;
 
 // for Vetur and TSX support
-type VueConstructorProxy<PropsOptions, RawBindings> = {
-  new (): ComponentRenderProxy<
+type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
+  new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
     UnwrapRef<RawBindings>,
     ExtractPropTypes<PropsOptions, false>
@@ -65,15 +65,15 @@ interface ComponentOptionsWithProps<
   setup?: SetupFunction<Props, RawBindings>;
 }
 
-interface ComponentOptionsWithoutProps<Props = never, RawBindings = Data> {
+interface ComponentOptionsWithoutProps<Props = unknown, RawBindings = Data> {
   props?: undefined;
   setup?: SetupFunction<Props, RawBindings>;
 }
 
 // overload 1: object format with no props
 export function createComponent<RawBindings>(
-  options: ComponentOptionsWithoutProps<never, RawBindings>
-): VueProxy<never, RawBindings>;
+  options: ComponentOptionsWithoutProps<unknown, RawBindings>
+): VueProxy<unknown, RawBindings>;
 // overload 2: object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
 export function createComponent<
