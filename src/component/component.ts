@@ -71,6 +71,31 @@ interface ComponentOptionsWithoutProps<Props = unknown, RawBindings = Data> {
 }
 
 // overload 1: object format with no props
+export function defineComponent<RawBindings>(
+  options: ComponentOptionsWithoutProps<unknown, RawBindings>
+): VueProxy<unknown, RawBindings>;
+// overload 2: object format with object props declaration
+// see `ExtractPropTypes` in ./componentProps.ts
+export function defineComponent<
+  Props,
+  RawBindings = Data,
+  PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
+>(
+  // prettier-ignore
+  options: (
+    // prefer the provided Props, otherwise infer it from PropsOptions
+    HasDefined<Props> extends true
+      ? ComponentOptionsWithProps<PropsOptions, RawBindings, Props>
+      : ComponentOptionsWithProps<PropsOptions, RawBindings>) &
+    Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptionsWithProps<never, never>>
+): VueProxy<PropsOptions, RawBindings>;
+// implementation, close to no-op
+export function defineComponent(options: any) {
+  return options as any;
+}
+
+// createComponent is kept around for retro-compatibility
+// overload 1: object format with no props
 export function createComponent<RawBindings>(
   options: ComponentOptionsWithoutProps<unknown, RawBindings>
 ): VueProxy<unknown, RawBindings>;
@@ -89,7 +114,10 @@ export function createComponent<
       : ComponentOptionsWithProps<PropsOptions, RawBindings>) &
     Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptionsWithProps<never, never>>
 ): VueProxy<PropsOptions, RawBindings>;
-// implementation, close to no-op
+// implementation, deferring to defineComponent, but logging a warning in dev mode
 export function createComponent(options: any) {
-  return options as any;
+  if (process.env.NODE_ENV !== 'production') {
+    Vue.util.warn('`createComponent` has been renamed to `defineComponent`.');
+  }
+  return defineComponent(options);
 }

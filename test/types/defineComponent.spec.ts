@@ -1,4 +1,4 @@
-import { createComponent, createElement as h, ref, SetupContext } from '../../src';
+import { createComponent, defineComponent, createElement as h, ref, SetupContext } from '../../src';
 import Router from 'vue-router';
 
 const Vue = require('vue/dist/vue.common.js');
@@ -18,16 +18,16 @@ const isSubType = <SuperType, SubType>(shouldBeEqual: SubType extends SuperType 
   expect(true).toBe(true);
 };
 
-describe('createComponent', () => {
+describe('defineComponent', () => {
   it('should work', () => {
-    const Child = createComponent({
+    const Child = defineComponent({
       props: { msg: String },
       setup(props) {
         return () => h('span', props.msg);
       },
     });
 
-    const App = createComponent({
+    const App = defineComponent({
       setup() {
         const msg = ref('hello');
         return () =>
@@ -45,7 +45,7 @@ describe('createComponent', () => {
   });
 
   it('should infer props type', () => {
-    const App = createComponent({
+    const App = defineComponent({
       props: {
         a: {
           type: Number,
@@ -69,7 +69,7 @@ describe('createComponent', () => {
     interface IPropsType {
       b: string;
     }
-    const App = createComponent<IPropsType>({
+    const App = defineComponent<IPropsType>({
       props: {
         b: {},
       },
@@ -86,7 +86,7 @@ describe('createComponent', () => {
   });
 
   it('no props', () => {
-    const App = createComponent({
+    const App = defineComponent({
       setup(props, ctx) {
         isTypeEqual<SetupContext, typeof ctx>(true);
         isTypeEqual<unknown, typeof props>(true);
@@ -98,7 +98,7 @@ describe('createComponent', () => {
   });
 
   it('infer the required prop', () => {
-    const App = createComponent({
+    const App = defineComponent({
       props: {
         foo: {
           type: String,
@@ -138,10 +138,42 @@ describe('createComponent', () => {
           {
             path: '/',
             name: 'root',
-            component: createComponent({}),
+            component: defineComponent({}),
           },
         ],
       });
+    });
+  });
+
+  describe('retro-compatible with createComponent', () => {
+    it('should still work and warn', () => {
+      const warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
+      const Child = createComponent({
+        props: { msg: String },
+        setup(props) {
+          return () => h('span', props.msg);
+        },
+      });
+
+      const App = createComponent({
+        setup() {
+          const msg = ref('hello');
+          return () =>
+            h('div', [
+              h(Child, {
+                props: {
+                  msg: msg.value,
+                },
+              }),
+            ]);
+        },
+      });
+      const vm = new Vue(App).$mount();
+      expect(vm.$el.querySelector('span').textContent).toBe('hello');
+      expect(warn.mock.calls[0][0]).toMatch(
+        '[Vue warn]: `createComponent` has been renamed to `defineComponent`.'
+      );
+      warn.mockRestore();
     });
   });
 });

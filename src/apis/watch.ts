@@ -1,7 +1,7 @@
 import { ComponentInstance } from '../component';
 import { Ref, isRef } from '../reactivity';
 import { assert, logError, noopFn } from '../utils';
-import { createComponentInstance } from '../helper';
+import { defineComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
 
@@ -262,7 +262,7 @@ export function watch(
   let vm = getCurrentVM();
   if (!vm) {
     if (!fallbackVM) {
-      fallbackVM = createComponentInstance(getCurrentVue());
+      fallbackVM = defineComponentInstance(getCurrentVue());
     }
     vm = fallbackVM;
   } else if (!hasWatchEnv(vm)) {
