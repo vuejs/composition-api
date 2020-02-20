@@ -86,7 +86,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val;
       // if the key is equal to RefKey, skip the unwrap logic
-      if (key !== RefKey && isRef(value)) {
+      if (key != RefKey && isRef(value)) {
         return value.value;
       } else {
         return value;
