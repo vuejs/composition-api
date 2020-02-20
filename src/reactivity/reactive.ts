@@ -21,7 +21,11 @@ function isNonReactive(obj: any): boolean {
 }
 
 export function isReactive(obj: any): boolean {
-  return hasOwn(obj, ReactiveIdentifierKey) && obj[ReactiveIdentifierKey] === ReactiveIdentifier;
+  return (
+    obj !== null &&
+    hasOwn(obj, ReactiveIdentifierKey) &&
+    obj[ReactiveIdentifierKey] === ReactiveIdentifier
+  );
 }
 
 /**
