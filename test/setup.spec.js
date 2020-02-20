@@ -39,7 +39,7 @@ describe('setup', () => {
         };
       },
     }).$mount();
-    expect(vm.a).toBe(null);
+    expect(vm.a).toBe(undefined);
   });
 
   it('should be overrided by data option of plain object', () => {
