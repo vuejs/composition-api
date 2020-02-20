@@ -30,6 +30,17 @@ describe('setup', () => {
     }).$mount();
     expect(vm.a).toBe(null);
   });
+  
+  it('should work with non reactive undefined', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: undefined,
+        };
+      },
+    }).$mount();
+    expect(vm.a).toBe(null);
+  });
 
   it('should be overrided by data option of plain object', () => {
     const vm = new Vue({
