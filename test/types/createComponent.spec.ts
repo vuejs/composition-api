@@ -4,10 +4,10 @@ import Router from 'vue-router';
 const Vue = require('vue/dist/vue.common.js');
 
 type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right
-    ? 1
-    : 0)
-    ? true
-    : false;
+  ? 1
+  : 0)
+  ? true
+  : false;
 
 const isTypeEqual = <Left, Right>(shouldBeEqual: Equal<Left, Right>) => {
   void shouldBeEqual;
