@@ -16,7 +16,7 @@
   - [TSX](#tsx)
 - [限制](#限制)
 - [API](https://vue-composition-api-rfc.netlify.com/api.html)
-- [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
+- [更新日志](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
 
 # 安装
 
@@ -55,9 +55,9 @@ Vue.use(VueCompositionApi);
 
 # TypeScript
 
-**请使用最新版的 TypeScript，如果你使用了 `vetur`，请将 `vetur.useWorkspaceDependencies` 设为 `true`。**
+**本插件要求使用 TypeScript 3.5.1 以上版本，如果你正在使用 `vetur`，请将 `vetur.useWorkspaceDependencies` 设为 `true`。**
 
-为了让 TypeScript 正确的推导类型，我们必须使用 `defineComponent` 来定义组件:
+为了让 TypeScript 在 Vue 组件选项中正确地推导类型，我们必须使用 `defineComponent` 来定义组件:
 
 ```ts
 import { defineComponent } from '@vue/composition-api';
@@ -79,7 +79,7 @@ const Component = {
 要支持 TSX，请创建一个类型定义文件并提供正确的 JSX 定义。内容如下：
 
 ```ts
-// file: shim-tsx.d.ts`
+// 文件: `shim-tsx.d.ts`
 import Vue, { VNode } from 'vue';
 import { ComponentRenderProxy } from '@vue/composition-api';
 
@@ -90,7 +90,7 @@ declare global {
     // tslint:disable no-empty-interface
     interface ElementClass extends ComponentRenderProxy {}
     interface ElementAttributesProperty {
-      $props: any; // specify the property name to use
+      $props: any; // 定义要使用的属性名称
     }
     interface IntrinsicElements {
       [elem: string]: any;
@@ -101,9 +101,9 @@ declare global {
 
 # 限制
 
-## `Ref` Unwrap
+## `Ref` 自动展开 (unwrap)
 
-数组索引属性无法进行自动的`Unwrap`:
+数组索引属性无法进行自动展开:
 
 ### **不要**使用 `Array` 直接存取 `ref` 对象:
 
@@ -111,11 +111,11 @@ declare global {
 const state = reactive({
   list: [ref(0)],
 });
-// no unwrap, `.value` is required
+// 不会自动展开, 须使用 `.value`
 state.list[0].value === 0; // true
 
 state.list.push(ref(1));
-//  no unwrap, `.value` is required
+// 不会自动展开, 须使用 `.value`
 state.list[1].value === 1; // true
 ```
 
@@ -126,10 +126,10 @@ const a = {
   count: ref(0),
 };
 const b = reactive({
-  list: [a], // a.count will not unwrap!!
+  list: [a], // `a.count` 不会自动展开!!
 });
 
-// no unwrap for `count`, `.value` is required
+// `count` 不会自动展开, 须使用 `.value`
 b.list[0].count.value === 0; // true
 ```
 
@@ -137,12 +137,12 @@ b.list[0].count.value === 0; // true
 const b = reactive({
   list: [
     {
-      count: ref(0), // no unwrap!!
+      count: ref(0), // 不会自动展开!!
     },
   ],
 });
 
-// no unwrap for `count`, `.value` is required
+// `count` 不会自动展开, 须使用 `.value`
 b.list[0].count.value === 0; // true
 ```
 
@@ -155,7 +155,7 @@ const a = reactive({
 const b = reactive({
   list: [a],
 });
-// unwrapped
+// 自动展开
 b.list[0].count === 0; // true
 
 b.list.push(
@@ -163,7 +163,7 @@ b.list.push(
     count: ref(1),
   })
 );
-// unwrapped
+// 自动展开
 b.list[1].count === 1; // true
 ```
 
@@ -180,11 +180,11 @@ b.list[1].count === 1; // true
 
 ---
 
-## Template Refs
+## 模板 Refs
 
-> :white_check_mark: Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Support
+> :white_check_mark: 支持 &nbsp;&nbsp;&nbsp;&nbsp;:x: 不支持
 
-:white_check_mark: String ref && return it from `setup()`:
+:white_check_mark: 字符串 ref && 从 `setup()` 返回 ref:
 
 ```html
 <template>
@@ -197,7 +197,7 @@ b.list[1].count === 1; // true
       const root = ref(null);
 
       onMounted(() => {
-        // the DOM element will be assigned to the ref after initial render
+        // 在初次渲染后 DOM 元素会被赋值给 ref
         console.log(root.value); // <div/>
       });
 
@@ -209,7 +209,7 @@ b.list[1].count === 1; // true
 </script>
 ```
 
-:white_check_mark: String ref && return it from `setup()` && Render Function / JSX:
+:white_check_mark: 字符串 ref && 从 `setup()` 返回 ref && 渲染函数 / JSX:
 
 ```jsx
 export default {
@@ -217,7 +217,7 @@ export default {
     const root = ref(null);
 
     onMounted(() => {
-      // the DOM element will be assigned to the ref after initial render
+      // 在初次渲染后 DOM 元素会被赋值给 ref
       console.log(root.value); // <div/>
     });
 
@@ -226,13 +226,13 @@ export default {
     };
   },
   render() {
-    // with JSX
+    // 使用 JSX
     return () => <div ref="root" />;
   },
 };
 ```
 
-:x: Function ref:
+:x: 函数 ref:
 
 ```html
 <template>
@@ -252,7 +252,7 @@ export default {
 </script>
 ```
 
-:x: Render Function / JSX:
+:x: 渲染函数 / JSX:
 
 ```jsx
 export default {
@@ -264,7 +264,7 @@ export default {
         ref: root,
       });
 
-    // with JSX
+    // 使用 JSX
     return () => <div ref={root} />;
   },
 };
@@ -279,7 +279,7 @@ export default {
   setup(initProps, setupContext) {
     const refs = setupContext.refs;
     onMounted(() => {
-      // the DOM element will be assigned to the ref after initial render
+      // 在初次渲染后 DOM 元素会被赋值给 ref
       console.log(refs.root); // <div/>
     });
 
@@ -288,7 +288,7 @@ export default {
         ref: 'root',
       });
 
-    // with JSX
+    // 使用 JSX
     return () => <div ref="root" />;
   },
 };
