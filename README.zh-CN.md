@@ -85,9 +85,9 @@ import { ComponentRenderProxy } from '@vue/composition-api';
 
 declare global {
   namespace JSX {
-    // TSLint: disable no-empty-interface
+    // tslint:disable no-empty-interface
     interface Element extends VNode {}
-    // TSLint: disable no-empty-interface
+    // tslint:disable no-empty-interface
     interface ElementClass extends ComponentRenderProxy {}
     interface ElementAttributesProperty {
       $props: any; // 定义要使用的属性名称
