@@ -1,6 +1,6 @@
 import { getCurrentVue, getCurrentVM } from '../runtimeContext';
 import { createRef, Ref } from '../reactivity';
-import { createComponentInstance } from '../helper';
+import { defineComponentInstance } from '../helper';
 import { warn } from '../utils';
 
 interface Option<T> {
@@ -9,11 +9,13 @@ interface Option<T> {
 }
 
 // read-only
-export function computed<T>(getter: Option<T>['get']): Ref<T>;
+export function computed<T>(getter: Option<T>['get']): Readonly<Ref<Readonly<T>>>;
 // writable
-export function computed<T>(options: Option<T>): Ref<T>;
+export function computed<T>(options: Option<T>): Ref<Readonly<T>>;
 // implement
-export function computed<T>(options: Option<T>['get'] | Option<T>): Ref<T> {
+export function computed<T>(
+  options: Option<T>['get'] | Option<T>
+): Readonly<Ref<Readonly<T>>> | Ref<Readonly<T>> {
   const vm = getCurrentVM();
   let get: Option<T>['get'], set: Option<T>['set'] | undefined;
   if (typeof options === 'function') {
@@ -23,7 +25,7 @@ export function computed<T>(options: Option<T>['get'] | Option<T>): Ref<T> {
     set = options.set;
   }
 
-  const computedHost = createComponentInstance(getCurrentVue(), {
+  const computedHost = defineComponentInstance(getCurrentVue(), {
     computed: {
       $$state: {
         get,

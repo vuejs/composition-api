@@ -1,7 +1,7 @@
 import { AnyObject } from '../types/basic';
 import { getCurrentVue } from '../runtimeContext';
 import { isPlainObject, def, hasOwn, warn } from '../utils';
-import { isComponentInstance, createComponentInstance } from '../helper';
+import { isComponentInstance, defineComponentInstance } from '../helper';
 import {
   AccessControlIdentifierKey,
   ReactiveIdentifierKey,
@@ -99,7 +99,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
         value.value = newVal;
       } else if (setter) {
         setter.call(target, newVal);
-      } else if (isRef(newVal)) {
+      } else {
         val = newVal;
       }
       setupAccessControl(newVal);
@@ -113,7 +113,7 @@ function observe<T>(obj: T): T {
   if (Vue.observable) {
     observed = Vue.observable(obj);
   } else {
-    const vm = createComponentInstance(Vue, {
+    const vm = defineComponentInstance(Vue, {
       data: {
         $$state: obj,
       },
@@ -152,7 +152,7 @@ export function nonReactive<T = any>(obj: T): T {
   }
 
   // set the vue observable flag at obj
-  (obj as any).__ob__ = (observe({}) as any).__ob__;
+  def(obj, '__ob__', (observe({}) as any).__ob__);
   // mark as nonReactive
   def(obj, NonReactiveIdentifierKey, NonReactiveIdentifier);
 

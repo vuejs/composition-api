@@ -15,6 +15,7 @@ describe('setupContext', () => {
     expect(context.parent).toBe(vm.$parent);
     expect(context.slots).toBeDefined();
     expect(context.attrs).toBe(vm.$attrs);
+    expect(context.listeners).toBe(vm.$listeners);
 
     // CAUTION: this will be removed in 3.0
     expect(context.refs).toBe(vm.$refs);

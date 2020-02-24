@@ -1,3 +1,28 @@
+# 0.4.0
+
+- **Refactor: rename `createComponent` to `defineComponent`** (the `createComponent` function is still there but deprecated) [#230](https://github.com/vuejs/composition-api/issues/230)
+- Fix: correct the symbol check; fixes the compatibility issue in iOS 9 [#218](https://github.com/vuejs/composition-api/pull/218)
+- Fix: avoid accessing undeclared instance fields on type-level; fixes Vetur template type checking; fixes vue-router type compatibility [#189](https://github.com/vuejs/composition-api/pull/189)
+- Fix: `onUnmounted` should not be run on `deactivated` [#217](https://github.com/vuejs/composition-api/pull/217)
+
+# 0.3.4
+
+- Fixed `reactive` setter not working on the server.
+- New `isServer` setup context property.
+
+# 0.3.3
+
+- Fixed make `__ob__` unenumerable [#149](https://github.com/vuejs/composition-api/issues/149).
+- Fixed computed type
+- Expose `getCurrentInstance` for advanced usage in Vue plugins.
+- New `onServerPrefetch` lifecycle hook and new `ssrContext` setup context property [#198](https://github.com/vuejs/composition-api/issues/198).
+
+# 0.3.2
+
+- Improve TypeScript type infer for `props` option [#106](https://github.com/vuejs/composition-api/issues/106).
+- Fix return type of `createComponent` not being compatible with `vue-router` [#130](https://github.com/vuejs/composition-api/issues/130).
+- Expose `listeners` on `SetupContext` [#132](https://github.com/vuejs/composition-api/issues/132).
+
 # 0.3.1
 
 - Fix cleaup callback not running when watcher stops [#113](https://github.com/vuejs/composition-api/issues/113).

@@ -1,14 +1,14 @@
 import { Data } from './component';
 
 export type ComponentPropsOptions<P = Data> = {
-  [K in keyof P]: Prop<P[K]> | null;
+  [K in keyof P]: Prop<P[K], true | false> | null;
 };
 
-type Prop<T> = PropOptions<T> | PropType<T>;
+type Prop<T, Required extends boolean> = PropOptions<T, Required> | PropType<T>;
 
-export interface PropOptions<T = any> {
+export interface PropOptions<T = any, Required extends boolean = false> {
   type?: PropType<T> | null;
-  required?: boolean;
+  required?: Required;
   default?: T | null | undefined | (() => T | null | undefined);
   validator?(value: any): boolean;
 }
@@ -34,7 +34,7 @@ type InferPropType<T> = T extends null
     ? any // somehow `ObjectConstructor` when inferred from { (): T } becomes `any`
     : T extends ObjectConstructor | { type: ObjectConstructor }
       ? { [key: string]: any }
-      : T extends Prop<infer V>
+      : T extends Prop<infer V, true | false>
         ? V
         : T;
 

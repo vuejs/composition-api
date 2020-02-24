@@ -60,9 +60,9 @@ Vue.use(VueCompositionApi);
 为了让 TypeScript 在 Vue 组件选项中正确地推导类型，我们必须使用 `defineComponent` 来定义组件:
 
 ```ts
-import { createComponent } from '@vue/composition-api';
+import { defineComponent } from '@vue/composition-api';
 
-const Component = createComponent({
+const Component = defineComponent({
   // 启用类型推断
 });
 
@@ -166,6 +166,11 @@ b.list.push(
 // 自动展开
 b.list[1].count === 1; // true
 ```
+
+### `reactive` 会返回一个修改过的原始的对象
+
+此行为与 Vue 2 中的 `Vue.observable` 一致
+> Vue 3 中会返回一个新的的代理对象.
 
 ---
 

@@ -11,7 +11,7 @@ export function ensureCurrentVMInFn(hook: string): ComponentInstance {
   return vm!;
 }
 
-export function createComponentInstance<V extends Vue = Vue>(
+export function defineComponentInstance<V extends Vue = Vue>(
   Ctor: VueConstructor<V>,
   options: ComponentOptions<V> = {}
 ) {
