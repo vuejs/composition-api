@@ -2,7 +2,13 @@ import Vue from 'vue';
 
 const toString = (x: any) => Object.prototype.toString.call(x);
 
-export const hasSymbol = typeof Symbol === 'function' && Symbol.for;
+export function isNative (Ctor: any): boolean {
+  return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
+}
+
+export const hasSymbol =
+  typeof Symbol !== 'undefined' && isNative(Symbol) &&
+  typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys)
 
 export const noopFn: any = (_: any) => _;
 
