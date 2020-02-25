@@ -89,7 +89,7 @@ describe('defineComponent', () => {
     interface IPropsTypeFunction {
       fn: (arg: boolean) => void;
     }
-    const App = createComponent<IPropsTypeFunction>({
+    const App = defineComponent<IPropsTypeFunction>({
       props: {
         fn: Function as PropType<(arg: boolean) => void>,
       },
