@@ -7,6 +7,10 @@
     "composition-api",
     "function-api"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/composition-api.git"
+  },
   "main": "dist/vue-composition-api.js",
   "umd:main": "dist/vue-composition-api.umd.js",
   "module": "dist/vue-composition-api.module.js",
