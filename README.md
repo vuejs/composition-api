@@ -25,7 +25,7 @@
 **npm**
 
 ```bash
-npm install @vue/composition-api --save
+npm install @vue/composition-api
 ```
 
 **yarn**
