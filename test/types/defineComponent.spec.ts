@@ -1,4 +1,4 @@
-import { defineComponent, createElement as h, ref, SetupContext, PropType } from '../../src';
+import { createComponent, defineComponent, createElement as h, ref, SetupContext, PropType } from '../../src';
 import Router from 'vue-router';
 
 const Vue = require('vue/dist/vue.common.js');
