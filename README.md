@@ -4,7 +4,7 @@
 
 `@vue/composition-api` provides a way to use `Vue 3.0`'s **Composition api** in `Vue 2.x`.
 
-**Note: the primary goal of this package is to allow the community to experiment with the API and provide feedback before it's finalized. The implementation may contain minor inconsistencies with the RFC as the latter gets updated. We do not recommend using this package for production yet at this stage.**
+**NOTE: The primary goal of this package is to allow the community to experiment with the API and provide feedback before it's finalized. The implementation may contain minor inconsistencies with the RFC as the latter gets updated. We do not recommend using this package for production yet at this stage.**
 
 [**中文文档**](./README.zh-CN.md)
 
@@ -25,7 +25,7 @@
 **npm**
 
 ```bash
-npm install @vue/composition-api
+npm i @vue/composition-api
 ```
 
 **yarn**
