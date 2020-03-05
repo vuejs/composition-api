@@ -11,7 +11,11 @@ type SimpleEffect = (onCleanup: CleanupRegistrator) => void;
 
 type StopHandle = () => void;
 
-type WatcherCallBack<T> = (newVal: T, oldVal: T, onCleanup: CleanupRegistrator) => void;
+type WatcherCallBack<V = any, OV = any> = (
+  newVal: V,
+  oldVal: OV,
+  onCleanup: CleanupRegistrator
+) => void;
 
 type WatcherSource<T> = Ref<T> | (() => T);
 
@@ -19,10 +23,18 @@ type MapSources<T> = {
   [K in keyof T]: T[K] extends WatcherSource<infer V> ? V : never;
 };
 
+type MapOldSources<T, Lazy> = {
+  [K in keyof T]: T[K] extends WatcherSource<infer V>
+    ? Lazy extends true
+      ? V
+      : (V | undefined)
+    : never;
+};
+
 type FlushMode = 'pre' | 'post' | 'sync';
 
-interface WatcherOption {
-  lazy: boolean;
+interface WatcherOption<Lazy = boolean> {
+  lazy: Lazy;
   deep: boolean;
   flush: FlushMode;
 }
@@ -199,29 +211,39 @@ export function watch<T = any>(
   source: SimpleEffect,
   options?: Omit<Partial<WatcherOption>, 'lazy'>
 ): StopHandle;
-export function watch<T = any>(
+
+export function watch<T, Lazy extends Readonly<boolean> = false>(
   source: WatcherSource<T>,
-  cb: WatcherCallBack<T>,
-  options?: Partial<WatcherOption>
+  cb: WatcherCallBack<T, Lazy extends true ? T : (T | undefined)>,
+  options?: Partial<WatcherOption<Lazy>>
 ): StopHandle;
-export function watch<T extends WatcherSource<unknown>[]>(
+
+export function watch<
+  T extends Readonly<WatcherSource<unknown>[]>,
+  Lazy extends Readonly<boolean> = false
+>(
   sources: T,
-  cb: (newValues: MapSources<T>, oldValues: MapSources<T>, onCleanup: CleanupRegistrator) => any,
-  options?: Partial<WatcherOption>
+  cb: (
+    newValues: MapSources<T>,
+    oldValues: MapOldSources<T, Lazy>,
+    onCleanup: CleanupRegistrator
+  ) => any,
+  options?: Partial<WatcherOption<Lazy>>
 ): StopHandle;
+
 export function watch(
   source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
   cb?: Partial<WatcherOption> | WatcherCallBack<any>,
   options?: Partial<WatcherOption>
 ): StopHandle {
-  let callbck: WatcherCallBack<unknown> | null = null;
+  let callback: WatcherCallBack<unknown> | null = null;
   if (typeof cb === 'function') {
     // source watch
-    callbck = cb as WatcherCallBack<unknown>;
+    callback = cb as WatcherCallBack<unknown>;
   } else {
     // effect watch
     options = cb as Partial<WatcherOption>;
-    callbck = null;
+    callback = null;
   }
 
   const opts: WatcherOption = {
@@ -242,5 +264,5 @@ export function watch(
     installWatchEnv(vm);
   }
 
-  return createWatcher(vm, source, callbck, opts);
+  return createWatcher(vm, source, callback, opts);
 }
