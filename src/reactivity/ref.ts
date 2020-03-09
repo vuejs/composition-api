@@ -6,7 +6,7 @@ import { reactive } from './reactive';
 
 type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
 
-const _refBrand: unique symbol = Symbol();
+declare const _refBrand: unique symbol;
 export interface Ref<T> {
   readonly [_refBrand]: true;
   value: T;
@@ -94,10 +94,6 @@ class RefImpl<T> implements Ref<T> {
     proxy(this, 'value', {
       get,
       set,
-    });
-    Object.defineProperty(this, _refBrand, {
-      enumerable: false,
-      value: true,
     });
   }
 }
