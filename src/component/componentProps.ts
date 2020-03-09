@@ -15,7 +15,10 @@ export interface PropOptions<T = any, Required extends boolean = false> {
 
 export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
 
-type PropConstructor<T> = { new (...args: any[]): T & object } | { (): T };
+type PropConstructor<T> =
+  | { new (...args: any[]): T & object }
+  | { (): T }
+  | { new (...args: string[]): Function };
 
 type RequiredKeys<T, MakeDefaultRequired> = {
   [K in keyof T]: T[K] extends

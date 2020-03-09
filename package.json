@@ -1,12 +1,16 @@
 {
   "name": "@vue/composition-api",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
     "vue",
     "composition-api",
     "function-api"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/composition-api.git"
+  },
   "main": "dist/vue-composition-api.js",
   "umd:main": "dist/vue-composition-api.umd.js",
   "module": "dist/vue-composition-api.module.js",
