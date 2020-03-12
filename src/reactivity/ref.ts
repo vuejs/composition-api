@@ -4,7 +4,7 @@ import { proxy, isPlainObject } from '../utils';
 import { HasDefined } from '../types/basic';
 import { reactive } from './reactive';
 
-type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any>;
+type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any> | Element;
 
 // corner case when use narrows type
 // Ex. type RelativePath = string & { __brand: unknown }
