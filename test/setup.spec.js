@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, computed, createElement: h } = require('../src');
+const { ref, computed, createElement: h, provide, inject } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -144,14 +144,21 @@ describe('setup', () => {
   });
 
   it('should merge result properly', () => {
+    const injectKey = Symbol('foo');
     const A = Vue.extend({
       setup() {
+        provide(injectKey, 'foo');
         return { a: 1 };
       },
     });
     const Test = Vue.extend({
       extends: A,
-      setup() {},
+      setup() {
+        const injectVal = inject(injectKey);
+        return {
+          injectVal,
+        };
+      },
     });
     let vm = new Test({
       setup() {
@@ -160,6 +167,7 @@ describe('setup', () => {
     });
     expect(vm.a).toBe(1);
     expect(vm.b).toBe(2);
+    expect(vm.injectVal).toBe('foo');
     // no instance data
     vm = new Test();
     expect(vm.a).toBe(1);
