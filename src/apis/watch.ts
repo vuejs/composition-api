@@ -1,6 +1,6 @@
 import { ComponentInstance } from '../component';
 import { Ref, isRef } from '../reactivity';
-import { assert, logError, noopFn } from '../utils';
+import { assert, logError, noopFn, warn } from '../utils';
 import { defineComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
@@ -52,6 +52,30 @@ function installWatchEnv(vm: any) {
   vm[WatcherPostFlushQueueKey] = [];
   vm.$on('hook:beforeUpdate', flushPreQueue);
   vm.$on('hook:updated', flushPostQueue);
+}
+
+function getWatcherOption(options?: Partial<WatcherOption>): WatcherOption {
+  return {
+    ...{
+      lazy: false,
+      deep: false,
+      flush: 'post',
+    },
+    ...options,
+  };
+}
+
+function getWatcherVM() {
+  let vm = getCurrentVM();
+  if (!vm) {
+    if (!fallbackVM) {
+      fallbackVM = defineComponentInstance(getCurrentVue());
+    }
+    vm = fallbackVM;
+  } else if (!hasWatchEnv(vm)) {
+    installWatchEnv(vm);
+  }
+  return vm;
 }
 
 function flushQueue(vm: any, key: any) {
@@ -222,6 +246,15 @@ function createWatcher(
   };
 }
 
+export function watchEffect(
+  effect: SimpleEffect,
+  options?: Omit<Partial<WatcherOption>, 'lazy'>
+): StopHandle {
+  const opts = getWatcherOption(options);
+  const vm = getWatcherVM();
+  return createWatcher(vm, effect, null, opts);
+}
+
 export function watch<T = any>(
   source: SimpleEffect,
   options?: Omit<Partial<WatcherOption>, 'lazy'>
@@ -247,27 +280,19 @@ export function watch(
     callback = cb as WatcherCallBack<unknown>;
   } else {
     // effect watch
+    if (process.env.NODE_ENV !== 'production') {
+      warn(
+        `\`watch(fn, options?)\` signature has been moved to a separate API. ` +
+          `Use \`watchEffect(fn, options?)\` instead. \`watch\` now only ` +
+          `supports \`watch(source, cb, options?) signature.`
+      );
+    }
     options = cb as Partial<WatcherOption>;
     callback = null;
   }
 
-  const opts: WatcherOption = {
-    ...{
-      lazy: false,
-      deep: false,
-      flush: 'post',
-    },
-    ...options,
-  };
-  let vm = getCurrentVM();
-  if (!vm) {
-    if (!fallbackVM) {
-      fallbackVM = defineComponentInstance(getCurrentVue());
-    }
-    vm = fallbackVM;
-  } else if (!hasWatchEnv(vm)) {
-    installWatchEnv(vm);
-  }
+  const opts = getWatcherOption(options);
+  const vm = getWatcherVM();
 
   return createWatcher(vm, source, callback, opts);
 }

@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, watch, createElement: h } = require('../src');
+const { ref, watchEffect, createElement: h } = require('../src');
 
 describe('ref', () => {
   it('should work', done => {
@@ -7,7 +7,7 @@ describe('ref', () => {
     const vm = new Vue({
       setup() {
         const ref1 = ref(null);
-        watch(() => {
+        watchEffect(() => {
           dummy = ref1.value;
         });
 
@@ -35,7 +35,7 @@ describe('ref', () => {
       setup() {
         const ref1 = ref(null);
         const ref2 = ref(null);
-        watch(() => {
+        watchEffect(() => {
           dummy1 = ref1.value;
           dummy2 = ref2.value;
         });
