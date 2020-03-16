@@ -16,12 +16,18 @@ const NonReactiveIdentifier = {};
 
 function isNonReactive(obj: any): boolean {
   return (
-    hasOwn(obj, NonReactiveIdentifierKey) && obj[NonReactiveIdentifierKey] === NonReactiveIdentifier
+    obj != null &&
+    hasOwn(obj, NonReactiveIdentifierKey) &&
+    obj[NonReactiveIdentifierKey] === NonReactiveIdentifier
   );
 }
 
 export function isReactive(obj: any): boolean {
-  return hasOwn(obj, ReactiveIdentifierKey) && obj[ReactiveIdentifierKey] === ReactiveIdentifier;
+  return (
+    obj != null &&
+    hasOwn(obj, ReactiveIdentifierKey) &&
+    obj[ReactiveIdentifierKey] === ReactiveIdentifier
+  );
 }
 
 /**
