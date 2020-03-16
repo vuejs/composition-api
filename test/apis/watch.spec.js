@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, reactive, watch } = require('../../src');
+const { ref, reactive, watch, watchEffect } = require('../../src');
 
 describe('api/watch', () => {
   const anyFn = expect.any(Function);
@@ -298,11 +298,11 @@ describe('api/watch', () => {
         const x = ref(0);
 
         // prettier-ignore
-        watch(() => { void x.value; result.push('sync getter'); }, { flush: 'sync' });
+        watchEffect(() => { void x.value; result.push('sync effect'); }, { flush: 'sync' });
         // prettier-ignore
-        watch(() => { void x.value; result.push('pre getter'); }, { flush: 'pre' });
+        watchEffect(() => { void x.value; result.push('pre effect'); }, { flush: 'pre' });
         // prettier-ignore
-        watch(() => { void x.value; result.push('post getter'); }, { flush: 'post' });
+        watchEffect(() => { void x.value; result.push('post effect'); }, { flush: 'post' });
 
         // prettier-ignore
         watch(x, () => { result.push('sync callback') }, { flush: 'sync' })
@@ -321,11 +321,11 @@ describe('api/watch', () => {
       },
       template: `<div>{{x}}</div>`,
     }).$mount();
-    expect(result).toEqual(['sync getter', 'sync callback', 'pre callback', 'post callback']);
+    expect(result).toEqual(['sync effect', 'sync callback', 'pre callback', 'post callback']);
     result.length = 0;
 
     waitForUpdate(() => {
-      expect(result).toEqual(['pre getter', 'post getter']);
+      expect(result).toEqual(['pre effect', 'post effect']);
       result.length = 0;
 
       vm.inc();
@@ -333,12 +333,12 @@ describe('api/watch', () => {
       .then(() => {
         expect(result).toEqual([
           'before inc',
-          'sync getter',
+          'sync effect',
           'sync callback',
           'after inc',
-          'pre getter',
+          'pre effect',
           'pre callback',
-          'post getter',
+          'post effect',
           'post callback',
         ]);
       })
@@ -352,7 +352,7 @@ describe('api/watch', () => {
       const vm = new Vue({
         setup() {
           const count = ref(0);
-          watch(_onCleanup => {
+          watchEffect(_onCleanup => {
             onCleanup = _onCleanup;
             spy(count.value);
             renderedText = vm.$el.textContent;
@@ -384,7 +384,7 @@ describe('api/watch', () => {
       const vm = new Vue({
         setup() {
           const count = ref(0);
-          watch(
+          watchEffect(
             () => {
               spy(count.value);
             },
@@ -563,7 +563,7 @@ describe('api/watch', () => {
 
     it('simple effect', done => {
       const obj = reactive({ a: 1 });
-      watch(() => spy(obj.a));
+      watchEffect(() => spy(obj.a));
       expect(spy).not.toHaveBeenCalled();
       waitForUpdate(() => {
         expect(spy).toBeCalledTimes(1);
@@ -596,10 +596,10 @@ describe('api/watch', () => {
       return p;
     }
 
-    it('work with (single getter)', done => {
+    it('work with effect', done => {
       const id = ref(1);
       const promises = [];
-      watch(onCleanup => {
+      watchEffect(onCleanup => {
         const val = getAsyncValue(id.value);
         promises.push(val);
         onCleanup(() => {
@@ -617,10 +617,10 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('run cleanup when watch stops (single getter)', done => {
+    it('run cleanup when watch stops (effect)', done => {
       const spy = jest.fn();
       const cleanup = jest.fn();
-      const stop = watch(onCleanup => {
+      const stop = watchEffect(onCleanup => {
         spy();
         onCleanup(cleanup);
       });
@@ -651,7 +651,7 @@ describe('api/watch', () => {
     it('should not collect reactive in onCleanup', done => {
       const ref1 = ref(1);
       const ref2 = ref(1);
-      watch(onCleanup => {
+      watchEffect(onCleanup => {
         spy(ref1.value);
         onCleanup(() => {
           ref2.value = ref2.value + 1;
