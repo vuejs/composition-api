@@ -22,7 +22,7 @@ function isNonReactive(obj: any): boolean {
 
 export function isReactive(obj: any): boolean {
   return (
-    obj !== null &&
+    obj != null &&
     hasOwn(obj, ReactiveIdentifierKey) &&
     obj[ReactiveIdentifierKey] === ReactiveIdentifier
   );
@@ -86,7 +86,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val;
       // if the key is equal to RefKey, skip the unwrap logic
-      if (key != RefKey && isRef(value)) {
+      if (key !== RefKey && isRef(value)) {
         return value.value;
       } else {
         return value;
