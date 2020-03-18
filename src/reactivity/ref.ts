@@ -19,70 +19,70 @@ export interface Ref<T> {
 // Recursively unwraps nested value bindings.
 // Unfortunately TS cannot do recursive types, but this should be enough for
 // practical use cases...
-export type UnwrapRef<T> = T extends Ref<infer V>
+export type UnwrapRef<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef2<V>
   : T extends BailTypes | BaseTypes
       ? T // bail out on types that shouldn't be unwrapped
       : T extends object ? { [K in keyof T]: UnwrapRef2<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef2<T> = T extends Ref<infer V>
+type UnwrapRef2<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef3<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef3<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef3<T> = T extends Ref<infer V>
+type UnwrapRef3<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef4<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef4<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef4<T> = T extends Ref<infer V>
+type UnwrapRef4<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef5<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef5<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef5<T> = T extends Ref<infer V>
+type UnwrapRef5<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef6<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef6<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef6<T> = T extends Ref<infer V>
+type UnwrapRef6<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef7<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef7<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef7<T> = T extends Ref<infer V>
+type UnwrapRef7<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef8<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef8<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef8<T> = T extends Ref<infer V>
+type UnwrapRef8<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef9<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef9<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef9<T> = T extends Ref<infer V>
+type UnwrapRef9<T> = T extends Ref<infer V | null | undefined>
   ? UnwrapRef10<V>
   : T extends BailTypes | BaseTypes
       ? T
       : T extends object ? { [K in keyof T]: UnwrapRef10<T[K]> } : T
 
 // prettier-ignore
-type UnwrapRef10<T> = T extends Ref<infer V>
+type UnwrapRef10<T> = T extends Ref<infer V | null | undefined>
   ? V // stop recursion
   : T
 
