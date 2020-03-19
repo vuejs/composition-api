@@ -34,7 +34,7 @@ type MapOldSources<T, Lazy> = {
 type FlushMode = 'pre' | 'post' | 'sync';
 
 interface WatcherOption<Lazy = boolean> {
-  lazy: Lazy; // whether or not to delay callcack invoking
+  lazy: Lazy; // whether or not to delay callback invoking
   deep: boolean;
   flush: FlushMode;
 }
@@ -233,11 +233,11 @@ function createWatcher(
   };
   let callback = createScheduler(applyCb);
   if (!options.lazy) {
-    const originalCallbck = callback;
+    const originalCallback = callback;
     // `shiftCallback` is used to handle the first sync effect run.
     // The subsequent callbacks will redirect to `callback`.
     let shiftCallback = (n: any, o: any) => {
-      shiftCallback = originalCallbck;
+      shiftCallback = originalCallback;
       applyCb(n, o);
     };
     callback = (n: any, o: any) => {
@@ -290,6 +290,7 @@ export function watch<
   ) => any,
   options?: Partial<WatcherOption<Lazy>>
 ): StopHandle;
+
 export function watch(
   source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
   cb?: Partial<WatcherOption> | WatcherCallBack<any>,
