@@ -1,7 +1,7 @@
 # 0.5.0
 
 - New: `watchEffect` function, lingin up with the latest version of the RFC ([RFC docs](https://vue-composition-api-rfc.netlify.com/api.html#watcheffect)) (#275)
-- Fix: `setup` from a mixin should called before the componen's own (#276)
+- Fix: `setup` from a mixin should called before the component's own (#276)
 - Fix(types): Fix corner case in `UnWrapRef` internal type (#261)
 - types: Add `Element` to bailout types for unwrapping (#278)
 
