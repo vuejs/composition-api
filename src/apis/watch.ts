@@ -21,10 +21,16 @@ type MapSources<T> = {
 
 type FlushMode = 'pre' | 'post' | 'sync';
 
-interface WatcherOption {
-  lazy: boolean; // whether or not to delay callcack invoking
-  deep: boolean;
+interface WatchEffectOptions {
   flush: FlushMode;
+  // Not supported options:
+  // onTrack?: (event: DebuggerEvent) => void
+  // onTrigger?: (event: DebuggerEvent) => void
+}
+
+interface WatcherOption extends WatchEffectOptions {
+  immediate: boolean;
+  deep: boolean;
 }
 
 export interface VueWatcher {
@@ -57,7 +63,7 @@ function installWatchEnv(vm: any) {
 function getWatcherOption(options?: Partial<WatcherOption>): WatcherOption {
   return {
     ...{
-      lazy: false,
+      immediate: false,
       deep: false,
       flush: 'post',
     },
@@ -220,12 +226,12 @@ function createWatcher(
     cb(n, o, registerCleanup);
   };
   let callback = createScheduler(applyCb);
-  if (!options.lazy) {
-    const originalCallbck = callback;
+  if (options.immediate) {
+    const originalCallback = callback;
     // `shiftCallback` is used to handle the first sync effect run.
     // The subsequent callbacks will redirect to `callback`.
     let shiftCallback = (n: any, o: any) => {
-      shiftCallback = originalCallbck;
+      shiftCallback = originalCallback;
       applyCb(n, o);
     };
     callback = (n: any, o: any) => {
@@ -235,7 +241,7 @@ function createWatcher(
 
   // @ts-ignore: use undocumented option "sync"
   const stop = vm.$watch(getter, callback, {
-    immediate: !options.lazy,
+    immediate: options.immediate,
     deep: options.deep,
     sync: isSync,
   });
@@ -248,16 +254,17 @@ function createWatcher(
 
 export function watchEffect(
   effect: SimpleEffect,
-  options?: Omit<Partial<WatcherOption>, 'lazy'>
+  options?: Partial<WatchEffectOptions>
 ): StopHandle {
   const opts = getWatcherOption(options);
+  opts.immediate = true;
   const vm = getWatcherVM();
   return createWatcher(vm, effect, null, opts);
 }
 
 export function watch<T = any>(
   source: SimpleEffect,
-  options?: Omit<Partial<WatcherOption>, 'lazy'>
+  options?: Omit<Partial<WatcherOption>, 'immediate'>
 ): StopHandle;
 export function watch<T = any>(
   source: WatcherSource<T>,

@@ -24,9 +24,13 @@ describe('api/ref', () => {
   it('should be reactive', done => {
     const a = ref(1);
     let dummy;
-    watch(a, () => {
-      dummy = a.value;
-    });
+    watch(
+      a,
+      () => {
+        dummy = a.value;
+      },
+      { immediate: true }
+    );
     expect(dummy).toBe(1);
     a.value = 2;
     waitForUpdate(() => {
@@ -44,7 +48,7 @@ describe('api/ref', () => {
       () => {
         dummy = a.value.count;
       },
-      { deep: true }
+      { deep: true, immediate: true }
     );
     expect(dummy).toBe(1);
     a.value.count = 2;
@@ -102,7 +106,8 @@ describe('api/toRefs', () => {
       () => state,
       () => {
         dummy = state.foo;
-      }
+      },
+      { immediate: true }
     );
     const stateAsRefs = toRefs(state);
     expect(dummy).toBe(1);
@@ -128,7 +133,7 @@ describe('api/toRefs', () => {
       bar: 2,
     };
 
-    watch(() => state, spy, { flush: 'sync', lazy: true });
+    watch(() => state, spy, { flush: 'sync' });
     const stateAsRefs = toRefs(state);
 
     expect(stateAsRefs.foo.value).toBe(1);
@@ -155,7 +160,7 @@ describe('unwrapping', () => {
       () => {
         dummy = obj.a;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy).toBe(0);
     expect(obj.a).toBe(0);
@@ -220,7 +225,7 @@ describe('unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -250,7 +255,7 @@ describe('unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -281,7 +286,7 @@ describe('unwrapping', () => {
       () => {
         dummy = obj.a.foo;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy).toBe(undefined);
     set(obj.a, 'foo', count);
@@ -306,7 +311,7 @@ describe('unwrapping', () => {
       () => {
         dummy = obj.a.b;
       },
-      { deep: true, lazy: true, flush: 'sync' }
+      { deep: true, flush: 'sync' }
     );
     expect(dummy).toBeUndefined();
     const replacedRef = ref(2);
@@ -341,7 +346,7 @@ describe('unwrapping', () => {
       () => {
         dummy = state.list[0].count;
       },
-      { lazy: true, flush: 'sync' }
+      { flush: 'sync' }
     );
     expect(dummy).toBeUndefined();
     const a = ref(0);
