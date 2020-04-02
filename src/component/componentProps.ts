@@ -30,14 +30,17 @@ type RequiredKeys<T, MakeDefaultRequired> = {
 
 type OptionalKeys<T, MakeDefaultRequired> = Exclude<keyof T, RequiredKeys<T, MakeDefaultRequired>>;
 
+// We wrap every conditional type with tuple as we don't want to distribute it.
+// About distributive conditional types: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html#distributive-conditional-types
+// Related issue: https://github.com/vuejs/composition-api/issues/291
 // prettier-ignore
-type InferPropType<T> = T extends null
+type InferPropType<T> = [T] extends [null]
   ? any // null & true would fail to infer
-  : T extends { type: null }
+  : [T] extends [{ type: null }]
     ? any // somehow `ObjectConstructor` when inferred from { (): T } becomes `any`
-    : T extends ObjectConstructor | { type: ObjectConstructor }
+    : [T] extends [ObjectConstructor | { type: ObjectConstructor }]
       ? { [key: string]: any }
-      : T extends Prop<infer V, true | false>
+      : [T] extends [Prop<infer V, true | false>]
         ? V
         : T;
 
