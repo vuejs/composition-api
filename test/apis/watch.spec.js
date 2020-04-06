@@ -23,13 +23,12 @@ describe('api/watch', () => {
       },
       template: `<div>{{a}}</div>`,
     }).$mount();
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(1, undefined, anyFn);
+    expect(spy).toBeCalledTimes(0);
     vm.a = 2;
     vm.a = 3;
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
     waitForUpdate(() => {
-      expect(spy).toBeCalledTimes(2);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith(3, 1, anyFn);
     }).then(done);
   });
@@ -46,12 +45,11 @@ describe('api/watch', () => {
       },
       template: `<div>{{a}}</div>`,
     }).$mount();
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(1, undefined);
+    expect(spy).toBeCalledTimes(0);
     vm.a = 2;
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
     waitForUpdate(() => {
-      expect(spy).toBeCalledTimes(2);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -68,12 +66,11 @@ describe('api/watch', () => {
       },
       template: `<div>{{a}}</div>`,
     }).$mount();
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(1, undefined);
+    expect(spy).toBeCalledTimes(0);
     vm.a = 2;
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
     waitForUpdate(() => {
-      expect(spy).toBeCalledTimes(2);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -196,12 +193,11 @@ describe('api/watch', () => {
         return h('div', this.a);
       },
     }).$mount();
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toHaveBeenLastCalledWith(1, undefined);
+    expect(spy).toBeCalledTimes(0);
     vm.a = 2;
     waitForUpdate(() => {
       expect(rerenderedText).toBe('2');
-      expect(spy).toBeCalledTimes(2);
+      expect(spy).toBeCalledTimes(1);
       expect(spy).toHaveBeenLastCalledWith(2, 1);
     }).then(done);
   });
@@ -286,9 +282,8 @@ describe('api/watch', () => {
         count.value++;
       },
     });
-    expect(spy).toBeCalledTimes(2);
-    expect(spy).toHaveBeenNthCalledWith(1, 0, undefined);
-    expect(spy).toHaveBeenNthCalledWith(2, 1, 0);
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toHaveBeenNthCalledWith(1, 1, 0);
   });
 
   it('should run in a expected order', done => {
@@ -321,7 +316,7 @@ describe('api/watch', () => {
       },
       template: `<div>{{x}}</div>`,
     }).$mount();
-    expect(result).toEqual(['sync effect', 'sync callback', 'pre callback', 'post callback']);
+    expect(result).toEqual(['sync effect']);
     result.length = 0;
 
     waitForUpdate(() => {
@@ -419,21 +414,20 @@ describe('api/watch', () => {
         },
         template: `<div>{{obj1.a}} {{obj2.a}}</div>`,
       }).$mount();
-      expect(spy).toBeCalledTimes(1);
-      expect(spy).toHaveBeenLastCalledWith([1, 2], undefined);
+      expect(spy).toBeCalledTimes(0);
       obj1.a = 2;
       obj2.a = 3;
 
       obj1.a = 3;
       obj2.a = 4;
       waitForUpdate(() => {
-        expect(spy).toBeCalledTimes(2);
+        expect(spy).toBeCalledTimes(1);
         expect(spy).toHaveBeenLastCalledWith([3, 4], [1, 2]);
         obj2.a = 5;
         obj2.a = 6;
       })
         .then(() => {
-          expect(spy).toBeCalledTimes(3);
+          expect(spy).toBeCalledTimes(2);
           expect(spy).toHaveBeenLastCalledWith([3, 6], [3, 4]);
         })
         .then(done);
@@ -553,10 +547,9 @@ describe('api/watch', () => {
     it('should work', done => {
       const obj = reactive({ a: 1 });
       watch(() => obj.a, (n, o) => spy(n, o));
-      expect(spy).toHaveBeenLastCalledWith(1, undefined);
       obj.a = 2;
       waitForUpdate(() => {
-        expect(spy).toBeCalledTimes(2);
+        expect(spy).toBeCalledTimes(1);
         expect(spy).toHaveBeenLastCalledWith(2, 1);
       }).then(done);
     });
@@ -634,7 +627,7 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('run cleanup when watch stops', () => {
+    it('run cleanup when watch stops', done => {
       const id = ref(1);
       const spy = jest.fn();
       const cleanup = jest.fn();
@@ -643,9 +636,16 @@ describe('api/watch', () => {
         onCleanup(cleanup);
       });
 
-      expect(spy).toHaveBeenCalledWith(1);
-      stop();
-      expect(cleanup).toHaveBeenCalled();
+      id.value = 2;
+
+      waitForUpdate(() => {
+        expect(spy).toHaveBeenLastCalledWith(2);
+        stop();
+      })
+        .then(() => {
+          expect(cleanup).toHaveBeenCalled();
+        })
+        .then(done);
     });
 
     it('should not collect reactive in onCleanup', done => {
@@ -675,19 +675,16 @@ describe('api/watch', () => {
 
     it('work with callback ', done => {
       const id = ref(1);
-      const promises = [];
+      let promise;
       watch(id, (newVal, oldVal, onCleanup) => {
         const val = getAsyncValue(newVal);
-        promises.push(val);
-        onCleanup(() => {
-          val.cancel();
-        });
+        promise = val;
       });
       id.value = 2;
       waitForUpdate()
         .thenWaitFor(async next => {
-          const values = await Promise.all(promises);
-          expect(values).toEqual(['canceled', 2]);
+          const value = await promise;
+          expect(value).toEqual(2);
           next();
         })
         .then(done);

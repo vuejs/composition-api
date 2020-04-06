@@ -291,7 +291,7 @@ export function watch(
     callback = null;
   }
 
-  const opts = getWatcherOption(options);
+  const opts = getWatcherOption({ lazy: true, ...options });
   const vm = getWatcherVM();
 
   return createWatcher(vm, source, callback, opts);

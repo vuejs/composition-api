@@ -27,7 +27,7 @@ describe('api/ref', () => {
     watch(a, () => {
       dummy = a.value;
     });
-    expect(dummy).toBe(1);
+    expect(dummy).toBeUndefined();
     a.value = 2;
     waitForUpdate(() => {
       expect(dummy).toBe(2);
@@ -46,7 +46,7 @@ describe('api/ref', () => {
       },
       { deep: true }
     );
-    expect(dummy).toBe(1);
+    expect(dummy).toBeUndefined();
     a.value.count = 2;
     waitForUpdate(() => {
       expect(dummy).toBe(2);
@@ -105,7 +105,7 @@ describe('api/toRefs', () => {
       }
     );
     const stateAsRefs = toRefs(state);
-    expect(dummy).toBe(1);
+    expect(dummy).toBeUndefined();
     expect(stateAsRefs.foo.value).toBe(1);
     expect(stateAsRefs.bar.value).toBe(2);
     state.foo++;
@@ -157,7 +157,7 @@ describe('unwrapping', () => {
       },
       { deep: true, flush: 'sync' }
     );
-    expect(dummy).toBe(0);
+    expect(dummy).toBeUndefined();
     expect(obj.a).toBe(0);
     expect(objWrapper.value.a).toBe(0);
     obj.a++;
@@ -222,8 +222,8 @@ describe('unwrapping', () => {
       },
       { deep: true, flush: 'sync' }
     );
-    expect(dummy1).toBe(1);
-    expect(dummy2).toBe(1);
+    expect(dummy1).toBeUndefined();
+    expect(dummy2).toBeUndefined();
     a.value++;
     expect(dummy1).toBe(2);
     expect(dummy2).toBe(2);
@@ -252,8 +252,8 @@ describe('unwrapping', () => {
       },
       { deep: true, flush: 'sync' }
     );
-    expect(dummy1).toBe(1);
-    expect(dummy2).toBe(1);
+    expect(dummy1).toBeUndefined();
+    expect(dummy2).toBeUndefined();
     expect(obj.a).toBe(1);
     expect(obj.b.c).toBe(1);
     obj.a++;
