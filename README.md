@@ -45,6 +45,7 @@ By using the global variable `window.vueCompositionApi`
 # Usage
 
 You must install `@vue/composition-api` via `Vue.use()` before using other APIs:
+Now inside /src/main.js file you will need to add the following code at the top of the page: 
 
 ```js
 import Vue from 'vue';
