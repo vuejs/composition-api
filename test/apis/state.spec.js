@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { reactive, ref, watch, set, toRefs, computed } = require('../../src');
+const { reactive, ref, watch, set, toRefs, computed, unref } = require('../../src');
 
 describe('api/ref', () => {
   it('should work with array', () => {
@@ -328,6 +328,12 @@ describe('unwrapping', () => {
 
     expect(state.list[0]).toBe(a);
     expect(state.list[0].value).toBe(0);
+  });
+
+  it('should unrwap ref', () => {
+    expect(unref(0)).toBe(0);
+    expect(unref(ref(0))).toBe(0);
+    expect(unref({ value: 1 })).toStrictEqual({ value: 1 });
   });
 
   it('should now unwrap plain object when using set at Array', () => {

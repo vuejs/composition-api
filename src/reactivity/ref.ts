@@ -132,6 +132,10 @@ export function isRef<T>(value: any): value is Ref<T> {
   return value instanceof RefImpl;
 }
 
+export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
+  return isRef(ref) ? (ref.value as any) : ref;
+}
+
 // prettier-ignore
 type Refs<Data> = {
   [K in keyof Data]: Data[K] extends Ref<infer V> 
