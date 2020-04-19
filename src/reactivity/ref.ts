@@ -111,6 +111,10 @@ export function isRef<T>(value: any): value is Ref<T> {
   return value instanceof RefImpl;
 }
 
+export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
+  return isRef(ref) ? (ref.value as any) : ref;
+}
+
 export function toRefs<T extends Data = Data>(obj: T): { [K in keyof T]: Ref<T[K]> } {
   if (!isPlainObject(obj)) return obj as any;
 
