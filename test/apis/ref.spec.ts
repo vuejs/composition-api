@@ -9,6 +9,7 @@ import {
   // isReactive,
   computed,
   effect,
+  unref,
 } from '../../src';
 // import { shallowRef, unref, customRef } from '../src/ref'
 
@@ -155,10 +156,10 @@ describe('reactivity/ref', () => {
     expect(objRef.value[customSymbol]).toStrictEqual(obj[customSymbol]);
   });
 
-  // test('unref', () => {
-  //   expect(unref(1)).toBe(1);
-  //   expect(unref(ref(1))).toBe(1);
-  // });
+  test('unref', () => {
+    expect(unref(1)).toBe(1);
+    expect(unref(ref(1))).toBe(1);
+  });
 
   // test('shallowRef', () => {
   //   const sref = shallowRef({ a: 1 });
