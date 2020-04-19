@@ -8,14 +8,20 @@ interface Option<T> {
   set: (value: T) => void;
 }
 
+export interface ComputedRef<T = any> extends WritableComputedRef<T> {
+  readonly value: T;
+}
+
+interface WritableComputedRef<T> extends Ref<T> {}
+
 // read-only
-export function computed<T>(getter: Option<T>['get']): Readonly<Ref<Readonly<T>>>;
+export function computed<T>(getter: Option<T>['get']): ComputedRef<T>;
 // writable
-export function computed<T>(options: Option<T>): Ref<Readonly<T>>;
+export function computed<T>(options: Option<T>): WritableComputedRef<T>;
 // implement
 export function computed<T>(
   options: Option<T>['get'] | Option<T>
-): Readonly<Ref<Readonly<T>>> | Ref<Readonly<T>> {
+): ComputedRef<T> | WritableComputedRef<T> {
   const vm = getCurrentVM();
   let get: Option<T>['get'], set: Option<T>['set'] | undefined;
   if (typeof options === 'function') {
