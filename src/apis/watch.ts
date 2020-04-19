@@ -280,7 +280,7 @@ export function watch(
     callback = cb as WatcherCallBack<unknown>;
   } else {
     // effect watch
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       warn(
         `\`watch(fn, options?)\` signature has been moved to a separate API. ` +
           `Use \`watchEffect(fn, options?)\` instead. \`watch\` now only ` +

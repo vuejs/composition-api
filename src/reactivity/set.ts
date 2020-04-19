@@ -29,7 +29,7 @@ function isValidArrayIndex(val: any): boolean {
 export function set<T>(target: any, key: any, val: T): T {
   const Vue = getCurrentVue();
   const { warn, defineReactive } = Vue.util;
-  if (process.env.NODE_ENV !== 'production' && (isUndef(target) || isPrimitive(target))) {
+  if (__DEV__ && (isUndef(target) || isPrimitive(target))) {
     warn(`Cannot set reactive property on undefined, null, or primitive value: ${target}`);
   }
   if (isArray(target) && isValidArrayIndex(key)) {
@@ -43,7 +43,7 @@ export function set<T>(target: any, key: any, val: T): T {
   }
   const ob = target.__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
-    process.env.NODE_ENV !== 'production' &&
+    __DEV__ &&
       warn(
         'Avoid adding reactive properties to a Vue instance or its root $data ' +
           'at runtime - declare it upfront in the data option.'

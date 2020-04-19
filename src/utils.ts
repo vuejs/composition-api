@@ -2,13 +2,15 @@ import Vue from 'vue';
 
 const toString = (x: any) => Object.prototype.toString.call(x);
 
-export function isNative (Ctor: any): boolean {
-  return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
+export function isNative(Ctor: any): boolean {
+  return typeof Ctor === 'function' && /native code/.test(Ctor.toString());
 }
 
 export const hasSymbol =
-  typeof Symbol !== 'undefined' && isNative(Symbol) &&
-  typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys)
+  typeof Symbol !== 'undefined' &&
+  isNative(Symbol) &&
+  typeof Reflect !== 'undefined' &&
+  isNative(Reflect.ownKeys);
 
 export const noopFn: any = (_: any) => _;
 
@@ -64,7 +66,7 @@ export function warn(msg: string, vm?: Vue) {
 }
 
 export function logError(err: Error, vm: Vue, info: string) {
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     warn(`Error in ${info}: "${err.toString()}"`, vm);
   }
   if (typeof window !== 'undefined' && typeof console !== 'undefined') {

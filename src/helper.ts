@@ -5,7 +5,7 @@ import { assert, warn } from './utils';
 
 export function ensureCurrentVMInFn(hook: string): ComponentInstance {
   const vm = getCurrentVM();
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     assert(vm, `"${hook}" get called outside of "setup()"`);
   }
   return vm!;

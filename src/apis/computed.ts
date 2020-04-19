@@ -37,7 +37,7 @@ export function computed<T>(
   return createRef<T>({
     get: () => (computedHost as any).$$state,
     set: (v: T) => {
-      if (process.env.NODE_ENV !== 'production' && !set) {
+      if (__DEV__ && !set) {
         warn('Computed property was assigned to but it has no setter.', vm!);
         return;
       }

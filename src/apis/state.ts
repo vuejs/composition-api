@@ -1,1 +1,12 @@
-export { reactive, ref, Ref, isRef, toRefs, set } from '../reactivity';
+export {
+  reactive,
+  ref,
+  Ref,
+  isRef,
+  toRefs,
+  set,
+  toRef,
+  isReactive,
+  UnwrapRef,
+  nonReactive,
+} from '../reactivity';

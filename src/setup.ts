@@ -17,7 +17,7 @@ function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<un
       },
     });
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       // expose binding to Vue Devtool as a data property
       // delay this until state has been resolved to prevent repeated works
       vm.$nextTick(() => {
@@ -29,7 +29,7 @@ function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<un
         });
       });
     }
-  } else if (process.env.NODE_ENV !== 'production') {
+  } else if (__DEV__) {
     if (props && hasOwn(props, propName)) {
       warn(`The setup binding property "${propName}" is already declared as a prop.`, vm);
     } else {
@@ -141,7 +141,7 @@ export function mixin(Vue: VueConstructor) {
       return;
     }
     if (typeof setup !== 'function') {
-      if (process.env.NODE_ENV !== 'production') {
+      if (__DEV__) {
         warn(
           'The "setup" option should be a function that returns a object in component definitions.',
           vm
@@ -202,7 +202,7 @@ export function mixin(Vue: VueConstructor) {
       return;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       assert(
         false,
         `"setup" must return a "Object" or a "Function", got "${Object.prototype.toString

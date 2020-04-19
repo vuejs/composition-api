@@ -45,7 +45,7 @@ export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | 
     return val;
   } else if (defaultValue !== undefined) {
     return defaultValue;
-  } else if (process.env.NODE_ENV !== 'production') {
+  } else if (__DEV__) {
     warn(`Injection "${String(key)}" not found`, vm);
   }
 }
