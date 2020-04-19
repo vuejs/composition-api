@@ -37,5 +37,6 @@ export { getCurrentVM as getCurrentInstance } from './runtimeContext';
 export * from './apis/state';
 export * from './apis/lifecycle';
 export * from './apis/watch';
+export * from './apis/effect';
 export * from './apis/computed';
 export * from './apis/inject';

@@ -82,7 +82,7 @@ type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
 
 // without init value, explicit typed: a = ref<{ a: number }>()
 // typeof a will be Ref<{ a: number } | undefined>
-export function ref<T = undefined>(): Ref<T | undefined>;
+export function ref<T = any>(): Ref<T | undefined>;
 // with null as init value: a = ref<{ a: number }>(null);
 // typeof a will be Ref<{ a: number } | null>
 export function ref<T = null>(raw: null): Ref<T | null>;
