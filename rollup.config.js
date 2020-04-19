@@ -63,7 +63,7 @@ function genConfig({ outFile, format, mode }) {
             ? // preserve to be handled by bundlers
               `(__DEV__)`
             : // hard coded dev/prod builds
-              !isProduction,
+              !isProd,
       }),
       isProd && terser(),
     ].filter(Boolean),
