@@ -10,7 +10,7 @@ import {
   computed,
   effect,
   unref,
-} from '../../src';
+} from '../../../src';
 // import { shallowRef, unref, customRef } from '../src/ref'
 
 describe('reactivity/ref', () => {

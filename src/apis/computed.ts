@@ -12,7 +12,7 @@ export interface ComputedRef<T = any> extends WritableComputedRef<T> {
   readonly value: T;
 }
 
-interface WritableComputedRef<T> extends Ref<T> {}
+export interface WritableComputedRef<T> extends Ref<T> {}
 
 // read-only
 export function computed<T>(getter: Option<T>['get']): ComputedRef<T>;
