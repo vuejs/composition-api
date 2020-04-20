@@ -4,34 +4,52 @@ import { assert, logError, noopFn, warn } from '../utils';
 import { defineComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
+import { ComputedRef } from './computed';
 
-type CleanupRegistrator = (invalidate: () => void) => void;
+export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void;
 
-type SimpleEffect = (onCleanup: CleanupRegistrator) => void;
+export type WatchSource<T = any> = Ref<T> | ComputedRef<T> | (() => T);
 
-type StopHandle = () => void;
-
-type WatcherCallBack<T> = (newVal: T, oldVal: T, onCleanup: CleanupRegistrator) => void;
-
-type WatcherSource<T> = Ref<T> | (() => T);
+export type WatchCallback<V = any, OV = any> = (
+  value: V,
+  oldValue: OV,
+  onInvalidate: InvalidateCbRegistrator
+) => any;
 
 type MapSources<T> = {
-  [K in keyof T]: T[K] extends WatcherSource<infer V> ? V : never;
+  [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never;
 };
 
-type FlushMode = 'pre' | 'post' | 'sync';
+type MapOldSources<T, Immediate> = {
+  [K in keyof T]: T[K] extends WatchSource<infer V>
+    ? Immediate extends true
+      ? (V | undefined)
+      : V
+    : never;
+};
 
-interface WatcherOption {
-  lazy: boolean; // whether or not to delay callcack invoking
-  deep: boolean;
-  flush: FlushMode;
-}
+type InvalidateCbRegistrator = (cb: () => void) => void;
+
+type FlushMode = 'pre' | 'post' | 'sync';
 
 export interface VueWatcher {
   lazy: boolean;
   get(): any;
   teardown(): void;
 }
+
+export interface BaseWatchOptions {
+  flush?: FlushMode;
+  // onTrack?: ReactiveEffectOptions['onTrack'];
+  // onTrigger?: ReactiveEffectOptions['onTrigger'];
+}
+
+export interface WatchOptions<Immediate = boolean> extends BaseWatchOptions {
+  immediate?: Immediate;
+  deep?: boolean;
+}
+
+export type StopHandle = () => void;
 
 let fallbackVM: ComponentInstance;
 
@@ -54,12 +72,23 @@ function installWatchEnv(vm: any) {
   vm.$on('hook:updated', flushPostQueue);
 }
 
-function getWatcherOption(options?: Partial<WatcherOption>): WatcherOption {
+function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
   return {
     ...{
-      lazy: false,
+      immediate: false,
       deep: false,
       flush: 'post',
+    },
+    ...options,
+  };
+}
+
+function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
+  return {
+    ...{
+      immediate: true,
+      deep: false,
+      flush: 'sync',
     },
     ...options,
   };
@@ -141,14 +170,14 @@ function createVueWatcher(
 
 function createWatcher(
   vm: ComponentInstance,
-  source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
-  cb: WatcherCallBack<any> | null,
-  options: WatcherOption
+  source: WatchSource<unknown> | WatchSource<unknown>[] | WatchEffect,
+  cb: WatchCallback<any> | null,
+  options: WatchOptions
 ): () => void {
   const flushMode = options.flush;
   const isSync = flushMode === 'sync';
   let cleanup: (() => void) | null;
-  const registerCleanup: CleanupRegistrator = (fn: () => void) => {
+  const registerCleanup: InvalidateCbRegistrator = (fn: () => void) => {
     cleanup = () => {
       try {
         fn();
@@ -180,10 +209,10 @@ function createWatcher(
 
   // effect watch
   if (cb === null) {
-    const getter = () => (source as SimpleEffect)(registerCleanup);
+    const getter = () => (source as WatchEffect)(registerCleanup);
     const watcher = createVueWatcher(vm, getter, noopFn, {
-      noRun: true, // take control the initial gettet invoking
-      deep: options.deep,
+      noRun: true, // take control the initial getter invoking
+      deep: options.deep || false,
       sync: isSync,
       before: runCleanup,
     });
@@ -220,7 +249,7 @@ function createWatcher(
     cb(n, o, registerCleanup);
   };
   let callback = createScheduler(applyCb);
-  if (!options.lazy) {
+  if (options.immediate) {
     const originalCallbck = callback;
     // `shiftCallback` is used to handle the first sync effect run.
     // The subsequent callbacks will redirect to `callback`.
@@ -235,7 +264,7 @@ function createWatcher(
 
   // @ts-ignore: use undocumented option "sync"
   const stop = vm.$watch(getter, callback, {
-    immediate: !options.lazy,
+    immediate: options.immediate,
     deep: options.deep,
     sync: isSync,
   });
@@ -246,38 +275,42 @@ function createWatcher(
   };
 }
 
-export function watchEffect(
-  effect: SimpleEffect,
-  options?: Omit<Partial<WatcherOption>, 'lazy'>
-): StopHandle {
-  const opts = getWatcherOption(options);
+export function watchEffect(effect: WatchEffect, options?: BaseWatchOptions): StopHandle {
+  const opts = getWatchEffectOption(options);
   const vm = getWatcherVM();
   return createWatcher(vm, effect, null, opts);
 }
 
-export function watch<T = any>(
-  source: SimpleEffect,
-  options?: Omit<Partial<WatcherOption>, 'lazy'>
+// overload #1: single source + cb
+export function watch<T, Immediate extends Readonly<boolean> = false>(
+  source: WatchSource<T>,
+  cb: WatchCallback<T, Immediate extends true ? (T | undefined) : T>,
+  options?: WatchOptions<Immediate>
 ): StopHandle;
-export function watch<T = any>(
-  source: WatcherSource<T>,
-  cb: WatcherCallBack<T>,
-  options?: Partial<WatcherOption>
-): StopHandle;
-export function watch<T extends WatcherSource<unknown>[]>(
+
+// overload #2: array of multiple sources + cb
+// Readonly constraint helps the callback to correctly infer value types based
+// on position in the source array. Otherwise the values will get a union type
+// of all possible value types.
+export function watch<
+  T extends Readonly<WatchSource<unknown>[]>,
+  Immediate extends Readonly<boolean> = false
+>(
   sources: T,
-  cb: (newValues: MapSources<T>, oldValues: MapSources<T>, onCleanup: CleanupRegistrator) => any,
-  options?: Partial<WatcherOption>
+  cb: WatchCallback<MapSources<T>, MapOldSources<T, Immediate>>,
+  options?: WatchOptions<Immediate>
 ): StopHandle;
-export function watch(
-  source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
-  cb?: Partial<WatcherOption> | WatcherCallBack<any>,
-  options?: Partial<WatcherOption>
+
+// implementation
+export function watch<T = any>(
+  source: WatchSource<T> | WatchSource<T>[],
+  cb: WatchCallback<T>,
+  options?: WatchOptions
 ): StopHandle {
-  let callback: WatcherCallBack<unknown> | null = null;
+  let callback: WatchCallback<unknown> | null = null;
   if (typeof cb === 'function') {
     // source watch
-    callback = cb as WatcherCallBack<unknown>;
+    callback = cb as WatchCallback<unknown>;
   } else {
     // effect watch
     if (__DEV__) {
@@ -287,7 +320,7 @@ export function watch(
           `supports \`watch(source, cb, options?) signature.`
       );
     }
-    options = cb as Partial<WatcherOption>;
+    options = cb as Partial<WatchOptions>;
     callback = null;
   }
 

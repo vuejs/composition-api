@@ -1,17 +1,23 @@
-import { ref, isRef } from '../src/ref';
-import { reactive, isReactive, toRaw, markRaw, shallowReactive } from '../src';
-import { mockWarn } from '@vue/shared';
-import { computed } from '../src/computed';
+import {
+  ref,
+  isRef,
+  reactive,
+  isReactive,
+  computed,
+  //toRaw, markRaw, shallowReactive
+} from '../../../src';
+// import { reactive, isReactive, toRaw, markRaw, shallowReactive } from '../src';
+// import { computed } from '../src/computed';
 
 describe('reactivity/reactive', () => {
-  mockWarn();
+  const warnSpy = jest.spyOn(console, 'warn');
 
   test('Object', () => {
     const original = { foo: 1 };
     const observed = reactive(original);
-    expect(observed).not.toBe(original);
+    expect(observed).toBe(original);
     expect(isReactive(observed)).toBe(true);
-    expect(isReactive(original)).toBe(false);
+    expect(isReactive(original)).toBe(true);
     // get
     expect(observed.foo).toBe(1);
     // has
@@ -50,7 +56,7 @@ describe('reactivity/reactive', () => {
     const observed = reactive<{ foo?: object }>({});
     const raw = {};
     observed.foo = raw;
-    expect(observed.foo).not.toBe(raw);
+    expect(observed.foo).toBe(raw);
     expect(isReactive(observed.foo)).toBe(true);
   });
 
@@ -78,12 +84,12 @@ describe('reactivity/reactive', () => {
     expect(original.bar).toBe(original2);
   });
 
-  test('unwrap', () => {
-    const original = { foo: 1 };
-    const observed = reactive(original);
-    expect(toRaw(observed)).toBe(original);
-    expect(toRaw(original)).toBe(original);
-  });
+  // test('unwrap', () => {
+  //   const original = { foo: 1 };
+  //   const observed = reactive(original);
+  //   expect(toRaw(observed)).toBe(original);
+  //   expect(toRaw(original)).toBe(original);
+  // });
 
   test('should not unwrap Ref<T>', () => {
     const observedNumberRef = reactive(ref(1));
@@ -112,7 +118,7 @@ describe('reactivity/reactive', () => {
   test('non-observable values', () => {
     const assertValue = (value: any) => {
       reactive(value);
-      expect(`value cannot be made reactive: ${String(value)}`).toHaveBeenWarnedLast();
+      expect(warnSpy).toHaveBeenLastCalledWith(`value cannot be made reactive: ${String(value)}`);
     };
 
     // number
@@ -125,6 +131,8 @@ describe('reactivity/reactive', () => {
     assertValue(null);
     // undefined
     assertValue(undefined);
+    // array
+    assertValue([]);
     // symbol
     const s = Symbol();
     assertValue(s);
@@ -138,14 +146,14 @@ describe('reactivity/reactive', () => {
     expect(reactive(d)).toBe(d);
   });
 
-  test('markRaw', () => {
-    const obj = reactive({
-      foo: { a: 1 },
-      bar: markRaw({ b: 2 }),
-    });
-    expect(isReactive(obj.foo)).toBe(true);
-    expect(isReactive(obj.bar)).toBe(false);
-  });
+  // test('markRaw', () => {
+  //   const obj = reactive({
+  //     foo: { a: 1 },
+  //     bar: markRaw({ b: 2 }),
+  //   });
+  //   expect(isReactive(obj.foo)).toBe(true);
+  //   expect(isReactive(obj.bar)).toBe(false);
+  // });
 
   test('should not observe frozen objects', () => {
     const obj = reactive({
@@ -154,16 +162,16 @@ describe('reactivity/reactive', () => {
     expect(isReactive(obj.foo)).toBe(false);
   });
 
-  describe('shallowReactive', () => {
-    test('should not make non-reactive properties reactive', () => {
-      const props = shallowReactive({ n: { foo: 1 } });
-      expect(isReactive(props.n)).toBe(false);
-    });
+  // describe('shallowReactive', () => {
+  //   test('should not make non-reactive properties reactive', () => {
+  //     const props = shallowReactive({ n: { foo: 1 } });
+  //     expect(isReactive(props.n)).toBe(false);
+  //   });
 
-    test('should keep reactive properties reactive', () => {
-      const props: any = shallowReactive({ n: reactive({ foo: 1 }) });
-      props.n = reactive({ foo: 2 });
-      expect(isReactive(props.n)).toBe(true);
-    });
-  });
+  //   test('should keep reactive properties reactive', () => {
+  //     const props: any = shallowReactive({ n: reactive({ foo: 1 }) });
+  //     props.n = reactive({ foo: 2 });
+  //     expect(isReactive(props.n)).toBe(true);
+  //   });
+  // });
 });

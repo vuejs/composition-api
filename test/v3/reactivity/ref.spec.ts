@@ -1,6 +1,6 @@
 import {
   ref,
-  // effect,
+  // watchEffect,
   reactive,
   isRef,
   toRef,
@@ -8,7 +8,7 @@ import {
   Ref,
   // isReactive,
   computed,
-  effect,
+  watchEffect,
   unref,
 } from '../../../src';
 // import { shallowRef, unref, customRef } from '../src/ref'
@@ -24,9 +24,12 @@ describe('reactivity/ref', () => {
   it('should be reactive', () => {
     const a = ref(1);
     let dummy;
-    effect(() => {
-      dummy = a.value;
-    });
+    watchEffect(
+      () => {
+        dummy = a.value;
+      },
+      { flush: 'sync' }
+    );
     expect(dummy).toBe(1);
     a.value = 2;
     expect(dummy).toBe(2);
@@ -37,9 +40,12 @@ describe('reactivity/ref', () => {
       count: 1,
     });
     let dummy;
-    effect(() => {
-      dummy = a.value.count;
-    });
+    watchEffect(
+      () => {
+        dummy = a.value.count;
+      },
+      { flush: 'sync' }
+    );
     expect(dummy).toBe(1);
     a.value.count = 2;
     expect(dummy).toBe(2);
@@ -48,9 +54,12 @@ describe('reactivity/ref', () => {
   it('should work without initial value', () => {
     const a = ref();
     let dummy;
-    effect(() => {
-      dummy = a.value;
-    });
+    watchEffect(
+      () => {
+        dummy = a.value;
+      },
+      { flush: 'sync' }
+    );
     expect(dummy).toBe(undefined);
     a.value = 2;
     expect(dummy).toBe(2);
@@ -68,10 +77,13 @@ describe('reactivity/ref', () => {
     let dummy1: number;
     let dummy2: number;
 
-    effect(() => {
-      dummy1 = obj.a;
-      dummy2 = obj.b.c;
-    });
+    watchEffect(
+      () => {
+        dummy1 = obj.a;
+        dummy2 = obj.b.c;
+      },
+      { flush: 'sync' }
+    );
 
     const assertDummiesEqualTo = (val: number) =>
       [dummy1, dummy2].forEach(dummy => expect(dummy).toBe(val));
@@ -166,9 +178,9 @@ describe('reactivity/ref', () => {
   //   expect(isReactive(sref.value)).toBe(false);
 
   //   let dummy;
-  //   effect(() => {
+  //   watchEffect(() => {
   //     dummy = sref.value.a;
-  //   });
+  //   }, {flush: 'sync'});
   //   expect(dummy).toBe(1);
 
   //   sref.value = { a: 2 };
@@ -204,12 +216,15 @@ describe('reactivity/ref', () => {
 
     // reactivity
     let dummyX;
-    effect(() => {
-      dummyX = x.value;
-    });
+    watchEffect(
+      () => {
+        dummyX = x.value;
+      },
+      { flush: 'sync' }
+    );
     expect(dummyX).toBe(x.value);
 
-    // mutating source should trigger effect using the proxy refs
+    // mutating source should trigger watchEffect using the proxy refs
     a.x = 4;
     expect(dummyX).toBe(4);
   });
@@ -241,14 +256,17 @@ describe('reactivity/ref', () => {
 
     // reactivity
     let dummyX, dummyY;
-    effect(() => {
-      dummyX = x.value;
-      dummyY = y.value;
-    });
+    watchEffect(
+      () => {
+        dummyX = x.value;
+        dummyY = y.value;
+      },
+      { flush: 'sync' }
+    );
     expect(dummyX).toBe(x.value);
     expect(dummyY).toBe(y.value);
 
-    // mutating source should trigger effect using the proxy refs
+    // mutating source should trigger watchEffect using the proxy refs
     a.x = 4;
     a.y = 5;
     expect(dummyX).toBe(4);
@@ -273,9 +291,9 @@ describe('reactivity/ref', () => {
   //   expect(isRef(custom)).toBe(true);
 
   //   let dummy;
-  //   effect(() => {
+  //   watchEffect(() => {
   //     dummy = custom.value;
-  //   });
+  //   }, {flush: 'sync'});
   //   expect(dummy).toBe(1);
 
   //   custom.value = 2;
