@@ -139,6 +139,16 @@ function createVueWatcher(
   return vm._watchers[index];
 }
 
+// We have to monkeypatch the teardown function so Vue will run
+// runCleanup() when it tears down the watcher on unmmount.
+function patchWatcherTeardown(watcher: VueWatcher, runCleanup: () => void) {
+  const _teardown = watcher.teardown;
+  watcher.teardown = function(...args) {
+    _teardown.apply(watcher, args);
+    runCleanup();
+  };
+}
+
 function createWatcher(
   vm: ComponentInstance,
   source: WatcherSource<unknown> | WatcherSource<unknown>[] | SimpleEffect,
@@ -188,6 +198,8 @@ function createWatcher(
       before: runCleanup,
     });
 
+    patchWatcherTeardown(watcher, runCleanup);
+
     // enable the watcher update
     watcher.lazy = false;
 
@@ -201,7 +213,6 @@ function createWatcher(
 
     return () => {
       watcher.teardown();
-      runCleanup();
     };
   }
 
@@ -240,9 +251,12 @@ function createWatcher(
     sync: isSync,
   });
 
+  // Once again, we have to hack the watcher for proper teardown
+  const watcher = vm._watchers[vm._watchers.length - 1];
+  patchWatcherTeardown(watcher, runCleanup);
+
   return () => {
     stop();
-    runCleanup();
   };
 }
 
