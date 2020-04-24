@@ -373,14 +373,12 @@ describe('api/watch', () => {
   });
 
   describe('simple effect', () => {
-    let renderedText;
     it('should work', done => {
       let onCleanup;
       const onCleanupSpy = jest.fn();
       const vm = new Vue({
         setup() {
           const count = ref(0);
-          let mounted = false;
           watchEffect(_onCleanup => {
             onCleanup = _onCleanup;
             _onCleanup(onCleanupSpy);

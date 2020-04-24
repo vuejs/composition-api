@@ -221,7 +221,6 @@ function createWatcher(
   if (cb === null) {
     const getter = () => (source as WatchEffect)(registerCleanup);
     const watcher = createVueWatcher(vm, getter, noopFn, {
-      noRun: true, // take control the initial getter invoking
       deep: options.deep || false,
       sync: isSync,
       before: runCleanup,
@@ -231,14 +230,9 @@ function createWatcher(
 
     // enable the watcher update
     watcher.lazy = false;
-    // if (vm !== fallbackVM) {
-    //   vm._watchers.push(watcher);
-    // }
-
     const originGet = watcher.get.bind(watcher);
 
     // always run watchEffect
-    originGet();
     watcher.get = createScheduler(originGet);
 
     return () => {

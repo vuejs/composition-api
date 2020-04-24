@@ -1,19 +1,16 @@
 import {
   ref,
-  // watchEffect,
   reactive,
   isRef,
   toRef,
   toRefs,
   Ref,
-  // isReactive,
   computed,
   watchEffect,
   unref,
   isReactive,
   shallowRef,
 } from '../../../src';
-// import { shallowRef, unref, customRef } from '../src/ref'
 
 describe('reactivity/ref', () => {
   it('should hold a value', () => {

@@ -1,10 +1,4 @@
-import {
-  computed,
-  reactive,
-  // stop,
-  ref,
-  watchEffect,
-} from '../../../src';
+import { computed, reactive, ref, watchEffect } from '../../../src';
 import { mockWarn } from '../../helpers/mockWarn';
 import { nextTick } from '../../helpers/utils';
 
