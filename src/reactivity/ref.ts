@@ -11,7 +11,9 @@ type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakS
 // RelativePath extends object -> true
 type BaseTypes = string | number | boolean;
 
+declare const _refBrand: unique symbol;
 export interface Ref<T> {
+  readonly [_refBrand]: true;
   value: T;
 }
 
@@ -91,6 +93,7 @@ interface RefOption<T> {
   set?(x: T): void;
 }
 class RefImpl<T> implements Ref<T> {
+  readonly [_refBrand]!: true;
   public value!: T;
   constructor({ get, set }: RefOption<T>) {
     proxy(this, 'value', {
@@ -139,7 +142,7 @@ export function isRef<T>(value: any): value is Ref<T> {
 
 // prettier-ignore
 type Refs<Data> = {
-  [K in keyof Data]: Data[K] extends Ref<infer V> 
+  [K in keyof Data]: Data[K] extends Ref<infer V>
     ? Ref<V>
     : Ref<Data[K]>
 }
