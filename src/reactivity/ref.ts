@@ -11,6 +11,8 @@ export interface Ref<T = any> {
   value: T;
 }
 
+export type ToRefs<T = any> = { [K in keyof T]: Ref<T[K]> };
+
 export type CollectionTypes = IterableCollections | WeakCollections;
 
 type IterableCollections = Map<any, any> | Set<any>;
@@ -114,7 +116,7 @@ export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
   return isRef(ref) ? (ref.value as any) : ref;
 }
 
-export function toRefs<T extends Data = Data>(obj: T): { [K in keyof T]: Ref<T[K]> } {
+export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
   if (!isPlainObject(obj)) return obj as any;
 
   if (__DEV__ && !isReactive(obj)) {
