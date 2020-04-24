@@ -2,7 +2,7 @@ import { Data } from '../component';
 import { RefKey } from '../symbols';
 import { proxy, isPlainObject, warn } from '../utils';
 import { HasDefined } from '../types/basic';
-import { reactive, isReactive } from './reactive';
+import { reactive, isReactive, shallowReactive } from './reactive';
 
 declare const _refBrand: unique symbol;
 export interface Ref<T = any> {
@@ -140,5 +140,18 @@ export function toRef<T extends object, K extends keyof T>(object: T, key: K): R
   return createRef({
     get: () => object[key],
     set: v => (object[key] = v),
+  });
+}
+
+export function shallowRef<T>(value: T): T extends Ref ? T : Ref<T>;
+export function shallowRef<T = any>(): Ref<T | undefined>;
+export function shallowRef(raw?: unknown) {
+  if (isRef(raw)) {
+    return raw;
+  }
+  const value = shallowReactive({ [RefKey]: raw });
+  return createRef({
+    get: () => value[RefKey] as any,
+    set: v => ((value[RefKey] as any) = v),
   });
 }

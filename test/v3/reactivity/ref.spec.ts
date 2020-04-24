@@ -10,6 +10,8 @@ import {
   computed,
   watchEffect,
   unref,
+  isReactive,
+  shallowRef,
 } from '../../../src';
 // import { shallowRef, unref, customRef } from '../src/ref'
 
@@ -173,20 +175,26 @@ describe('reactivity/ref', () => {
     expect(unref(ref(1))).toBe(1);
   });
 
-  // test('shallowRef', () => {
-  //   const sref = shallowRef({ a: 1 });
-  //   expect(isReactive(sref.value)).toBe(false);
+  test('shallowRef', () => {
+    const sref = shallowRef({ a: 1 });
+    expect(isReactive(sref.value)).toBe(false);
 
-  //   let dummy;
-  //   watchEffect(() => {
-  //     dummy = sref.value.a;
-  //   }, {flush: 'sync'});
-  //   expect(dummy).toBe(1);
+    let dummy;
+    watchEffect(
+      () => {
+        dummy = sref.value.a;
+      },
+      { flush: 'sync' }
+    );
+    expect(dummy).toBe(1);
 
-  //   sref.value = { a: 2 };
-  //   expect(isReactive(sref.value)).toBe(false);
-  //   expect(dummy).toBe(2);
-  // });
+    sref.value = { a: 2 };
+    expect(isReactive(sref.value)).toBe(false);
+    expect(dummy).toBe(2);
+
+    sref.value.a = 3;
+    expect(dummy).toBe(2);
+  });
 
   test('isRef', () => {
     expect(isRef(ref(1))).toBe(true);

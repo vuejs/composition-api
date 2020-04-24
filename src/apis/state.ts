@@ -12,4 +12,5 @@ export {
   unref,
   shallowReactive,
   toRaw,
+  shallowRef,
 } from '../reactivity';
