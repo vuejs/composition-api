@@ -3,6 +3,7 @@ import { RefKey } from '../symbols';
 import { proxy, isPlainObject, warn } from '../utils';
 import { HasDefined } from '../types/basic';
 import { reactive, isReactive, shallowReactive } from './reactive';
+import { ComputedRef } from '../apis/computed';
 
 declare const _refBrand: unique symbol;
 export interface Ref<T = any> {
@@ -14,11 +15,6 @@ export type CollectionTypes = IterableCollections | WeakCollections;
 
 type IterableCollections = Map<any, any> | Set<any>;
 type WeakCollections = WeakMap<any, any> | WeakSet<any>;
-
-// TODO REMOVE me and get from ComputedRef typed
-interface ComputedRef<T> extends Ref<T> {
-  readonly value: T;
-}
 
 // corner case when use narrows type
 // Ex. type RelativePath = string & { __brand: unknown }
