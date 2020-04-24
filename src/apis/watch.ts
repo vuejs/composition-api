@@ -202,9 +202,6 @@ function createWatcher(
 
     // enable the watcher update
     watcher.lazy = false;
-    if (vm !== fallbackVM) {
-      vm._watchers.push(watcher);
-    }
 
     const originGet = watcher.get.bind(watcher);
     if (isSync) {
