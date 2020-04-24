@@ -13,10 +13,14 @@ describe('api/watch', () => {
   });
 
   it('should work', done => {
+    const onCleanupSpy = jest.fn();
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, spy, { immediate: true });
+        watch(a, (n, o, _onCleanup) => {
+          spy(n, o, _onCleanup);
+          _onCleanup(onCleanupSpy);
+        }, { immediate: true });
         return {
           a,
         };
@@ -25,13 +29,21 @@ describe('api/watch', () => {
     }).$mount();
     expect(spy).toBeCalledTimes(1);
     expect(spy).toHaveBeenLastCalledWith(1, undefined, anyFn);
+    expect(onCleanupSpy).toHaveBeenCalledTimes(0);
     vm.a = 2;
     vm.a = 3;
     expect(spy).toBeCalledTimes(1);
     waitForUpdate(() => {
       expect(spy).toBeCalledTimes(2);
       expect(spy).toHaveBeenLastCalledWith(3, 1, anyFn);
-    }).then(done);
+      expect(onCleanupSpy).toHaveBeenCalledTimes(1);
+
+      vm.$destroy();
+    })
+      .then(() => {
+        expect(onCleanupSpy).toHaveBeenCalledTimes(2);
+      })
+      .then(done);
   });
 
   it('basic usage(value wrapper)', done => {
@@ -355,11 +367,13 @@ describe('api/watch', () => {
     let renderedText;
     it('should work', done => {
       let onCleanup;
+      const onCleanupSpy = jest.fn();
       const vm = new Vue({
         setup() {
           const count = ref(0);
           watchEffect(_onCleanup => {
             onCleanup = _onCleanup;
+            _onCleanup(onCleanupSpy);
             spy(count.value);
             renderedText = vm.$el.textContent;
           });
@@ -375,6 +389,7 @@ describe('api/watch', () => {
       expect(spy).not.toHaveBeenCalled();
       waitForUpdate(() => {
         expect(onCleanup).toEqual(anyFn);
+        expect(onCleanupSpy).toHaveBeenCalledTimes(0);
         expect(renderedText).toBe('0');
         expect(spy).toHaveBeenLastCalledWith(0);
         vm.count++;
@@ -382,6 +397,11 @@ describe('api/watch', () => {
         .then(() => {
           expect(renderedText).toBe('1');
           expect(spy).toHaveBeenLastCalledWith(1);
+          expect(onCleanupSpy).toHaveBeenCalledTimes(1);
+          vm.$destroy();
+        })
+        .then(() => {
+          expect(onCleanupSpy).toHaveBeenCalledTimes(2);
         })
         .then(done);
     });
