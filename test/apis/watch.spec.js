@@ -399,7 +399,8 @@ describe('api/watch', () => {
       waitForUpdate(() => {
         expect(onCleanup).toEqual(anyFn);
         expect(onCleanupSpy).toHaveBeenCalledTimes(0);
-        expect(renderedText).toBe('0');
+        // watch effect runs immediately, os the vm.$el.textContent hasn't update yet
+        expect(renderedText).toBe(undefined);
         expect(spy).toHaveBeenLastCalledWith(0);
         vm.count++;
       })
