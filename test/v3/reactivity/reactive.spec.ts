@@ -5,13 +5,10 @@ import {
   isReactive,
   computed,
   toRaw,
-  //toRaw, markRaw,
   shallowReactive,
   set,
   markRaw,
 } from '../../../src';
-// import { reactive, isReactive, toRaw, markRaw, shallowReactive } from '../src';
-// import { computed } from '../src/computed';
 
 describe('reactivity/reactive', () => {
   test('Object', () => {

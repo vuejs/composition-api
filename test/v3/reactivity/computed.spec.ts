@@ -6,7 +6,6 @@ import {
   watchEffect,
 } from '../../../src';
 import { mockWarn } from '../../helpers/mockWarn';
-import '../../helpers/wait-for-update';
 import { nextTick } from '../../helpers/utils';
 
 describe('reactivity/computed', () => {

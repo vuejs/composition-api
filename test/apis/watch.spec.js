@@ -380,11 +380,11 @@ describe('api/watch', () => {
       const vm = new Vue({
         setup() {
           const count = ref(0);
+          let mounted = false;
           watchEffect(_onCleanup => {
             onCleanup = _onCleanup;
             _onCleanup(onCleanupSpy);
             spy(count.value);
-            renderedText = vm.$el.textContent;
           });
 
           return {
@@ -399,13 +399,10 @@ describe('api/watch', () => {
       waitForUpdate(() => {
         expect(onCleanup).toEqual(anyFn);
         expect(onCleanupSpy).toHaveBeenCalledTimes(0);
-        // watch effect runs immediately, os the vm.$el.textContent hasn't update yet
-        expect(renderedText).toBe(undefined);
         expect(spy).toHaveBeenLastCalledWith(0);
         vm.count++;
       })
         .then(() => {
-          expect(renderedText).toBe('1');
           expect(spy).toHaveBeenLastCalledWith(1);
           expect(onCleanupSpy).toHaveBeenCalledTimes(1);
           vm.$destroy();
