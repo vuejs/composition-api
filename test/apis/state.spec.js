@@ -24,9 +24,13 @@ describe('api/ref', () => {
   it('should be reactive', done => {
     const a = ref(1);
     let dummy;
-    watch(a, () => {
-      dummy = a.value;
-    });
+    watch(
+      a,
+      () => {
+        dummy = a.value;
+      },
+      { immediate: true }
+    );
     expect(dummy).toBe(1);
     a.value = 2;
     waitForUpdate(() => {
@@ -44,7 +48,7 @@ describe('api/ref', () => {
       () => {
         dummy = a.value.count;
       },
-      { deep: true }
+      { deep: true, immediate: true }
     );
     expect(dummy).toBe(1);
     a.value.count = 2;
@@ -102,7 +106,8 @@ describe('api/toRefs', () => {
       () => state,
       () => {
         dummy = state.foo;
-      }
+      },
+      { immediate: true }
     );
     const stateAsRefs = toRefs(state);
     expect(dummy).toBe(1);
@@ -155,7 +160,7 @@ describe('unwrapping', () => {
       () => {
         dummy = obj.a;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy).toBe(0);
     expect(obj.a).toBe(0);
@@ -166,13 +171,12 @@ describe('unwrapping', () => {
     expect(dummy).toBe(2);
   });
 
-  // NOTE I think this is old API??
-  // it('should not unwrap a ref', () => {
-  //   const a = ref(0);
-  //   const b = ref(a);
-  //   expect(a.value).toBe(0);
-  //   expect(b.value).toBe(a);
-  // });
+  it('should not unwrap a ref', () => {
+    const a = ref(0);
+    const b = ref(a);
+    expect(a.value).toBe(0);
+    expect(b).toBe(a);
+  });
 
   it('should not unwrap a ref when re-assign', () => {
     const a = ref('foo');
@@ -221,7 +225,7 @@ describe('unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -251,7 +255,7 @@ describe('unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
