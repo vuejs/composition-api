@@ -32,9 +32,9 @@ export function provide<T>(key: InjectionKey<T> | string, value: T): void {
   vm._provided[key as string] = value;
 }
 
-export function inject<T>(key: InjectionKey<T> | string): T | void;
+export function inject<T>(key: InjectionKey<T> | string): T | undefined;
 export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T;
-export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | void {
+export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | undefined {
   if (!key) {
     return defaultValue;
   }
@@ -43,9 +43,10 @@ export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | 
   const val = resolveInject(key as InjectionKey<T>, vm);
   if (val !== NOT_FOUND) {
     return val;
-  } else if (defaultValue !== undefined) {
+  } else {
+    if (defaultValue === undefined && process.env.NODE_ENV !== 'production') {
+      warn(`Injection "${String(key)}" not found`, vm);
+    }
     return defaultValue;
-  } else if (process.env.NODE_ENV !== 'production') {
-    warn(`Injection "${String(key)}" not found`, vm);
   }
 }
