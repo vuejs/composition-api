@@ -4,8 +4,10 @@ import {
   reactive,
   isReactive,
   computed,
-  //toRaw, markRaw, shallowReactive
+  //toRaw, markRaw,
+  shallowReactive,
 } from '../../../src';
+import { watch } from '../../../../../../Users/david/AppData/Local/Microsoft/TypeScript/3.8/node_modules/@types/fs-extra';
 // import { reactive, isReactive, toRaw, markRaw, shallowReactive } from '../src';
 // import { computed } from '../src/computed';
 
@@ -34,7 +36,7 @@ describe('reactivity/reactive', () => {
       array: [{ bar: 2 }],
     };
     const observed = reactive(original);
-    expect(isReactive(observed.nested)).toBe(true);
+    expect(isReactive(observed.nested)).toBe(true); //not supported by vue2
     expect(isReactive(observed.array)).toBe(true);
     expect(isReactive(observed.array[0])).toBe(true);
   });
@@ -162,16 +164,16 @@ describe('reactivity/reactive', () => {
     expect(isReactive(obj.foo)).toBe(false);
   });
 
-  // describe('shallowReactive', () => {
-  //   test('should not make non-reactive properties reactive', () => {
-  //     const props = shallowReactive({ n: { foo: 1 } });
-  //     expect(isReactive(props.n)).toBe(false);
-  //   });
+  describe('shallowReactive', () => {
+    test('should not make non-reactive properties reactive', () => {
+      const props = shallowReactive({ n: { foo: 1 } });
+      expect(isReactive(props.n)).toBe(false);
+    });
 
-  //   test('should keep reactive properties reactive', () => {
-  //     const props: any = shallowReactive({ n: reactive({ foo: 1 }) });
-  //     props.n = reactive({ foo: 2 });
-  //     expect(isReactive(props.n)).toBe(true);
-  //   });
-  // });
+    test('should keep reactive properties reactive', () => {
+      const props: any = shallowReactive({ n: reactive({ foo: 1 }) });
+      props.n = reactive({ foo: 2 });
+      expect(isReactive(props.n)).toBe(true);
+    });
+  });
 });

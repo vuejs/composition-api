@@ -1,4 +1,4 @@
-import { watch, watchEffect, computed, reactive, ref, set } from '../../../src';
+import { watch, watchEffect, computed, reactive, ref, set, shallowReactive } from '../../../src';
 import { nextTick } from '../../helpers/utils';
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#watch
@@ -282,6 +282,45 @@ describe('api: watch', () => {
     state.value = undefined;
     await nextTick();
     expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('shallow reactive effect', async () => {
+    const state = shallowReactive({ count: 0 });
+    let dummy;
+    watch(
+      () => state.count,
+      () => {
+        dummy = state.count;
+      },
+      { immediate: true }
+    );
+    expect(dummy).toBe(0);
+
+    state.count++;
+    await nextTick();
+    expect(dummy).toBe(1);
+  });
+
+  it('shallow reactive object', async () => {
+    const state = shallowReactive({ a: { count: 0 } });
+    let dummy;
+    watch(
+      () => state.a,
+      () => {
+        dummy = state.a.count;
+      },
+      { immediate: true }
+    );
+    expect(dummy).toBe(0);
+
+    state.a.count++;
+    await nextTick();
+    expect(dummy).toBe(0);
+
+    state.a = { count: 5 };
+    await nextTick();
+
+    expect(dummy).toBe(5);
   });
 
   // it('warn immediate option when using effect', async () => {

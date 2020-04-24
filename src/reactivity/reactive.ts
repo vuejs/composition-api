@@ -28,7 +28,7 @@ export function isReactive(obj: any): boolean {
  * Proxing property access of target.
  * We can do unwrapping and other things here.
  */
-function setupAccessControl(target: AnyObject): void {
+function setupAccessControl(target: AnyObject, shallow = false): void {
   if (
     !isPlainObject(target) ||
     isNonReactive(target) ||
@@ -123,10 +123,67 @@ function observe<T>(obj: T): T {
 
   return observed;
 }
+
+export function shallowReactive<T extends object = any>(obj: T): T {
+  if (__DEV__ && !obj) {
+    warn('"shallowReactive()" is called without provide an "object".');
+    // @ts-ignore
+    return;
+  }
+
+  if (!isPlainObject(obj) || isReactive(obj) || isNonReactive(obj) || !Object.isExtensible(obj)) {
+    return obj as any;
+  }
+
+  const observed = observe({});
+  def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
+  setupAccessControl(observed);
+
+  const ob = (observed as any).__ob__;
+
+  for (const key of Object.keys(obj)) {
+    let val = obj[key];
+    let getter: (() => any) | undefined;
+    let setter: ((x: any) => void) | undefined;
+    const property = Object.getOwnPropertyDescriptor(obj, key);
+    if (property) {
+      if (property.configurable === false) {
+        continue;
+      }
+      getter = property.get;
+      setter = property.set;
+      if ((!getter || setter) /* not only have getter */ && arguments.length === 2) {
+        val = obj[key];
+      }
+    }
+
+    // setupAccessControl(val);
+    Object.defineProperty(observed, key, {
+      enumerable: true,
+      configurable: true,
+      get: function getterHandler() {
+        const value = getter ? getter.call(obj) : val;
+        ob.dep.depend();
+        return value;
+      },
+      set: function setterHandler(newVal) {
+        if (getter && !setter) return;
+        if (setter) {
+          setter.call(obj, newVal);
+        } else {
+          val = newVal;
+        }
+        ob.dep.notify();
+      },
+    });
+  }
+  return (observed as unknown) as T;
+}
+
 /**
  * Make obj reactivity
  */
-export function reactive<T = any>(obj: T): UnwrapRef<T> {
+export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   if (__DEV__ && !obj) {
     warn('"reactive()" is called without provide an "object".');
     // @ts-ignore
@@ -138,7 +195,7 @@ export function reactive<T = any>(obj: T): UnwrapRef<T> {
   }
 
   const observed = observe(obj);
-  def(observed, ReactiveIdentifierKey, ReactiveIdentifier);
+  def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
   setupAccessControl(observed);
   return observed as UnwrapRef<T>;
 }

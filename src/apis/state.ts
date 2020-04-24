@@ -10,4 +10,5 @@ export {
   UnwrapRef,
   nonReactive,
   unref,
+  shallowReactive,
 } from '../reactivity';
