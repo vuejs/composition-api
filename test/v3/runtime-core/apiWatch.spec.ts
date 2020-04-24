@@ -1,22 +1,4 @@
-// import {
-//   watch,
-//   watchEffect,
-//   reactive,
-//   computed,
-//   nextTick,
-//   ref,
-//   h
-// } from '../src/index'
-// import { render, nodeOps, serializeInner } from '@vue/runtime-test'
-// import {
-//   ITERATE_KEY,
-//   DebuggerEvent,
-//   TrackOpTypes,
-//   TriggerOpTypes
-// } from '@vue/reactivity'
-// import { mockWarn } from '@vue/shared'
-
-import { watch, watchEffect, computed, reactive, ref } from '../../../src';
+import { watch, watchEffect, computed, reactive, ref, set } from '../../../src';
 import { nextTick } from '../../helpers/utils';
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#watch
@@ -251,19 +233,20 @@ describe('api: watch', () => {
     expect(dummy).toEqual([1, 1, 1, true]);
 
     // nested array mutation
-    state.array[0] = 2;
+    set(state.array, '0', 2);
     await nextTick();
     expect(dummy).toEqual([1, 2, 1, true]);
 
-    // nested map mutation
-    state.map.set('a', 2);
-    await nextTick();
-    expect(dummy).toEqual([1, 2, 2, true]);
+    // NOT supported by Vue.observe :(
+    // // nested map mutation
+    // state.map.set('a', 2);
+    // await nextTick();
+    // expect(dummy).toEqual([1, 2, 2, true]);
 
-    // nested set mutation
-    state.set.delete(1);
-    await nextTick();
-    expect(dummy).toEqual([1, 2, 2, false]);
+    // // nested set mutation
+    // state.set.delete(1);
+    // await nextTick();
+    // expect(dummy).toEqual([1, 2, 2, false]);
   });
 
   it('immediate', async () => {
