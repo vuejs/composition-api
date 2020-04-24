@@ -4,7 +4,9 @@ import { proxy, isPlainObject, warn } from '../utils';
 import { HasDefined } from '../types/basic';
 import { reactive, isReactive } from './reactive';
 
+declare const _refBrand: unique symbol;
 export interface Ref<T = any> {
+  readonly [_refBrand]: true;
   value: T;
 }
 
@@ -62,6 +64,7 @@ interface RefOption<T> {
   set?(x: T): void;
 }
 class RefImpl<T> implements Ref<T> {
+  readonly [_refBrand]!: true;
   public value!: T;
   constructor({ get, set }: RefOption<T>) {
     proxy(this, 'value', {
