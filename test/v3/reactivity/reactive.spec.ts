@@ -7,7 +7,6 @@ import {
   //toRaw, markRaw,
   shallowReactive,
 } from '../../../src';
-import { watch } from '../../../../../../Users/david/AppData/Local/Microsoft/TypeScript/3.8/node_modules/@types/fs-extra';
 // import { reactive, isReactive, toRaw, markRaw, shallowReactive } from '../src';
 // import { computed } from '../src/computed';
 
