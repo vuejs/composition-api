@@ -8,7 +8,8 @@ export {
   toRef,
   isReactive,
   UnwrapRef,
-  nonReactive,
+  markRaw,
   unref,
   shallowReactive,
+  toRaw,
 } from '../reactivity';

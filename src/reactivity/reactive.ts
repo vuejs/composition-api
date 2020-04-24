@@ -5,33 +5,35 @@ import { isComponentInstance, defineComponentInstance } from '../helper';
 import {
   AccessControlIdentifierKey,
   ReactiveIdentifierKey,
-  NonReactiveIdentifierKey,
+  RawIdentifierKey,
   RefKey,
 } from '../symbols';
 import { isRef, UnwrapRef } from './ref';
 
 const AccessControlIdentifier = {};
 const ReactiveIdentifier = {};
-const NonReactiveIdentifier = {};
+const RawIdentifier = {};
 
-function isNonReactive(obj: any): boolean {
-  return (
-    hasOwn(obj, NonReactiveIdentifierKey) && obj[NonReactiveIdentifierKey] === NonReactiveIdentifier
-  );
+export function isRaw(obj: any): boolean {
+  return hasOwn(obj, RawIdentifierKey) && obj[RawIdentifierKey] === RawIdentifier;
 }
 
 export function isReactive(obj: any): boolean {
-  return hasOwn(obj, ReactiveIdentifierKey) && obj[ReactiveIdentifierKey] === ReactiveIdentifier;
+  return (
+    Object.isExtensible(obj) &&
+    hasOwn(obj, ReactiveIdentifierKey) &&
+    obj[ReactiveIdentifierKey] === ReactiveIdentifier
+  );
 }
 
 /**
  * Proxing property access of target.
  * We can do unwrapping and other things here.
  */
-function setupAccessControl(target: AnyObject, shallow = false): void {
+function setupAccessControl(target: AnyObject): void {
   if (
     !isPlainObject(target) ||
-    isNonReactive(target) ||
+    isRaw(target) ||
     Array.isArray(target) ||
     isRef(target) ||
     isComponentInstance(target)
@@ -131,12 +133,13 @@ export function shallowReactive<T extends object = any>(obj: T): T {
     return;
   }
 
-  if (!isPlainObject(obj) || isReactive(obj) || isNonReactive(obj) || !Object.isExtensible(obj)) {
+  if (!isPlainObject(obj) || isReactive(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
     return obj as any;
   }
 
   const observed = observe({});
-  def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
+  // def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
+  markReactive(observe, true);
   setupAccessControl(observed);
 
   const ob = (observed as any).__ob__;
@@ -180,6 +183,37 @@ export function shallowReactive<T extends object = any>(obj: T): T {
   return (observed as unknown) as T;
 }
 
+export function markReactive(target: any, shallow = false) {
+  if (
+    !isPlainObject(target) ||
+    isRaw(target) ||
+    Array.isArray(target) ||
+    isRef(target) ||
+    isComponentInstance(target)
+  ) {
+    return;
+  }
+
+  if (
+    hasOwn(target, ReactiveIdentifierKey) &&
+    target[ReactiveIdentifierKey] === ReactiveIdentifier
+  ) {
+    return;
+  }
+
+  if (Object.isExtensible(target)) {
+    def(target, ReactiveIdentifierKey, ReactiveIdentifier);
+  }
+
+  if (shallow) {
+    return;
+  }
+  const keys = Object.keys(target);
+  for (let i = 0; i < keys.length; i++) {
+    markReactive(target[keys[i]]);
+  }
+}
+
 /**
  * Make obj reactivity
  */
@@ -190,12 +224,13 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
     return;
   }
 
-  if (!isPlainObject(obj) || isReactive(obj) || isNonReactive(obj) || !Object.isExtensible(obj)) {
+  if (!isPlainObject(obj) || isReactive(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
     return obj as any;
   }
 
   const observed = observe(obj);
-  def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
+  // def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
+  markReactive(obj);
   setupAccessControl(observed);
   return observed as UnwrapRef<T>;
 }
@@ -203,15 +238,23 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
 /**
  * Make sure obj can't be a reactive
  */
-export function nonReactive<T = any>(obj: T): T {
+export function markRaw<T extends object>(obj: T): T {
   if (!isPlainObject(obj)) {
     return obj;
   }
 
   // set the vue observable flag at obj
   def(obj, '__ob__', (observe({}) as any).__ob__);
-  // mark as nonReactive
-  def(obj, NonReactiveIdentifierKey, NonReactiveIdentifier);
+  // mark as Raw
+  def(obj, RawIdentifierKey, RawIdentifier);
 
   return obj;
+}
+
+export function toRaw<T>(observed: T): T {
+  if (isRaw(observe) || !Object.isExtensible(observed)) {
+    return observed;
+  }
+
+  return (observed as any).__ob__.value || observed;
 }

@@ -1,6 +1,6 @@
 import { getCurrentVue } from '../runtimeContext';
 import { isArray } from '../utils';
-import { defineAccessControl } from './reactive';
+import { defineAccessControl, markReactive } from './reactive';
 
 function isUndef(v: any): boolean {
   return v === undefined || v === null;
@@ -57,6 +57,8 @@ export function set<T>(target: any, key: any, val: T): T {
   defineReactive(ob.value, key, val);
   // IMPORTANT: define access control before trigger watcher
   defineAccessControl(target, key, val);
+  markReactive(ob.value[key]);
+
   ob.dep.notify();
   return val;
 }

@@ -1,6 +1,6 @@
 import { VueConstructor } from 'vue';
 import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
-import { Ref, isRef, isReactive, nonReactive } from './reactivity';
+import { Ref, isRef, isReactive, markRaw } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { resolveSlots, createSlotProxy } from './helper';
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
@@ -194,7 +194,7 @@ export function mixin(Vue: VueConstructor) {
             bindingValue = ref(bindingValue);
           } else {
             // a non-reactive should not don't get reactivity
-            bindingValue = ref(nonReactive(bindingValue));
+            bindingValue = ref(markRaw(bindingValue));
           }
         }
         asVmProperty(vm, name, bindingValue);
