@@ -13,4 +13,5 @@ export {
   shallowReactive,
   toRaw,
   shallowRef,
+  triggerRef,
 } from '../reactivity';

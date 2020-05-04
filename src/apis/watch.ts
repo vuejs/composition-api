@@ -1,6 +1,6 @@
 import { ComponentInstance } from '../component';
-import { Ref, isRef } from '../reactivity';
-import { assert, logError, noopFn, warn } from '../utils';
+import { Ref, isRef, isReactive } from '../reactivity';
+import { assert, logError, noopFn, warn, isFunction } from '../utils';
 import { defineComponentInstance } from '../helper';
 import { getCurrentVM, getCurrentVue } from '../runtimeContext';
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
@@ -28,9 +28,20 @@ type MapOldSources<T, Immediate> = {
     : never;
 };
 
+export interface WatchOptionsBase {
+  flush?: 'pre' | 'post' | 'sync';
+  // onTrack?: ReactiveEffectOptions['onTrack'];
+  // onTrigger?: ReactiveEffectOptions['onTrigger'];
+}
+
 type InvalidateCbRegistrator = (cb: () => void) => void;
 
 type FlushMode = 'pre' | 'post' | 'sync';
+
+export interface WatchOptions<Immediate = boolean> extends WatchOptionsBase {
+  immediate?: Immediate;
+  deep?: boolean;
+}
 
 export interface VueWatcher {
   lazy: boolean;
@@ -38,18 +49,7 @@ export interface VueWatcher {
   teardown(): void;
 }
 
-export interface BaseWatchOptions {
-  flush?: FlushMode;
-  // onTrack?: ReactiveEffectOptions['onTrack'];
-  // onTrigger?: ReactiveEffectOptions['onTrigger'];
-}
-
-export interface WatchOptions<Immediate = boolean> extends BaseWatchOptions {
-  immediate?: Immediate;
-  deep?: boolean;
-}
-
-export type StopHandle = () => void;
+export type WatchStopHandle = () => void;
 
 let fallbackVM: ComponentInstance;
 
@@ -240,13 +240,25 @@ function createWatcher(
     };
   }
 
+  let deep = options.deep;
+
   let getter: () => any;
   if (Array.isArray(source)) {
     getter = () => source.map(s => (isRef(s) ? s.value : s()));
   } else if (isRef(source)) {
     getter = () => source.value;
-  } else {
+  } else if (isReactive(source)) {
+    getter = () => source;
+    deep = true;
+  } else if (isFunction(source)) {
     getter = source as () => any;
+  } else {
+    getter = noopFn;
+    warn(
+      `Invalid watch source: ${JSON.stringify(source)}.
+      A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
+      vm
+    );
   }
 
   const applyCb = (n: any, o: any) => {
@@ -271,7 +283,7 @@ function createWatcher(
   // @ts-ignore: use undocumented option "sync"
   const stop = vm.$watch(getter, callback, {
     immediate: options.immediate,
-    deep: options.deep,
+    deep: deep,
     sync: isSync,
   });
 
@@ -284,20 +296,13 @@ function createWatcher(
   };
 }
 
-export function watchEffect(effect: WatchEffect, options?: BaseWatchOptions): StopHandle {
+export function watchEffect(effect: WatchEffect, options?: WatchOptionsBase): WatchStopHandle {
   const opts = getWatchEffectOption(options);
   const vm = getWatcherVM();
   return createWatcher(vm, effect, null, opts);
 }
 
-// overload #1: single source + cb
-export function watch<T, Immediate extends Readonly<boolean> = false>(
-  source: WatchSource<T>,
-  cb: WatchCallback<T, Immediate extends true ? (T | undefined) : T>,
-  options?: WatchOptions<Immediate>
-): StopHandle;
-
-// overload #2: array of multiple sources + cb
+// overload #1: array of multiple sources + cb
 // Readonly constraint helps the callback to correctly infer value types based
 // on position in the source array. Otherwise the values will get a union type
 // of all possible value types.
@@ -308,14 +313,28 @@ export function watch<
   sources: T,
   cb: WatchCallback<MapSources<T>, MapOldSources<T, Immediate>>,
   options?: WatchOptions<Immediate>
-): StopHandle;
+): WatchStopHandle;
+
+// overload #2: single source + cb
+export function watch<T, Immediate extends Readonly<boolean> = false>(
+  source: WatchSource<T>,
+  cb: WatchCallback<T, Immediate extends true ? (T | undefined) : T>,
+  options?: WatchOptions<Immediate>
+): WatchStopHandle;
+
+// overload #3: watching reactive object w/ cb
+export function watch<T extends object, Immediate extends Readonly<boolean> = false>(
+  source: T,
+  cb: WatchCallback<T, Immediate extends true ? (T | undefined) : T>,
+  options?: WatchOptions<Immediate>
+): WatchStopHandle;
 
 // implementation
 export function watch<T = any>(
   source: WatchSource<T> | WatchSource<T>[],
   cb: WatchCallback<T>,
   options?: WatchOptions
-): StopHandle {
+): WatchStopHandle {
   let callback: WatchCallback<unknown> | null = null;
   if (typeof cb === 'function') {
     // source watch

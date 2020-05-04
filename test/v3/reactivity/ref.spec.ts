@@ -6,6 +6,7 @@ import {
   toRefs,
   Ref,
   computed,
+  triggerRef,
   watchEffect,
   unref,
   isReactive,
@@ -23,14 +24,23 @@ describe('reactivity/ref', () => {
   it('should be reactive', () => {
     const a = ref(1);
     let dummy;
+    let calls = 0;
     watchEffect(
       () => {
+        calls++;
         dummy = a.value;
       },
       { flush: 'sync' }
     );
+    expect(calls).toBe(1);
     expect(dummy).toBe(1);
+
     a.value = 2;
+    expect(calls).toBe(2);
+    expect(dummy).toBe(2);
+    // same value should not trigger
+    a.value = 2;
+    expect(calls).toBe(2);
     expect(dummy).toBe(2);
   });
 
@@ -190,6 +200,26 @@ describe('reactivity/ref', () => {
     expect(dummy).toBe(2);
 
     sref.value.a = 3;
+    expect(dummy).toBe(2);
+  });
+
+  test('shallowRef force trigger', () => {
+    const sref = shallowRef({ a: 1 });
+    let dummy;
+    watchEffect(
+      () => {
+        dummy = sref.value.a;
+      },
+      { flush: 'sync' }
+    );
+    expect(dummy).toBe(1);
+
+    sref.value.a = 2;
+    expect(dummy).toBe(1); // should not trigger yet
+
+    // force trigger
+    // sref.value = sref.value;
+    triggerRef(sref);
     expect(dummy).toBe(2);
   });
 

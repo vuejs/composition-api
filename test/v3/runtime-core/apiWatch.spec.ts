@@ -1,10 +1,12 @@
 import { watch, watchEffect, computed, reactive, ref, set, shallowReactive } from '../../../src';
 import { nextTick } from '../../helpers/utils';
+import Vue from 'vue';
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#watch
 
 describe('api: watch', () => {
-  const warnSpy = jest.spyOn(console, 'warn');
+  // const warnSpy = jest.spyOn(console, 'warn');
+  const warnSpy = jest.spyOn((Vue as any).util, 'warn');
 
   beforeEach(() => {
     warnSpy.mockReset();
@@ -92,6 +94,19 @@ describe('api: watch', () => {
     expect(dummy).toMatchObject([1, 0]);
   });
 
+  it('directly watching reactive object (with automatic deep: true)', async () => {
+    const src = reactive({
+      count: 0,
+    });
+    let dummy;
+    watch(src, ({ count }) => {
+      dummy = count;
+    });
+    src.count++;
+    await nextTick();
+    expect(dummy).toBe(1);
+  });
+
   it('watching multiple sources', async () => {
     const state = reactive({ count: 1 });
     const count = ref(1);
@@ -129,6 +144,15 @@ describe('api: watch', () => {
     status.value = true;
     await nextTick();
     expect(dummy).toMatchObject([[2, true], [1, false]]);
+  });
+
+  it('warn invalid watch source', () => {
+    // @ts-ignore
+    watch(1, () => {});
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Invalid watch source'),
+      expect.anything()
+    );
   });
 
   it('stopping the watcher (effect)', async () => {
@@ -208,6 +232,116 @@ describe('api: watch', () => {
     stop();
     expect(cleanup).toHaveBeenCalledTimes(2);
   });
+
+  // it('flush timing: post (default)', async () => {
+  //   const count = ref(0);
+  //   let callCount = 0;
+  //   const assertion = jest.fn(count => {
+  //     callCount++;
+  //     // on mount, the watcher callback should be called before DOM render
+  //     // on update, should be called after the count is updated
+  //     const expectedDOM = callCount === 1 ? `` : `${count}`;
+  //     expect(serializeInner(root)).toBe(expectedDOM);
+  //   });
+
+  //   const Comp = {
+  //     setup() {
+  //       watchEffect(() => {
+  //         assertion(count.value);
+  //       });
+  //       return () => count.value;
+  //     },
+  //   };
+  //   const root = nodeOps.createElement('div');
+  //   render(h(Comp), root);
+  //   expect(assertion).toHaveBeenCalledTimes(1);
+
+  //   count.value++;
+  //   await nextTick();
+  //   expect(assertion).toHaveBeenCalledTimes(2);
+  // });
+
+  // it('flush timing: pre', async () => {
+  //   const count = ref(0);
+  //   const count2 = ref(0);
+
+  //   let callCount = 0;
+  //   const assertion = jest.fn((count, count2Value) => {
+  //     callCount++;
+  //     // on mount, the watcher callback should be called before DOM render
+  //     // on update, should be called before the count is updated
+  //     const expectedDOM = callCount === 1 ? `` : `${count - 1}`;
+  //     expect(serializeInner(root)).toBe(expectedDOM);
+
+  //     // in a pre-flush callback, all state should have been updated
+  //     const expectedState = callCount === 1 ? 0 : 1;
+  //     expect(count2Value).toBe(expectedState);
+  //   });
+
+  //   const Comp = {
+  //     setup() {
+  //       watchEffect(
+  //         () => {
+  //           assertion(count.value, count2.value);
+  //         },
+  //         {
+  //           flush: 'pre',
+  //         }
+  //       );
+  //       return () => count.value;
+  //     },
+  //   };
+  //   const root = nodeOps.createElement('div');
+  //   render(h(Comp), root);
+  //   expect(assertion).toHaveBeenCalledTimes(1);
+
+  //   count.value++;
+  //   count2.value++;
+  //   await nextTick();
+  //   // two mutations should result in 1 callback execution
+  //   expect(assertion).toHaveBeenCalledTimes(2);
+  // });
+
+  // it('flush timing: sync', async () => {
+  //   const count = ref(0);
+  //   const count2 = ref(0);
+
+  //   let callCount = 0;
+  //   const assertion = jest.fn(count => {
+  //     callCount++;
+  //     // on mount, the watcher callback should be called before DOM render
+  //     // on update, should be called before the count is updated
+  //     const expectedDOM = callCount === 1 ? `` : `${count - 1}`;
+  //     expect(serializeInner(root)).toBe(expectedDOM);
+
+  //     // in a sync callback, state mutation on the next line should not have
+  //     // executed yet on the 2nd call, but will be on the 3rd call.
+  //     const expectedState = callCount < 3 ? 0 : 1;
+  //     expect(count2.value).toBe(expectedState);
+  //   });
+
+  //   const Comp = {
+  //     setup() {
+  //       watchEffect(
+  //         () => {
+  //           assertion(count.value);
+  //         },
+  //         {
+  //           flush: 'sync',
+  //         }
+  //       );
+  //       return () => count.value;
+  //     },
+  //   };
+  //   const root = nodeOps.createElement('div');
+  //   render(h(Comp), root);
+  //   expect(assertion).toHaveBeenCalledTimes(1);
+
+  //   count.value++;
+  //   count2.value++;
+  //   await nextTick();
+  //   expect(assertion).toHaveBeenCalledTimes(3);
+  // });
 
   it('deep', async () => {
     const state = reactive({

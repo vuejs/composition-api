@@ -74,7 +74,7 @@ class RefImpl<T> implements Ref<T> {
 
 export function createRef<T>(options: RefOption<T>) {
   // seal the ref, this could prevent ref from being observed
-  // It's safe to seal the ref, since we really shoulnd't extend it.
+  // It's safe to seal the ref, since we really shouldn't extend it.
   // related issues: #79
   return Object.seal(new RefImpl<T>(options));
 }
@@ -152,4 +152,10 @@ export function shallowRef(raw?: unknown) {
     get: () => value[RefKey] as any,
     set: v => ((value[RefKey] as any) = v),
   });
+}
+
+export function triggerRef(value: any) {
+  if (!isRef(value)) return;
+
+  value.value = value.value;
 }

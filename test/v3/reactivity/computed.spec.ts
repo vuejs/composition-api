@@ -43,16 +43,18 @@ describe('reactivity/computed', () => {
     expect(getter).toHaveBeenCalledTimes(2);
   });
 
-  it('should trigger effect', async () => {
+  it('should trigger effect', () => {
     const value = reactive<{ foo?: number }>({ foo: undefined });
     const cValue = computed(() => value.foo);
     let dummy;
-    watchEffect(() => {
-      dummy = cValue.value;
-    });
+    watchEffect(
+      () => {
+        dummy = cValue.value;
+      },
+      { flush: 'sync' }
+    );
     expect(dummy).toBe(undefined);
     value.foo = 1;
-    await nextTick();
     expect(dummy).toBe(1);
   });
 
@@ -67,7 +69,7 @@ describe('reactivity/computed', () => {
     expect(c1.value).toBe(1);
   });
 
-  it('should trigger effect when chained', async () => {
+  it('should trigger effect when chained', () => {
     const value = reactive({ foo: 0 });
     const getter1 = jest.fn(() => value.foo);
     const getter2 = jest.fn(() => {
@@ -77,14 +79,16 @@ describe('reactivity/computed', () => {
     const c2 = computed(getter2);
 
     let dummy;
-    watchEffect(() => {
-      dummy = c2.value;
-    });
+    watchEffect(
+      () => {
+        dummy = c2.value;
+      },
+      { flush: 'sync' }
+    );
     expect(dummy).toBe(1);
     expect(getter1).toHaveBeenCalledTimes(1);
     expect(getter2).toHaveBeenCalledTimes(1);
     value.foo++;
-    await nextTick();
     expect(dummy).toBe(2);
     // should not result in duplicate calls
     expect(getter1).toHaveBeenCalledTimes(2);
