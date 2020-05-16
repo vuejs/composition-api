@@ -138,8 +138,7 @@ export function shallowReactive<T extends object = any>(obj: T): T {
   }
 
   const observed = observe({});
-  // def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
-  markReactive(observe, true);
+  markReactive(observed, true);
   setupAccessControl(observed);
 
   const ob = (observed as any).__ob__;

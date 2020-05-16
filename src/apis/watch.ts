@@ -29,14 +29,14 @@ type MapOldSources<T, Immediate> = {
 };
 
 export interface WatchOptionsBase {
-  flush?: 'pre' | 'post' | 'sync';
+  flush?: FlushMode;
   // onTrack?: ReactiveEffectOptions['onTrack'];
   // onTrigger?: ReactiveEffectOptions['onTrigger'];
 }
 
 type InvalidateCbRegistrator = (cb: () => void) => void;
 
-type FlushMode = 'pre' | 'post' | 'sync';
+export type FlushMode = 'pre' | 'post' | 'sync';
 
 export interface WatchOptions<Immediate = boolean> extends WatchOptionsBase {
   immediate?: Immediate;
