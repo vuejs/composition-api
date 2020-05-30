@@ -7,6 +7,7 @@ const {
   onBeforeUnmount,
   onUnmounted,
   onErrorCaptured,
+  getCurrentInstance,
 } = require('../../src');
 
 describe('Hooks lifecycle', () => {
@@ -99,6 +100,40 @@ describe('Hooks lifecycle', () => {
         },
       }).$mount();
       expect(calls).toEqual(['nested', 'child', 'parent']);
+    });
+
+    it('getCurrentInstance should be available', () => {
+      const parent = new Vue();
+      let instance;
+      new Vue({
+        parent,
+        template: '<div></div>',
+        setup() {
+          onMounted(() => {
+            instance = getCurrentInstance();
+          });
+        },
+      }).$mount();
+      expect(instance).toBeDefined();
+    });
+
+    it('getCurrentInstance should not be available on promised hook', () => {
+      const parent = new Vue();
+      let instance;
+      let promisedInstance;
+      new Vue({
+        parent,
+        template: '<div></div>',
+        setup() {
+          onMounted(async () => {
+            instance = getCurrentInstance();
+            await Promise.resolve();
+            promisedInstance = getCurrentInstance();
+          });
+        },
+      }).$mount();
+      expect(instance).toBeDefined();
+      expect(promisedInstance).not.toBeDefined();
     });
   });
 
