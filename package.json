@@ -54,7 +54,7 @@
     "vue-server-renderer": "^2.6.11"
   },
   "peerDependencies": {
-    "vue": "^2.5.11"
+    "vue": "^2.5.22"
   },
   "dependencies": {
     "tslib": "^2.0.0"
