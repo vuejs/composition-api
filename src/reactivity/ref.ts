@@ -112,6 +112,8 @@ export function createRef<T>(options: RefOption<T>) {
 
 type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
 
+export function ref<T extends object>(value: T): T extends Ref ? T : Ref<UnwrapRef<T>>;
+export function ref<T>(value: T): Ref<UnwrapRef<T>>;
 // without init value, explicit typed: a = ref<{ a: number }>()
 // typeof a will be Ref<{ a: number } | undefined>
 export function ref<T = undefined>(): Ref<T | undefined>;
