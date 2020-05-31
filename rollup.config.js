@@ -1,9 +1,9 @@
 import * as path from 'path';
 // import filesize from 'rollup-plugin-filesize';
 import typescript from 'rollup-plugin-typescript2';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
-import replace from 'rollup-plugin-replace';
+import replace from '@rollup/plugin-replace';
 
 const builds = {
   'cjs-dev': {
@@ -34,7 +34,7 @@ const builds = {
 };
 
 function getAllBuilds() {
-  return Object.keys(builds).map(key => genConfig(builds[key]));
+  return Object.keys(builds).map((key) => genConfig(builds[key]));
 }
 
 function genConfig({ outFile, format, mode }) {
