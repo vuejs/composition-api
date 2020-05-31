@@ -12,7 +12,7 @@ type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakS
 type BaseTypes = string | number | boolean;
 
 declare const _refBrand: unique symbol;
-export interface Ref<T> {
+export interface Ref<T = any> {
   readonly [_refBrand]: true;
   value: T;
 }
