@@ -90,6 +90,7 @@ describe('api/reactive', () => {
     expect(warn.mock.calls[1][0]).toMatch(
       '[Vue warn]: "reactive()" is called without provide an "object".'
     );
+    expect(warn).toBeCalledTimes(2);
     warn.mockRestore();
   });
 });
@@ -127,6 +128,7 @@ describe('api/toRefs', () => {
   });
 
   it('should proxy plain object but not make it a reactive', () => {
+    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
     const spy = jest.fn();
     const state = {
       foo: 1,
@@ -135,6 +137,10 @@ describe('api/toRefs', () => {
 
     watch(() => state, spy, { flush: 'sync', lazy: true });
     const stateAsRefs = toRefs(state);
+
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: toRefs() expects a reactive object but received a plain one.'
+    );
 
     expect(stateAsRefs.foo.value).toBe(1);
     expect(stateAsRefs.bar.value).toBe(2);
@@ -145,6 +151,8 @@ describe('api/toRefs', () => {
     expect(state.foo).toBe(3);
 
     expect(spy).not.toHaveBeenCalled();
+    expect(warn).toBeCalledTimes(1);
+    warn.mockRestore();
   });
 });
 

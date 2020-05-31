@@ -11,6 +11,16 @@ import {
 } from '../../../src';
 
 describe('reactivity/reactive', () => {
+  let warn: jest.SpyInstance;
+  beforeEach(() => {
+    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
+    warn.mockReset();
+  });
+  afterEach(() => {
+    expect(warn).not.toBeCalled();
+    warn.mockRestore();
+  });
+
   test('Object', () => {
     const original = { foo: 1 };
     const observed = reactive(original);
@@ -156,6 +166,14 @@ describe('reactivity/reactive', () => {
     expect(reactive(r)).toBe(r);
     const d = new Date();
     expect(reactive(d)).toBe(d);
+
+    expect(warn).toBeCalledTimes(3);
+    expect(
+      warn.mock.calls.map(call => {
+        expect(call[0]).toBe('[Vue warn]: "reactive()" is called without provide an "object".');
+      })
+    );
+    warn.mockReset();
   });
 
   test('markRaw', () => {
