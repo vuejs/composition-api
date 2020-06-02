@@ -17,10 +17,14 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, (n, o, _onCleanup) => {
-          spy(n, o, _onCleanup);
-          _onCleanup(onCleanupSpy);
-        });
+        watch(
+          a,
+          (n, o, _onCleanup) => {
+            spy(n, o, _onCleanup);
+            _onCleanup(onCleanupSpy);
+          },
+          { immediate: true }
+        );
         return {
           a,
         };
@@ -50,7 +54,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, (n, o) => spy(n, o), { flush: 'pre' });
+        watch(a, (n, o) => spy(n, o), { flush: 'pre', immediate: true });
 
         return {
           a,
@@ -72,7 +76,7 @@ describe('api/watch', () => {
     const vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(() => a.value, (n, o) => spy(n, o));
+        watch(() => a.value, (n, o) => spy(n, o), { immediate: true });
 
         return {
           a,
@@ -159,7 +163,7 @@ describe('api/watch', () => {
       .then(done);
   });
 
-  it('should flush after render (lazy=true)', done => {
+  it('should flush after render (immediate=false)', done => {
     let rerenderedText;
     const vm = new Vue({
       setup() {
@@ -189,17 +193,21 @@ describe('api/watch', () => {
     }).then(done);
   });
 
-  it('should flush after render (lazy=false)', done => {
+  it('should flush after render (immediate=true)', done => {
     let rerenderedText;
     var vm = new Vue({
       setup() {
         const a = ref(1);
-        watch(a, (newVal, oldVal) => {
-          spy(newVal, oldVal);
-          if (vm) {
-            rerenderedText = vm.$el.textContent;
-          }
-        });
+        watch(
+          a,
+          (newVal, oldVal) => {
+            spy(newVal, oldVal);
+            if (vm) {
+              rerenderedText = vm.$el.textContent;
+            }
+          },
+          { immediate: true }
+        );
         return {
           a,
         };
@@ -294,7 +302,7 @@ describe('api/watch', () => {
     new Vue({
       setup() {
         const count = ref(0);
-        watch(count, (n, o) => spy(n, o), { flush: 'sync' });
+        watch(count, (n, o) => spy(n, o), { flush: 'sync', immediate: true });
         count.value++;
       },
     });
@@ -317,11 +325,11 @@ describe('api/watch', () => {
         watchEffect(() => { void x.value; result.push('post effect'); }, { flush: 'post' });
 
         // prettier-ignore
-        watch(x, () => { result.push('sync callback') }, { flush: 'sync' })
+        watch(x, () => { result.push('sync callback') }, { flush: 'sync', immediate: true  })
         // prettier-ignore
-        watch(x, () => { result.push('pre callback') }, { flush: 'pre' })
+        watch(x, () => { result.push('pre callback') }, { flush: 'pre', immediate: true  })
         // prettier-ignore
-        watch(x, () => { result.push('post callback') }, { flush: 'post' })
+        watch(x, () => { result.push('post callback') }, { flush: 'post', immediate: true  })
 
         const inc = () => {
           result.push('before inc');
@@ -333,11 +341,18 @@ describe('api/watch', () => {
       },
       template: `<div>{{x}}</div>`,
     }).$mount();
-    expect(result).toEqual(['sync effect', 'sync callback', 'pre callback', 'post callback']);
+    expect(result).toEqual([
+      'sync effect',
+      'pre effect',
+      'post effect',
+      'sync callback',
+      'pre callback',
+      'post callback',
+    ]);
     result.length = 0;
 
     waitForUpdate(() => {
-      expect(result).toEqual(['pre effect', 'post effect']);
+      expect(result).toEqual([]);
       result.length = 0;
 
       vm.inc();
@@ -358,7 +373,6 @@ describe('api/watch', () => {
   });
 
   describe('simple effect', () => {
-    let renderedText;
     it('should work', done => {
       let onCleanup;
       const onCleanupSpy = jest.fn();
@@ -369,7 +383,6 @@ describe('api/watch', () => {
             onCleanup = _onCleanup;
             _onCleanup(onCleanupSpy);
             spy(count.value);
-            renderedText = vm.$el.textContent;
           });
 
           return {
@@ -380,16 +393,14 @@ describe('api/watch', () => {
           return h('div', this.count);
         },
       }).$mount();
-      expect(spy).not.toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
       waitForUpdate(() => {
         expect(onCleanup).toEqual(anyFn);
         expect(onCleanupSpy).toHaveBeenCalledTimes(0);
-        expect(renderedText).toBe('0');
         expect(spy).toHaveBeenLastCalledWith(0);
         vm.count++;
       })
         .then(() => {
-          expect(renderedText).toBe('1');
           expect(spy).toHaveBeenLastCalledWith(1);
           expect(onCleanupSpy).toHaveBeenCalledTimes(1);
           vm.$destroy();
@@ -431,7 +442,7 @@ describe('api/watch', () => {
         setup() {
           obj1 = reactive({ a: 1 });
           obj2 = reactive({ a: 2 });
-          watch([() => obj1.a, () => obj2.a], (n, o) => spy(n, o));
+          watch([() => obj1.a, () => obj2.a], (n, o) => spy(n, o), { immediate: true });
           return {
             obj1,
             obj2,
@@ -459,12 +470,12 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('basic usage(lazy=false, flush=none-sync)', done => {
+    it('basic usage(immediate=true, flush=none-sync)', done => {
       const vm = new Vue({
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], (n, o) => spy(n, o), { lazy: false, flush: 'post' });
+          watch([a, b], (n, o) => spy(n, o), { flush: 'post', immediate: true });
 
           return {
             a,
@@ -490,12 +501,12 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('basic usage(lazy=true, flush=none-sync)', done => {
+    it('basic usage(immediate=false, flush=none-sync)', done => {
       const vm = new Vue({
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], (n, o) => spy(n, o), { lazy: true, flush: 'post' });
+          watch([a, b], (n, o) => spy(n, o), { immediate: false, flush: 'post' });
 
           return {
             a,
@@ -519,12 +530,12 @@ describe('api/watch', () => {
         .then(done);
     });
 
-    it('basic usage(lazy=false, flush=sync)', () => {
+    it('basic usage(immediate=true, flush=sync)', () => {
       const vm = new Vue({
         setup() {
           const a = ref(1);
           const b = ref(1);
-          watch([a, b], (n, o) => spy(n, o), { lazy: false, flush: 'sync' });
+          watch([a, b], (n, o) => spy(n, o), { immediate: true, flush: 'sync' });
 
           return {
             a,
@@ -544,7 +555,7 @@ describe('api/watch', () => {
       expect(spy).toHaveBeenNthCalledWith(4, [3, 3], [3, 1]);
     });
 
-    it('basic usage(lazy=true, flush=sync)', () => {
+    it('basic usage(immediate=false, flush=sync)', () => {
       const vm = new Vue({
         setup() {
           const a = ref(1);
@@ -572,7 +583,7 @@ describe('api/watch', () => {
   describe('Out of setup', () => {
     it('should work', done => {
       const obj = reactive({ a: 1 });
-      watch(() => obj.a, (n, o) => spy(n, o));
+      watch(() => obj.a, (n, o) => spy(n, o), { immediate: true });
       expect(spy).toHaveBeenLastCalledWith(1, undefined);
       obj.a = 2;
       waitForUpdate(() => {
@@ -584,7 +595,7 @@ describe('api/watch', () => {
     it('simple effect', done => {
       const obj = reactive({ a: 1 });
       watchEffect(() => spy(obj.a));
-      expect(spy).not.toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
       waitForUpdate(() => {
         expect(spy).toBeCalledTimes(1);
         expect(spy).toHaveBeenLastCalledWith(1);
@@ -658,10 +669,14 @@ describe('api/watch', () => {
       const id = ref(1);
       const spy = jest.fn();
       const cleanup = jest.fn();
-      const stop = watch(id, (value, oldValue, onCleanup) => {
-        spy(value);
-        onCleanup(cleanup);
-      });
+      const stop = watch(
+        id,
+        (value, oldValue, onCleanup) => {
+          spy(value);
+          onCleanup(cleanup);
+        },
+        { immediate: true }
+      );
 
       expect(spy).toHaveBeenCalledWith(1);
       stop();
@@ -696,13 +711,17 @@ describe('api/watch', () => {
     it('work with callback ', done => {
       const id = ref(1);
       const promises = [];
-      watch(id, (newVal, oldVal, onCleanup) => {
-        const val = getAsyncValue(newVal);
-        promises.push(val);
-        onCleanup(() => {
-          val.cancel();
-        });
-      });
+      watch(
+        id,
+        (newVal, oldVal, onCleanup) => {
+          const val = getAsyncValue(newVal);
+          promises.push(val);
+          onCleanup(() => {
+            val.cancel();
+          });
+        },
+        { immediate: true }
+      );
       id.value = 2;
       waitForUpdate()
         .thenWaitFor(async next => {

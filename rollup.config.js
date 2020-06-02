@@ -56,7 +56,15 @@ function genConfig({ outFile, format, mode }) {
         typescript: require('typescript'),
       }),
       resolve(),
-      replace({ 'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development') }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+        __DEV__:
+          format === 'es'
+            ? // preserve to be handled by bundlers
+              `(__DEV__)`
+            : // hard coded dev/prod builds
+              !isProd,
+      }),
       isProd && terser(),
     ].filter(Boolean),
   };

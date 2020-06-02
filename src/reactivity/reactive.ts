@@ -5,23 +5,25 @@ import { isComponentInstance, defineComponentInstance } from '../helper';
 import {
   AccessControlIdentifierKey,
   ReactiveIdentifierKey,
-  NonReactiveIdentifierKey,
+  RawIdentifierKey,
   RefKey,
 } from '../symbols';
 import { isRef, UnwrapRef } from './ref';
 
 const AccessControlIdentifier = {};
 const ReactiveIdentifier = {};
-const NonReactiveIdentifier = {};
+const RawIdentifier = {};
 
-function isNonReactive(obj: any): boolean {
-  return (
-    hasOwn(obj, NonReactiveIdentifierKey) && obj[NonReactiveIdentifierKey] === NonReactiveIdentifier
-  );
+export function isRaw(obj: any): boolean {
+  return hasOwn(obj, RawIdentifierKey) && obj[RawIdentifierKey] === RawIdentifier;
 }
 
 export function isReactive(obj: any): boolean {
-  return hasOwn(obj, ReactiveIdentifierKey) && obj[ReactiveIdentifierKey] === ReactiveIdentifier;
+  return (
+    Object.isExtensible(obj) &&
+    hasOwn(obj, ReactiveIdentifierKey) &&
+    obj[ReactiveIdentifierKey] === ReactiveIdentifier
+  );
 }
 
 /**
@@ -31,7 +33,7 @@ export function isReactive(obj: any): boolean {
 function setupAccessControl(target: AnyObject): void {
   if (
     !isPlainObject(target) ||
-    isNonReactive(target) ||
+    isRaw(target) ||
     Array.isArray(target) ||
     isRef(target) ||
     isComponentInstance(target)
@@ -123,22 +125,111 @@ function observe<T>(obj: T): T {
 
   return observed;
 }
+
+export function shallowReactive<T extends object = any>(obj: T): T {
+  if (__DEV__ && !obj) {
+    warn('"shallowReactive()" is called without provide an "object".');
+    // @ts-ignore
+    return;
+  }
+
+  if (!isPlainObject(obj) || isReactive(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+    return obj as any;
+  }
+
+  const observed = observe({});
+  markReactive(observed, true);
+  setupAccessControl(observed);
+
+  const ob = (observed as any).__ob__;
+
+  for (const key of Object.keys(obj)) {
+    let val = obj[key];
+    let getter: (() => any) | undefined;
+    let setter: ((x: any) => void) | undefined;
+    const property = Object.getOwnPropertyDescriptor(obj, key);
+    if (property) {
+      if (property.configurable === false) {
+        continue;
+      }
+      getter = property.get;
+      setter = property.set;
+      if ((!getter || setter) /* not only have getter */ && arguments.length === 2) {
+        val = obj[key];
+      }
+    }
+
+    // setupAccessControl(val);
+    Object.defineProperty(observed, key, {
+      enumerable: true,
+      configurable: true,
+      get: function getterHandler() {
+        const value = getter ? getter.call(obj) : val;
+        ob.dep.depend();
+        return value;
+      },
+      set: function setterHandler(newVal) {
+        if (getter && !setter) return;
+        if (setter) {
+          setter.call(obj, newVal);
+        } else {
+          val = newVal;
+        }
+        ob.dep.notify();
+      },
+    });
+  }
+  return (observed as unknown) as T;
+}
+
+export function markReactive(target: any, shallow = false) {
+  if (
+    !isPlainObject(target) ||
+    isRaw(target) ||
+    Array.isArray(target) ||
+    isRef(target) ||
+    isComponentInstance(target)
+  ) {
+    return;
+  }
+
+  if (
+    hasOwn(target, ReactiveIdentifierKey) &&
+    target[ReactiveIdentifierKey] === ReactiveIdentifier
+  ) {
+    return;
+  }
+
+  if (Object.isExtensible(target)) {
+    def(target, ReactiveIdentifierKey, ReactiveIdentifier);
+  }
+
+  if (shallow) {
+    return;
+  }
+  const keys = Object.keys(target);
+  for (let i = 0; i < keys.length; i++) {
+    markReactive(target[keys[i]]);
+  }
+}
+
 /**
  * Make obj reactivity
  */
-export function reactive<T = any>(obj: T): UnwrapRef<T> {
-  if (process.env.NODE_ENV !== 'production' && !obj) {
+export function reactive<T extends object>(obj: T): UnwrapRef<T> {
+  if (__DEV__ && !obj) {
     warn('"reactive()" is called without provide an "object".');
     // @ts-ignore
     return;
   }
 
-  if (!isPlainObject(obj) || isReactive(obj) || isNonReactive(obj) || !Object.isExtensible(obj)) {
+  if (!isPlainObject(obj) || isReactive(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
     return obj as any;
   }
 
   const observed = observe(obj);
-  def(observed, ReactiveIdentifierKey, ReactiveIdentifier);
+  // def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
+  markReactive(obj);
   setupAccessControl(observed);
   return observed as UnwrapRef<T>;
 }
@@ -146,15 +237,23 @@ export function reactive<T = any>(obj: T): UnwrapRef<T> {
 /**
  * Make sure obj can't be a reactive
  */
-export function nonReactive<T = any>(obj: T): T {
+export function markRaw<T extends object>(obj: T): T {
   if (!isPlainObject(obj)) {
     return obj;
   }
 
   // set the vue observable flag at obj
   def(obj, '__ob__', (observe({}) as any).__ob__);
-  // mark as nonReactive
-  def(obj, NonReactiveIdentifierKey, NonReactiveIdentifier);
+  // mark as Raw
+  def(obj, RawIdentifierKey, RawIdentifier);
 
   return obj;
+}
+
+export function toRaw<T>(observed: T): T {
+  if (isRaw(observe) || !Object.isExtensible(observed)) {
+    return observed;
+  }
+
+  return (observed as any).__ob__.value || observed;
 }

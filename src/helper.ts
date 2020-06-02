@@ -1,14 +1,18 @@
 import Vue, { VNode, ComponentOptions, VueConstructor } from 'vue';
 import { ComponentInstance } from './component';
 import { currentVue, getCurrentVM } from './runtimeContext';
-import { assert, warn } from './utils';
+import { warn } from './utils';
 
-export function ensureCurrentVMInFn(hook: string): ComponentInstance {
+export function currentVMInFn(hook: string): ComponentInstance | null {
   const vm = getCurrentVM();
-  if (process.env.NODE_ENV !== 'production') {
-    assert(vm, `"${hook}" get called outside of "setup()"`);
+  if (__DEV__ && !vm) {
+    warn(
+      `${hook} is called when there is no active component instance to be ` +
+        `associated with. ` +
+        `Lifecycle injection APIs can only be used during execution of setup().`
+    );
   }
-  return vm!;
+  return vm;
 }
 
 export function defineComponentInstance<V extends Vue = Vue>(

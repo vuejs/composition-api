@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { reactive, ref, watch, set, toRefs, computed } = require('../../src');
+const { reactive, ref, watch, set, toRefs, computed, unref } = require('../../src');
 
 describe('api/ref', () => {
   it('should work with array', () => {
@@ -24,9 +24,13 @@ describe('api/ref', () => {
   it('should be reactive', done => {
     const a = ref(1);
     let dummy;
-    watch(a, () => {
-      dummy = a.value;
-    });
+    watch(
+      a,
+      () => {
+        dummy = a.value;
+      },
+      { immediate: true }
+    );
     expect(dummy).toBe(1);
     a.value = 2;
     waitForUpdate(() => {
@@ -44,7 +48,7 @@ describe('api/ref', () => {
       () => {
         dummy = a.value.count;
       },
-      { deep: true }
+      { deep: true, immediate: true }
     );
     expect(dummy).toBe(1);
     a.value.count = 2;
@@ -86,6 +90,7 @@ describe('api/reactive', () => {
     expect(warn.mock.calls[1][0]).toMatch(
       '[Vue warn]: "reactive()" is called without provide an "object".'
     );
+    expect(warn).toBeCalledTimes(2);
     warn.mockRestore();
   });
 });
@@ -102,7 +107,8 @@ describe('api/toRefs', () => {
       () => state,
       () => {
         dummy = state.foo;
-      }
+      },
+      { immediate: true }
     );
     const stateAsRefs = toRefs(state);
     expect(dummy).toBe(1);
@@ -122,6 +128,7 @@ describe('api/toRefs', () => {
   });
 
   it('should proxy plain object but not make it a reactive', () => {
+    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null);
     const spy = jest.fn();
     const state = {
       foo: 1,
@@ -130,6 +137,10 @@ describe('api/toRefs', () => {
 
     watch(() => state, spy, { flush: 'sync', lazy: true });
     const stateAsRefs = toRefs(state);
+
+    expect(warn.mock.calls[0][0]).toMatch(
+      '[Vue warn]: toRefs() expects a reactive object but received a plain one.'
+    );
 
     expect(stateAsRefs.foo.value).toBe(1);
     expect(stateAsRefs.bar.value).toBe(2);
@@ -140,6 +151,8 @@ describe('api/toRefs', () => {
     expect(state.foo).toBe(3);
 
     expect(spy).not.toHaveBeenCalled();
+    expect(warn).toBeCalledTimes(1);
+    warn.mockRestore();
   });
 });
 
@@ -155,7 +168,7 @@ describe('unwrapping', () => {
       () => {
         dummy = obj.a;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy).toBe(0);
     expect(obj.a).toBe(0);
@@ -170,7 +183,7 @@ describe('unwrapping', () => {
     const a = ref(0);
     const b = ref(a);
     expect(a.value).toBe(0);
-    expect(b.value).toBe(a);
+    expect(b).toBe(a);
   });
 
   it('should not unwrap a ref when re-assign', () => {
@@ -194,7 +207,7 @@ describe('unwrapping', () => {
   it('should unwrap when re-assign', () => {
     const a = ref();
     const b = ref(a);
-    expect(b.value).toBe(a);
+    expect(b.value).toBe(a.value);
     const c = ref(0);
     b.value = {
       count: c,
@@ -220,7 +233,7 @@ describe('unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -250,7 +263,7 @@ describe('unwrapping', () => {
         dummy1 = obj.a;
         dummy2 = obj.b.c;
       },
-      { deep: true, flush: 'sync' }
+      { deep: true, flush: 'sync', immediate: true }
     );
     expect(dummy1).toBe(1);
     expect(dummy2).toBe(1);
@@ -328,6 +341,12 @@ describe('unwrapping', () => {
 
     expect(state.list[0]).toBe(a);
     expect(state.list[0].value).toBe(0);
+  });
+
+  it('should unrwap ref', () => {
+    expect(unref(0)).toBe(0);
+    expect(unref(ref(0))).toBe(0);
+    expect(unref({ value: 1 })).toStrictEqual({ value: 1 });
   });
 
   it('should now unwrap plain object when using set at Array', () => {

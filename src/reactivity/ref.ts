@@ -1,92 +1,61 @@
 import { Data } from '../component';
 import { RefKey } from '../symbols';
-import { proxy, isPlainObject } from '../utils';
+import { proxy, isPlainObject, warn } from '../utils';
 import { HasDefined } from '../types/basic';
-import { reactive } from './reactive';
-
-type BailTypes = Function | Map<any, any> | Set<any> | WeakMap<any, any> | WeakSet<any> | Element;
-
-// corner case when use narrows type
-// Ex. type RelativePath = string & { __brand: unknown }
-// RelativePath extends object -> true
-type BaseTypes = string | number | boolean;
+import { reactive, isReactive, shallowReactive } from './reactive';
+import { ComputedRef } from '../apis/computed';
 
 declare const _refBrand: unique symbol;
-export interface Ref<T> {
+export interface Ref<T = any> {
   readonly [_refBrand]: true;
   value: T;
 }
 
-// prettier-ignore
-// Recursively unwraps nested value bindings.
-// Unfortunately TS cannot do recursive types, but this should be enough for
-// practical use cases...
-export type UnwrapRef<T> = T extends Ref<infer V>
-  ? UnwrapRef2<V>
-  : T extends BailTypes | BaseTypes
-      ? T // bail out on types that shouldn't be unwrapped
-      : T extends object ? { [K in keyof T]: UnwrapRef2<T[K]> } : T
+export type ToRefs<T = any> = { [K in keyof T]: Ref<T[K]> };
 
-// prettier-ignore
-type UnwrapRef2<T> = T extends Ref<infer V>
-  ? UnwrapRef3<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef3<T[K]> } : T
+export type CollectionTypes = IterableCollections | WeakCollections;
 
-// prettier-ignore
-type UnwrapRef3<T> = T extends Ref<infer V>
-  ? UnwrapRef4<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef4<T[K]> } : T
+type IterableCollections = Map<any, any> | Set<any>;
+type WeakCollections = WeakMap<any, any> | WeakSet<any>;
 
-// prettier-ignore
-type UnwrapRef4<T> = T extends Ref<infer V>
-  ? UnwrapRef5<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef5<T[K]> } : T
+// corner case when use narrows type
+// Ex. type RelativePath = string & { __brand: unknown }
+// RelativePath extends object -> true
+type BaseTypes = string | number | boolean | Node | Window;
 
-// prettier-ignore
-type UnwrapRef5<T> = T extends Ref<infer V>
-  ? UnwrapRef6<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef6<T[K]> } : T
+export type UnwrapRef<T> = T extends ComputedRef<infer V>
+  ? UnwrapRefSimple<V>
+  : T extends Ref<infer V>
+  ? UnwrapRefSimple<V>
+  : UnwrapRefSimple<T>;
 
-// prettier-ignore
-type UnwrapRef6<T> = T extends Ref<infer V>
-  ? UnwrapRef7<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef7<T[K]> } : T
+type UnwrapRefSimple<T> = T extends Function | CollectionTypes | BaseTypes | Ref
+  ? T
+  : T extends Array<any>
+  ? T
+  : T extends object
+  ? UnwrappedObject<T>
+  : T;
 
-// prettier-ignore
-type UnwrapRef7<T> = T extends Ref<infer V>
-  ? UnwrapRef8<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef8<T[K]> } : T
+// Extract all known symbols from an object
+// when unwrapping Object the symbols are not `in keyof`, this should cover all the
+// known symbols
+type SymbolExtract<T> = (T extends { [Symbol.asyncIterator]: infer V }
+  ? { [Symbol.asyncIterator]: V }
+  : {}) &
+  (T extends { [Symbol.hasInstance]: infer V } ? { [Symbol.hasInstance]: V } : {}) &
+  (T extends { [Symbol.isConcatSpreadable]: infer V } ? { [Symbol.isConcatSpreadable]: V } : {}) &
+  (T extends { [Symbol.iterator]: infer V } ? { [Symbol.iterator]: V } : {}) &
+  (T extends { [Symbol.match]: infer V } ? { [Symbol.match]: V } : {}) &
+  (T extends { [Symbol.replace]: infer V } ? { [Symbol.replace]: V } : {}) &
+  (T extends { [Symbol.search]: infer V } ? { [Symbol.search]: V } : {}) &
+  (T extends { [Symbol.species]: infer V } ? { [Symbol.species]: V } : {}) &
+  (T extends { [Symbol.split]: infer V } ? { [Symbol.split]: V } : {}) &
+  (T extends { [Symbol.toPrimitive]: infer V } ? { [Symbol.toPrimitive]: V } : {}) &
+  (T extends { [Symbol.toStringTag]: infer V } ? { [Symbol.toStringTag]: V } : {}) &
+  (T extends { [Symbol.unscopables]: infer V } ? { [Symbol.unscopables]: V } : {});
 
-// prettier-ignore
-type UnwrapRef8<T> = T extends Ref<infer V>
-  ? UnwrapRef9<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef9<T[K]> } : T
-
-// prettier-ignore
-type UnwrapRef9<T> = T extends Ref<infer V>
-  ? UnwrapRef10<V>
-  : T extends BailTypes | BaseTypes
-      ? T
-      : T extends object ? { [K in keyof T]: UnwrapRef10<T[K]> } : T
-
-// prettier-ignore
-type UnwrapRef10<T> = T extends Ref<infer V>
-  ? V // stop recursion
-  : T
+type UnwrappedObject<T> = { [P in keyof T]: UnwrapRef<T[P]> } & SymbolExtract<T>;
 
 interface RefOption<T> {
   get(): T;
@@ -105,7 +74,7 @@ class RefImpl<T> implements Ref<T> {
 
 export function createRef<T>(options: RefOption<T>) {
   // seal the ref, this could prevent ref from being observed
-  // It's safe to seal the ref, since we really shoulnd't extend it.
+  // It's safe to seal the ref, since we really shouldn't extend it.
   // related issues: #79
   return Object.seal(new RefImpl<T>(options));
 }
@@ -114,7 +83,7 @@ type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
 
 // without init value, explicit typed: a = ref<{ a: number }>()
 // typeof a will be Ref<{ a: number } | undefined>
-export function ref<T = undefined>(): Ref<T | undefined>;
+export function ref<T = any>(): Ref<T | undefined>;
 // with null as init value: a = ref<{ a: number }>(null);
 // typeof a will be Ref<{ a: number } | null>
 export function ref<T = null>(raw: null): Ref<T | null>;
@@ -128,6 +97,9 @@ export function ref(raw?: any): any {
   // if (isRef(raw)) {
   //   return {} as any;
   // }
+  if (isRef(raw)) {
+    return raw;
+  }
 
   const value = reactive({ [RefKey]: raw });
   return createRef({
@@ -140,29 +112,50 @@ export function isRef<T>(value: any): value is Ref<T> {
   return value instanceof RefImpl;
 }
 
-// prettier-ignore
-type Refs<Data> = {
-  [K in keyof Data]: Data[K] extends Ref<infer V>
-    ? Ref<V>
-    : Ref<Data[K]>
+export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
+  return isRef(ref) ? (ref.value as any) : ref;
 }
 
-export function toRefs<T extends Data = Data>(obj: T): Refs<T> {
+export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
   if (!isPlainObject(obj)) return obj as any;
 
-  const res: Refs<T> = {} as any;
-  Object.keys(obj).forEach(key => {
-    let val: any = obj[key];
-    // use ref to proxy the property
-    if (!isRef(val)) {
-      val = createRef<any>({
-        get: () => obj[key],
-        set: v => (obj[key as keyof T] = v),
-      });
-    }
-    // todo
-    res[key as keyof T] = val;
-  });
+  if (__DEV__ && !isReactive(obj)) {
+    warn(`toRefs() expects a reactive object but received a plain one.`);
+  }
 
-  return res;
+  const ret: any = {};
+  for (const key in obj) {
+    ret[key] = toRef(obj, key);
+  }
+
+  return ret;
+}
+
+export function toRef<T extends object, K extends keyof T>(object: T, key: K): Ref<T[K]> {
+  const v = object[key];
+  if (isRef<T[K]>(v)) return v;
+
+  return createRef({
+    get: () => object[key],
+    set: v => (object[key] = v),
+  });
+}
+
+export function shallowRef<T>(value: T): T extends Ref ? T : Ref<T>;
+export function shallowRef<T = any>(): Ref<T | undefined>;
+export function shallowRef(raw?: unknown) {
+  if (isRef(raw)) {
+    return raw;
+  }
+  const value = shallowReactive({ [RefKey]: raw });
+  return createRef({
+    get: () => value[RefKey] as any,
+    set: v => ((value[RefKey] as any) = v),
+  });
+}
+
+export function triggerRef(value: any) {
+  if (!isRef(value)) return;
+
+  value.value = value.value;
 }

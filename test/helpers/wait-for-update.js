@@ -12,6 +12,7 @@ const Vue = require('vue');
 //   // more assertions...
 // })
 // .then(done)
+
 window.waitForUpdate = initialCb => {
   let end;
   const queue = initialCb ? [initialCb] : [];
@@ -67,6 +68,8 @@ window.waitForUpdate = initialCb => {
 
   return chainer;
 };
+
+exports.waitForUpdate = window.waitForUpdate;
 
 function timeout(n) {
   return next => setTimeout(next, n);

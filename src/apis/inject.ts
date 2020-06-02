@@ -1,11 +1,12 @@
 import { ComponentInstance } from '../component';
-import { ensureCurrentVMInFn } from '../helper';
+import { currentVMInFn } from '../helper';
 import { hasOwn, warn } from '../utils';
+import { getCurrentVM } from '../runtimeContext';
 
 const NOT_FOUND = {};
 export interface InjectionKey<T> extends Symbol {}
 
-function resolveInject(provideKey: InjectionKey<any>, vm: ComponentInstance): any {
+function resolveInject(provideKey: InjectionKey<any> | string, vm: ComponentInstance): any {
   let source = vm;
   while (source) {
     // @ts-ignore
@@ -20,7 +21,9 @@ function resolveInject(provideKey: InjectionKey<any>, vm: ComponentInstance): an
 }
 
 export function provide<T>(key: InjectionKey<T> | string, value: T): void {
-  const vm: any = ensureCurrentVMInFn('provide');
+  const vm: any = currentVMInFn('provide');
+  if (!vm) return;
+
   if (!vm._provided) {
     const provideCache = {};
     Object.defineProperty(vm, '_provided', {
@@ -34,19 +37,23 @@ export function provide<T>(key: InjectionKey<T> | string, value: T): void {
 
 export function inject<T>(key: InjectionKey<T> | string): T | undefined;
 export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T;
-export function inject<T>(key: InjectionKey<T> | string, defaultValue?: T): T | undefined {
+export function inject(key: InjectionKey<any> | string, defaultValue?: unknown) {
   if (!key) {
     return defaultValue;
   }
 
-  const vm = ensureCurrentVMInFn('inject');
-  const val = resolveInject(key as InjectionKey<T>, vm);
-  if (val !== NOT_FOUND) {
-    return val;
-  } else {
-    if (defaultValue === undefined && process.env.NODE_ENV !== 'production') {
-      warn(`Injection "${String(key)}" not found`, vm);
+  const vm = getCurrentVM();
+  if (vm) {
+    const val = resolveInject(key, vm);
+    if (val !== NOT_FOUND) {
+      return val;
+    } else {
+      if (defaultValue === undefined && process.env.NODE_ENV !== 'production') {
+        warn(`Injection "${String(key)}" not found`, vm);
+      }
+      return defaultValue;
     }
-    return defaultValue;
+  } else {
+    warn(`inject() can only be used inside setup() or functional components.`);
   }
 }

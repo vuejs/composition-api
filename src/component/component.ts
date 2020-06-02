@@ -116,7 +116,7 @@ export function createComponent<
 ): VueProxy<PropsOptions, RawBindings>;
 // implementation, deferring to defineComponent, but logging a warning in dev mode
 export function createComponent(options: any) {
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     Vue.util.warn('`createComponent` has been renamed to `defineComponent`.');
   }
   return defineComponent(options);
