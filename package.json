@@ -29,7 +29,7 @@
     "start": "cross-env TARGET=es rollup -c -w",
     "build": "rollup -c",
     "test": "cross-env NODE_ENV=test jest",
-    "test-tsd": "tsd",
+    "test-tsd": "npm run build && tsd",
     "release": "bash scripts/release.sh"
   },
   "types": "dist/index.d.ts",
