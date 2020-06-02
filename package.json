@@ -76,6 +76,9 @@
   },
   "jest": {
     "verbose": true,
+    "globals": {
+      "__DEV__": true
+    },
     "setupFiles": [
       "<rootDir>/test/setupTest.js"
     ],
