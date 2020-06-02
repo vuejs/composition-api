@@ -6,7 +6,7 @@ let currentVue: VueConstructor | null = null;
 let currentVM: ComponentInstance | null = null;
 
 export function getCurrentVue(): VueConstructor {
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     assert(currentVue, `must call Vue.use(plugin) before using any function.`);
   }
 

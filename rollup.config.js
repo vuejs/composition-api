@@ -1,9 +1,9 @@
 import * as path from 'path';
 // import filesize from 'rollup-plugin-filesize';
 import typescript from 'rollup-plugin-typescript2';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
-import replace from 'rollup-plugin-replace';
+import replace from '@rollup/plugin-replace';
 
 const builds = {
   'cjs-dev': {
@@ -34,7 +34,7 @@ const builds = {
 };
 
 function getAllBuilds() {
-  return Object.keys(builds).map(key => genConfig(builds[key]));
+  return Object.keys(builds).map((key) => genConfig(builds[key]));
 }
 
 function genConfig({ outFile, format, mode }) {
@@ -56,7 +56,15 @@ function genConfig({ outFile, format, mode }) {
         typescript: require('typescript'),
       }),
       resolve(),
-      replace({ 'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development') }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+        __DEV__:
+          format === 'es'
+            ? // preserve to be handled by bundlers
+              `(__DEV__)`
+            : // hard coded dev/prod builds
+              !isProd,
+      }),
       isProd && terser(),
     ].filter(Boolean),
   };

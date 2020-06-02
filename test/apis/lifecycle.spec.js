@@ -7,6 +7,7 @@ const {
   onBeforeUnmount,
   onUnmounted,
   onErrorCaptured,
+  getCurrentInstance,
 } = require('../../src');
 
 describe('Hooks lifecycle', () => {
@@ -100,10 +101,44 @@ describe('Hooks lifecycle', () => {
       }).$mount();
       expect(calls).toEqual(['nested', 'child', 'parent']);
     });
+
+    it('getCurrentInstance should be available', () => {
+      const parent = new Vue();
+      let instance;
+      new Vue({
+        parent,
+        template: '<div></div>',
+        setup() {
+          onMounted(() => {
+            instance = getCurrentInstance();
+          });
+        },
+      }).$mount();
+      expect(instance).toBeDefined();
+    });
+
+    it('getCurrentInstance should not be available on promised hook', () => {
+      const parent = new Vue();
+      let instance;
+      let promisedInstance;
+      new Vue({
+        parent,
+        template: '<div></div>',
+        setup() {
+          onMounted(async () => {
+            instance = getCurrentInstance();
+            await Promise.resolve();
+            promisedInstance = getCurrentInstance();
+          });
+        },
+      }).$mount();
+      expect(instance).toBeDefined();
+      expect(promisedInstance).not.toBeDefined();
+    });
   });
 
   describe('beforeUpdate', () => {
-    it('should be called before update', done => {
+    it('should be called before update', (done) => {
       const spy = jest.fn();
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
@@ -123,7 +158,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should be called before render and allow mutating state', done => {
+    it('should be called before render and allow mutating state', (done) => {
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
         data: { msg: 'foo' },
@@ -140,7 +175,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should not be called after destroy', done => {
+    it('should not be called after destroy', (done) => {
       const beforeUpdate = jest.fn();
       const destroyed = jest.fn();
 
@@ -166,7 +201,7 @@ describe('Hooks lifecycle', () => {
         },
         computed: {
           pendingTodos() {
-            return this.todos.filter(t => !t.done);
+            return this.todos.filter((t) => !t.done);
           },
         },
       }).$mount();
@@ -180,7 +215,7 @@ describe('Hooks lifecycle', () => {
   });
 
   describe('updated', () => {
-    it('should be called after update', done => {
+    it('should be called after update', (done) => {
       const spy = jest.fn();
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
@@ -200,7 +235,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should be called after children are updated', done => {
+    it('should be called after children are updated', (done) => {
       const calls = [];
       const vm = new Vue({
         template: '<div><test ref="child">{{ msg }}</test></div>',
@@ -232,7 +267,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should not be called after destroy', done => {
+    it('should not be called after destroy', (done) => {
       const updated = jest.fn();
       const destroyed = jest.fn();
 
@@ -258,7 +293,7 @@ describe('Hooks lifecycle', () => {
         },
         computed: {
           pendingTodos() {
-            return this.todos.filter(t => !t.done);
+            return this.todos.filter((t) => !t.done);
           },
         },
       }).$mount();
@@ -342,7 +377,7 @@ describe('Hooks lifecycle', () => {
         setup() {
           onErrorCaptured(spy);
         },
-        render: h => h(Child),
+        render: (h) => h(Child),
       }).$mount();
 
       expect(spy).toHaveBeenCalledWith(err, child, 'data()');
