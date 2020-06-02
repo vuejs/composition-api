@@ -169,7 +169,7 @@ describe('reactivity/reactive', () => {
 
     expect(warn).toBeCalledTimes(3);
     expect(
-      warn.mock.calls.map(call => {
+      warn.mock.calls.map((call) => {
         expect(call[0]).toBe('[Vue warn]: "reactive()" is called without provide an "object".');
       })
     );

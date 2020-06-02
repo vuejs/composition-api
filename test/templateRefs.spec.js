@@ -2,7 +2,7 @@ const Vue = require('vue/dist/vue.common.js');
 const { ref, watchEffect, watch, createElement: h } = require('../src');
 
 describe('ref', () => {
-  it('should work', done => {
+  it('should work', (done) => {
     let dummy;
     const vm = new Vue({
       setup() {
@@ -32,7 +32,7 @@ describe('ref', () => {
       .then(done);
   });
 
-  it('should dynamically update refs', done => {
+  it('should dynamically update refs', (done) => {
     const vm = new Vue({
       setup() {
         const ref1 = ref(null);

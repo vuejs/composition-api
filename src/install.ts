@@ -25,8 +25,10 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
       to[key] = fromVal;
     } else if (
       toVal !== fromVal &&
-      (isPlainObject(toVal) && !isRef(toVal)) &&
-      (isPlainObject(fromVal) && !isRef(fromVal))
+      isPlainObject(toVal) &&
+      !isRef(toVal) &&
+      isPlainObject(fromVal) &&
+      !isRef(fromVal)
     ) {
       mergeData(fromVal, toVal);
     }
@@ -42,7 +44,7 @@ export function install(Vue: VueConstructor, _install: (Vue: VueConstructor) => 
     return;
   }
 
-  Vue.config.optionMergeStrategies.setup = function(parent: Function, child: Function) {
+  Vue.config.optionMergeStrategies.setup = function (parent: Function, child: Function) {
     return function mergedSetupFn(props: any, context: any) {
       return mergeData(
         typeof parent === 'function' ? parent(props, context) || {} : {},

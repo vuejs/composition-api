@@ -21,7 +21,7 @@ describe('api/ref', () => {
     expect(a.value).toBe(2);
   });
 
-  it('should be reactive', done => {
+  it('should be reactive', (done) => {
     const a = ref(1);
     let dummy;
     watch(
@@ -38,7 +38,7 @@ describe('api/ref', () => {
     }).then(done);
   });
 
-  it('should make nested properties reactive', done => {
+  it('should make nested properties reactive', (done) => {
     const a = ref({
       count: 1,
     });
@@ -59,7 +59,7 @@ describe('api/ref', () => {
 });
 
 describe('api/reactive', () => {
-  it('should work', done => {
+  it('should work', (done) => {
     const app = new Vue({
       setup() {
         return {
@@ -96,7 +96,7 @@ describe('api/reactive', () => {
 });
 
 describe('api/toRefs', () => {
-  it('should work', done => {
+  it('should work', (done) => {
     const state = reactive({
       foo: 1,
       bar: 2,

@@ -132,7 +132,7 @@ export function mixin(Vue: VueConstructor) {
 
     if (render) {
       // keep currentInstance accessible for createElement
-      $options.render = function(...args: any): any {
+      $options.render = function (...args: any): any {
         return activateCurrentInstance(vm, () => render.apply(this, args));
       };
     }
@@ -186,7 +186,7 @@ export function mixin(Vue: VueConstructor) {
     if (isPlainObject(binding)) {
       const bindingObj = binding;
       vmStateManager.set(vm, 'rawBindings', binding);
-      Object.keys(binding).forEach(name => {
+      Object.keys(binding).forEach((name) => {
         let bindingValue = bindingObj[name];
         // only make primitive value reactive
         if (!isRef(bindingValue)) {
@@ -226,7 +226,7 @@ export function mixin(Vue: VueConstructor) {
       'ssrContext',
     ];
     const methodReturnVoid = ['emit'];
-    props.forEach(key => {
+    props.forEach((key) => {
       let targetKey: string;
       let srcKey: string;
       if (Array.isArray(key)) {
@@ -242,7 +242,7 @@ export function mixin(Vue: VueConstructor) {
         },
       });
     });
-    methodReturnVoid.forEach(key => {
+    methodReturnVoid.forEach((key) => {
       const srcKey = `$${key}`;
       proxy(ctx, key, {
         get() {

@@ -104,7 +104,7 @@ export function ref(raw?: any): any {
   const value = reactive({ [RefKey]: raw });
   return createRef({
     get: () => value[RefKey] as any,
-    set: v => ((value[RefKey] as any) = v),
+    set: (v) => ((value[RefKey] as any) = v),
   });
 }
 
@@ -137,7 +137,7 @@ export function toRef<T extends object, K extends keyof T>(object: T, key: K): R
 
   return createRef({
     get: () => object[key],
-    set: v => (object[key] = v),
+    set: (v) => (object[key] = v),
   });
 }
 
@@ -150,7 +150,7 @@ export function shallowRef(raw?: unknown) {
   const value = shallowReactive({ [RefKey]: raw });
   return createRef({
     get: () => value[RefKey] as any,
-    set: v => ((value[RefKey] as any) = v),
+    set: (v) => ((value[RefKey] as any) = v),
   });
 }
 

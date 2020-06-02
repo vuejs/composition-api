@@ -142,7 +142,7 @@ describe('reactivity/computed', () => {
     const n = ref(1);
     const plusOne = computed({
       get: () => n.value + 1,
-      set: val => {
+      set: (val) => {
         n.value = val - 1;
       },
     });
@@ -159,7 +159,7 @@ describe('reactivity/computed', () => {
     const n = ref(1);
     const plusOne = computed({
       get: () => n.value + 1,
-      set: val => {
+      set: (val) => {
         n.value = val - 1;
       },
     });

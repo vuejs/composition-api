@@ -123,7 +123,10 @@ describe('api: watch', () => {
     state.count++;
     count.value++;
     await nextTick();
-    expect(dummy).toMatchObject([[2, 2, 3], [1, 1, 2]]);
+    expect(dummy).toMatchObject([
+      [2, 2, 3],
+      [1, 1, 2],
+    ]);
   });
 
   it('watching multiple sources: readonly array', async () => {
@@ -143,7 +146,10 @@ describe('api: watch', () => {
     state.count++;
     status.value = true;
     await nextTick();
-    expect(dummy).toMatchObject([[2, true], [1, false]]);
+    expect(dummy).toMatchObject([
+      [2, true],
+      [1, false],
+    ]);
   });
 
   it('warn invalid watch source', () => {
@@ -175,7 +181,7 @@ describe('api: watch', () => {
     let dummy;
     const stop = watch(
       () => state.count,
-      count => {
+      (count) => {
         dummy = count;
       }
     );
@@ -195,7 +201,7 @@ describe('api: watch', () => {
     const state = reactive({ count: 0 });
     const cleanup = jest.fn();
     let dummy;
-    const stop = watchEffect(onCleanup => {
+    const stop = watchEffect((onCleanup) => {
       onCleanup(cleanup);
       dummy = state.count;
     });
@@ -349,14 +355,17 @@ describe('api: watch', () => {
         count: ref(0),
       },
       array: [1, 2, 3],
-      map: new Map([['a', 1], ['b', 2]]),
+      map: new Map([
+        ['a', 1],
+        ['b', 2],
+      ]),
       set: new Set([1, 2, 3]),
     });
 
     let dummy;
     watch(
       () => state,
-      state => {
+      (state) => {
         dummy = [state.nested.count, state.array[0], state.map.get('a'), state.set.has(1)];
       },
       { deep: true }

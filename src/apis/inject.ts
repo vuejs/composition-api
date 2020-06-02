@@ -28,7 +28,7 @@ export function provide<T>(key: InjectionKey<T> | string, value: T): void {
     const provideCache = {};
     Object.defineProperty(vm, '_provided', {
       get: () => provideCache,
-      set: v => Object.assign(provideCache, v),
+      set: (v) => Object.assign(provideCache, v),
     });
   }
 

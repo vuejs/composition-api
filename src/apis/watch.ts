@@ -23,7 +23,7 @@ type MapSources<T> = {
 type MapOldSources<T, Immediate> = {
   [K in keyof T]: T[K] extends WatchSource<infer V>
     ? Immediate extends true
-      ? (V | undefined)
+      ? V | undefined
       : V
     : never;
 };
@@ -172,7 +172,7 @@ function createVueWatcher(
 // runCleanup() when it tears down the watcher on unmmount.
 function patchWatcherTeardown(watcher: VueWatcher, runCleanup: () => void) {
   const _teardown = watcher.teardown;
-  watcher.teardown = function(...args) {
+  watcher.teardown = function (...args) {
     _teardown.apply(watcher, args);
     runCleanup();
   };
@@ -244,7 +244,7 @@ function createWatcher(
 
   let getter: () => any;
   if (Array.isArray(source)) {
-    getter = () => source.map(s => (isRef(s) ? s.value : s()));
+    getter = () => source.map((s) => (isRef(s) ? s.value : s()));
   } else if (isRef(source)) {
     getter = () => source.value;
   } else if (isReactive(source)) {
@@ -318,14 +318,14 @@ export function watch<
 // overload #2: single source + cb
 export function watch<T, Immediate extends Readonly<boolean> = false>(
   source: WatchSource<T>,
-  cb: WatchCallback<T, Immediate extends true ? (T | undefined) : T>,
+  cb: WatchCallback<T, Immediate extends true ? T | undefined : T>,
   options?: WatchOptions<Immediate>
 ): WatchStopHandle;
 
 // overload #3: watching reactive object w/ cb
 export function watch<T extends object, Immediate extends Readonly<boolean> = false>(
   source: T,
-  cb: WatchCallback<T, Immediate extends true ? (T | undefined) : T>,
+  cb: WatchCallback<T, Immediate extends true ? T | undefined : T>,
   options?: WatchOptions<Immediate>
 ): WatchStopHandle;
 

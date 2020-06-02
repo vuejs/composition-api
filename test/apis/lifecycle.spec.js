@@ -138,7 +138,7 @@ describe('Hooks lifecycle', () => {
   });
 
   describe('beforeUpdate', () => {
-    it('should be called before update', done => {
+    it('should be called before update', (done) => {
       const spy = jest.fn();
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
@@ -158,7 +158,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should be called before render and allow mutating state', done => {
+    it('should be called before render and allow mutating state', (done) => {
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
         data: { msg: 'foo' },
@@ -175,7 +175,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should not be called after destroy', done => {
+    it('should not be called after destroy', (done) => {
       const beforeUpdate = jest.fn();
       const destroyed = jest.fn();
 
@@ -201,7 +201,7 @@ describe('Hooks lifecycle', () => {
         },
         computed: {
           pendingTodos() {
-            return this.todos.filter(t => !t.done);
+            return this.todos.filter((t) => !t.done);
           },
         },
       }).$mount();
@@ -215,7 +215,7 @@ describe('Hooks lifecycle', () => {
   });
 
   describe('updated', () => {
-    it('should be called after update', done => {
+    it('should be called after update', (done) => {
       const spy = jest.fn();
       const vm = new Vue({
         template: '<div>{{ msg }}</div>',
@@ -235,7 +235,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should be called after children are updated', done => {
+    it('should be called after children are updated', (done) => {
       const calls = [];
       const vm = new Vue({
         template: '<div><test ref="child">{{ msg }}</test></div>',
@@ -267,7 +267,7 @@ describe('Hooks lifecycle', () => {
       }).then(done);
     });
 
-    it('should not be called after destroy', done => {
+    it('should not be called after destroy', (done) => {
       const updated = jest.fn();
       const destroyed = jest.fn();
 
@@ -293,7 +293,7 @@ describe('Hooks lifecycle', () => {
         },
         computed: {
           pendingTodos() {
-            return this.todos.filter(t => !t.done);
+            return this.todos.filter((t) => !t.done);
           },
         },
       }).$mount();
@@ -377,7 +377,7 @@ describe('Hooks lifecycle', () => {
         setup() {
           onErrorCaptured(spy);
         },
-        render: h => h(Child),
+        render: (h) => h(Child),
       }).$mount();
 
       expect(spy).toHaveBeenCalledWith(err, child, 'data()');

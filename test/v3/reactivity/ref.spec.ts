@@ -95,7 +95,7 @@ describe('reactivity/ref', () => {
     );
 
     const assertDummiesEqualTo = (val: number) =>
-      [dummy1, dummy2].forEach(dummy => expect(dummy).toBe(val));
+      [dummy1, dummy2].forEach((dummy) => expect(dummy).toBe(val));
 
     assertDummiesEqualTo(1);
     a.value++;
