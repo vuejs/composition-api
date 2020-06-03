@@ -1,7 +1,6 @@
 import { Data } from '../component';
 import { RefKey } from '../symbols';
 import { proxy, isPlainObject, warn } from '../utils';
-import { HasDefined } from '../types/basic';
 import { reactive, isReactive, shallowReactive } from './reactive';
 import { ComputedRef } from '../apis/computed';
 
@@ -79,24 +78,10 @@ export function createRef<T>(options: RefOption<T>) {
   return Object.seal(new RefImpl<T>(options));
 }
 
-type RefValue<T> = T extends Ref<infer V> ? V : UnwrapRef<T>;
-
-// without init value, explicit typed: a = ref<{ a: number }>()
-// typeof a will be Ref<{ a: number } | undefined>
+export function ref<T extends object>(raw: T): T extends Ref ? T : Ref<UnwrapRef<T>>;
+export function ref<T>(raw: T): Ref<UnwrapRef<T>>;
 export function ref<T = any>(): Ref<T | undefined>;
-// with null as init value: a = ref<{ a: number }>(null);
-// typeof a will be Ref<{ a: number } | null>
-export function ref<T = null>(raw: null): Ref<T | null>;
-// with init value: a = ref({ a: ref(0) })
-// typeof a will be Ref<{ a: number }>
-export function ref<S, T = unknown, R = HasDefined<S> extends true ? S : RefValue<T>>(
-  raw: T
-): Ref<R>;
-// implementation
-export function ref(raw?: any): any {
-  // if (isRef(raw)) {
-  //   return {} as any;
-  // }
+export function ref(raw?: unknown) {
   if (isRef(raw)) {
     return raw;
   }
