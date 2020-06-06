@@ -193,6 +193,10 @@ export function mixin(Vue: VueConstructor) {
           if (isReactive(bindingValue)) {
             bindingValue = ref(bindingValue);
           } else {
+            // bind function to the vm, this will make `this` = vm
+            if (isFunction(bindingValue)){
+              bindingValue = bindingValue.bind(vm);
+            }
             // a non-reactive should not don't get reactivity
             bindingValue = ref(markRaw(bindingValue));
           }
