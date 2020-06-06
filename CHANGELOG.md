@@ -1,3 +1,33 @@
+# 0.6.0
+
+Great thanks to @pikax for #311, making most of the APIs better aligned with the latest vue-next.
+
+## BREAKING CHANGE
+
+- The `lazy` option of `watch` has been replaced by the opposite `immediate` option, which defaults to false. (It's ignored when using the effect signature). [more details](https://github.com/vuejs/vue-next/blob/master/CHANGELOG.md#breaking-changes-12) (#266)
+- Rename `nonReactive` to `markRaw` 
+- `UnwrapRef` types from `vue-next` this can cause some incompatibilities.
+
+## Bug Fixes
+
+- Added missing reactivity API from vue-next, #311, @pikax 
+- Fix return type of `toRefs`, #315
+- Fix incorrect ref typing, #344, @antfu
+- Binding context vm when using function without parentheses, #148, @pikax
+- **computed**: destroy helper vm of computed to prevent memleak, #277, @LinusBorg 
+
+## Features
+
+- Added `unref`(#309), `isReactive` (#327), `toRef` (#313), `UnwrapRef` (#247)
+- Added `shallowReactive`, `shallowRef`
+- Added `toRaw` 
+- `getCurrentInstance` available on the lifecycle hooks (`onMounted`, etc)
+- `getCurrentInstance` returns `undefined` when called outside setup instead of throwing exception
+
+## Types
+- Align reactivity types with `vue-next`
+
+
 # 0.5.0
 
 - New: `watchEffect` function, lingin up with the latest version of the RFC ([RFC docs](https://vue-composition-api-rfc.netlify.com/api.html#watcheffect)) (#275)
