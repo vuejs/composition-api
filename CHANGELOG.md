@@ -15,6 +15,7 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 - Fix incorrect ref typing, #344, @antfu
 - Binding context vm when using function without parentheses, #148, @pikax
 - **computed**: destroy helper vm of computed to prevent memleak, #277, @LinusBorg 
+- Remove the surplus Function type from PropType, #352, @pikax
 
 ## Features
 
@@ -25,6 +26,7 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 - `getCurrentInstance` returns `undefined` when called outside setup instead of throwing exception
 
 ## Types
+
 - Align reactivity types with `vue-next`
 
 
