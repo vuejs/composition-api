@@ -1,11 +1,16 @@
-import { createComponent, defineComponent, createElement as h, ref, SetupContext, PropType } from '../../src';
+import {
+  createComponent,
+  defineComponent,
+  createElement as h,
+  ref,
+  SetupContext,
+  PropType,
+} from '../../src';
 import Router from 'vue-router';
 
 const Vue = require('vue/dist/vue.common.js');
 
-type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends (<U>() => U extends Right
-  ? 1
-  : 0)
+type Equal<Left, Right> = (<U>() => U extends Left ? 1 : 0) extends <U>() => U extends Right ? 1 : 0
   ? true
   : false;
 
@@ -103,6 +108,28 @@ describe('defineComponent', () => {
     });
     new Vue(App);
     expect.assertions(3);
+  });
+
+  it('custom props type inferred from PropType', () => {
+    interface User {
+      name: string;
+    }
+    const App = defineComponent({
+      props: {
+        user: Object as PropType<User>,
+        func: Function as PropType<() => boolean>,
+        userFunc: Function as PropType<(u: User) => User>,
+      },
+      setup(props) {
+        type PropsType = typeof props;
+        isSubType<{ user?: User }, PropsType>(true);
+        isSubType<PropsType, { user?: User; func?: () => boolean; userFunc?: (u: User) => User }>(
+          true
+        );
+      },
+    });
+    new Vue(App);
+    expect.assertions(2);
   });
 
   it('no props', () => {
