@@ -34,7 +34,7 @@ const builds = {
 };
 
 function getAllBuilds() {
-  return Object.keys(builds).map((key) => genConfig(builds[key]));
+  return Object.keys(builds).map(key => genConfig(builds[key]));
 }
 
 function genConfig({ outFile, format, mode }) {
@@ -61,7 +61,7 @@ function genConfig({ outFile, format, mode }) {
         __DEV__:
           format === 'es'
             ? // preserve to be handled by bundlers
-              `(__DEV__)`
+              `(process.env.NODE_ENV !== 'production')`
             : // hard coded dev/prod builds
               !isProd,
       }),
