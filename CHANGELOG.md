@@ -1,3 +1,9 @@
+# 0.6.1
+
+## Fix
+
+- `__DEV__` is not defined, #355, @yoyo930021
+
 # 0.6.0
 
 Great thanks to @pikax for #311, making most of the APIs better aligned with the latest vue-next.
