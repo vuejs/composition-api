@@ -36,10 +36,12 @@ describe('setup', () => {
       setup() {
         return {
           a: undefined,
+          b: 'foobar',
         };
       },
     }).$mount();
     expect(vm.a).toBe(undefined);
+    expect(vm.b).toBe('foobar');
   });
 
   it('should be overrided by data option of plain object', () => {
