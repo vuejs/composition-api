@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "esnext"],
-    "baseUrl": ".",
     "declaration": true,
     "module": "esnext",
     "moduleResolution": "node",

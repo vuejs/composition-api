@@ -22,8 +22,7 @@
   "license": "MIT",
   "sideEffects": false,
   "files": [
-    "dist",
-    "dist/index.d.ts"
+    "dist"
   ],
   "scripts": {
     "start": "cross-env TARGET=es rollup -c -w",
