@@ -381,4 +381,46 @@ describe('setup', () => {
       })
       .then(done);
   });
+
+  describe('Methods', () => {
+    it('binds methods when calling with parenthesis', async ()=>{
+      let context = null;
+      const contextFunction = jest.fn(function (){
+        context = this
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction()"/></div>',
+        setup() {
+          return {
+            contextFunction
+          }
+        }
+      }).$mount();
+  
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context).toBe(vm);
+    });
+
+    it('binds methods when calling without parenthesis', async () => {
+      let context = null;
+      const contextFunction = jest.fn(function (){
+        context = this
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction"/></div>',
+        setup() {
+          return {
+            contextFunction
+          }
+        }
+      }).$mount();
+  
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context).toBe(vm);
+    });
+  })
 });
