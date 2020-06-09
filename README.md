@@ -1,6 +1,8 @@
 # Vue Composition API
 
-> [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
+> [Composition API RFC](https://vue-composition-api-rfc.netlify.com/)
+
+[![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 
 `@vue/composition-api` provides a way to use `Vue 3.0`'s **Composition api** in `Vue 2.x`.
 
