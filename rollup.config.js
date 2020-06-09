@@ -61,7 +61,7 @@ function genConfig({ outFile, format, mode }) {
         __DEV__:
           format === 'es'
             ? // preserve to be handled by bundlers
-              `(__DEV__)`
+              `(process.env.NODE_ENV !== 'production')`
             : // hard coded dev/prod builds
               !isProd,
       }),

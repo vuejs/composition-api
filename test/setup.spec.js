@@ -51,7 +51,7 @@ describe('setup', () => {
     expect(vm.b).toBe(1);
   });
 
-  it('should work with `methods` and `data` options', done => {
+  it('should work with `methods` and `data` options', (done) => {
     let calls = 0;
     const vm = new Vue({
       template: `<div>{{a}}{{b}}{{c}}</div>`,
@@ -215,7 +215,7 @@ describe('setup', () => {
     expect(vm.$refs.test.b).toBe(1);
   });
 
-  it('props should not be reactive', done => {
+  it('props should not be reactive', (done) => {
     let calls = 0;
     const vm = new Vue({
       template: `<child :msg="msg"></child>`,
@@ -256,7 +256,7 @@ describe('setup', () => {
     }).$mount();
   });
 
-  it('should not make returned non-reactive object reactive', done => {
+  it('should not make returned non-reactive object reactive', (done) => {
     const vm = new Vue({
       setup() {
         return {
@@ -285,8 +285,8 @@ describe('setup', () => {
   });
 
   it("should put a unenumerable '__ob__' for non-reactive object", () => {
-    const clone = obj => JSON.parse(JSON.stringify(obj));
-    const componentSetup = jest.fn(props => {
+    const clone = (obj) => JSON.parse(JSON.stringify(obj));
+    const componentSetup = jest.fn((props) => {
       const internalOptions = clone(props.options);
       return { internalOptions };
     });
@@ -329,7 +329,7 @@ describe('setup', () => {
           name: 'child',
           props: ['msg'],
           setup() {
-            return props => {
+            return (props) => {
               p = props;
               return null;
             };
@@ -340,7 +340,7 @@ describe('setup', () => {
     expect(p).toBe(undefined);
   });
 
-  it('inline render function should work', done => {
+  it('inline render function should work', (done) => {
     // let createElement;
     const vm = new Vue({
       props: ['msg'],
@@ -380,5 +380,47 @@ describe('setup', () => {
         expect(vm.$el.querySelector('span').textContent).toBe('bar');
       })
       .then(done);
+  });
+
+  describe('Methods', () => {
+    it('binds methods when calling with parenthesis', async () => {
+      let context = null;
+      const contextFunction = jest.fn(function () {
+        context = this;
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction()"/></div>',
+        setup() {
+          return {
+            contextFunction,
+          };
+        },
+      }).$mount();
+
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context).toBe(vm);
+    });
+
+    it('binds methods when calling without parenthesis', async () => {
+      let context = null;
+      const contextFunction = jest.fn(function () {
+        context = this;
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction"/></div>',
+        setup() {
+          return {
+            contextFunction,
+          };
+        },
+      }).$mount();
+
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context).toBe(vm);
+    });
   });
 });

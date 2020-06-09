@@ -78,13 +78,10 @@ export function createRef<T>(options: RefOption<T>) {
   return Object.seal(new RefImpl<T>(options));
 }
 
-export function ref<T extends object>(value: T): T extends Ref ? T : Ref<UnwrapRef<T>>;
-export function ref<T>(value: T): Ref<UnwrapRef<T>>;
+export function ref<T extends object>(raw: T): T extends Ref ? T : Ref<UnwrapRef<T>>;
+export function ref<T>(raw: T): Ref<UnwrapRef<T>>;
 export function ref<T = any>(): Ref<T | undefined>;
-export function ref(raw?: any): any {
-  // if (isRef(raw)) {
-  //   return {} as any;
-  // }
+export function ref(raw?: unknown) {
   if (isRef(raw)) {
     return raw;
   }
