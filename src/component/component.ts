@@ -65,6 +65,15 @@ interface ComponentOptionsWithProps<
   setup?: SetupFunction<Props, RawBindings>;
 }
 
+interface ComponentOptionsWithArrayProps<
+  PropNames extends string = string,
+  RawBindings = Data,
+  Props = Readonly<{ [key in PropNames]?: any }>
+> {
+  props?: PropNames[];
+  setup?: SetupFunction<Props, RawBindings>;
+}
+
 interface ComponentOptionsWithoutProps<Props = unknown, RawBindings = Data> {
   props?: undefined;
   setup?: SetupFunction<Props, RawBindings>;
@@ -74,10 +83,23 @@ interface ComponentOptionsWithoutProps<Props = unknown, RawBindings = Data> {
 export function defineComponent<RawBindings>(
   options: ComponentOptionsWithoutProps<unknown, RawBindings>
 ): VueProxy<unknown, RawBindings>;
-// overload 2: object format with object props declaration
+// overload 2: object format with array props declaration
+// props inferred as { [key in PropNames]?: any }
+// return type is for Vetur and TSX support
+export function defineComponent<
+  PropNames extends string,
+  RawBindings = Data,
+  PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
+>(
+  // prettier-ignore
+  options: (
+    ComponentOptionsWithArrayProps<PropNames, RawBindings>) &
+    Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptionsWithProps<never, never>>
+): VueProxy<Readonly<{ [key in PropNames]?: any }>, RawBindings>;
+// overload 3: object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
 export function defineComponent<
-  Props,
+  Props = {},
   RawBindings = Data,
   PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
 >(
