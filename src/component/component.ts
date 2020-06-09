@@ -99,7 +99,7 @@ export function defineComponent<
 // overload 3: object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
 export function defineComponent<
-  Props = {},
+  Props,
   RawBindings = Data,
   PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
 >(
