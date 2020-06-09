@@ -25,7 +25,7 @@ jobs:
         env:
           CI: true
       - name: Typing Declartion Tests
-        run: npx tsd
+        run: yarn test-dts
         env:
           CI: true
       - name: Unit Tests
