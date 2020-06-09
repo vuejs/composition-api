@@ -29,12 +29,8 @@
     "start": "cross-env TARGET=es rollup -c -w",
     "build": "rollup -c",
     "test": "cross-env NODE_ENV=test jest",
-    "test-tsd": "npm run build && tsd",
+    "test-tsd": "tsc -p ./test-dts/tsconfig.json && npm run build && tsc -p ./test-dts/tsconfig.build.json",
     "release": "bash scripts/release.sh"
-  },
-  "types": "dist/index.d.ts",
-  "tsd": {
-    "directory": "test-dts"
   },
   "bugs": {
     "url": "https://github.com/vuejs/composition-api/issues"
@@ -54,7 +50,6 @@
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "ts-jest": "^26.1.0",
-    "tsd": "^0.11.0",
     "typescript": "^3.9.3",
     "vue": "^2.6.11",
     "vue-router": "^3.3.2",
