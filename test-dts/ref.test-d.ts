@@ -31,8 +31,7 @@ function plainType(arg: number | Ref<number>) {
   expectType<true>(trueRef.value);
 
   // tuple
-  // Not supported by Vue 2
-  // expectType<[number, string]>(unref(ref([1, '1'])));
+  expectType<[number, string]>(unref(ref([1, '1'])));
 
   interface IteratorFoo {
     [Symbol.iterator]: any;
