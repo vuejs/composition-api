@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, computed, createElement: h, provide, inject } = require('../src');
+const { ref, computed, createElement: h, provide, inject, reactive } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -388,6 +388,31 @@ describe('setup', () => {
         const r = ref('r');
         const nested = {
           a: ref('a'),
+          aa: {
+            b: ref('aa'),
+            bb: {
+              cc: ref('aa'),
+              c: 'aa',
+            },
+          },
+
+          aaa: reactive({
+            b: ref('aaa'),
+            bb: {
+              c: ref('aaa'),
+              cc: 'aaa',
+            },
+          }),
+
+          aaaa: {
+            b: [1],
+            bb: ref([1]),
+            bbb: reactive({
+              c: [1],
+              cc: ref([1]),
+            }),
+            bbbb: [ref(1)],
+          },
         };
 
         const refList = ref([ref('1'), ref('2'), ref('3')]);
@@ -405,6 +430,20 @@ describe('setup', () => {
         <p id="nested">{{nested.a}}</p>
         <p id="list">{{list}}</p>
         <p id="refList">{{refList}}</p>
+
+        <p id="nested_aa_b">{{ nested.aa.b }}</p>
+        <p id="nested_aa_bb_c">{{ nested.aa.bb.c }}</p>
+        <p id="nested_aa_bb_cc">{{ nested.aa.bb.cc }}</p>
+
+        <p id="nested_aaa_b">{{ nested.aaa.b }}</p>
+        <p id="nested_aaa_bb_c">{{ nested.aaa.bb.c }}</p>
+        <p id="nested_aaa_bb_cc">{{ nested.aaa.bb.cc }}</p>
+
+        <p id="nested_aaaa_b">{{ nested.aaaa.b }}</p>
+        <p id="nested_aaaa_bb_c">{{ nested.aaaa.bb }}</p>
+        <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.c }}</p>
+        <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.cc }}</p>
+        <p id="nested_aaaa_bbbb">{{ nested.aaaa.bbbb }}</p>
       </div>`,
     }).$mount();
 
@@ -420,6 +459,22 @@ describe('setup', () => {
       { value: '1' },
       { value: '2' },
       { value: '3' },
+    ]);
+
+    expect(vm.$el.querySelector('#nested_aa_b').textContent).toBe('aa');
+    expect(vm.$el.querySelector('#nested_aa_bb_c').textContent).toBe('aa');
+    expect(vm.$el.querySelector('#nested_aa_bb_cc').textContent).toBe('aa');
+
+    expect(vm.$el.querySelector('#nested_aaa_b').textContent).toBe('aaa');
+    expect(vm.$el.querySelector('#nested_aaa_bb_c').textContent).toBe('aaa');
+    expect(vm.$el.querySelector('#nested_aaa_bb_cc').textContent).toBe('aaa');
+
+    expect(JSON.parse(vm.$el.querySelector('#nested_aaaa_b').textContent)).toMatchObject([1]);
+    expect(JSON.parse(vm.$el.querySelector('#nested_aaaa_bb_c').textContent)).toMatchObject([1]);
+    expect(JSON.parse(vm.$el.querySelector('#nested_aaaa_bbb_cc').textContent)).toMatchObject([1]);
+    expect(JSON.parse(vm.$el.querySelector('#nested_aaaa_bbb_cc').textContent)).toMatchObject([1]);
+    expect(JSON.parse(vm.$el.querySelector('#nested_aaaa_bbbb').textContent)).toMatchObject([
+      { value: 1 },
     ]);
   });
 
