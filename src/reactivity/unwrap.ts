@@ -29,16 +29,15 @@ export function unwrapRefProxy(value: any) {
   Object.getOwnPropertySymbols(value).forEach((s) => (obj[s] = (value as any)[s]));
 
   for (const k of Object.keys(value)) {
-    const v = value[k];
-    let r = unwrapRefProxy(v);
+    const r = value[k];
     // if is a ref, create a proxy to retrieve the value,
     if (isRef(r)) {
-      const set = (v: any) => (value[k].value = v);
-      const get = () => value[k].value;
+      const set = (v: any) => (r.value = v);
+      const get = () => r.value;
 
       proxy(obj, k, { get, set });
     } else {
-      obj[k] = r;
+      obj[k] = unwrapRefProxy(r);
     }
   }
 
