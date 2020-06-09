@@ -6,6 +6,7 @@ import { resolveSlots, createSlotProxy } from './helper';
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
+import { HookMethodsKey } from './symbols';
 
 function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<unknown>) {
   const props = vm.$options.props;
@@ -119,6 +120,40 @@ export function mixin(Vue: VueConstructor) {
     updated(this: ComponentInstance) {
       updateTemplateRef(this);
     },
+    errorCaptured(err: Error, vm: Vue, info: string): boolean | void {
+      const hookMethods = (this as any)[HookMethodsKey];
+      let errorCaptured = hookMethods && hookMethods.errorCaptured;
+      if (!errorCaptured) {
+        return;
+      }
+      if (!Array.isArray(errorCaptured)) {
+        errorCaptured = [errorCaptured];
+      }
+      for (let i = 0, len = errorCaptured.length; i < len; i += 1) {
+        const capture = errorCaptured[i].call(this, err, vm, info) === false;
+        if (capture) {
+          return false;
+        }
+      }
+    },
+    serverPrefetch(this: ComponentInstance): Promise<void> {
+      const hookMethods = (this as any)[HookMethodsKey];
+      let serverPrefetch = hookMethods && hookMethods.serverPrefetch;
+      if (!serverPrefetch) {
+        return Promise.resolve();
+      }
+      if (!Array.isArray(serverPrefetch)) {
+        serverPrefetch = [serverPrefetch];
+      }
+      const promises: Promise<void>[] = [];
+      for (let i = 0, length = serverPrefetch.length; i < length; i += 1) {
+        const result = serverPrefetch[i].call(this, this);
+        if (result && typeof result.then === 'function') {
+          promises.push(result);
+        }
+      }
+      return Promise.all(promises).then();
+    },
   });
 
   /**
@@ -194,7 +229,7 @@ export function mixin(Vue: VueConstructor) {
             bindingValue = ref(bindingValue);
           } else {
             // bind function to the vm, this will make `this` = vm
-            if (isFunction(bindingValue)){
+            if (isFunction(bindingValue)) {
               bindingValue = bindingValue.bind(vm);
             }
             // a non-reactive should not don't get reactivity

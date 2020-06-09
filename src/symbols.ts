@@ -9,6 +9,7 @@ export const WatcherPostFlushQueueKey = createSymbol('vfa.key.postFlushQueue');
 export const AccessControlIdentifierKey = createSymbol('vfa.key.accessControlIdentifier');
 export const ReactiveIdentifierKey = createSymbol('vfa.key.reactiveIdentifier');
 export const RawIdentifierKey = createSymbol('vfa.key.rawIdentifierKey');
+export const HookMethodsKey = createSymbol('vfa.key.hookMethodsKey');
 
 // must be a string, symbol key is ignored in reactive
 export const RefKey = 'vfa.key.refKey';
