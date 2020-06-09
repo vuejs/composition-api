@@ -22,8 +22,8 @@ export type ComponentRenderProxy<P = {}, S = {}, PublicProps = P> = {
   S;
 
 // for Vetur and TSX support
-type VueConstructorProxy<PropsOptions, RawBindings> = {
-  new (): ComponentRenderProxy<
+type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
+  new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
     UnwrapRef<RawBindings>,
     ExtractPropTypes<PropsOptions, false>
@@ -65,15 +65,40 @@ interface ComponentOptionsWithProps<
   setup?: SetupFunction<Props, RawBindings>;
 }
 
-interface ComponentOptionsWithoutProps<Props = never, RawBindings = Data> {
+interface ComponentOptionsWithoutProps<Props = unknown, RawBindings = Data> {
   props?: undefined;
   setup?: SetupFunction<Props, RawBindings>;
 }
 
 // overload 1: object format with no props
+export function defineComponent<RawBindings>(
+  options: ComponentOptionsWithoutProps<unknown, RawBindings>
+): VueProxy<unknown, RawBindings>;
+// overload 2: object format with object props declaration
+// see `ExtractPropTypes` in ./componentProps.ts
+export function defineComponent<
+  Props,
+  RawBindings = Data,
+  PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
+>(
+  // prettier-ignore
+  options: (
+    // prefer the provided Props, otherwise infer it from PropsOptions
+    HasDefined<Props> extends true
+      ? ComponentOptionsWithProps<PropsOptions, RawBindings, Props>
+      : ComponentOptionsWithProps<PropsOptions, RawBindings>) &
+    Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptionsWithProps<never, never>>
+): VueProxy<PropsOptions, RawBindings>;
+// implementation, close to no-op
+export function defineComponent(options: any) {
+  return options as any;
+}
+
+// createComponent is kept around for retro-compatibility
+// overload 1: object format with no props
 export function createComponent<RawBindings>(
-  options: ComponentOptionsWithoutProps<never, RawBindings>
-): VueProxy<never, RawBindings>;
+  options: ComponentOptionsWithoutProps<unknown, RawBindings>
+): VueProxy<unknown, RawBindings>;
 // overload 2: object format with object props declaration
 // see `ExtractPropTypes` in ./componentProps.ts
 export function createComponent<
@@ -89,7 +114,10 @@ export function createComponent<
       : ComponentOptionsWithProps<PropsOptions, RawBindings>) &
     Omit<Vue2ComponentOptions<Vue>, keyof ComponentOptionsWithProps<never, never>>
 ): VueProxy<PropsOptions, RawBindings>;
-// implementation, close to no-op
+// implementation, deferring to defineComponent, but logging a warning in dev mode
 export function createComponent(options: any) {
-  return options as any;
+  if (__DEV__) {
+    Vue.util.warn('`createComponent` has been renamed to `defineComponent`.');
+  }
+  return defineComponent(options);
 }
