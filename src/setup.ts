@@ -6,6 +6,7 @@ import { resolveSlots, createSlotProxy } from './helper';
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
+import { unwrapRefProxy } from './reactivity/unwrap';
 
 function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<unknown>) {
   const props = vm.$options.props;
@@ -194,11 +195,11 @@ export function mixin(Vue: VueConstructor) {
             bindingValue = ref(bindingValue);
           } else {
             // bind function to the vm, this will make `this` = vm
-            if (isFunction(bindingValue)){
+            if (isFunction(bindingValue)) {
               bindingValue = bindingValue.bind(vm);
             }
             // a non-reactive should not don't get reactivity
-            bindingValue = ref(markRaw(bindingValue));
+            bindingValue = ref(markRaw(unwrapRefProxy(bindingValue)));
           }
         }
         asVmProperty(vm, name, bindingValue);
