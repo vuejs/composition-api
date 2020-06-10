@@ -25,7 +25,7 @@ jobs:
         env:
           CI: true
       - name: Unit Tests
-        run: yarn test
+        run: yarn test-unit
         env:
           CI: true
       
