@@ -1,11 +1,12 @@
 import { VueConstructor } from 'vue';
 import { ComponentInstance, SetupContext, SetupFunction, Data } from './component';
-import { Ref, isRef, isReactive, nonReactive } from './reactivity';
+import { Ref, isRef, isReactive, markRaw } from './reactivity';
 import { getCurrentVM, setCurrentVM } from './runtimeContext';
 import { resolveSlots, createSlotProxy } from './helper';
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils';
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
+import { markReactive } from './reactivity/reactive';
 
 function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<unknown>) {
   const props = vm.$options.props;
@@ -17,7 +18,7 @@ function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<un
       },
     });
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       // expose binding to Vue Devtool as a data property
       // delay this until state has been resolved to prevent repeated works
       vm.$nextTick(() => {
@@ -29,7 +30,7 @@ function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<un
         });
       });
     }
-  } else if (process.env.NODE_ENV !== 'production') {
+  } else if (__DEV__) {
     if (props && hasOwn(props, propName)) {
       warn(`The setup binding property "${propName}" is already declared as a prop.`, vm);
     } else {
@@ -132,7 +133,7 @@ export function mixin(Vue: VueConstructor) {
 
     if (render) {
       // keep currentInstance accessible for createElement
-      $options.render = function(...args: any): any {
+      $options.render = function (...args: any): any {
         return activateCurrentInstance(vm, () => render.apply(this, args));
       };
     }
@@ -141,7 +142,7 @@ export function mixin(Vue: VueConstructor) {
       return;
     }
     if (typeof setup !== 'function') {
-      if (process.env.NODE_ENV !== 'production') {
+      if (__DEV__) {
         warn(
           'The "setup" option should be a function that returns a object in component definitions.',
           vm
@@ -163,6 +164,9 @@ export function mixin(Vue: VueConstructor) {
   function initSetup(vm: ComponentInstance, props: Record<any, any> = {}) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
+
+    // mark props as reactive
+    markReactive(props);
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots);
@@ -186,15 +190,19 @@ export function mixin(Vue: VueConstructor) {
     if (isPlainObject(binding)) {
       const bindingObj = binding;
       vmStateManager.set(vm, 'rawBindings', binding);
-      Object.keys(binding).forEach(name => {
+      Object.keys(binding).forEach((name) => {
         let bindingValue = bindingObj[name];
         // only make primitive value reactive
         if (!isRef(bindingValue)) {
           if (isReactive(bindingValue)) {
             bindingValue = ref(bindingValue);
           } else {
+            // bind function to the vm, this will make `this` = vm
+            if (isFunction(bindingValue)) {
+              bindingValue = bindingValue.bind(vm);
+            }
             // a non-reactive should not don't get reactivity
-            bindingValue = ref(nonReactive(bindingValue));
+            bindingValue = ref(markRaw(bindingValue));
           }
         }
         asVmProperty(vm, name, bindingValue);
@@ -202,7 +210,7 @@ export function mixin(Vue: VueConstructor) {
       return;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       assert(
         false,
         `"setup" must return a "Object" or a "Function", got "${Object.prototype.toString
@@ -226,7 +234,7 @@ export function mixin(Vue: VueConstructor) {
       'ssrContext',
     ];
     const methodReturnVoid = ['emit'];
-    props.forEach(key => {
+    props.forEach((key) => {
       let targetKey: string;
       let srcKey: string;
       if (Array.isArray(key)) {
@@ -242,7 +250,7 @@ export function mixin(Vue: VueConstructor) {
         },
       });
     });
-    methodReturnVoid.forEach(key => {
+    methodReturnVoid.forEach((key) => {
       const srcKey = `$${key}`;
       proxy(ctx, key, {
         get() {

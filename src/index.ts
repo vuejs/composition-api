@@ -23,7 +23,13 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 export default plugin;
 export { default as createElement } from './createElement';
 export { SetupContext };
-export { createComponent, ComponentRenderProxy, PropType, PropOptions } from './component';
+export {
+  createComponent,
+  defineComponent,
+  ComponentRenderProxy,
+  PropType,
+  PropOptions,
+} from './component';
 // For getting a hold of the interal instance in setup() - useful for advanced
 // plugins
 export { getCurrentVM as getCurrentInstance } from './runtimeContext';

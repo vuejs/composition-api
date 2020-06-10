@@ -65,7 +65,7 @@ export function warn(msg: string, vm?: Vue) {
 }
 
 export function logError(err: Error, vm: Vue, info: string) {
-  if (process.env.NODE_ENV !== 'production') {
+  if (__DEV__) {
     warn(`Error in ${info}: "${err.toString()}"`, vm);
   }
   if (typeof window !== 'undefined' && typeof console !== 'undefined') {

@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, computed, createElement: h } = require('../src');
+const { ref, computed, createElement: h, provide, inject, toRefs } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('setup', () => {
     }).$mount();
     expect(vm.a).toBe(null);
   });
-  
+
   it('should work with non reactive undefined', () => {
     const vm = new Vue({
       setup() {
@@ -75,7 +75,7 @@ describe('setup', () => {
     expect(vm.b).toBe(1);
   });
 
-  it('should work with `methods` and `data` options', done => {
+  it('should work with `methods` and `data` options', (done) => {
     let calls = 0;
     const vm = new Vue({
       template: `<div>{{a}}{{b}}{{c}}</div>`,
@@ -168,14 +168,21 @@ describe('setup', () => {
   });
 
   it('should merge result properly', () => {
+    const injectKey = Symbol('foo');
     const A = Vue.extend({
       setup() {
+        provide(injectKey, 'foo');
         return { a: 1 };
       },
     });
     const Test = Vue.extend({
       extends: A,
-      setup() {},
+      setup() {
+        const injectVal = inject(injectKey);
+        return {
+          injectVal,
+        };
+      },
     });
     let vm = new Test({
       setup() {
@@ -184,6 +191,7 @@ describe('setup', () => {
     });
     expect(vm.a).toBe(1);
     expect(vm.b).toBe(2);
+    expect(vm.injectVal).toBe('foo');
     // no instance data
     vm = new Test();
     expect(vm.a).toBe(1);
@@ -231,7 +239,7 @@ describe('setup', () => {
     expect(vm.$refs.test.b).toBe(1);
   });
 
-  it('props should not be reactive', done => {
+  it('props should not be reactive', (done) => {
     let calls = 0;
     const vm = new Vue({
       template: `<child :msg="msg"></child>`,
@@ -263,6 +271,43 @@ describe('setup', () => {
     }).then(done);
   });
 
+  it('toRefs(props) should not warn', async () => {
+    let a;
+
+    const child = {
+      template: `<div/>`,
+
+      props: {
+        r: Number,
+      },
+      setup(props) {
+        a = toRefs(props).r;
+      },
+    };
+
+    const vm = new Vue({
+      template: `<child :r="r"/>`,
+      components: {
+        child,
+      },
+
+      data() {
+        return {
+          r: 1,
+        };
+      },
+    }).$mount();
+
+    expect(a.value).toBe(1);
+    vm.r = 3;
+
+    await Vue.nextTick();
+
+    expect(a.value).toBe(3);
+
+    expect(warn).not.toHaveBeenCalled();
+  });
+
   it('this should be undefined', () => {
     const vm = new Vue({
       template: '<div></div>',
@@ -272,7 +317,7 @@ describe('setup', () => {
     }).$mount();
   });
 
-  it('should not make returned non-reactive object reactive', done => {
+  it('should not make returned non-reactive object reactive', (done) => {
     const vm = new Vue({
       setup() {
         return {
@@ -301,8 +346,8 @@ describe('setup', () => {
   });
 
   it("should put a unenumerable '__ob__' for non-reactive object", () => {
-    const clone = obj => JSON.parse(JSON.stringify(obj));
-    const componentSetup = jest.fn(props => {
+    const clone = (obj) => JSON.parse(JSON.stringify(obj));
+    const componentSetup = jest.fn((props) => {
       const internalOptions = clone(props.options);
       return { internalOptions };
     });
@@ -345,7 +390,7 @@ describe('setup', () => {
           name: 'child',
           props: ['msg'],
           setup() {
-            return props => {
+            return (props) => {
               p = props;
               return null;
             };
@@ -356,7 +401,7 @@ describe('setup', () => {
     expect(p).toBe(undefined);
   });
 
-  it('inline render function should work', done => {
+  it('inline render function should work', (done) => {
     // let createElement;
     const vm = new Vue({
       props: ['msg'],
@@ -396,5 +441,47 @@ describe('setup', () => {
         expect(vm.$el.querySelector('span').textContent).toBe('bar');
       })
       .then(done);
+  });
+
+  describe('Methods', () => {
+    it('binds methods when calling with parenthesis', async () => {
+      let context = null;
+      const contextFunction = jest.fn(function () {
+        context = this;
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction()"/></div>',
+        setup() {
+          return {
+            contextFunction,
+          };
+        },
+      }).$mount();
+
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context).toBe(vm);
+    });
+
+    it('binds methods when calling without parenthesis', async () => {
+      let context = null;
+      const contextFunction = jest.fn(function () {
+        context = this;
+      });
+
+      const vm = new Vue({
+        template: '<div><button @click="contextFunction"/></div>',
+        setup() {
+          return {
+            contextFunction,
+          };
+        },
+      }).$mount();
+
+      await vm.$el.querySelector('button').click();
+      expect(contextFunction).toBeCalled();
+      expect(context).toBe(vm);
+    });
   });
 });

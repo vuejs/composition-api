@@ -1,3 +1,55 @@
+# 0.6.1
+
+## Fix
+
+- `__DEV__` is not defined, #355, @yoyo930021
+
+# 0.6.0
+
+Great thanks to @pikax for #311, making most of the APIs better aligned with the latest vue-next.
+
+## BREAKING CHANGE
+
+- The `lazy` option of `watch` has been replaced by the opposite `immediate` option, which defaults to false. (It's ignored when using the effect signature). [more details](https://github.com/vuejs/vue-next/blob/master/CHANGELOG.md#breaking-changes-12) (#266)
+- Rename `nonReactive` to `markRaw` 
+- `UnwrapRef` types from `vue-next` this can cause some incompatibilities.
+
+## Bug Fixes
+
+- Added missing reactivity API from vue-next, #311, @pikax 
+- Fix return type of `toRefs`, #315
+- Fix incorrect ref typing, #344, @antfu
+- Binding context vm when using function without parentheses, #148, @pikax
+- **computed**: destroy helper vm of computed to prevent memleak, #277, @LinusBorg 
+- Remove the surplus Function type from PropType, #352, @pikax
+
+## Features
+
+- Added `unref`(#309), `isReactive` (#327), `toRef` (#313), `UnwrapRef` (#247)
+- Added `shallowReactive`, `shallowRef`
+- Added `toRaw` 
+- `getCurrentInstance` available on the lifecycle hooks (`onMounted`, etc)
+- `getCurrentInstance` returns `undefined` when called outside setup instead of throwing exception
+
+## Types
+
+- Align reactivity types with `vue-next`
+
+
+# 0.5.0
+
+- New: `watchEffect` function, lingin up with the latest version of the RFC ([RFC docs](https://vue-composition-api-rfc.netlify.com/api.html#watcheffect)) (#275)
+- Fix: `setup` from a mixin should called before the component's own (#276)
+- Fix(types): Fix corner case in `UnWrapRef` internal type (#261)
+- types: Add `Element` to bailout types for unwrapping (#278)
+
+# 0.4.0
+
+- **Refactor: rename `createComponent` to `defineComponent`** (the `createComponent` function is still there but deprecated) [#230](https://github.com/vuejs/composition-api/issues/230)
+- Fix: correct the symbol check; fixes the compatibility issue in iOS 9 [#218](https://github.com/vuejs/composition-api/pull/218)
+- Fix: avoid accessing undeclared instance fields on type-level; fixes Vetur template type checking; fixes vue-router type compatibility [#189](https://github.com/vuejs/composition-api/pull/189)
+- Fix: `onUnmounted` should not be run on `deactivated` [#217](https://github.com/vuejs/composition-api/pull/217)
+
 # 0.3.4
 
 - Fixed `reactive` setter not working on the server.

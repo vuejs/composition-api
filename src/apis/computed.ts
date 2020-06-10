@@ -1,6 +1,6 @@
 import { getCurrentVue, getCurrentVM } from '../runtimeContext';
 import { createRef, Ref } from '../reactivity';
-import { createComponentInstance } from '../helper';
+import { defineComponentInstance } from '../helper';
 import { warn } from '../utils';
 
 interface Option<T> {
@@ -8,14 +8,20 @@ interface Option<T> {
   set: (value: T) => void;
 }
 
+export interface ComputedRef<T = any> extends WritableComputedRef<T> {
+  readonly value: T;
+}
+
+export interface WritableComputedRef<T> extends Ref<T> {}
+
 // read-only
-export function computed<T>(getter: Option<T>['get']): Readonly<Ref<Readonly<T>>>;
+export function computed<T>(getter: Option<T>['get']): ComputedRef<T>;
 // writable
-export function computed<T>(options: Option<T>): Ref<Readonly<T>>;
+export function computed<T>(options: Option<T>): WritableComputedRef<T>;
 // implement
 export function computed<T>(
   options: Option<T>['get'] | Option<T>
-): Readonly<Ref<Readonly<T>>> | Ref<Readonly<T>> {
+): ComputedRef<T> | WritableComputedRef<T> {
   const vm = getCurrentVM();
   let get: Option<T>['get'], set: Option<T>['set'] | undefined;
   if (typeof options === 'function') {
@@ -25,7 +31,7 @@ export function computed<T>(
     set = options.set;
   }
 
-  const computedHost = createComponentInstance(getCurrentVue(), {
+  const computedHost = defineComponentInstance(getCurrentVue(), {
     computed: {
       $$state: {
         get,
@@ -34,10 +40,12 @@ export function computed<T>(
     },
   });
 
+  vm && vm.$on('hook:destroyed', () => computedHost.$destroy());
+
   return createRef<T>({
     get: () => (computedHost as any).$$state,
     set: (v: T) => {
-      if (process.env.NODE_ENV !== 'production' && !set) {
+      if (__DEV__ && !set) {
         warn('Computed property was assigned to but it has no setter.', vm!);
         return;
       }

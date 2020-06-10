@@ -7,7 +7,7 @@ import { VueConstructor } from 'vue';
 /**
  * Helper that recursively merges two data objects together.
  */
-function mergeData(to: AnyObject, from?: AnyObject): Object {
+function mergeData(from: AnyObject, to: AnyObject): Object {
   if (!from) return to;
   let key: any;
   let toVal: any;
@@ -25,10 +25,12 @@ function mergeData(to: AnyObject, from?: AnyObject): Object {
       to[key] = fromVal;
     } else if (
       toVal !== fromVal &&
-      (isPlainObject(toVal) && !isRef(toVal)) &&
-      (isPlainObject(fromVal) && !isRef(fromVal))
+      isPlainObject(toVal) &&
+      !isRef(toVal) &&
+      isPlainObject(fromVal) &&
+      !isRef(fromVal)
     ) {
-      mergeData(toVal, fromVal);
+      mergeData(fromVal, toVal);
     }
   }
   return to;
@@ -36,17 +38,17 @@ function mergeData(to: AnyObject, from?: AnyObject): Object {
 
 export function install(Vue: VueConstructor, _install: (Vue: VueConstructor) => void) {
   if (currentVue && currentVue === Vue) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (__DEV__) {
       assert(false, 'already installed. Vue.use(plugin) should be called only once');
     }
     return;
   }
 
-  Vue.config.optionMergeStrategies.setup = function(parent: Function, child: Function) {
+  Vue.config.optionMergeStrategies.setup = function (parent: Function, child: Function) {
     return function mergedSetupFn(props: any, context: any) {
       return mergeData(
-        typeof child === 'function' ? child(props, context) || {} : {},
-        typeof parent === 'function' ? parent(props, context) || {} : {}
+        typeof parent === 'function' ? parent(props, context) || {} : {},
+        typeof child === 'function' ? child(props, context) || {} : {}
       );
     };
   };
