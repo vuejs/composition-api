@@ -7,6 +7,7 @@ import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils'
 import { ref } from './apis/state';
 import vmStateManager from './vmStateManager';
 import { unwrapRefProxy } from './reactivity/unwrap';
+import { markReactive } from './reactivity/reactive';
 
 function asVmProperty(vm: ComponentInstance, propName: string, propValue: Ref<unknown>) {
   const props = vm.$options.props;
@@ -164,6 +165,9 @@ export function mixin(Vue: VueConstructor) {
   function initSetup(vm: ComponentInstance, props: Record<any, any> = {}) {
     const setup = vm.$options.setup!;
     const ctx = createSetupContext(vm);
+
+    // mark props as reactive
+    markReactive(props);
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots);

@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js');
-const { ref, computed, createElement: h, provide, inject, reactive } = require('../src');
+const { ref, computed, createElement: h, provide, inject, reactive, toRefs } = require('../src');
 
 describe('setup', () => {
   beforeEach(() => {
@@ -245,6 +245,43 @@ describe('setup', () => {
       expect(child.computedMsg).toBe('hi world');
       expect(calls).toBe(1);
     }).then(done);
+  });
+
+  it('toRefs(props) should not warn', async () => {
+    let a;
+
+    const child = {
+      template: `<div/>`,
+
+      props: {
+        r: Number,
+      },
+      setup(props) {
+        a = toRefs(props).r;
+      },
+    };
+
+    const vm = new Vue({
+      template: `<child :r="r"/>`,
+      components: {
+        child,
+      },
+
+      data() {
+        return {
+          r: 1,
+        };
+      },
+    }).$mount();
+
+    expect(a.value).toBe(1);
+    vm.r = 3;
+
+    await Vue.nextTick();
+
+    expect(a.value).toBe(3);
+
+    expect(warn).not.toHaveBeenCalled();
   });
 
   it('this should be undefined', () => {
