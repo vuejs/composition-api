@@ -27,6 +27,7 @@
   "scripts": {
     "start": "cross-env TARGET=es rollup -c -w",
     "build": "rollup -c",
+    "lint": "prettier --write --parser typescript \"{src,test,test-dts}/*.ts?(x)\" && prettier --write \"{src,test}/*.js\"",
     "test": "cross-env NODE_ENV=test jest",
     "test-dts": "tsc -p ./test-dts/tsconfig.json && npm run build && tsc -p ./test-dts/tsconfig.build.json",
     "release": "bash scripts/release.sh"
@@ -70,7 +71,7 @@
       "prettier --write",
       "git add"
     ],
-    "*.ts": [
+    "*.ts?(x)": [
       "prettier --parser=typescript --write",
       "git add"
     ]
@@ -96,8 +97,8 @@
     "preset": "ts-jest"
   },
   "prettier": {
-    "printWidth": 100,
+    "semi": false,
     "singleQuote": true,
-    "trailingComma": "es5"
+    "printWidth": 80
   }
 }
