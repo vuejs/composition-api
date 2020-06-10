@@ -20,10 +20,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install
         run: yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
-        env:
-          CI: true
       - name: Typing Declartion Tests
         run: yarn test-dts
         env:
