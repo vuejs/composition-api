@@ -11,6 +11,7 @@ import { resolveSlots, createSlotProxy } from './helper'
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils'
 import { ref } from './apis/state'
 import vmStateManager from './vmStateManager'
+import { unwrapRefProxy } from './reactivity/unwrap'
 import { markReactive } from './reactivity/reactive'
 
 function asVmProperty(
@@ -220,7 +221,7 @@ export function mixin(Vue: VueConstructor) {
               bindingValue = bindingValue.bind(vm)
             }
             // a non-reactive should not don't get reactivity
-            bindingValue = ref(markRaw(bindingValue))
+            bindingValue = ref(markRaw(unwrapRefProxy(bindingValue)))
           }
         }
         asVmProperty(vm, name, bindingValue)
