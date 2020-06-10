@@ -8,11 +8,13 @@ export type ComponentObjectPropsOptions<P = Data> = {
 
 export type Prop<T> = PropOptions<T> | PropType<T>;
 
-export interface PropOptions<T = any, Required extends boolean = false> {
-  type?: PropType<T> | null;
-  required?: Required;
-  default?: T | null | undefined | (() => T | null | undefined);
-  validator?(value: any): boolean;
+type DefaultFactory<T> = () => T | null | undefined;
+
+interface PropOptions<T = any> {
+  type?: PropType<T> | true | null;
+  required?: boolean;
+  default?: T | DefaultFactory<T> | null | undefined;
+  validator?(value: unknown): boolean;
 }
 
 export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
