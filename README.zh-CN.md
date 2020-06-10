@@ -1,12 +1,13 @@
 # Vue Composition API
 
-> [Composition API RFC](https://vue-composition-api-rfc.netlify.com/)
+Vue 2 插件用于提供 Vue 3 中的 **组合式 API**.
 
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
-`@vue/composition-api` 使开发者们可以在 `Vue 2.x` 中使用 `Vue 3.0` 引入的**基于函数**的**逻辑复用机制**。
+[**English**](./README.md) | 中文文档 / [**组合式 API RFC**](https://composition-api.vuejs.org/zh)
 
-[**English Version**](./README.md)
+**请注意：此插件的主要目的是让社区尝试新的API并在其最终确定之前提供反馈。随着RFC的更新，该实现可能包含与RFC有细微的不一致。现阶段，我们暂不建议将此插件用于生产环境。**
 
 ---
 
@@ -17,7 +18,6 @@
 - [TypeScript](#TypeScript)
   - [TSX](#tsx)
 - [限制](#限制)
-- [API](https://vue-composition-api-rfc.netlify.com/api.html)
 - [更新日志](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
 
 # 安装

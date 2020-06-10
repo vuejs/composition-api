@@ -1,14 +1,14 @@
 # Vue Composition API
 
-> [Composition API RFC](https://vue-composition-api-rfc.netlify.com/)
+Vue 2 plugin for **Composition API** in Vue 3.
 
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
-`@vue/composition-api` provides a way to use `Vue 3.0`'s **Composition api** in `Vue 2.x`.
+English | [**中文文档**](./README.zh-CN.md) / [**Composition API RFC**](https://composition-api.vuejs.org/)
+
 
 **Note: the primary goal of this package is to allow the community to experiment with the API and provide feedback before it's finalized. The implementation may contain minor inconsistencies with the RFC as the latter gets updated. We do not recommend using this package for production yet at this stage.**
-
-[**中文文档**](./README.zh-CN.md)
 
 ---
 
@@ -19,7 +19,6 @@
 - [TypeScript](#TypeScript)
   - [TSX](#tsx)
 - [Limitations](#Limitations)
-- [API](https://vue-composition-api-rfc.netlify.com/api.html)
 - [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
 
 # Installation
