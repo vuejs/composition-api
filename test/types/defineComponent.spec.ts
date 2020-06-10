@@ -144,6 +144,22 @@ describe('defineComponent', () => {
     expect.assertions(2);
   });
 
+  it('should accept tuple props', () => {
+    const App = defineComponent({
+      props: ['p1', 'p2'],
+      setup(props) {
+        props.p1;
+        props.p2;
+        type PropsType = typeof props;
+        type Expected = { readonly p1?: any; readonly p2?: any };
+        isSubType<Expected, PropsType>(true);
+        isSubType<PropsType, Expected>(true);
+      },
+    });
+    new Vue(App);
+    expect.assertions(2);
+  });
+
   it('infer the required prop', () => {
     const App = defineComponent({
       props: {

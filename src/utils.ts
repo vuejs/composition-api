@@ -36,9 +36,8 @@ export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
   });
 }
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-export function hasOwn(obj: Object | any[], key: string): boolean {
-  return hasOwnProperty.call(obj, key);
+export function hasOwn(obj: Object, key: string): boolean {
+  return Object.hasOwnProperty.call(obj, key);
 }
 
 export function assert(condition: any, msg: string) {

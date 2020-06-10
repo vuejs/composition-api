@@ -20,6 +20,30 @@ describe('setup', () => {
     expect(vm.a).toBe(1);
   });
 
+  it('should work with non reactive null', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: null,
+        };
+      },
+    }).$mount();
+    expect(vm.a).toBe(null);
+  });
+
+  it('should work with non reactive undefined', () => {
+    const vm = new Vue({
+      setup() {
+        return {
+          a: undefined,
+          b: 'foobar',
+        };
+      },
+    }).$mount();
+    expect(vm.a).toBe(undefined);
+    expect(vm.b).toBe('foobar');
+  });
+
   it('should be overrided by data option of plain object', () => {
     const vm = new Vue({
       setup() {
@@ -282,6 +306,19 @@ describe('setup', () => {
     expect(a.value).toBe(3);
 
     expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('Should allow to return Object.freeze', () => {
+    const vm = new Vue({
+      template: `<div>{{foo.bar}}</div>`,
+      setup() {
+        const foo = Object.freeze({ bar: 'baz' });
+        return {
+          foo,
+        };
+      },
+    }).$mount();
+    expect(vm.$el.textContent).toBe('baz');
   });
 
   it('this should be undefined', () => {
