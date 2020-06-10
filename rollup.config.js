@@ -34,7 +34,7 @@ const builds = {
 };
 
 function getAllBuilds() {
-  return Object.keys(builds).map(key => genConfig(builds[key]));
+  return Object.keys(builds).map((key) => genConfig(builds[key]));
 }
 
 function genConfig({ outFile, format, mode }) {
@@ -51,6 +51,11 @@ function genConfig({ outFile, format, mode }) {
       name: format === 'umd' ? 'vueCompositionApi' : undefined,
     },
     external: ['vue'],
+    onwarn: (msg, warn) => {
+      if (!/Circular/.test(msg)) {
+        warn(msg);
+      }
+    },
     plugins: [
       typescript({
         typescript: require('typescript'),

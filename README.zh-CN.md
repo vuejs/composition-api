@@ -1,6 +1,8 @@
 # Vue Composition API
 
-> [Vue Composition API](https://vue-composition-api-rfc.netlify.com/)
+> [Composition API RFC](https://vue-composition-api-rfc.netlify.com/)
+
+[![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 
 `@vue/composition-api` 使开发者们可以在 `Vue 2.x` 中使用 `Vue 3.0` 引入的**基于函数**的**逻辑复用机制**。
 

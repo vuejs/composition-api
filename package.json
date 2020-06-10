@@ -22,12 +22,13 @@
   "license": "MIT",
   "sideEffects": false,
   "files": [
-    "dist/"
+    "dist"
   ],
   "scripts": {
     "start": "cross-env TARGET=es rollup -c -w",
     "build": "rollup -c",
     "test": "cross-env NODE_ENV=test jest",
+    "test-dts": "tsc -p ./test-dts/tsconfig.json && npm run build && tsc -p ./test-dts/tsconfig.build.json",
     "release": "bash scripts/release.sh"
   },
   "bugs": {
