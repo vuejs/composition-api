@@ -1,23 +1,24 @@
-import Vue from 'vue';
-import { currentVM, getCurrentVue } from './runtimeContext';
-import { defineComponentInstance } from './helper';
-import { warn } from './utils';
+import Vue from 'vue'
+import { currentVM, getCurrentVue } from './runtimeContext'
+import { defineComponentInstance } from './helper'
+import { warn } from './utils'
 
-type CreateElement = Vue['$createElement'];
+type CreateElement = Vue['$createElement']
 
-let fallbackCreateElement: CreateElement;
+let fallbackCreateElement: CreateElement
 
 const createElement: CreateElement = function createElement(...args: any) {
   if (!currentVM) {
-    warn('`createElement()` has been called outside of render function.');
+    warn('`createElement()` has been called outside of render function.')
     if (!fallbackCreateElement) {
-      fallbackCreateElement = defineComponentInstance(getCurrentVue()).$createElement;
+      fallbackCreateElement = defineComponentInstance(getCurrentVue())
+        .$createElement
     }
 
-    return fallbackCreateElement.apply(fallbackCreateElement, args);
+    return fallbackCreateElement.apply(fallbackCreateElement, args)
   }
 
-  return currentVM.$createElement.apply(currentVM, args);
-} as any;
+  return currentVM.$createElement.apply(currentVM, args)
+} as any
 
-export default createElement;
+export default createElement
