@@ -308,6 +308,19 @@ describe('setup', () => {
     expect(warn).not.toHaveBeenCalled();
   });
 
+  it('Should allow to return Object.freeze', () => {
+    const vm = new Vue({
+      template: `<div>{{foo.bar}}</div>`,
+      setup() {
+        const foo = Object.freeze({ bar: 'baz' });
+        return {
+          foo,
+        };
+      },
+    }).$mount();
+    expect(vm.$el.textContent).toBe('baz');
+  });
+
   it('this should be undefined', () => {
     const vm = new Vue({
       template: '<div></div>',

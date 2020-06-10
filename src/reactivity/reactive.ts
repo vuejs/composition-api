@@ -238,7 +238,7 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
  * Make sure obj can't be a reactive
  */
 export function markRaw<T extends object>(obj: T): T {
-  if (!isPlainObject(obj)) {
+  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
     return obj;
   }
 
