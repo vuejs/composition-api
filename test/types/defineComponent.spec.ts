@@ -150,9 +150,13 @@ describe('defineComponent', () => {
       setup(props) {
         props.p1;
         props.p2;
+        type PropsType = typeof props;
+        isSubType<{ p1: any; p2: any }, PropsType>(true);
+        isSubType<PropsType, { p1: any; p2: any }>(true);
       },
     });
     new Vue(App);
+    expect.assertions(2);
   });
 
   it('infer the required prop', () => {
