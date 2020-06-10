@@ -1,28 +1,28 @@
-import { AnyObject } from './types/basic';
-import { hasSymbol, hasOwn, isPlainObject, assert } from './utils';
-import { isRef } from './reactivity';
-import { setCurrentVue, currentVue } from './runtimeContext';
-import { VueConstructor } from 'vue';
+import { AnyObject } from './types/basic'
+import { hasSymbol, hasOwn, isPlainObject, assert } from './utils'
+import { isRef } from './reactivity'
+import { setCurrentVue, currentVue } from './runtimeContext'
+import { VueConstructor } from 'vue'
 
 /**
  * Helper that recursively merges two data objects together.
  */
 function mergeData(from: AnyObject, to: AnyObject): Object {
-  if (!from) return to;
-  let key: any;
-  let toVal: any;
-  let fromVal: any;
+  if (!from) return to
+  let key: any
+  let toVal: any
+  let fromVal: any
 
-  const keys = hasSymbol ? Reflect.ownKeys(from) : Object.keys(from);
+  const keys = hasSymbol ? Reflect.ownKeys(from) : Object.keys(from)
 
   for (let i = 0; i < keys.length; i++) {
-    key = keys[i];
+    key = keys[i]
     // in case the object is already observed...
-    if (key === '__ob__') continue;
-    toVal = to[key];
-    fromVal = from[key];
+    if (key === '__ob__') continue
+    toVal = to[key]
+    fromVal = from[key]
     if (!hasOwn(to, key)) {
-      to[key] = fromVal;
+      to[key] = fromVal
     } else if (
       toVal !== fromVal &&
       isPlainObject(toVal) &&
@@ -30,29 +30,38 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
       isPlainObject(fromVal) &&
       !isRef(fromVal)
     ) {
-      mergeData(fromVal, toVal);
+      mergeData(fromVal, toVal)
     }
   }
-  return to;
+  return to
 }
 
-export function install(Vue: VueConstructor, _install: (Vue: VueConstructor) => void) {
+export function install(
+  Vue: VueConstructor,
+  _install: (Vue: VueConstructor) => void
+) {
   if (currentVue && currentVue === Vue) {
     if (__DEV__) {
-      assert(false, 'already installed. Vue.use(plugin) should be called only once');
+      assert(
+        false,
+        'already installed. Vue.use(plugin) should be called only once'
+      )
     }
-    return;
+    return
   }
 
-  Vue.config.optionMergeStrategies.setup = function (parent: Function, child: Function) {
+  Vue.config.optionMergeStrategies.setup = function (
+    parent: Function,
+    child: Function
+  ) {
     return function mergedSetupFn(props: any, context: any) {
       return mergeData(
         typeof parent === 'function' ? parent(props, context) || {} : {},
         typeof child === 'function' ? child(props, context) || {} : {}
-      );
-    };
-  };
+      )
+    }
+  }
 
-  setCurrentVue(Vue);
-  _install(Vue);
+  setCurrentVue(Vue)
+  _install(Vue)
 }

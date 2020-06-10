@@ -1,14 +1,16 @@
-import { hasSymbol } from './utils';
+import { hasSymbol } from './utils'
 
 function createSymbol(name: string): string {
-  return hasSymbol ? (Symbol.for(name) as any) : name;
+  return hasSymbol ? (Symbol.for(name) as any) : name
 }
 
-export const WatcherPreFlushQueueKey = createSymbol('vfa.key.preFlushQueue');
-export const WatcherPostFlushQueueKey = createSymbol('vfa.key.postFlushQueue');
-export const AccessControlIdentifierKey = createSymbol('vfa.key.accessControlIdentifier');
-export const ReactiveIdentifierKey = createSymbol('vfa.key.reactiveIdentifier');
-export const RawIdentifierKey = createSymbol('vfa.key.rawIdentifierKey');
+export const WatcherPreFlushQueueKey = createSymbol('vfa.key.preFlushQueue')
+export const WatcherPostFlushQueueKey = createSymbol('vfa.key.postFlushQueue')
+export const AccessControlIdentifierKey = createSymbol(
+  'vfa.key.accessControlIdentifier'
+)
+export const ReactiveIdentifierKey = createSymbol('vfa.key.reactiveIdentifier')
+export const RawIdentifierKey = createSymbol('vfa.key.rawIdentifierKey')
 
 // must be a string, symbol key is ignored in reactive
-export const RefKey = 'vfa.key.refKey';
+export const RefKey = 'vfa.key.refKey'

@@ -1,28 +1,28 @@
-import { VueConstructor } from 'vue';
-import { ComponentInstance } from './component';
-import { assert } from './utils';
+import { VueConstructor } from 'vue'
+import { ComponentInstance } from './component'
+import { assert } from './utils'
 
-let currentVue: VueConstructor | null = null;
-let currentVM: ComponentInstance | null = null;
+let currentVue: VueConstructor | null = null
+let currentVM: ComponentInstance | null = null
 
 export function getCurrentVue(): VueConstructor {
   if (__DEV__) {
-    assert(currentVue, `must call Vue.use(plugin) before using any function.`);
+    assert(currentVue, `must call Vue.use(plugin) before using any function.`)
   }
 
-  return currentVue!;
+  return currentVue!
 }
 
 export function setCurrentVue(vue: VueConstructor) {
-  currentVue = vue;
+  currentVue = vue
 }
 
 export function getCurrentVM(): ComponentInstance | null {
-  return currentVM;
+  return currentVM
 }
 
 export function setCurrentVM(vm: ComponentInstance | null) {
-  currentVM = vm;
+  currentVM = vm
 }
 
-export { currentVue, currentVM };
+export { currentVue, currentVM }

@@ -1,19 +1,19 @@
-const Vue = require('vue/dist/vue.common.js');
-const { ref, watchEffect, watch, createElement: h } = require('../src');
+const Vue = require('vue/dist/vue.common.js')
+const { ref, watchEffect, watch, createElement: h } = require('../src')
 
 describe('ref', () => {
   it('should work', (done) => {
-    let dummy;
+    let dummy
     const vm = new Vue({
       setup() {
-        const ref1 = ref(null);
+        const ref1 = ref(null)
         watchEffect(() => {
-          dummy = ref1.value;
-        });
+          dummy = ref1.value
+        })
 
         return {
           bar: ref1,
-        };
+        }
       },
       template: `<div>
         <test ref="bar"></test>
@@ -24,37 +24,37 @@ describe('ref', () => {
           template: '<div>test</div>',
         },
       },
-    }).$mount();
+    }).$mount()
     vm.$nextTick()
       .then(() => {
-        expect(dummy).toBe(vm.$refs.bar);
+        expect(dummy).toBe(vm.$refs.bar)
       })
-      .then(done);
-  });
+      .then(done)
+  })
 
   it('should dynamically update refs', (done) => {
     const vm = new Vue({
       setup() {
-        const ref1 = ref(null);
-        const ref2 = ref(null);
+        const ref1 = ref(null)
+        const ref2 = ref(null)
         watchEffect(() => {
-          dummy1 = ref1.value;
-          dummy2 = ref2.value;
-        });
+          dummy1 = ref1.value
+          dummy2 = ref2.value
+        })
 
         return {
           value: 'bar',
           bar: ref1,
           foo: ref2,
-        };
+        }
       },
       template: '<div :ref="value"></div>',
-    }).$mount();
+    }).$mount()
     waitForUpdate(() => {})
       .then(() => {
-        expect(dummy1).toBe(vm.$refs.bar);
-        expect(dummy2).toBe(null);
-        vm.value = 'foo';
+        expect(dummy1).toBe(vm.$refs.bar)
+        expect(dummy2).toBe(null)
+        vm.value = 'foo'
       })
       .then(() => {
         // vm updated. ref update occures after updated;
@@ -63,11 +63,11 @@ describe('ref', () => {
         // no render cycle, empty tick
       })
       .then(() => {
-        expect(dummy1).toBe(null);
-        expect(dummy2).toBe(vm.$refs.foo);
+        expect(dummy1).toBe(null)
+        expect(dummy2).toBe(vm.$refs.foo)
       })
-      .then(done);
-  });
+      .then(done)
+  })
 
   // TODO: how ?
   // it('work with createElement', () => {
@@ -84,4 +84,4 @@ describe('ref', () => {
   //   }).$mount();
   //   expect(root.value).toBe(vm.$el);
   // });
-});
+})
