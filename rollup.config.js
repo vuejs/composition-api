@@ -51,6 +51,11 @@ function genConfig({ outFile, format, mode }) {
       name: format === 'umd' ? 'vueCompositionApi' : undefined,
     },
     external: ['vue'],
+    onwarn: (msg, warn) => {
+      if (!/Circular/.test(msg)) {
+        warn(msg);
+      }
+    },
     plugins: [
       typescript({
         typescript: require('typescript'),
@@ -61,7 +66,7 @@ function genConfig({ outFile, format, mode }) {
         __DEV__:
           format === 'es'
             ? // preserve to be handled by bundlers
-              `(__DEV__)`
+              `(process.env.NODE_ENV !== 'production')`
             : // hard coded dev/prod builds
               !isProd,
       }),
