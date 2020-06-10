@@ -144,6 +144,17 @@ describe('defineComponent', () => {
     expect.assertions(2);
   });
 
+  it('should accept tuple props', () => {
+    const App = createComponent({
+      props: ['p1', 'p2'],
+      setup(props) {
+        props.p1;
+        props.p2;
+      },
+    });
+    new Vue(App);
+  });
+
   it('infer the required prop', () => {
     const App = defineComponent({
       props: {
