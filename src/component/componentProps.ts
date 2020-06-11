@@ -34,6 +34,16 @@ type RequiredKeys<T, MakeDefaultRequired> = {
 
 type OptionalKeys<T, MakeDefaultRequired> = Exclude<keyof T, RequiredKeys<T, MakeDefaultRequired>>;
 
+type ExtractFunctionPropType<
+  T extends Function,
+  TArgs extends Array<any> = any[],
+  TResult = any
+> = T extends (...args: TArgs) => TResult ? T : never;
+
+type ExtractCorrectPropType<T> = T extends Function
+  ? ExtractFunctionPropType<T>
+  : Exclude<T, Function>;
+
 // prettier-ignore
 type InferPropType<T> = T extends null
   ? any // null & true would fail to infer
@@ -43,7 +53,8 @@ type InferPropType<T> = T extends null
       ? { [key: string]: any }
       : T extends BooleanConstructor | { type: BooleanConstructor }
         ? boolean
-        : T extends Prop<infer V> ? V : T;
+        : T extends Prop<infer V>
+          ? ExtractCorrectPropType<V> : T;
 
 export type ExtractPropTypes<O, MakeDefaultRequired extends boolean = true> = O extends object
   ? { [K in RequiredKeys<O, MakeDefaultRequired>]: InferPropType<O[K]> } &
