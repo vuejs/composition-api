@@ -1,3 +1,14 @@
+<a name="0.6.2"></a>
+## [0.6.2](https://github.com/vuejs/composition-api/compare/v0.6.1...v0.6.2) (2020-06-11)
+
+
+### Bug Fixes
+
+* **reactivity:** unwrap nested refs on the template ([#361](https://github.com/vuejs/composition-api/issues/361)) ([1fd48f5](https://github.com/vuejs/composition-api/commit/1fd48f5))
+* defineComponent() with array props ([#364](https://github.com/vuejs/composition-api/issues/364)) ([d7048d4](https://github.com/vuejs/composition-api/commit/d7048d4))
+* **setup:** Allow retuning frozen objects on the setup ([#366](https://github.com/vuejs/composition-api/issues/366)) ([bca3a69](https://github.com/vuejs/composition-api/commit/bca3a69))
+* mark props as reactive ([#359](https://github.com/vuejs/composition-api/issues/359)) ([bc78428](https://github.com/vuejs/composition-api/commit/bc78428))
+
 # 0.6.1
 
 ## Fix
