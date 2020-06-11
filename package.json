@@ -35,7 +35,7 @@
     "prepublish": "yarn test",
     "postpublish": "yarn release-gh",
     "version": "yarn changelog && git add CHANGELOG.md",
-    "release": "yarn version && yarn publish",
+    "release": "yarn publish",
     "release-gh": "conventional-github-releaser -p angular"
   },
   "bugs": {
