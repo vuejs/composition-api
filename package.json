@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "start": "cross-env TARGET=es rollup -c -w",
-    "build": "rollup -c",
+    "build": "rimraf dist typings && tsc --emitDeclarationOnly && rollup -c",
     "lint": "prettier --write --parser typescript \"{src,test,test-dts}/*.ts?(x)\" && prettier --write \"{src,test}/*.js\"",
     "test": "cross-env NODE_ENV=test jest",
     "test-dts": "tsc -p ./test-dts/tsconfig.json && npm run build && tsc -p ./test-dts/tsconfig.build.json",
@@ -46,7 +46,9 @@
     "jest": "^26.0.1",
     "lint-staged": "^10.2.7",
     "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
     "rollup": "^2.12.0",
+    "rollup-plugin-dts": "^1.4.7",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "ts-jest": "^26.1.0",

@@ -1,9 +1,9 @@
-import * as path from 'path';
-// import filesize from 'rollup-plugin-filesize';
-import typescript from 'rollup-plugin-typescript2';
-import resolve from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
-import replace from '@rollup/plugin-replace';
+import * as path from 'path'
+import typescript from 'rollup-plugin-typescript2'
+import resolve from '@rollup/plugin-node-resolve'
+import { terser } from 'rollup-plugin-terser'
+import replace from '@rollup/plugin-replace'
+import dts from 'rollup-plugin-dts'
 
 const builds = {
   'cjs-dev': {
@@ -31,14 +31,20 @@ const builds = {
     format: 'es',
     mode: 'development',
   },
-};
+}
+
+function onwarn(msg, warn) {
+  if (!/Circular/.test(msg)) {
+    warn(msg)
+  }
+}
 
 function getAllBuilds() {
-  return Object.keys(builds).map((key) => genConfig(builds[key]));
+  return Object.keys(builds).map((key) => genConfig(builds[key]))
 }
 
 function genConfig({ outFile, format, mode }) {
-  const isProd = mode === 'production';
+  const isProd = mode === 'production'
   return {
     input: './src/index.ts',
     output: {
@@ -51,18 +57,21 @@ function genConfig({ outFile, format, mode }) {
       name: format === 'umd' ? 'vueCompositionApi' : undefined,
     },
     external: ['vue'],
-    onwarn: (msg, warn) => {
-      if (!/Circular/.test(msg)) {
-        warn(msg);
-      }
-    },
+    onwarn,
     plugins: [
       typescript({
-        typescript: require('typescript'),
+        tsconfigOverride: {
+          declaration: false,
+          declarationDir: null,
+          emitDeclarationOnly: false,
+        },
+        useTsconfigDeclarationDir: true,
       }),
       resolve(),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(isProd ? 'production' : 'development'),
+        'process.env.NODE_ENV': JSON.stringify(
+          isProd ? 'production' : 'development'
+        ),
         __DEV__:
           format === 'es'
             ? // preserve to be handled by bundlers
@@ -72,15 +81,26 @@ function genConfig({ outFile, format, mode }) {
       }),
       isProd && terser(),
     ].filter(Boolean),
-  };
+  }
 }
 
-let buildConfig;
+let buildConfig
 
 if (process.env.TARGET) {
-  buildConfig = genConfig(builds[process.env.TARGET]);
+  buildConfig = genConfig(builds[process.env.TARGET])
 } else {
-  buildConfig = getAllBuilds();
+  buildConfig = getAllBuilds()
 }
 
-export default buildConfig;
+// bundle typings
+buildConfig.push({
+  input: 'typings/index.d.ts',
+  output: {
+    file: 'dist/index.d.ts',
+    format: 'es',
+  },
+  onwarn,
+  plugins: [dts()],
+})
+
+export default buildConfig
