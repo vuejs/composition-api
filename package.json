@@ -1,6 +1,6 @@
 {
   "name": "@vue/composition-api",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
     "vue",
