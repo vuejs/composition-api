@@ -1,41 +1,17 @@
-import Vue, { VueConstructor } from 'vue'
-import { Data, SetupFunction, SetupContext } from './component'
-import { currentVue } from './runtimeContext'
-import { install } from './install'
-import { mixin } from './setup'
+import { version } from 'vue'
+// redirect anything to Vue 3
+export * from 'vue'
 
-declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    setup?: SetupFunction<Data, Data>
-  }
+// compatible with plugin installation but actually does nothing.
+export default {
+  install: () => {
+    if (__DEV__) {
+      if (version[0] === '2') {
+        console.warn(
+          '[vue-composition-api] It seems like you are using Vue 2 with @vue/composition-api@next' +
+            ' which is for Vue 3. Please use @vue/composition-api@latest instead.'
+        )
+      }
+    }
+  },
 }
-
-const _install = (Vue: VueConstructor) => install(Vue, mixin)
-const plugin = {
-  install: _install,
-}
-// Auto install if it is not done yet and `window` has `Vue`.
-// To allow users to avoid auto-installation in some cases,
-if (currentVue && typeof window !== 'undefined' && window.Vue) {
-  _install(window.Vue)
-}
-
-export default plugin
-export { default as createElement } from './createElement'
-export { SetupContext }
-export {
-  createComponent,
-  defineComponent,
-  ComponentRenderProxy,
-  PropType,
-  PropOptions,
-} from './component'
-// For getting a hold of the interal instance in setup() - useful for advanced
-// plugins
-export { getCurrentVM as getCurrentInstance } from './runtimeContext'
-
-export * from './apis/state'
-export * from './apis/lifecycle'
-export * from './apis/watch'
-export * from './apis/computed'
-export * from './apis/inject'
