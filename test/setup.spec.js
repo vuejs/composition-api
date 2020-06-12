@@ -568,6 +568,60 @@ describe('setup', () => {
     ).toMatchObject([{ value: 1 }])
   })
 
+  it('should not unwrap built-in objects on the template', () => {
+    const date = new Date('2020-01-01')
+    const regex = /a(b).*/
+    const dateString = date.toString()
+    const regexString = regex.toString()
+    const mathString = Math.toString()
+
+    const vm = new Vue({
+      setup() {
+        return {
+          raw_date: date,
+          nested_date: {
+            a: date,
+            b: date,
+          },
+          raw_regex: regex,
+          nested_regex: {
+            a: regex,
+            b: regex,
+          },
+          math: Math,
+        }
+      },
+      template: `<div>
+        <p id="raw_date">{{raw_date}}</p>
+        <p id="nested_date">{{nested_date}}</p>
+        <p id="raw_regex">{{raw_regex}}</p>
+        <p id="nested_regex_a">{{nested_regex.a}}</p>
+        <p id="nested_regex_b">{{nested_regex.b}}</p>
+        <p id="math">{{math}}</p>
+      </div>`,
+    }).$mount()
+
+    expect(vm.$el.querySelector('#raw_date').textContent).toBe(dateString)
+    expect(
+      JSON.parse(vm.$el.querySelector('#nested_date').textContent)
+    ).toMatchObject(
+      JSON.parse(
+        JSON.stringify({
+          a: date,
+          b: date,
+        })
+      )
+    )
+    expect(vm.$el.querySelector('#raw_regex').textContent).toBe(regexString)
+    expect(vm.$el.querySelector('#nested_regex_a').textContent).toBe(
+      regexString
+    )
+    expect(vm.$el.querySelector('#nested_regex_b').textContent).toBe(
+      regexString
+    )
+    expect(vm.$el.querySelector('#math').textContent).toBe(mathString)
+  })
+
   describe('Methods', () => {
     it('binds methods when calling with parenthesis', async () => {
       let context = null
