@@ -87,7 +87,7 @@ function genConfig({ outFile, format, mode }) {
 let buildConfig
 
 if (process.env.TARGET) {
-  buildConfig = genConfig(builds[process.env.TARGET])
+  buildConfig = [genConfig(builds[process.env.TARGET])]
 } else {
   buildConfig = getAllBuilds()
 }
