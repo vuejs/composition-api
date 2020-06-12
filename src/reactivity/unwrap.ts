@@ -3,9 +3,8 @@ import { proxy, isFunction, isPlainObject, isArray } from '../utils'
 import { isReactive } from './reactive'
 
 export function unwrapRefProxy(value: any, map = new WeakMap()) {
-  let processed = map.get(value)
-  if (processed) {
-    return processed
+  if (map.has(value)) {
+    return map.get(value)
   }
 
   if (
