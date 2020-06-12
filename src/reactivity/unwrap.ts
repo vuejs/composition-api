@@ -2,17 +2,19 @@ import { isRef } from './ref'
 import { proxy, isFunction, isPlainObject, isArray } from '../utils'
 import { isReactive } from './reactive'
 
-export function unwrapRefProxy(value: any) {
+export function unwrapRefProxy(value: any, processed = new Set<any>()) {
   if (
     isFunction(value) ||
     isRef(value) ||
     isArray(value) ||
     isReactive(value) ||
     !isPlainObject(value) ||
-    !Object.isExtensible(value)
+    !Object.isExtensible(value) ||
+    processed.has(value)
   ) {
     return value
   }
+  processed.add(value)
 
   const obj: any = {}
 
@@ -30,7 +32,7 @@ export function unwrapRefProxy(value: any) {
 
       proxy(obj, k, { get, set })
     } else {
-      obj[k] = unwrapRefProxy(r)
+      obj[k] = unwrapRefProxy(r, processed)
     }
   }
 

@@ -500,6 +500,19 @@ describe('setup', () => {
           },
         }
 
+        const b = {
+          c: 'c',
+        }
+
+        const recursive = {
+          a: {
+            a: 'a',
+            b,
+          },
+        }
+
+        b.recursive = recursive
+
         const refList = ref([ref('1'), ref('2'), ref('3')])
         const list = [ref('a'), ref('b')]
 
@@ -508,6 +521,8 @@ describe('setup', () => {
           nested,
           refList,
           list,
+
+          recursive,
         }
       },
       template: `<div>
@@ -529,6 +544,12 @@ describe('setup', () => {
         <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.c }}</p>
         <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.cc }}</p>
         <p id="nested_aaaa_bbbb">{{ nested.aaaa.bbbb }}</p>
+
+        <p id="recursive_a">{{recursive.a.a}}</p>
+        <p id="recursive_b_c">{{recursive.a.b.c}}</p>
+        <p id="recursive_b_recursive_a">{{recursive.a.b.recursive.a.a}}</p>
+        <p id="recursive_b_recursive_c">{{recursive.a.b.recursive.a.b.c}}</p>
+        <p id="recursive_b_recursive_recursive_c">{{recursive.a.b.recursive.a.b.recursive.a.b.c}}</p>
       </div>`,
     }).$mount()
 
@@ -550,6 +571,18 @@ describe('setup', () => {
     expect(vm.$el.querySelector('#nested_aaa_b').textContent).toBe('aaa')
     expect(vm.$el.querySelector('#nested_aaa_bb_c').textContent).toBe('aaa')
     expect(vm.$el.querySelector('#nested_aaa_bb_cc').textContent).toBe('aaa')
+
+    expect(vm.$el.querySelector('#recursive_a').textContent).toBe('a')
+    expect(vm.$el.querySelector('#recursive_b_c').textContent).toBe('c')
+    expect(vm.$el.querySelector('#recursive_b_recursive_a').textContent).toBe(
+      'a'
+    )
+    expect(vm.$el.querySelector('#recursive_b_recursive_c').textContent).toBe(
+      'c'
+    )
+    expect(
+      vm.$el.querySelector('#recursive_b_recursive_recursive_c').textContent
+    ).toBe('c')
 
     expect(
       JSON.parse(vm.$el.querySelector('#nested_aaaa_b').textContent)
