@@ -2,21 +2,25 @@ import { isRef } from './ref'
 import { proxy, isFunction, isPlainObject, isArray } from '../utils'
 import { isReactive } from './reactive'
 
-export function unwrapRefProxy(value: any, processed = new Set<any>()) {
+export function unwrapRefProxy(value: any, map = new WeakMap()) {
+  let processed = map.get(value)
+  if (processed) {
+    return processed
+  }
+
   if (
     isFunction(value) ||
-    isRef(value) ||
     isArray(value) ||
     isReactive(value) ||
     !isPlainObject(value) ||
     !Object.isExtensible(value) ||
-    processed.has(value)
+    isRef(value)
   ) {
     return value
   }
-  processed.add(value)
 
   const obj: any = {}
+  map.set(value, obj)
 
   // copy symbols over
   Object.getOwnPropertySymbols(value).forEach(
@@ -32,7 +36,7 @@ export function unwrapRefProxy(value: any, processed = new Set<any>()) {
 
       proxy(obj, k, { get, set })
     } else {
-      obj[k] = unwrapRefProxy(r, processed)
+      obj[k] = unwrapRefProxy(r, map)
     }
   }
 
