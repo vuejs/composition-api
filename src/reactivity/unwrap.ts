@@ -1,29 +1,16 @@
 import { isRef } from './ref'
-import { proxy, isFunction, isObject, isArray } from '../utils'
+import { proxy, isFunction, isPlainObject, isArray } from '../utils'
 import { isReactive } from './reactive'
 
 export function unwrapRefProxy(value: any) {
-  if (isFunction(value)) {
-    return value
-  }
-
-  if (isRef(value)) {
-    return value
-  }
-
-  if (isArray(value)) {
-    return value
-  }
-
-  if (isReactive(value)) {
-    return value
-  }
-
-  if (!isObject(value)) {
-    return value
-  }
-
-  if (!Object.isExtensible(value)) {
+  if (
+    isFunction(value) ||
+    isRef(value) ||
+    isArray(value) ||
+    isReactive(value) ||
+    !isPlainObject(value) ||
+    !Object.isExtensible(value)
+  ) {
     return value
   }
 
