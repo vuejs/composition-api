@@ -122,7 +122,7 @@ describe('defineComponent', () => {
       },
       setup(props) {
         type PropsType = typeof props;
-        isSubType<{ user?: User }, PropsType>(true);
+        isSubType<{ user?: User; func?: () => boolean; userFunc?: (u: User) => User }, PropsType>(true);
         isSubType<PropsType, { user?: User; func?: () => boolean; userFunc?: (u: User) => User }>(
           true
         );
