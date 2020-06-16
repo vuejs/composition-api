@@ -744,4 +744,37 @@ describe('setup', () => {
     const vm = new Vue(Constructor).$mount()
     expect(vm.$el.textContent).toBe('Composition-api')
   })
+
+  it('should keep data reactive', async () => {
+    const vm = new Vue({
+      template: `<div>
+        <button id="a" @click="a++">{{a}}</button>
+        <button id="b" @click="b++">{{b}}</button>
+      </div>`,
+      data() {
+        return {
+          a: 1,
+          b: ref(1),
+        }
+      },
+    }).$mount()
+
+    const a = vm.$el.querySelector('#a')
+    const b = vm.$el.querySelector('#b')
+
+    expect(a.textContent).toBe('1')
+    expect(b.textContent).toBe('1')
+
+    a.click()
+    await Vue.nextTick()
+
+    expect(a.textContent).toBe('2')
+    expect(b.textContent).toBe('1')
+
+    b.click()
+    await Vue.nextTick()
+
+    expect(a.textContent).toBe('2')
+    expect(b.textContent).toBe('2')
+  })
 })
