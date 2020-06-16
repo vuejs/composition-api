@@ -9,6 +9,8 @@ import { VueConstructor } from 'vue'
  */
 function mergeData(from: AnyObject, to: AnyObject): Object {
   if (!from) return to
+  if (!to) return from
+
   let key: any
   let toVal: any
   let fromVal: any
@@ -56,8 +58,8 @@ export function install(
   ) {
     return function mergedSetupFn(props: any, context: any) {
       return mergeData(
-        typeof parent === 'function' ? parent(props, context) || {} : {},
-        typeof child === 'function' ? child(props, context) || {} : {}
+        typeof parent === 'function' ? parent(props, context) || {} : undefined,
+        typeof child === 'function' ? child(props, context) || {} : undefined
       )
     }
   }

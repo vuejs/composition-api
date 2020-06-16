@@ -719,4 +719,16 @@ describe('setup', () => {
       expect(context).toBe(vm)
     })
   })
+
+  it('should work after extending with an undefined setup', () => {
+    const opts = {
+      setup() {
+        return () => h('div', 'Composition-api')
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('Composition-api')
+  })
 })
