@@ -467,105 +467,161 @@ describe('setup', () => {
       .then(done)
   })
 
-  it('should unwrap on the template', () => {
-    const vm = new Vue({
-      setup() {
-        const r = ref('r')
-        const nested = {
-          a: ref('a'),
-          aa: {
-            b: ref('aa'),
-            bb: {
-              cc: ref('aa'),
-              c: 'aa',
-            },
-          },
+  describe('setup unwrap', () => {
+    test('ref', () => {
+      const vm = new Vue({
+        setup() {
+          const r = ref('r')
 
-          aaa: reactive({
-            b: ref('aaa'),
-            bb: {
-              c: ref('aaa'),
-              cc: 'aaa',
-            },
-          }),
+          const refList = ref([ref('1'), ref('2'), ref('3')])
+          const list = [ref('a'), ref('b')]
 
-          aaaa: {
-            b: [1],
-            bb: ref([1]),
-            bbb: reactive({
-              c: [1],
-              cc: ref([1]),
+          return {
+            r,
+            refList,
+            list,
+          }
+        },
+        template: `<div>
+          <p id="r">{{r}}</p>
+          <p id="list">{{list}}</p>
+          <p id="refList">{{refList}}</p>
+        </div>`,
+      }).$mount()
+
+      expect(vm.$el.querySelector('#r').textContent).toBe('r')
+
+      // shouldn't unwrap arrays
+      expect(
+        JSON.parse(vm.$el.querySelector('#list').textContent)
+      ).toMatchObject([{ value: 'a' }, { value: 'b' }])
+      expect(
+        JSON.parse(vm.$el.querySelector('#refList').textContent)
+      ).toMatchObject([{ value: '1' }, { value: '2' }, { value: '3' }])
+    })
+
+    test('nested', () => {
+      const vm = new Vue({
+        setup() {
+          const nested = {
+            a: ref('a'),
+            aa: {
+              b: ref('aa'),
+              bb: {
+                cc: ref('aa'),
+                c: 'aa',
+              },
+            },
+
+            aaa: reactive({
+              b: ref('aaa'),
+              bb: {
+                c: ref('aaa'),
+                cc: 'aaa',
+              },
             }),
-            bbbb: [ref(1)],
-          },
-        }
 
-        const refList = ref([ref('1'), ref('2'), ref('3')])
-        const list = [ref('a'), ref('b')]
+            aaaa: {
+              b: [1],
+              bb: ref([1]),
+              bbb: reactive({
+                c: [1],
+                cc: ref([1]),
+              }),
+              bbbb: [ref(1)],
+            },
+          }
 
-        return {
-          r,
-          nested,
-          refList,
-          list,
-        }
-      },
-      template: `<div>
-        <p id="r">{{r}}</p>
-        <p id="nested">{{nested.a}}</p>
-        <p id="list">{{list}}</p>
-        <p id="refList">{{refList}}</p>
+          return {
+            nested,
+          }
+        },
+        template: `<div>
+          <p id="nested">{{nested.a}}</p>
+  
+          <p id="nested_aa_b">{{ nested.aa.b }}</p>
+          <p id="nested_aa_bb_c">{{ nested.aa.bb.c }}</p>
+          <p id="nested_aa_bb_cc">{{ nested.aa.bb.cc }}</p>
+  
+          <p id="nested_aaa_b">{{ nested.aaa.b }}</p>
+          <p id="nested_aaa_bb_c">{{ nested.aaa.bb.c }}</p>
+          <p id="nested_aaa_bb_cc">{{ nested.aaa.bb.cc }}</p>
+  
+          <p id="nested_aaaa_b">{{ nested.aaaa.b }}</p>
+          <p id="nested_aaaa_bb_c">{{ nested.aaaa.bb }}</p>
+          <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.c }}</p>
+          <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.cc }}</p>
+          <p id="nested_aaaa_bbbb">{{ nested.aaaa.bbbb }}</p>
+        </div>`,
+      }).$mount()
 
-        <p id="nested_aa_b">{{ nested.aa.b }}</p>
-        <p id="nested_aa_bb_c">{{ nested.aa.bb.c }}</p>
-        <p id="nested_aa_bb_cc">{{ nested.aa.bb.cc }}</p>
+      expect(vm.$el.querySelector('#nested').textContent).toBe('a')
 
-        <p id="nested_aaa_b">{{ nested.aaa.b }}</p>
-        <p id="nested_aaa_bb_c">{{ nested.aaa.bb.c }}</p>
-        <p id="nested_aaa_bb_cc">{{ nested.aaa.bb.cc }}</p>
+      expect(vm.$el.querySelector('#nested_aa_b').textContent).toBe('aa')
+      expect(vm.$el.querySelector('#nested_aa_bb_c').textContent).toBe('aa')
+      expect(vm.$el.querySelector('#nested_aa_bb_cc').textContent).toBe('aa')
 
-        <p id="nested_aaaa_b">{{ nested.aaaa.b }}</p>
-        <p id="nested_aaaa_bb_c">{{ nested.aaaa.bb }}</p>
-        <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.c }}</p>
-        <p id="nested_aaaa_bbb_cc">{{ nested.aaaa.bbb.cc }}</p>
-        <p id="nested_aaaa_bbbb">{{ nested.aaaa.bbbb }}</p>
-      </div>`,
-    }).$mount()
+      expect(vm.$el.querySelector('#nested_aaa_b').textContent).toBe('aaa')
+      expect(vm.$el.querySelector('#nested_aaa_bb_c').textContent).toBe('aaa')
+      expect(vm.$el.querySelector('#nested_aaa_bb_cc').textContent).toBe('aaa')
+    })
 
-    expect(vm.$el.querySelector('#r').textContent).toBe('r')
-    expect(vm.$el.querySelector('#nested').textContent).toBe('a')
+    it('recursive', () => {
+      const vm = new Vue({
+        setup() {
+          const b = {
+            c: 'c',
+          }
 
-    // shouldn't unwrap arrays
-    expect(
-      JSON.parse(vm.$el.querySelector('#list').textContent)
-    ).toMatchObject([{ value: 'a' }, { value: 'b' }])
-    expect(
-      JSON.parse(vm.$el.querySelector('#refList').textContent)
-    ).toMatchObject([{ value: '1' }, { value: '2' }, { value: '3' }])
+          const recursive = {
+            a: {
+              a: 'a',
+              b,
+            },
+          }
 
-    expect(vm.$el.querySelector('#nested_aa_b').textContent).toBe('aa')
-    expect(vm.$el.querySelector('#nested_aa_bb_c').textContent).toBe('aa')
-    expect(vm.$el.querySelector('#nested_aa_bb_cc').textContent).toBe('aa')
+          b.recursive = recursive
+          b.r = ref('r')
 
-    expect(vm.$el.querySelector('#nested_aaa_b').textContent).toBe('aaa')
-    expect(vm.$el.querySelector('#nested_aaa_bb_c').textContent).toBe('aaa')
-    expect(vm.$el.querySelector('#nested_aaa_bb_cc').textContent).toBe('aaa')
+          return {
+            recursive,
+          }
+        },
+        template: `<div>
+          <p id="recursive_a">{{recursive.a.a}}</p>
+          <p id="recursive_b_c">{{recursive.a.b.c}}</p>
+          <p id="recursive_b_r">{{recursive.a.b.r}}</p>
 
-    expect(
-      JSON.parse(vm.$el.querySelector('#nested_aaaa_b').textContent)
-    ).toMatchObject([1])
-    expect(
-      JSON.parse(vm.$el.querySelector('#nested_aaaa_bb_c').textContent)
-    ).toMatchObject([1])
-    expect(
-      JSON.parse(vm.$el.querySelector('#nested_aaaa_bbb_cc').textContent)
-    ).toMatchObject([1])
-    expect(
-      JSON.parse(vm.$el.querySelector('#nested_aaaa_bbb_cc').textContent)
-    ).toMatchObject([1])
-    expect(
-      JSON.parse(vm.$el.querySelector('#nested_aaaa_bbbb').textContent)
-    ).toMatchObject([{ value: 1 }])
+          <p id="recursive_b_recursive_a">{{recursive.a.b.recursive.a.a}}</p>
+          <p id="recursive_b_recursive_c">{{recursive.a.b.recursive.a.b.c}}</p>
+          <p id="recursive_b_recursive_r">{{recursive.a.b.recursive.a.b.r}}</p>
+          
+          <p id="recursive_b_recursive_recursive_c">{{recursive.a.b.recursive.a.b.recursive.a.b.c}}</p>
+          <p id="recursive_b_recursive_recursive_r">{{recursive.a.b.recursive.a.b.recursive.a.b.r}}</p>
+        </div>`,
+      }).$mount()
+      expect(vm.$el.querySelector('#recursive_a').textContent).toBe('a')
+      expect(vm.$el.querySelector('#recursive_b_c').textContent).toBe('c')
+      expect(vm.$el.querySelector('#recursive_b_r').textContent).toBe('r')
+
+      expect(vm.$el.querySelector('#recursive_b_recursive_a').textContent).toBe(
+        'a'
+      )
+      expect(vm.$el.querySelector('#recursive_b_recursive_c').textContent).toBe(
+        'c'
+      )
+      expect(vm.$el.querySelector('#recursive_b_recursive_r').textContent).toBe(
+        'r'
+      )
+
+      expect(
+        vm.$el.querySelector('#recursive_b_recursive_recursive_c').textContent
+      ).toBe('c')
+
+      expect(
+        vm.$el.querySelector('#recursive_b_recursive_recursive_r').textContent
+      ).toBe('r')
+    })
   })
 
   it('should not unwrap built-in objects on the template', () => {
