@@ -83,6 +83,19 @@ describe('setup', () => {
     expect(vm.b).toBe(1)
   })
 
+  // #385
+  it('should unwrapRef on data', () => {
+    const vm = new Vue({
+      data() {
+        return {
+          a: ref(1),
+        }
+      },
+      setup() {},
+    }).$mount()
+    expect(vm.a).toBe(1)
+  })
+
   it('should work with `methods` and `data` options', (done) => {
     let calls = 0
     const vm = new Vue({
