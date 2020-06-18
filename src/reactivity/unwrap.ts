@@ -29,8 +29,8 @@ export function unwrapRefProxy(value: any, map = new WeakMap()) {
 
   for (const k of Object.keys(value)) {
     const r = value[k]
-    // don't unwrap or do anything to raw
-    if (isRaw(r)) {
+    // don't process on falsy or raw
+    if (!r || isRaw(r)) {
       obj[k] = r
     }
     // if is a ref, create a proxy to retrieve the value,
