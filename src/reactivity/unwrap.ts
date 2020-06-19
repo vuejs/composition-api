@@ -1,6 +1,6 @@
 import { isRef } from './ref'
 import { proxy, isFunction, isPlainObject, isArray } from '../utils'
-import { isReactive } from './reactive'
+import { isReactive, isRaw } from './reactive'
 
 export function unwrapRefProxy(value: any, map = new WeakMap()) {
   if (map.has(value)) {
@@ -13,7 +13,8 @@ export function unwrapRefProxy(value: any, map = new WeakMap()) {
     isReactive(value) ||
     !isPlainObject(value) ||
     !Object.isExtensible(value) ||
-    isRef(value)
+    isRef(value) ||
+    isRaw(value)
   ) {
     return value
   }
@@ -28,8 +29,12 @@ export function unwrapRefProxy(value: any, map = new WeakMap()) {
 
   for (const k of Object.keys(value)) {
     const r = value[k]
+    // don't process on falsy or raw
+    if (!r || isRaw(r)) {
+      obj[k] = r
+    }
     // if is a ref, create a proxy to retrieve the value,
-    if (isRef(r)) {
+    else if (isRef(r)) {
       const set = (v: any) => (r.value = v)
       const get = () => r.value
 

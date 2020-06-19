@@ -7,6 +7,7 @@ const {
   inject,
   reactive,
   toRefs,
+  markRaw,
 } = require('../src')
 
 describe('setup', () => {
@@ -621,6 +622,30 @@ describe('setup', () => {
       expect(
         vm.$el.querySelector('#recursive_b_recursive_recursive_r').textContent
       ).toBe('r')
+    })
+
+    // #384
+    it('not unwrap when is raw', () => {
+      const vm = new Vue({
+        setup() {
+          const xx = {
+            ref: ref('r'),
+          }
+          const r = markRaw(xx)
+          return {
+            r,
+          }
+        },
+        template: `<div>
+          <p id="r">{{r}}</p>
+        </div>`,
+      }).$mount()
+
+      expect(JSON.parse(vm.$el.querySelector('#r').textContent)).toMatchObject({
+        ref: {
+          value: 'r',
+        },
+      })
     })
   })
 
