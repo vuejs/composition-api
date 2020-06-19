@@ -232,8 +232,9 @@ function createWatcher(
   if (cb === null) {
     let running = false
     const getter = () => {
+      // preventing the watch callback being call in the same execution
       if (running) {
-        return // already running
+        return
       }
       try {
         running = true
