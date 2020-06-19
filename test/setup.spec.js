@@ -84,6 +84,19 @@ describe('setup', () => {
     expect(vm.b).toBe(1)
   })
 
+  // #385
+  it('should unwrapRef on data', () => {
+    const vm = new Vue({
+      data() {
+        return {
+          a: ref(1),
+        }
+      },
+      setup() {},
+    }).$mount()
+    expect(vm.a).toBe(1)
+  })
+
   it('should work with `methods` and `data` options', (done) => {
     let calls = 0
     const vm = new Vue({
@@ -755,5 +768,38 @@ describe('setup', () => {
 
     const vm = new Vue(Constructor).$mount()
     expect(vm.$el.textContent).toBe('Composition-api')
+  })
+
+  it('should keep data reactive', async () => {
+    const vm = new Vue({
+      template: `<div>
+        <button id="a" @click="a++">{{a}}</button>
+        <button id="b" @click="b++">{{b}}</button>
+      </div>`,
+      data() {
+        return {
+          a: 1,
+          b: ref(1),
+        }
+      },
+    }).$mount()
+
+    const a = vm.$el.querySelector('#a')
+    const b = vm.$el.querySelector('#b')
+
+    expect(a.textContent).toBe('1')
+    expect(b.textContent).toBe('1')
+
+    a.click()
+    await Vue.nextTick()
+
+    expect(a.textContent).toBe('2')
+    expect(b.textContent).toBe('1')
+
+    b.click()
+    await Vue.nextTick()
+
+    expect(a.textContent).toBe('2')
+    expect(b.textContent).toBe('2')
   })
 })
