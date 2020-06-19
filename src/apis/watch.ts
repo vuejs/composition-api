@@ -230,7 +230,19 @@ function createWatcher(
 
   // effect watch
   if (cb === null) {
-    const getter = () => (source as WatchEffect)(registerCleanup)
+    let running = false
+    const getter = () => {
+      // preventing the watch callback being call in the same execution
+      if (running) {
+        return
+      }
+      try {
+        running = true
+        ;(source as WatchEffect)(registerCleanup)
+      } finally {
+        running = false
+      }
+    }
     const watcher = createVueWatcher(vm, getter, noopFn, {
       deep: options.deep || false,
       sync: isSync,

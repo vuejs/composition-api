@@ -514,4 +514,22 @@ describe('api: watch', () => {
   //   expect(spy).toHaveBeenCalledTimes(1);
   //   expect(warnSpy).toHaveBeenCalledWith(`"deep" option is only respected`);
   // });
+
+
+  // #388
+  it('should not call the callback multiple times', () => {
+    const data = ref([1, 1, 1, 1, 1])
+    const data2 = ref<number[]>([])
+
+    watchEffect(
+      () => {
+        data2.value = data.value.slice(1, 2)
+      },
+      {
+        flush: 'sync',
+      }
+    )
+
+    expect(data2.value).toMatchObject([1])
+  })
 })
