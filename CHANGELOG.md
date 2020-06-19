@@ -1,3 +1,15 @@
+<a name="0.6.5"></a>
+## [0.6.5](https://github.com/vuejs/composition-api/compare/v0.6.4...v0.6.5) (2020-06-19)
+
+
+### Bug Fixes
+
+* **watchEffect:** prevent recursive calls when using `flush:sync` ([#389](https://github.com/vuejs/composition-api/issues/389)) ([f7f1e77](https://github.com/vuejs/composition-api/commit/f7f1e77))
+* not unwrapping `markRaw` objects ([#386](https://github.com/vuejs/composition-api/issues/386)) ([575d100](https://github.com/vuejs/composition-api/commit/575d100))
+* unwrap refs returned by `data` ([#387](https://github.com/vuejs/composition-api/issues/387)) ([1f07075](https://github.com/vuejs/composition-api/commit/1f07075))
+
+
+
 <a name="0.6.4"></a>
 ## [0.6.4](https://github.com/vuejs/composition-api/compare/v0.6.3...v0.6.4) (2020-06-16)
 
