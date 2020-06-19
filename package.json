@@ -27,7 +27,7 @@
   "scripts": {
     "start": "concurrently \"tsc --emitDeclarationOnly -w\" \"cross-env TARGET=es rollup -c -w\"",
     "build": "rimraf dist typings && tsc --emitDeclarationOnly && rollup -c",
-    "lint": "prettier --write --parser typescript \"{src,test,test-dts}/*.ts?(x)\" && prettier --write \"{src,test}/*.js\"",
+    "lint": "prettier --write --parser typescript \"{src,test,test-dts}/**/*.ts?(x)\" && prettier --write \"{src,test}/**/*.js\"",
     "test": "yarn test-dts && yarn test-unit",
     "test-unit": "cross-env NODE_ENV=test jest",
     "test-dts": "tsc -p ./test-dts/tsconfig.json && yarn build && tsc -p ./test-dts/tsconfig.build.json",

@@ -1,4 +1,11 @@
-export { reactive, isReactive, markRaw, shallowReactive, toRaw, isRaw } from './reactive';
+export {
+  reactive,
+  isReactive,
+  markRaw,
+  shallowReactive,
+  toRaw,
+  isRaw,
+} from './reactive'
 export {
   ref,
   isRef,
@@ -10,5 +17,5 @@ export {
   unref,
   shallowRef,
   triggerRef,
-} from './ref';
-export { set } from './set';
+} from './ref'
+export { set } from './set'

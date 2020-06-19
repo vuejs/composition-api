@@ -1,75 +1,75 @@
-import { ComponentInstance } from '../component';
-import { Ref, isRef, isReactive } from '../reactivity';
-import { assert, logError, noopFn, warn, isFunction } from '../utils';
-import { defineComponentInstance } from '../helper';
-import { getCurrentVM, getCurrentVue } from '../runtimeContext';
-import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols';
-import { ComputedRef } from './computed';
+import { ComponentInstance } from '../component'
+import { Ref, isRef, isReactive } from '../reactivity'
+import { assert, logError, noopFn, warn, isFunction } from '../utils'
+import { defineComponentInstance } from '../helper'
+import { getCurrentVM, getCurrentVue } from '../runtimeContext'
+import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols'
+import { ComputedRef } from './computed'
 
-export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void;
+export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
 
-export type WatchSource<T = any> = Ref<T> | ComputedRef<T> | (() => T);
+export type WatchSource<T = any> = Ref<T> | ComputedRef<T> | (() => T)
 
 export type WatchCallback<V = any, OV = any> = (
   value: V,
   oldValue: OV,
   onInvalidate: InvalidateCbRegistrator
-) => any;
+) => any
 
 type MapSources<T> = {
-  [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never;
-};
+  [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never
+}
 
 type MapOldSources<T, Immediate> = {
   [K in keyof T]: T[K] extends WatchSource<infer V>
     ? Immediate extends true
       ? V | undefined
       : V
-    : never;
-};
+    : never
+}
 
 export interface WatchOptionsBase {
-  flush?: FlushMode;
+  flush?: FlushMode
   // onTrack?: ReactiveEffectOptions['onTrack'];
   // onTrigger?: ReactiveEffectOptions['onTrigger'];
 }
 
-type InvalidateCbRegistrator = (cb: () => void) => void;
+type InvalidateCbRegistrator = (cb: () => void) => void
 
-export type FlushMode = 'pre' | 'post' | 'sync';
+export type FlushMode = 'pre' | 'post' | 'sync'
 
 export interface WatchOptions<Immediate = boolean> extends WatchOptionsBase {
-  immediate?: Immediate;
-  deep?: boolean;
+  immediate?: Immediate
+  deep?: boolean
 }
 
 export interface VueWatcher {
-  lazy: boolean;
-  get(): any;
-  teardown(): void;
+  lazy: boolean
+  get(): any
+  teardown(): void
 }
 
-export type WatchStopHandle = () => void;
+export type WatchStopHandle = () => void
 
-let fallbackVM: ComponentInstance;
+let fallbackVM: ComponentInstance
 
 function flushPreQueue(this: any) {
-  flushQueue(this, WatcherPreFlushQueueKey);
+  flushQueue(this, WatcherPreFlushQueueKey)
 }
 
 function flushPostQueue(this: any) {
-  flushQueue(this, WatcherPostFlushQueueKey);
+  flushQueue(this, WatcherPostFlushQueueKey)
 }
 
 function hasWatchEnv(vm: any) {
-  return vm[WatcherPreFlushQueueKey] !== undefined;
+  return vm[WatcherPreFlushQueueKey] !== undefined
 }
 
 function installWatchEnv(vm: any) {
-  vm[WatcherPreFlushQueueKey] = [];
-  vm[WatcherPostFlushQueueKey] = [];
-  vm.$on('hook:beforeUpdate', flushPreQueue);
-  vm.$on('hook:updated', flushPostQueue);
+  vm[WatcherPreFlushQueueKey] = []
+  vm[WatcherPostFlushQueueKey] = []
+  vm.$on('hook:beforeUpdate', flushPreQueue)
+  vm.$on('hook:updated', flushPostQueue)
 }
 
 function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
@@ -80,7 +80,7 @@ function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
       flush: 'post',
     },
     ...options,
-  };
+  }
 }
 
 function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
@@ -91,55 +91,62 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
       flush: 'post',
     },
     ...options,
-  };
+  }
 }
 
 function getWatcherVM() {
-  let vm = getCurrentVM();
+  let vm = getCurrentVM()
   if (!vm) {
     if (!fallbackVM) {
-      fallbackVM = defineComponentInstance(getCurrentVue());
+      fallbackVM = defineComponentInstance(getCurrentVue())
     }
-    vm = fallbackVM;
+    vm = fallbackVM
   } else if (!hasWatchEnv(vm)) {
-    installWatchEnv(vm);
+    installWatchEnv(vm)
   }
-  return vm;
+  return vm
 }
 
 function flushQueue(vm: any, key: any) {
-  const queue = vm[key];
+  const queue = vm[key]
   for (let index = 0; index < queue.length; index++) {
-    queue[index]();
+    queue[index]()
   }
-  queue.length = 0;
+  queue.length = 0
 }
 
-function queueFlushJob(vm: any, fn: () => void, mode: Exclude<FlushMode, 'sync'>) {
+function queueFlushJob(
+  vm: any,
+  fn: () => void,
+  mode: Exclude<FlushMode, 'sync'>
+) {
   // flush all when beforeUpdate and updated are not fired
   const fallbackFlush = () => {
     vm.$nextTick(() => {
       if (vm[WatcherPreFlushQueueKey].length) {
-        flushQueue(vm, WatcherPreFlushQueueKey);
+        flushQueue(vm, WatcherPreFlushQueueKey)
       }
       if (vm[WatcherPostFlushQueueKey].length) {
-        flushQueue(vm, WatcherPostFlushQueueKey);
+        flushQueue(vm, WatcherPostFlushQueueKey)
       }
-    });
-  };
+    })
+  }
 
   switch (mode) {
     case 'pre':
-      fallbackFlush();
-      vm[WatcherPreFlushQueueKey].push(fn);
-      break;
+      fallbackFlush()
+      vm[WatcherPreFlushQueueKey].push(fn)
+      break
     case 'post':
-      fallbackFlush();
-      vm[WatcherPostFlushQueueKey].push(fn);
-      break;
+      fallbackFlush()
+      vm[WatcherPostFlushQueueKey].push(fn)
+      break
     default:
-      assert(false, `flush must be one of ["post", "pre", "sync"], but got ${mode}`);
-      break;
+      assert(
+        false,
+        `flush must be one of ["post", "pre", "sync"], but got ${mode}`
+      )
+      break
   }
 }
 
@@ -148,14 +155,14 @@ function createVueWatcher(
   getter: () => any,
   callback: (n: any, o: any) => any,
   options: {
-    deep: boolean;
-    sync: boolean;
-    immediateInvokeCallback?: boolean;
-    noRun?: boolean;
-    before?: () => void;
+    deep: boolean
+    sync: boolean
+    immediateInvokeCallback?: boolean
+    noRun?: boolean
+    before?: () => void
   }
 ): VueWatcher {
-  const index = vm._watchers.length;
+  const index = vm._watchers.length
   // @ts-ignore: use undocumented options
   vm.$watch(getter, callback, {
     immediate: options.immediateInvokeCallback,
@@ -163,19 +170,19 @@ function createVueWatcher(
     lazy: options.noRun,
     sync: options.sync,
     before: options.before,
-  });
+  })
 
-  return vm._watchers[index];
+  return vm._watchers[index]
 }
 
 // We have to monkeypatch the teardown function so Vue will run
 // runCleanup() when it tears down the watcher on unmmount.
 function patchWatcherTeardown(watcher: VueWatcher, runCleanup: () => void) {
-  const _teardown = watcher.teardown;
+  const _teardown = watcher.teardown
   watcher.teardown = function (...args) {
-    _teardown.apply(watcher, args);
-    runCleanup();
-  };
+    _teardown.apply(watcher, args)
+    runCleanup()
+  }
 }
 
 function createWatcher(
@@ -184,100 +191,104 @@ function createWatcher(
   cb: WatchCallback<any> | null,
   options: WatchOptions
 ): () => void {
-  const flushMode = options.flush;
-  const isSync = flushMode === 'sync';
-  let cleanup: (() => void) | null;
+  const flushMode = options.flush
+  const isSync = flushMode === 'sync'
+  let cleanup: (() => void) | null
   const registerCleanup: InvalidateCbRegistrator = (fn: () => void) => {
     cleanup = () => {
       try {
-        fn();
+        fn()
       } catch (error) {
-        logError(error, vm, 'onCleanup()');
+        logError(error, vm, 'onCleanup()')
       }
-    };
-  };
+    }
+  }
   // cleanup before running getter again
   const runCleanup = () => {
     if (cleanup) {
-      cleanup();
-      cleanup = null;
+      cleanup()
+      cleanup = null
     }
-  };
+  }
   const createScheduler = <T extends Function>(fn: T): T => {
-    if (isSync || /* without a current active instance, ignore pre|post mode */ vm === fallbackVM) {
-      return fn;
+    if (
+      isSync ||
+      /* without a current active instance, ignore pre|post mode */ vm ===
+        fallbackVM
+    ) {
+      return fn
     }
     return (((...args: any[]) =>
       queueFlushJob(
         vm,
         () => {
-          fn(...args);
+          fn(...args)
         },
         flushMode as 'pre' | 'post'
-      )) as any) as T;
-  };
+      )) as any) as T
+  }
 
   // effect watch
   if (cb === null) {
-    const getter = () => (source as WatchEffect)(registerCleanup);
+    const getter = () => (source as WatchEffect)(registerCleanup)
     const watcher = createVueWatcher(vm, getter, noopFn, {
       deep: options.deep || false,
       sync: isSync,
       before: runCleanup,
-    });
+    })
 
-    patchWatcherTeardown(watcher, runCleanup);
+    patchWatcherTeardown(watcher, runCleanup)
 
     // enable the watcher update
-    watcher.lazy = false;
-    const originGet = watcher.get.bind(watcher);
+    watcher.lazy = false
+    const originGet = watcher.get.bind(watcher)
 
     // always run watchEffect
-    watcher.get = createScheduler(originGet);
+    watcher.get = createScheduler(originGet)
 
     return () => {
-      watcher.teardown();
-    };
+      watcher.teardown()
+    }
   }
 
-  let deep = options.deep;
+  let deep = options.deep
 
-  let getter: () => any;
+  let getter: () => any
   if (Array.isArray(source)) {
-    getter = () => source.map((s) => (isRef(s) ? s.value : s()));
+    getter = () => source.map((s) => (isRef(s) ? s.value : s()))
   } else if (isRef(source)) {
-    getter = () => source.value;
+    getter = () => source.value
   } else if (isReactive(source)) {
-    getter = () => source;
-    deep = true;
+    getter = () => source
+    deep = true
   } else if (isFunction(source)) {
-    getter = source as () => any;
+    getter = source as () => any
   } else {
-    getter = noopFn;
+    getter = noopFn
     warn(
       `Invalid watch source: ${JSON.stringify(source)}.
       A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
       vm
-    );
+    )
   }
 
   const applyCb = (n: any, o: any) => {
     // cleanup before running cb again
-    runCleanup();
-    cb(n, o, registerCleanup);
-  };
-  let callback = createScheduler(applyCb);
+    runCleanup()
+    cb(n, o, registerCleanup)
+  }
+  let callback = createScheduler(applyCb)
   if (options.immediate) {
-    const originalCallbck = callback;
+    const originalCallbck = callback
     // `shiftCallback` is used to handle the first sync effect run.
     // The subsequent callbacks will redirect to `callback`.
     let shiftCallback = (n: any, o: any) => {
-      shiftCallback = originalCallbck;
-      applyCb(n, o);
-    };
+      shiftCallback = originalCallbck
+      applyCb(n, o)
+    }
     callback = (n: any, o: any) => {
-      shiftCallback(n, o);
-    };
+      shiftCallback(n, o)
+    }
   }
 
   // @ts-ignore: use undocumented option "sync"
@@ -285,21 +296,24 @@ function createWatcher(
     immediate: options.immediate,
     deep: deep,
     sync: isSync,
-  });
+  })
 
   // Once again, we have to hack the watcher for proper teardown
-  const watcher = vm._watchers[vm._watchers.length - 1];
-  patchWatcherTeardown(watcher, runCleanup);
+  const watcher = vm._watchers[vm._watchers.length - 1]
+  patchWatcherTeardown(watcher, runCleanup)
 
   return () => {
-    stop();
-  };
+    stop()
+  }
 }
 
-export function watchEffect(effect: WatchEffect, options?: WatchOptionsBase): WatchStopHandle {
-  const opts = getWatchEffectOption(options);
-  const vm = getWatcherVM();
-  return createWatcher(vm, effect, null, opts);
+export function watchEffect(
+  effect: WatchEffect,
+  options?: WatchOptionsBase
+): WatchStopHandle {
+  const opts = getWatchEffectOption(options)
+  const vm = getWatcherVM()
+  return createWatcher(vm, effect, null, opts)
 }
 
 // overload #1: array of multiple sources + cb
@@ -313,21 +327,24 @@ export function watch<
   sources: T,
   cb: WatchCallback<MapSources<T>, MapOldSources<T, Immediate>>,
   options?: WatchOptions<Immediate>
-): WatchStopHandle;
+): WatchStopHandle
 
 // overload #2: single source + cb
 export function watch<T, Immediate extends Readonly<boolean> = false>(
   source: WatchSource<T>,
   cb: WatchCallback<T, Immediate extends true ? T | undefined : T>,
   options?: WatchOptions<Immediate>
-): WatchStopHandle;
+): WatchStopHandle
 
 // overload #3: watching reactive object w/ cb
-export function watch<T extends object, Immediate extends Readonly<boolean> = false>(
+export function watch<
+  T extends object,
+  Immediate extends Readonly<boolean> = false
+>(
   source: T,
   cb: WatchCallback<T, Immediate extends true ? T | undefined : T>,
   options?: WatchOptions<Immediate>
-): WatchStopHandle;
+): WatchStopHandle
 
 // implementation
 export function watch<T = any>(
@@ -335,10 +352,10 @@ export function watch<T = any>(
   cb: WatchCallback<T>,
   options?: WatchOptions
 ): WatchStopHandle {
-  let callback: WatchCallback<unknown> | null = null;
+  let callback: WatchCallback<unknown> | null = null
   if (typeof cb === 'function') {
     // source watch
-    callback = cb as WatchCallback<unknown>;
+    callback = cb as WatchCallback<unknown>
   } else {
     // effect watch
     if (__DEV__) {
@@ -346,14 +363,14 @@ export function watch<T = any>(
         `\`watch(fn, options?)\` signature has been moved to a separate API. ` +
           `Use \`watchEffect(fn, options?)\` instead. \`watch\` now only ` +
           `supports \`watch(source, cb, options?) signature.`
-      );
+      )
     }
-    options = cb as Partial<WatchOptions>;
-    callback = null;
+    options = cb as Partial<WatchOptions>
+    callback = null
   }
 
-  const opts = getWatcherOption(options);
-  const vm = getWatcherVM();
+  const opts = getWatcherOption(options)
+  const vm = getWatcherVM()
 
-  return createWatcher(vm, source, callback, opts);
+  return createWatcher(vm, source, callback, opts)
 }

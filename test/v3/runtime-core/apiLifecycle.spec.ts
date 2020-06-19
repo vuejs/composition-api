@@ -1,5 +1,5 @@
-import { VueConstructor } from 'vue';
-const Vue = require('vue/dist/vue.common.js') as VueConstructor;
+import { VueConstructor } from 'vue'
+const Vue = require('vue/dist/vue.common.js') as VueConstructor
 import {
   onBeforeMount,
   onMounted,
@@ -9,91 +9,91 @@ import {
   onUpdated,
   onBeforeUnmount,
   onUnmounted,
-} from '../../../src';
-import { nextTick } from '../../helpers/utils';
+} from '../../../src'
+import { nextTick } from '../../helpers/utils'
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#lifecycle-hooks
 
 describe('api: lifecycle hooks', () => {
   it('onBeforeMount', () => {
-    const root = document.createElement('div');
+    const root = document.createElement('div')
     const fn = jest.fn(() => {
       // should be called before inner div is rendered
-      expect(root.innerHTML).toBe(``);
-    });
+      expect(root.innerHTML).toBe(``)
+    })
 
     const Comp = {
       setup() {
-        onBeforeMount(fn);
-        return () => h('div');
+        onBeforeMount(fn)
+        return () => h('div')
       },
-    };
-    new Vue(Comp).$mount(root);
+    }
+    new Vue(Comp).$mount(root)
     //render(h(Comp), root);
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 
   it('onMounted', () => {
-    const root = document.createElement('div');
+    const root = document.createElement('div')
     const fn = jest.fn(() => {
       // should be called after inner div is rendered
-      expect(root.outerHTML).toBe(`<div></div>`);
-    });
+      expect(root.outerHTML).toBe(`<div></div>`)
+    })
 
     const Comp = {
       setup() {
-        onMounted(fn);
-        return () => h('div');
+        onMounted(fn)
+        return () => h('div')
       },
-    };
-    new Vue(Comp).$mount(root);
+    }
+    new Vue(Comp).$mount(root)
     //render(h(Comp), root);
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 
   it('onBeforeUpdate', async () => {
-    const count = ref(0);
+    const count = ref(0)
     // const root = document.createElement('div');
     const fn = jest.fn(() => {
       // should be called before inner div is updated
-      expect(vm.$el.outerHTML).toBe(`<div>0</div>`);
-    });
+      expect(vm.$el.outerHTML).toBe(`<div>0</div>`)
+    })
 
     const Comp = {
       setup() {
-        onBeforeUpdate(fn);
-        return () => h('div', (count.value as unknown) as string);
+        onBeforeUpdate(fn)
+        return () => h('div', (count.value as unknown) as string)
       },
-    };
-    const vm = new Vue(Comp).$mount();
+    }
+    const vm = new Vue(Comp).$mount()
     //render(h(Comp), root);
 
-    count.value = 1;
-    await nextTick();
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
+    count.value = 1
+    await nextTick()
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 
   it('onUpdated', async () => {
-    const count = ref(0);
+    const count = ref(0)
     // const root = document.createElement('div');
     const fn = jest.fn(() => {
       // should be called after inner div is updated
-      expect(vm.$el.outerHTML).toBe(`<div>1</div>`);
-    });
+      expect(vm.$el.outerHTML).toBe(`<div>1</div>`)
+    })
 
     const Comp = {
       setup() {
-        onUpdated(fn);
-        return () => h('div', (count.value as unknown) as string);
+        onUpdated(fn)
+        return () => h('div', (count.value as unknown) as string)
       },
-    };
-    const vm = new Vue(Comp).$mount();
+    }
+    const vm = new Vue(Comp).$mount()
     //render(h(Comp), root);
 
-    count.value++;
-    await nextTick();
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
+    count.value++
+    await nextTick()
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 
   // it('onBeforeUnmount', async () => {
   //   const toggle = ref(true);
@@ -154,85 +154,85 @@ describe('api: lifecycle hooks', () => {
   // });
 
   it('onBeforeUnmount in onMounted', async () => {
-    const toggle = ref(true);
-    const root = document.createElement('div');
+    const toggle = ref(true)
+    const root = document.createElement('div')
     const fn = jest.fn(() => {
       // should be called before inner div is removed
-      expect(root.outerHTML).toBe(`<div></div>`);
-    });
+      expect(root.outerHTML).toBe(`<div></div>`)
+    })
 
     const Comp = {
       setup() {
-        return () => (toggle.value ? h(Child) : null);
+        return () => (toggle.value ? h(Child) : null)
       },
-    };
+    }
 
     const Child = {
       setup() {
         onMounted(() => {
-          onBeforeUnmount(fn);
-        });
-        return () => h('div');
+          onBeforeUnmount(fn)
+        })
+        return () => h('div')
       },
-    };
+    }
 
-    new Vue(Comp).$mount(root);
+    new Vue(Comp).$mount(root)
     //render(h(Comp), root);
 
-    toggle.value = false;
-    await nextTick();
-    expect(fn).toHaveBeenCalledTimes(1);
-  });
+    toggle.value = false
+    await nextTick()
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 
   it('lifecycle call order', async () => {
-    const count = ref(0);
-    const calls: string[] = [];
+    const count = ref(0)
+    const calls: string[] = []
 
     const Root = {
       setup() {
-        onBeforeMount(() => calls.push('root onBeforeMount'));
-        onMounted(() => calls.push('root onMounted'));
-        onBeforeUpdate(() => calls.push('root onBeforeUpdate'));
-        onUpdated(() => calls.push('root onUpdated'));
-        onBeforeUnmount(() => calls.push('root onBeforeUnmount'));
-        onUnmounted(() => calls.push('root onUnmounted'));
-        return () => h(Mid, { props: { count: count.value } });
+        onBeforeMount(() => calls.push('root onBeforeMount'))
+        onMounted(() => calls.push('root onMounted'))
+        onBeforeUpdate(() => calls.push('root onBeforeUpdate'))
+        onUpdated(() => calls.push('root onUpdated'))
+        onBeforeUnmount(() => calls.push('root onBeforeUnmount'))
+        onUnmounted(() => calls.push('root onUnmounted'))
+        return () => h(Mid, { props: { count: count.value } })
       },
-    };
+    }
     const Mid = {
       props: {
         count: Number,
       },
       setup(props: any) {
-        onBeforeMount(() => calls.push('mid onBeforeMount'));
-        onMounted(() => calls.push('mid onMounted'));
-        onBeforeUpdate(() => calls.push('mid onBeforeUpdate'));
-        onUpdated(() => calls.push('mid onUpdated'));
-        onBeforeUnmount(() => calls.push('mid onBeforeUnmount'));
-        onUnmounted(() => calls.push('mid onUnmounted'));
-        return () => h(Child, { props: { count: props.count } });
+        onBeforeMount(() => calls.push('mid onBeforeMount'))
+        onMounted(() => calls.push('mid onMounted'))
+        onBeforeUpdate(() => calls.push('mid onBeforeUpdate'))
+        onUpdated(() => calls.push('mid onUpdated'))
+        onBeforeUnmount(() => calls.push('mid onBeforeUnmount'))
+        onUnmounted(() => calls.push('mid onUnmounted'))
+        return () => h(Child, { props: { count: props.count } })
       },
-    };
+    }
 
     const Child = {
       props: {
         count: Number,
       },
       setup(props: any) {
-        onBeforeMount(() => calls.push('child onBeforeMount'));
-        onMounted(() => calls.push('child onMounted'));
-        onBeforeUpdate(() => calls.push('child onBeforeUpdate'));
-        onUpdated(() => calls.push('child onUpdated'));
-        onBeforeUnmount(() => calls.push('child onBeforeUnmount'));
-        onUnmounted(() => calls.push('child onUnmounted'));
-        return () => h('div', props.count);
+        onBeforeMount(() => calls.push('child onBeforeMount'))
+        onMounted(() => calls.push('child onMounted'))
+        onBeforeUpdate(() => calls.push('child onBeforeUpdate'))
+        onUpdated(() => calls.push('child onUpdated'))
+        onBeforeUnmount(() => calls.push('child onBeforeUnmount'))
+        onUnmounted(() => calls.push('child onUnmounted'))
+        return () => h('div', props.count)
       },
-    };
+    }
 
     // mount
     // render(h(Root), root);
-    const vm = new Vue(Root);
-    vm.$mount();
+    const vm = new Vue(Root)
+    vm.$mount()
     expect(calls).toEqual([
       'root onBeforeMount',
       'mid onBeforeMount',
@@ -240,15 +240,15 @@ describe('api: lifecycle hooks', () => {
       'child onMounted',
       'mid onMounted',
       'root onMounted',
-    ]);
+    ])
 
-    calls.length = 0;
+    calls.length = 0
 
     // update
-    count.value++;
-    await nextTick();
-    await nextTick();
-    await nextTick();
+    count.value++
+    await nextTick()
+    await nextTick()
+    await nextTick()
     expect(calls).toEqual([
       'root onBeforeUpdate',
       'mid onBeforeUpdate',
@@ -256,13 +256,13 @@ describe('api: lifecycle hooks', () => {
       'child onUpdated',
       'mid onUpdated',
       'root onUpdated',
-    ]);
+    ])
 
-    calls.length = 0;
+    calls.length = 0
 
     // unmount
     // render(null, root);
-    vm.$destroy();
+    vm.$destroy()
     expect(calls).toEqual([
       'root onBeforeUnmount',
       'mid onBeforeUnmount',
@@ -270,8 +270,8 @@ describe('api: lifecycle hooks', () => {
       'child onUnmounted',
       'mid onUnmounted',
       'root onUnmounted',
-    ]);
-  });
+    ])
+  })
 
   // it('onRenderTracked', () => {
   //   const events: DebuggerEvent[] = [];
@@ -351,4 +351,4 @@ describe('api: lifecycle hooks', () => {
   //     newValue: 3,
   //   });
   // });
-});
+})
