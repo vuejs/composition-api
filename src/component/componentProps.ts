@@ -1,48 +1,53 @@
-import { Data } from './component';
+import { Data } from './component'
 
-export type ComponentPropsOptions<P = Data> = ComponentObjectPropsOptions<P> | string[];
+export type ComponentPropsOptions<P = Data> =
+  | ComponentObjectPropsOptions<P>
+  | string[]
 
 export type ComponentObjectPropsOptions<P = Data> = {
-  [K in keyof P]: Prop<P[K]> | null;
-};
-
-export type Prop<T> = PropOptions<T> | PropType<T>;
-
-type DefaultFactory<T> = () => T | null | undefined;
-
-export interface PropOptions<T = any> {
-  type?: PropType<T> | true | null;
-  required?: boolean;
-  default?: T | DefaultFactory<T> | null | undefined;
-  validator?(value: unknown): boolean;
+  [K in keyof P]: Prop<P[K]> | null
 }
 
-export type PropType<T> = PropConstructor<T> | PropConstructor<T>[];
+export type Prop<T> = PropOptions<T> | PropType<T>
+
+type DefaultFactory<T> = () => T | null | undefined
+
+export interface PropOptions<T = any> {
+  type?: PropType<T> | true | null
+  required?: boolean
+  default?: T | DefaultFactory<T> | null | undefined
+  validator?(value: unknown): boolean
+}
+
+export type PropType<T> = PropConstructor<T> | PropConstructor<T>[]
 
 type PropConstructor<T> =
   | { new (...args: any[]): T & object }
   | { (): T }
-  | { new (...args: string[]): Function };
+  | { new (...args: string[]): Function }
 
 type RequiredKeys<T, MakeDefaultRequired> = {
   [K in keyof T]: T[K] extends
     | { required: true }
     | (MakeDefaultRequired extends true ? { default: any } : never)
     ? K
-    : never;
-}[keyof T];
+    : never
+}[keyof T]
 
-type OptionalKeys<T, MakeDefaultRequired> = Exclude<keyof T, RequiredKeys<T, MakeDefaultRequired>>;
+type OptionalKeys<T, MakeDefaultRequired> = Exclude<
+  keyof T,
+  RequiredKeys<T, MakeDefaultRequired>
+>
 
 type ExtractFunctionPropType<
   T extends Function,
   TArgs extends Array<any> = any[],
   TResult = any
-> = T extends (...args: TArgs) => TResult ? T : never;
+> = T extends (...args: TArgs) => TResult ? T : never
 
 type ExtractCorrectPropType<T> = T extends Function
   ? ExtractFunctionPropType<T>
-  : Exclude<T, Function>;
+  : Exclude<T, Function>
 
 // prettier-ignore
 type InferPropType<T> = T extends null
@@ -56,7 +61,10 @@ type InferPropType<T> = T extends null
         : T extends Prop<infer V>
           ? ExtractCorrectPropType<V> : T;
 
-export type ExtractPropTypes<O, MakeDefaultRequired extends boolean = true> = O extends object
+export type ExtractPropTypes<
+  O,
+  MakeDefaultRequired extends boolean = true
+> = O extends object
   ? { [K in RequiredKeys<O, MakeDefaultRequired>]: InferPropType<O[K]> } &
       { [K in OptionalKeys<O, MakeDefaultRequired>]?: InferPropType<O[K]> }
-  : { [K in string]: any };
+  : { [K in string]: any }

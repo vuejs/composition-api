@@ -7,6 +7,7 @@ const {
   inject,
   reactive,
   toRefs,
+  markRaw,
 } = require('../src')
 
 describe('setup', () => {
@@ -81,6 +82,19 @@ describe('setup', () => {
     }).$mount()
     expect(vm.a).toBe(1)
     expect(vm.b).toBe(1)
+  })
+
+  // #385
+  it('should unwrapRef on data', () => {
+    const vm = new Vue({
+      data() {
+        return {
+          a: ref(1),
+        }
+      },
+      setup() {},
+    }).$mount()
+    expect(vm.a).toBe(1)
   })
 
   it('should work with `methods` and `data` options', (done) => {
@@ -622,6 +636,30 @@ describe('setup', () => {
         vm.$el.querySelector('#recursive_b_recursive_recursive_r').textContent
       ).toBe('r')
     })
+
+    // #384
+    it('not unwrap when is raw', () => {
+      const vm = new Vue({
+        setup() {
+          const xx = {
+            ref: ref('r'),
+          }
+          const r = markRaw(xx)
+          return {
+            r,
+          }
+        },
+        template: `<div>
+          <p id="r">{{r}}</p>
+        </div>`,
+      }).$mount()
+
+      expect(JSON.parse(vm.$el.querySelector('#r').textContent)).toMatchObject({
+        ref: {
+          value: 'r',
+        },
+      })
+    })
   })
 
   it('should not unwrap built-in objects on the template', () => {
@@ -730,5 +768,38 @@ describe('setup', () => {
 
     const vm = new Vue(Constructor).$mount()
     expect(vm.$el.textContent).toBe('Composition-api')
+  })
+
+  it('should keep data reactive', async () => {
+    const vm = new Vue({
+      template: `<div>
+        <button id="a" @click="a++">{{a}}</button>
+        <button id="b" @click="b++">{{b}}</button>
+      </div>`,
+      data() {
+        return {
+          a: 1,
+          b: ref(1),
+        }
+      },
+    }).$mount()
+
+    const a = vm.$el.querySelector('#a')
+    const b = vm.$el.querySelector('#b')
+
+    expect(a.textContent).toBe('1')
+    expect(b.textContent).toBe('1')
+
+    a.click()
+    await Vue.nextTick()
+
+    expect(a.textContent).toBe('2')
+    expect(b.textContent).toBe('1')
+
+    b.click()
+    await Vue.nextTick()
+
+    expect(a.textContent).toBe('2')
+    expect(b.textContent).toBe('2')
   })
 })

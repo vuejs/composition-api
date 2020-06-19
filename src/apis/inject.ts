@@ -1,59 +1,65 @@
-import { ComponentInstance } from '../component';
-import { currentVMInFn } from '../helper';
-import { hasOwn, warn } from '../utils';
-import { getCurrentVM } from '../runtimeContext';
+import { ComponentInstance } from '../component'
+import { currentVMInFn } from '../helper'
+import { hasOwn, warn } from '../utils'
+import { getCurrentVM } from '../runtimeContext'
 
-const NOT_FOUND = {};
+const NOT_FOUND = {}
 export interface InjectionKey<T> extends Symbol {}
 
-function resolveInject(provideKey: InjectionKey<any> | string, vm: ComponentInstance): any {
-  let source = vm;
+function resolveInject(
+  provideKey: InjectionKey<any> | string,
+  vm: ComponentInstance
+): any {
+  let source = vm
   while (source) {
     // @ts-ignore
     if (source._provided && hasOwn(source._provided, provideKey)) {
       //@ts-ignore
-      return source._provided[provideKey];
+      return source._provided[provideKey]
     }
-    source = source.$parent;
+    source = source.$parent
   }
 
-  return NOT_FOUND;
+  return NOT_FOUND
 }
 
 export function provide<T>(key: InjectionKey<T> | string, value: T): void {
-  const vm: any = currentVMInFn('provide');
-  if (!vm) return;
+  const vm: any = currentVMInFn('provide')
+  if (!vm) return
 
   if (!vm._provided) {
-    const provideCache = {};
+    const provideCache = {}
     Object.defineProperty(vm, '_provided', {
       get: () => provideCache,
       set: (v) => Object.assign(provideCache, v),
-    });
+    })
   }
 
-  vm._provided[key as string] = value;
+  vm._provided[key as string] = value
 }
 
-export function inject<T>(key: InjectionKey<T> | string): T | undefined;
-export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T;
-export function inject(key: InjectionKey<any> | string, defaultValue?: unknown) {
+export function inject<T>(key: InjectionKey<T> | string): T | undefined
+export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T
+export function inject(
+  key: InjectionKey<any> | string,
+  defaultValue?: unknown
+) {
   if (!key) {
-    return defaultValue;
+    return defaultValue
   }
 
-  const vm = getCurrentVM();
+  const vm = getCurrentVM()
   if (vm) {
-    const val = resolveInject(key, vm);
+    const val = resolveInject(key, vm)
     if (val !== NOT_FOUND) {
-      return val;
+      return val
     } else {
       if (defaultValue === undefined && process.env.NODE_ENV !== 'production') {
-        warn(`Injection "${String(key)}" not found`, vm);
+        warn(`Injection "${String(key)}" not found`, vm)
       }
-      return defaultValue;
+      return defaultValue
     }
   } else {
-    warn(`inject() can only be used inside setup() or functional components.`);
+    warn(`inject() can only be used inside setup() or functional components.`)
   }
 }

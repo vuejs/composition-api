@@ -1,9 +1,9 @@
-import { getCurrentVue } from '../runtimeContext';
-import { isArray } from '../utils';
-import { defineAccessControl, markReactive } from './reactive';
+import { getCurrentVue } from '../runtimeContext'
+import { isArray } from '../utils'
+import { defineAccessControl, markReactive } from './reactive'
 
 function isUndef(v: any): boolean {
-  return v === undefined || v === null;
+  return v === undefined || v === null
 }
 
 function isPrimitive(value: any): boolean {
@@ -13,12 +13,12 @@ function isPrimitive(value: any): boolean {
     // $flow-disable-line
     typeof value === 'symbol' ||
     typeof value === 'boolean'
-  );
+  )
 }
 
 function isValidArrayIndex(val: any): boolean {
-  const n = parseFloat(String(val));
-  return n >= 0 && Math.floor(n) === n && isFinite(val);
+  const n = parseFloat(String(val))
+  return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
 /**
@@ -27,38 +27,40 @@ function isValidArrayIndex(val: any): boolean {
  * already exist.
  */
 export function set<T>(target: any, key: any, val: T): T {
-  const Vue = getCurrentVue();
-  const { warn, defineReactive } = Vue.util;
+  const Vue = getCurrentVue()
+  const { warn, defineReactive } = Vue.util
   if (__DEV__ && (isUndef(target) || isPrimitive(target))) {
-    warn(`Cannot set reactive property on undefined, null, or primitive value: ${target}`);
+    warn(
+      `Cannot set reactive property on undefined, null, or primitive value: ${target}`
+    )
   }
   if (isArray(target) && isValidArrayIndex(key)) {
-    target.length = Math.max(target.length, key);
-    target.splice(key, 1, val);
-    return val;
+    target.length = Math.max(target.length, key)
+    target.splice(key, 1, val)
+    return val
   }
   if (key in target && !(key in Object.prototype)) {
-    target[key] = val;
-    return val;
+    target[key] = val
+    return val
   }
-  const ob = target.__ob__;
+  const ob = target.__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     __DEV__ &&
       warn(
         'Avoid adding reactive properties to a Vue instance or its root $data ' +
           'at runtime - declare it upfront in the data option.'
-      );
-    return val;
+      )
+    return val
   }
   if (!ob) {
-    target[key] = val;
-    return val;
+    target[key] = val
+    return val
   }
-  defineReactive(ob.value, key, val);
+  defineReactive(ob.value, key, val)
   // IMPORTANT: define access control before trigger watcher
-  defineAccessControl(target, key, val);
-  markReactive(ob.value[key]);
+  defineAccessControl(target, key, val)
+  markReactive(ob.value[key])
 
-  ob.dep.notify();
-  return val;
+  ob.dep.notify()
+  return val
 }

@@ -1,3 +1,14 @@
+<a name="0.6.4"></a>
+## [0.6.4](https://github.com/vuejs/composition-api/compare/v0.6.3...v0.6.4) (2020-06-16)
+
+
+### Bug Fixes
+
+* **setup:** call stack exceeded when returning circular dependency ([#380](https://github.com/vuejs/composition-api/issues/380)) ([66f58ba](https://github.com/vuejs/composition-api/commit/66f58ba))
+* **setup:** Vue.extend(Comp).extend({}) - vue-test-utils ([#383](https://github.com/vuejs/composition-api/issues/383)) ([ce932bf](https://github.com/vuejs/composition-api/commit/ce932bf))
+
+
+
 <a name="0.6.3"></a>
 ## [0.6.3](https://github.com/vuejs/composition-api/compare/v0.6.2...v0.6.3) (2020-06-12)
 
