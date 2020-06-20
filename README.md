@@ -1,37 +1,19 @@
-# Vue Composition API
+# @vue/composition-api
 
-Vue 2 plugin for **Composition API** in Vue 3.
+Vue 2 plugin for **Composition API**
 
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
-English | [**中文文档**](./README.zh-CN.md) / [**Composition API RFC**](https://composition-api.vuejs.org/)
+English | [中文](./README.zh-CN.md) · [**Composition API Docs**](https://composition-api.vuejs.org/)
 
+</p>
 
-**Note: the primary goal of this package is to allow the community to experiment with the API and provide feedback before it's finalized. The implementation may contain minor inconsistencies with the RFC as the latter gets updated. We do not recommend using this package for production yet at this stage.**
-
----
-
-# Navigation
-
-- [Installation](#Installation)
-- [Usage](#Usage)
-- [TypeScript](#TypeScript)
-  - [TSX](#tsx)
-- [Limitations](#Limitations)
-- [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
-
-# Installation
-
-**npm**
+## Installation
 
 ```bash
 npm install @vue/composition-api
-```
-
-**yarn**
-
-```bash
+# or
 yarn add @vue/composition-api
 ```
 
@@ -41,9 +23,9 @@ yarn add @vue/composition-api
 <script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
 ```
 
-By using the global variable `window.vueCompositionApi`
+The package will be exposed to global variable `window.vueCompositionApi`
 
-# Usage
+## Usage
 
 You must install `@vue/composition-api` via `Vue.use()` before using other APIs:
 
@@ -54,28 +36,28 @@ import VueCompositionApi from '@vue/composition-api';
 Vue.use(VueCompositionApi);
 ```
 
-After installing the plugin you can use the [Composition API](https://vue-composition-api-rfc.netlify.com/) to compose your component.
+After installing the plugin you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
-# TypeScript
+## TypeScript Support
 
-**This plugin requires TypeScript version >3.5.1. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
+> TypeScript version **>3.5.1** is required
 
 To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`:
 
 ```ts
 import { defineComponent } from '@vue/composition-api';
 
-const Component = defineComponent({
+const ComponentA = defineComponent({
   // type inference enabled
-});
+})
 
-const Component = {
+const ComponentB = {
   // this will NOT have type inference,
   // because TypeScript can't tell this is options for a Vue component.
-};
+}
 ```
 
-## TSX
+### TSX
 
 :rocket: An Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support is provided to help you start.
 
@@ -102,13 +84,23 @@ declare global {
 }
 ```
 
-# Limitations
+## Limitations
 
-## `Ref` Unwrap
+> :white_check_mark:
+> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
-`Unwrap` is not working with Array index.
+### Performance Impact
 
-### **Should not** store `ref` as a **direct** child of `Array`:
+Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. This should not concern you in most of the cases.
+
+You can check the [benchmarks](https://antfu.github.io/vue-composition-api-benchmark-results/) that comparing with Vue 2's option API and vue-next.
+
+
+### `Ref` Unwrap
+
+:x: `Unwrap` is not working with Array index.
+
+#### **Should NOT** store `ref` as a **direct** child of `Array`:
 
 ```js
 const state = reactive({
@@ -122,7 +114,7 @@ state.list.push(ref(1));
 state.list[1].value === 1; // true
 ```
 
-### **Should not** use `ref` in a plain object when working with `Array`:
+#### **Should NOT** use `ref` in a plain object when working with `Array`:
 
 ```js
 const a = {
@@ -149,7 +141,7 @@ const b = reactive({
 b.list[0].count.value === 0; // true
 ```
 
-### **Should** always use `ref` in a `reactive` when working with `Array`:
+#### **Should** always use `ref` in a `reactive` when working with `Array`:
 
 ```js
 const a = reactive({
@@ -170,23 +162,18 @@ b.list.push(
 b.list[1].count === 1; // true
 ```
 
-### ***Using*** `reactive` will mutate the origin object
+### :warning: `reactive` ***mutates*** the original object
 
-This is an limitation of using `Vue.observable` in Vue 2.
-> Vue 3 will return an new proxy object.
+`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
 
----
+> :bulb: Vue 3 will return an new proxy object.
 
-## `watch()` API
 
-`onTrack` and `onTrigger` are not available in `WatchOptions`.
+### `watch()` API
 
----
+:x: `onTrack` and `onTrigger` are not available in `WatchOptions`.
 
-## Template Refs
-
-> :white_check_mark:
-> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
+### Template Refs
 
 :white_check_mark:
 String ref && return it from `setup()`:
