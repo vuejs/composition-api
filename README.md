@@ -7,8 +7,6 @@ Vue 2 plugin for **Composition API**
 
 English | [中文](./README.zh-CN.md) · [**Composition API Docs**](https://composition-api.vuejs.org/)
 
-</p>
-
 ## Installation
 
 ```bash
@@ -27,22 +25,21 @@ The package will be exposed to global variable `window.vueCompositionApi`
 
 ## Usage
 
-You must install `@vue/composition-api` via `Vue.use()` before using other APIs:
+You must install `@vue/composition-api` via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
 ```js
-import Vue from 'vue';
-import VueCompositionApi from '@vue/composition-api';
+import Vue from 'vue'
+import VueCompositionApi from '@vue/composition-api'
 
-Vue.use(VueCompositionApi);
+Vue.use(VueCompositionApi)
 ```
 
-After installing the plugin you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
 ## TypeScript Support
 
 > TypeScript version **>3.5.1** is required
 
-To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`:
+To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`
 
 ```ts
 import { defineComponent } from '@vue/composition-api';
@@ -91,9 +88,9 @@ declare global {
 
 ### Performance Impact
 
-Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. This should not concern you in most of the cases.
+Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs.
 
-You can check the [benchmarks](https://antfu.github.io/vue-composition-api-benchmark-results/) that comparing with Vue 2's option API and vue-next.
+You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
 
 
 ### `Ref` Unwrap
@@ -295,7 +292,7 @@ import VueCompositionApi from '@vue/composition-api';
 
 Vue.use(VueCompositionApi);
 
-declare module '@vue/composition-api/dist/component/component' {
+declare module '@vue/composition-api' {
   interface SetupContext {
     readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
   }
