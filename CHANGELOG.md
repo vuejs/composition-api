@@ -1,3 +1,13 @@
+<a name="0.6.6"></a>
+## [0.6.6](https://github.com/vuejs/composition-api/compare/v0.6.5...v0.6.6) (2020-06-21)
+
+
+### Reverts
+
+* [#387](https://github.com/vuejs/composition-api/issues/387) ([#395](https://github.com/vuejs/composition-api/issues/395)) ([b9fab71](https://github.com/vuejs/composition-api/commit/b9fab71))
+
+
+
 <a name="0.6.5"></a>
 ## [0.6.5](https://github.com/vuejs/composition-api/compare/v0.6.4...v0.6.5) (2020-06-19)
 
