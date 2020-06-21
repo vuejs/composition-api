@@ -9,21 +9,13 @@ English | [中文](./README.zh-CN.md) · [**Composition API Docs**](https://comp
 
 ## Installation
 
+### NPM
+
 ```bash
 npm install @vue/composition-api
 # or
 yarn add @vue/composition-api
 ```
-
-**CDN**
-
-```html
-<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
-```
-
-The package will be exposed to global variable `window.vueCompositionApi`
-
-## Usage
 
 You must install `@vue/composition-api` via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
@@ -32,6 +24,29 @@ import Vue from 'vue'
 import VueCompositionApi from '@vue/composition-api'
 
 Vue.use(VueCompositionApi)
+```
+
+```js
+// in components
+import { ref, reactive } from '@vue/composition-api'
+```
+
+### CDN
+
+```html
+<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
+```
+
+The package will be exposed to global variable `window.vueCompositionApi`
+
+```js
+// install the plugin
+Vue.use(vueCompositionApi.default)
+```
+
+```js
+// use the APIs
+const { ref, reactive } = vueCompositionApi
 ```
 
 
