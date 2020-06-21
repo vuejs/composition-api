@@ -13,6 +13,7 @@
   },
   "main": "dist/vue-composition-api.js",
   "umd:main": "dist/vue-composition-api.umd.js",
+  "browser": "dist/vue-composition-api.umd.js",
   "module": "dist/vue-composition-api.module.js",
   "typings": "dist/index.d.ts",
   "author": {
