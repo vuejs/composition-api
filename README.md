@@ -33,9 +33,12 @@ import { ref, reactive } from '@vue/composition-api'
 
 ### CDN
 
+<!--cdn-links-start-->
 ```html
-<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.5"></script>
 ```
+<!--cdn-links-end-->
 
 The package will be exposed to global variable `window.vueCompositionApi`
 

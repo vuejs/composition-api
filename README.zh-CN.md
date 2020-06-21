@@ -11,15 +11,6 @@ Vue 2 插件用于提供 Vue 3 中的 **组合式 API**.
 
 ---
 
-# 导航
-
-- [安装](#安装)
-- [使用](#使用)
-- [TypeScript](#TypeScript)
-  - [TSX](#tsx)
-- [限制](#限制)
-- [更新日志](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
-
 # 安装
 
 **npm**
@@ -36,9 +27,12 @@ yarn add @vue/composition-api
 
 **CDN**
 
+<!--cdn-links-start-->
 ```html
-<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.5"></script>
 ```
+<!--cdn-links-end-->
 
 通过全局变量 `window.vueCompositionApi` 来使用。
 
