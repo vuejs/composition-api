@@ -69,32 +69,9 @@ const ComponentB = {
 }
 ```
 
-### TSX
+### JSX/TSX
 
-:rocket: An Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support is provided to help you start.
-
-To support TSX, create a declaration file with following content in your project.
-
-```ts
-// file: shim-tsx.d.ts
-import Vue, { VNode } from 'vue';
-import { ComponentRenderProxy } from '@vue/composition-api';
-
-declare global {
-  namespace JSX {
-    // tslint:disable no-empty-interface
-    interface Element extends VNode {}
-    // tslint:disable no-empty-interface
-    interface ElementClass extends ComponentRenderProxy {}
-    interface ElementAttributesProperty {
-      $props: any; // specify the property name to use
-    }
-    interface IntrinsicElements {
-      [elem: string]: any;
-    }
-  }
-}
-```
+To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
 ## Limitations
 
