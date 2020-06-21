@@ -1,5 +1,4 @@
 import {
-  createComponent,
   defineComponent,
   createElement as h,
   ref,
@@ -215,40 +214,6 @@ describe('defineComponent', () => {
           },
         ],
       })
-    })
-  })
-
-  describe('retro-compatible with createComponent', () => {
-    it('should still work and warn', () => {
-      const warn = jest
-        .spyOn(global.console, 'error')
-        .mockImplementation(() => null)
-      const Child = createComponent({
-        props: { msg: String },
-        setup(props) {
-          return () => h('span', props.msg)
-        },
-      })
-
-      const App = createComponent({
-        setup() {
-          const msg = ref('hello')
-          return () =>
-            h('div', [
-              h(Child, {
-                props: {
-                  msg: msg.value,
-                },
-              }),
-            ])
-        },
-      })
-      const vm = new Vue(App).$mount()
-      expect(vm.$el.querySelector('span').textContent).toBe('hello')
-      expect(warn.mock.calls[0][0]).toMatch(
-        '[Vue warn]: `createComponent` has been renamed to `defineComponent`.'
-      )
-      warn.mockRestore()
     })
   })
 })

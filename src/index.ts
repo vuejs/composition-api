@@ -24,7 +24,6 @@ export default plugin
 export { default as createElement } from './createElement'
 export { SetupContext }
 export {
-  createComponent,
   defineComponent,
   ComponentRenderProxy,
   PropType,
