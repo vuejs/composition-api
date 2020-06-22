@@ -35,7 +35,7 @@ import { ref, reactive } from '@vue/composition-api'
 
 ### CDN
 
-Add the following lines in your `<head>` to import Vue and `@vue/composition-api`.
+Include `@vue/composition-api` after Vue and it will install itself automatically.
 
 <!--cdn-links-start-->
 ```html
@@ -44,15 +44,9 @@ Add the following lines in your `<head>` to import Vue and `@vue/composition-api
 ```
 <!--cdn-links-end-->
 
-`@vue/composition-api` will be exposed to global variable `window.vueCompositionApi` and you have to install it before using the APIs.
+`@vue/composition-api` will be exposed to global variable `window.vueCompositionApi`. 
 
-```js
-// install the plugin
-Vue.use(vueCompositionApi.default)
-```
-
-```js
-// use the APIs
+```ts
 const { ref, reactive } = vueCompositionApi
 ```
 
@@ -66,14 +60,9 @@ To let TypeScript properly infer types inside Vue component options, you need to
 ```ts
 import { defineComponent } from '@vue/composition-api'
 
-const ComponentA = defineComponent({
+export default defineComponent({
   // type inference enabled
 })
-
-const ComponentB = {
-  // this will NOT have type inference,
-  // because TypeScript can't tell this is options for a Vue component.
-}
 ```
 
 ### JSX/TSX
@@ -259,11 +248,18 @@ export default {
 }
 ```
 
-If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+<details>
+<summary><code>$refs</code> accessing workaround
+</summary>
+
+<br>
 
 > :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
-```js
+If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+
+
+```jsx
 export default {
   setup(initProps, setupContext) {
     const refs = setupContext.refs
@@ -287,9 +283,6 @@ You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
 import Vue from 'vue'
-import VueCompositionApi from '@vue/composition-api'
-
-Vue.use(VueCompositionApi)
 
 declare module '@vue/composition-api' {
   interface SetupContext {
@@ -297,6 +290,9 @@ declare module '@vue/composition-api' {
   }
 }
 ```
+
+</details>
+
 
 ## SSR
 
