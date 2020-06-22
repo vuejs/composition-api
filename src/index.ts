@@ -21,6 +21,7 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 }
 
 export default plugin
+export { nextTick } from './nextTick'
 export { default as createElement } from './createElement'
 export { SetupContext }
 export {
