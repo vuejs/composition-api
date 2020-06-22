@@ -57,7 +57,7 @@ const { ref, reactive } = vueCompositionApi
 To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`
 
 ```ts
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from '@vue/composition-api'
 
 const ComponentA = defineComponent({
   // type inference enabled
@@ -77,8 +77,8 @@ To support TSX, create a declaration file with following content in your project
 
 ```ts
 // file: shim-tsx.d.ts
-import Vue, { VNode } from 'vue';
-import { ComponentRenderProxy } from '@vue/composition-api';
+import Vue, { VNode } from 'vue'
+import { ComponentRenderProxy } from '@vue/composition-api'
 
 declare global {
   namespace JSX {
@@ -87,10 +87,10 @@ declare global {
     // tslint:disable no-empty-interface
     interface ElementClass extends ComponentRenderProxy {}
     interface ElementAttributesProperty {
-      $props: any; // specify the property name to use
+      $props: any // specify the property name to use
     }
     interface IntrinsicElements {
-      [elem: string]: any;
+      [elem: string]: any
     }
   }
 }
@@ -117,13 +117,13 @@ You can check the [benchmark results](https://antfu.github.io/vue-composition-ap
 ```js
 const state = reactive({
   list: [ref(0)],
-});
+})
 // no unwrap, `.value` is required
-state.list[0].value === 0; // true
+state.list[0].value === 0 // true
 
-state.list.push(ref(1));
+state.list.push(ref(1))
 // no unwrap, `.value` is required
-state.list[1].value === 1; // true
+state.list[1].value === 1 // true
 ```
 
 #### **Should NOT** use `ref` in a plain object when working with `Array`:
@@ -131,13 +131,13 @@ state.list[1].value === 1; // true
 ```js
 const a = {
   count: ref(0),
-};
+}
 const b = reactive({
   list: [a], // `a.count` will not unwrap!!
-});
+})
 
 // no unwrap for `count`, `.value` is required
-b.list[0].count.value === 0; // true
+b.list[0].count.value === 0 // true
 ```
 
 ```js
@@ -147,10 +147,10 @@ const b = reactive({
       count: ref(0), // no unwrap!!
     },
   ],
-});
+})
 
 // no unwrap for `count`, `.value` is required
-b.list[0].count.value === 0; // true
+b.list[0].count.value === 0 // true
 ```
 
 #### **Should** always use `ref` in a `reactive` when working with `Array`:
@@ -158,20 +158,20 @@ b.list[0].count.value === 0; // true
 ```js
 const a = reactive({
   count: ref(0),
-});
+})
 const b = reactive({
   list: [a],
-});
+})
 // unwrapped
-b.list[0].count === 0; // true
+b.list[0].count === 0 // true
 
 b.list.push(
   reactive({
     count: ref(1),
   })
-);
+)
 // unwrapped
-b.list[1].count === 1; // true
+b.list[1].count === 1 // true
 ```
 
 ### :warning: `reactive` ***mutates*** the original object
@@ -198,18 +198,18 @@ String ref && return it from `setup()`:
 <script>
   export default {
     setup() {
-      const root = ref(null);
+      const root = ref(null)
 
       onMounted(() => {
         // the DOM element will be assigned to the ref after initial render
-        console.log(root.value); // <div/>
-      });
+        console.log(root.value) // <div/>
+      })
 
       return {
         root,
-      };
+      }
     },
-  };
+  }
 </script>
 ```
 
@@ -219,22 +219,22 @@ String ref && return it from `setup()` && Render Function / JSX:
 ```jsx
 export default {
   setup() {
-    const root = ref(null);
+    const root = ref(null)
 
     onMounted(() => {
       // the DOM element will be assigned to the ref after initial render
-      console.log(root.value); // <div/>
-    });
+      console.log(root.value) // <div/>
+    })
 
     return {
       root,
-    };
+    }
   },
   render() {
     // with JSX
-    return () => <div ref="root" />;
+    return () => <div ref="root" />
   },
-};
+}
 ```
 
 :x: Function ref:
@@ -247,13 +247,13 @@ export default {
 <script>
   export default {
     setup() {
-      const root = ref(null);
+      const root = ref(null)
 
       return {
         root,
-      };
+      }
     },
-  };
+  }
 </script>
 ```
 
@@ -262,17 +262,17 @@ export default {
 ```jsx
 export default {
   setup() {
-    const root = ref(null);
+    const root = ref(null)
 
     return () =>
       h('div', {
         ref: root,
-      });
+      })
 
     // with JSX
-    return () => <div ref={root} />;
+    return () => <div ref={root} />
   },
-};
+}
 ```
 
 If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
@@ -282,34 +282,34 @@ If you really want to use template refs in this case, you can access `vm.$refs` 
 ```js
 export default {
   setup(initProps, setupContext) {
-    const refs = setupContext.refs;
+    const refs = setupContext.refs
     onMounted(() => {
       // the DOM element will be assigned to the ref after initial render
-      console.log(refs.root); // <div/>
-    });
+      console.log(refs.root) // <div/>
+    })
 
     return () =>
       h('div', {
         ref: 'root',
-      });
+      })
 
     // with JSX
-    return () => <div ref="root" />;
+    return () => <div ref="root" />
   },
-};
+}
 ```
 
 You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
-import Vue from 'vue';
-import VueCompositionApi from '@vue/composition-api';
+import Vue from 'vue'
+import VueCompositionApi from '@vue/composition-api'
 
-Vue.use(VueCompositionApi);
+Vue.use(VueCompositionApi)
 
 declare module '@vue/composition-api' {
   interface SetupContext {
-    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
+    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
   }
 }
 ```
@@ -319,19 +319,19 @@ declare module '@vue/composition-api' {
 Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
 
 ```js
-import { onServerPrefetch } from '@vue/composition-api';
+import { onServerPrefetch } from '@vue/composition-api'
 
 export default {
   setup (props, { ssrContext }) {
-    const result = ref();
+    const result = ref()
 
     onServerPrefetch(async () => {
-      result.value = await callApi(ssrContext.someId);
-    });
+      result.value = await callApi(ssrContext.someId)
+    })
 
     return {
       result,
-    };
+    }
   },
-};
+}
 ```
