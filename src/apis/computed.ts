@@ -1,4 +1,4 @@
-import { getCurrentVue, getCurrentVM } from '../runtimeContext'
+import { getCurrentVue, getCurrentInstance } from '../runtimeContext'
 import { createRef, Ref } from '../reactivity'
 import { defineComponentInstance } from '../helper'
 import { warn } from '../utils'
@@ -22,7 +22,7 @@ export function computed<T>(options: Option<T>): WritableComputedRef<T>
 export function computed<T>(
   options: Option<T>['get'] | Option<T>
 ): ComputedRef<T> | WritableComputedRef<T> {
-  const vm = getCurrentVM()
+  const vm = getCurrentInstance()
   let get: Option<T>['get'], set: Option<T>['set'] | undefined
   if (typeof options === 'function') {
     get = options

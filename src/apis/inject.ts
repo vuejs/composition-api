@@ -1,7 +1,7 @@
 import { ComponentInstance } from '../component'
 import { currentVMInFn } from '../helper'
 import { hasOwn, warn } from '../utils'
-import { getCurrentVM } from '../runtimeContext'
+import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}
 export interface InjectionKey<T> extends Symbol {}
@@ -48,7 +48,7 @@ export function inject(
     return defaultValue
   }
 
-  const vm = getCurrentVM()
+  const vm = getCurrentInstance()
   if (vm) {
     const val = resolveInject(key, vm)
     if (val !== NOT_FOUND) {

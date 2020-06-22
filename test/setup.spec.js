@@ -2,7 +2,7 @@ const Vue = require('vue/dist/vue.common.js')
 const {
   ref,
   computed,
-  createElement: h,
+  h,
   provide,
   inject,
   reactive,

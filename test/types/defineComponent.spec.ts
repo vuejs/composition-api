@@ -1,7 +1,7 @@
 import {
   createComponent,
   defineComponent,
-  createElement as h,
+  h,
   ref,
   SetupContext,
   PropType,
