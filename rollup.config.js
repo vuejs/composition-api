@@ -54,7 +54,7 @@ function genConfig({ outFile, format, mode }) {
         vue: 'Vue',
       },
       exports: 'named',
-      name: format === 'umd' ? 'VueCompostionAPI' : undefined,
+      name: format === 'umd' ? 'VueCompositionAPI' : undefined,
     },
     external: ['vue'],
     onwarn,

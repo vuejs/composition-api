@@ -21,9 +21,9 @@ You must install `@vue/composition-api` via `Vue.use()` before you can use the [
 
 ```js
 import Vue from 'vue'
-import VueCompostionAPI from '@vue/composition-api'
+import VueCompositionAPI from '@vue/composition-api'
 
-Vue.use(VueCompostionAPI)
+Vue.use(VueCompositionAPI)
 ```
 
 ```js
@@ -37,16 +37,16 @@ import { ref, reactive } from '@vue/composition-api'
 <script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
 ```
 
-The package will be exposed to global variable `window.VueCompostionAPI`
+The package will be exposed to global variable `window.VueCompositionAPI`
 
 ```js
 // install the plugin
-Vue.use(VueCompostionAPI.default)
+Vue.use(VueCompositionAPI.default)
 ```
 
 ```js
 // use the APIs
-const { ref, reactive } = VueCompostionAPI
+const { ref, reactive } = VueCompositionAPI
 ```
 
 
@@ -303,9 +303,9 @@ You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
 import Vue from 'vue';
-import VueCompostionAPI from '@vue/composition-api';
+import VueCompositionAPI from '@vue/composition-api';
 
-Vue.use(VueCompostionAPI);
+Vue.use(VueCompositionAPI);
 
 declare module '@vue/composition-api' {
   interface SetupContext {
