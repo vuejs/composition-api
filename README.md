@@ -17,7 +17,7 @@ npm install @vue/composition-api
 yarn add @vue/composition-api
 ```
 
-You must install `@vue/composition-api` via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
+You must install `@vue/composition-api` as a plugin via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
 ```js
 import Vue from 'vue'
@@ -27,17 +27,24 @@ Vue.use(VueCompositionApi)
 ```
 
 ```js
-// in components
+// use the APIs
 import { ref, reactive } from '@vue/composition-api'
 ```
 
+> :bulb: When you migrate to Vue 3, just replacing `@vue/composition-api` to `vue` and your code should just work.
+
 ### CDN
 
-```html
-<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
-```
+Add the following lines in your `<head>` to import Vue and `@vue/composition-api`.
 
-The package will be exposed to global variable `window.vueCompositionApi`
+<!--cdn-links-start-->
+```html
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.5"></script>
+```
+<!--cdn-links-end-->
+
+`@vue/composition-api` will be exposed to global variable `window.vueCompositionApi` and you have to install it before using the APIs.
 
 ```js
 // install the plugin
