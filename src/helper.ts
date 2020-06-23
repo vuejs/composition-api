@@ -1,10 +1,10 @@
 import Vue, { VNode, ComponentOptions, VueConstructor } from 'vue'
 import { ComponentInstance } from './component'
-import { currentVue, getCurrentVM } from './runtimeContext'
+import { currentVue, getCurrentInstance } from './runtimeContext'
 import { warn } from './utils'
 
 export function currentVMInFn(hook: string): ComponentInstance | null {
-  const vm = getCurrentVM()
+  const vm = getCurrentInstance()
   if (__DEV__ && !vm) {
     warn(
       `${hook} is called when there is no active component instance to be ` +

@@ -1,6 +1,10 @@
 import { VueConstructor } from 'vue'
 import { ComponentInstance } from '../component'
-import { getCurrentVue, setCurrentVM, getCurrentVM } from '../runtimeContext'
+import {
+  getCurrentVue,
+  setCurrentVM,
+  getCurrentInstance,
+} from '../runtimeContext'
 import { currentVMInFn } from '../helper'
 
 const genName = (name: string) => `on${name[0].toUpperCase() + name.slice(1)}`
@@ -26,7 +30,7 @@ function injectHookOption(
 
 function wrapHookCall(vm: ComponentInstance, fn: Function) {
   return (...args: any) => {
-    let preVm = getCurrentVM()
+    let preVm = getCurrentInstance()
     setCurrentVM(vm)
     try {
       return fn(...args)

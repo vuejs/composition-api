@@ -1,5 +1,5 @@
 import Vue, { VueConstructor } from 'vue'
-import { Data, SetupFunction, SetupContext } from './component'
+import { Data, SetupFunction } from './component'
 import { currentVue } from './runtimeContext'
 import { install } from './install'
 import { mixin } from './setup'
@@ -21,17 +21,15 @@ if (currentVue && typeof window !== 'undefined' && window.Vue) {
 }
 
 export default plugin
-export { default as createElement } from './createElement'
-export { SetupContext }
+export { createElement as h } from './createElement'
+export { getCurrentInstance } from './runtimeContext'
 export {
   defineComponent,
   ComponentRenderProxy,
   PropType,
   PropOptions,
+  SetupContext,
 } from './component'
-// For getting a hold of the interal instance in setup() - useful for advanced
-// plugins
-export { getCurrentVM as getCurrentInstance } from './runtimeContext'
 
 export * from './apis/state'
 export * from './apis/lifecycle'
