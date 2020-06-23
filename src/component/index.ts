@@ -1,6 +1,5 @@
 export {
   Data,
-  createComponent,
   defineComponent,
   SetupFunction,
   SetupContext,
