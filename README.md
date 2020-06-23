@@ -294,6 +294,21 @@ declare module '@vue/composition-api' {
 </details>
 
 
+### :x: Reactive APIs in `data()`
+
+Passing `ref`, `reactive` or other reactive apis to `data()` would not work.
+
+```jsx
+export default {
+  data() {
+    return {
+      // will result { a: { value: 1 } } in template
+      a: ref(1) 
+    }
+  },
+};
+```
+
 ## SSR
 
 Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.

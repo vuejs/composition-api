@@ -154,22 +154,6 @@ export function mixin(Vue: VueConstructor) {
       }
     }
 
-    const { data } = $options
-    // wrapper the data option, so we can invoke setup before data get resolved
-    $options.data = function wrappedData() {
-      if (setup) {
-        initSetup(vm, vm.$props)
-      }
-      const dataValue =
-        typeof data === 'function'
-          ? (data as (
-              this: ComponentInstance,
-              x: ComponentInstance
-            ) => object).call(vm, vm)
-          : data || {}
-      return unwrapRefProxy(dataValue)
-    }
-
     if (!setup) {
       return
     }
@@ -181,6 +165,18 @@ export function mixin(Vue: VueConstructor) {
         )
       }
       return
+    }
+
+    const { data } = $options
+    // wrapper the data option, so we can invoke setup before data get resolved
+    $options.data = function wrappedData() {
+      initSetup(vm, vm.$props)
+      return typeof data === 'function'
+        ? (data as (
+            this: ComponentInstance,
+            x: ComponentInstance
+          ) => object).call(vm, vm)
+        : data || {}
     }
   }
 
