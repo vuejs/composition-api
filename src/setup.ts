@@ -220,9 +220,11 @@ export function mixin(Vue: VueConstructor) {
             if (isFunction(bindingValue)) {
               bindingValue = bindingValue.bind(vm)
             }
-            // a non-reactive should not don't get reactivity
+            // unwrap all ref properties
             const unwrapped = unwrapRefProxy(bindingValue)
+            // mark the object as reactive
             markReactive(unwrapped)
+            // a non-reactive should not don't get reactivity
             bindingValue = ref(markRaw(unwrapped))
           }
         }
