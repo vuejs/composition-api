@@ -21,9 +21,9 @@ You must install `@vue/composition-api` as a plugin via `Vue.use()` before you c
 
 ```js
 import Vue from 'vue'
-import VueCompositionApi from '@vue/composition-api'
+import VueCompositionAPI from '@vue/composition-api'
 
-Vue.use(VueCompositionApi)
+Vue.use(VueCompositionAPI)
 ```
 
 ```js
@@ -44,7 +44,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 ```
 <!--cdn-links-end-->
 
-`@vue/composition-api` will be exposed to global variable `window.vueCompositionApi`. 
+`@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`. 
 
 ```ts
 const { ref, reactive } = vueCompositionApi

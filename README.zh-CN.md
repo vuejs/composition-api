@@ -34,7 +34,7 @@ yarn add @vue/composition-api
 ```
 <!--cdn-links-end-->
 
-通过全局变量 `window.vueCompositionApi` 来使用。
+通过全局变量 `window.VueCompositionAPI` 来使用。
 
 # 使用
 
@@ -42,9 +42,9 @@ yarn add @vue/composition-api
 
 ```js
 import Vue from 'vue';
-import VueCompositionApi from '@vue/composition-api';
+import VueCompositionAPI from '@vue/composition-api';
 
-Vue.use(VueCompositionApi);
+Vue.use(VueCompositionAPI);
 ```
 
 安装插件后，您就可以使用新的 [Composition API](https://vue-composition-api-rfc.netlify.com/) 来开发组件了。
@@ -294,9 +294,9 @@ export default {
 
 ```ts
 import Vue from 'vue';
-import VueCompositionApi from '@vue/composition-api';
+import VueCompositionAPI from '@vue/composition-api';
 
-Vue.use(VueCompositionApi);
+Vue.use(VueCompositionAPI);
 
 declare module '@vue/composition-api/dist/component/component' {
   interface SetupContext {
