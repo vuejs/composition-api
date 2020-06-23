@@ -47,7 +47,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 `@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`. 
 
 ```ts
-const { ref, reactive } = vueCompositionApi
+const { ref, reactive } = VueCompositionAPI
 ```
 
 
