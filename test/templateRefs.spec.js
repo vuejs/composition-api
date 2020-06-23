@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, watchEffect, watch, createElement: h } = require('../src')
+const { ref, watchEffect } = require('../src')
 
 describe('ref', () => {
   it('should work', (done) => {

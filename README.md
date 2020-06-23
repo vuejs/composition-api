@@ -17,7 +17,7 @@ npm install @vue/composition-api
 yarn add @vue/composition-api
 ```
 
-You must install `@vue/composition-api` via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
+You must install `@vue/composition-api` as a plugin via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
 ```js
 import Vue from 'vue'
@@ -27,26 +27,27 @@ Vue.use(VueCompositionAPI)
 ```
 
 ```js
-// in components
+// use the APIs
 import { ref, reactive } from '@vue/composition-api'
 ```
 
+> :bulb: When you migrate to Vue 3, just replacing `@vue/composition-api` to `vue` and your code should just work.
+
 ### CDN
 
+Include `@vue/composition-api` after Vue and it will install itself automatically.
+
+<!--cdn-links-start-->
 ```html
-<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.5"></script>
 ```
+<!--cdn-links-end-->
 
-The package will be exposed to global variable `window.VueCompositionAPI`
+`@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`. 
 
-```js
-// install the plugin
-Vue.use(VueCompositionAPI.default)
-```
-
-```js
-// use the APIs
-const { ref, reactive } = VueCompositionAPI
+```ts
+const { ref, reactive } = vueCompositionApi
 ```
 
 
@@ -59,42 +60,14 @@ To let TypeScript properly infer types inside Vue component options, you need to
 ```ts
 import { defineComponent } from '@vue/composition-api'
 
-const ComponentA = defineComponent({
+export default defineComponent({
   // type inference enabled
 })
-
-const ComponentB = {
-  // this will NOT have type inference,
-  // because TypeScript can't tell this is options for a Vue component.
-}
 ```
 
-### TSX
+### JSX/TSX
 
-:rocket: An Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support is provided to help you start.
-
-To support TSX, create a declaration file with following content in your project.
-
-```ts
-// file: shim-tsx.d.ts
-import Vue, { VNode } from 'vue'
-import { ComponentRenderProxy } from '@vue/composition-api'
-
-declare global {
-  namespace JSX {
-    // tslint:disable no-empty-interface
-    interface Element extends VNode {}
-    // tslint:disable no-empty-interface
-    interface ElementClass extends ComponentRenderProxy {}
-    interface ElementAttributesProperty {
-      $props: any // specify the property name to use
-    }
-    interface IntrinsicElements {
-      [elem: string]: any
-    }
-  }
-}
-```
+To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
 ## Limitations
 
@@ -275,11 +248,18 @@ export default {
 }
 ```
 
-If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+<details>
+<summary><code>$refs</code> accessing workaround
+</summary>
+
+<br>
 
 > :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
-```js
+If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+
+
+```jsx
 export default {
   setup(initProps, setupContext) {
     const refs = setupContext.refs
@@ -302,12 +282,17 @@ export default {
 You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
+import Vue from 'vue'
+
 declare module '@vue/composition-api' {
   interface SetupContext {
     readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
   }
 }
 ```
+
+</details>
+
 
 ## SSR
 

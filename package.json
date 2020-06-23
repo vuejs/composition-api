@@ -13,6 +13,7 @@
   },
   "main": "dist/vue-composition-api.js",
   "umd:main": "dist/vue-composition-api.umd.js",
+  "browser": "dist/vue-composition-api.umd.js",
   "module": "dist/vue-composition-api.module.js",
   "typings": "dist/index.d.ts",
   "author": {
@@ -31,10 +32,11 @@
     "test": "yarn test-dts && yarn test-unit",
     "test-unit": "cross-env NODE_ENV=test jest",
     "test-dts": "tsc -p ./test-dts/tsconfig.json && yarn build && tsc -p ./test-dts/tsconfig.build.json",
+    "update-readme": "node ./scripts/update-readme.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "prepublish": "yarn test",
     "postpublish": "yarn release-gh",
-    "version": "yarn changelog && git add CHANGELOG.md",
+    "version": "yarn changelog && yarn update-readme && git add CHANGELOG.md README.*",
     "release": "yarn version && git push --follow-tags && yarn publish --non-interactive",
     "release-gh": "conventional-github-releaser -p angular"
   },

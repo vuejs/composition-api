@@ -2,7 +2,7 @@ import { ComponentInstance } from '../component'
 import { Ref, isRef, isReactive } from '../reactivity'
 import { assert, logError, noopFn, warn, isFunction } from '../utils'
 import { defineComponentInstance } from '../helper'
-import { getCurrentVM, getCurrentVue } from '../runtimeContext'
+import { getCurrentInstance, getCurrentVue } from '../runtimeContext'
 import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols'
 import { ComputedRef } from './computed'
 
@@ -95,7 +95,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
 }
 
 function getWatcherVM() {
-  let vm = getCurrentVM()
+  let vm = getCurrentInstance()
   if (!vm) {
     if (!fallbackVM) {
       fallbackVM = defineComponentInstance(getCurrentVue())

@@ -7,7 +7,9 @@ type CreateElement = Vue['$createElement']
 
 let fallbackCreateElement: CreateElement
 
-const createElement: CreateElement = function createElement(...args: any) {
+export const createElement: CreateElement = function createElement(
+  ...args: any
+) {
   if (!currentVM) {
     warn('`createElement()` has been called outside of render function.')
     if (!fallbackCreateElement) {
@@ -20,5 +22,3 @@ const createElement: CreateElement = function createElement(...args: any) {
 
   return currentVM.$createElement.apply(currentVM, args)
 } as any
-
-export default createElement

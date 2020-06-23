@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, watch, createElement: h } = require('../src')
+const { h } = require('../src')
 
 describe('setupContext', () => {
   it('should have proper properties', () => {
