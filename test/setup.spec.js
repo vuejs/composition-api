@@ -176,6 +176,55 @@ describe('setup', () => {
     )
   })
 
+  it('not warn doing toRef on props', async () => {
+    const Foo = {
+      props: {
+        obj: {
+          type: Object,
+          required: true,
+        },
+      },
+      setup(props) {
+        return () =>
+          h('div', null, [
+            h('span', toRefs(props.obj).bar.value),
+            h('span', toRefs(props.obj.nested).baz.value),
+          ])
+      },
+    }
+
+    let bar
+    let baz
+
+    const vm = new Vue({
+      template: `<div id="app"><Foo :obj="obj" /></div>`,
+      components: { Foo },
+      setup() {
+        bar = ref(3)
+        baz = ref(1)
+        return {
+          obj: {
+            bar,
+            nested: {
+              baz,
+            },
+          },
+        }
+      },
+    })
+    vm.$mount()
+
+    expect(warn).not.toHaveBeenCalled()
+    expect(vm.$el.textContent).toBe('31')
+
+    bar.value = 4
+    baz.value = 2
+
+    await vm.$nextTick()
+    expect(warn).not.toHaveBeenCalled()
+    expect(vm.$el.textContent).toBe('42')
+  })
+
   it('should merge result properly', () => {
     const injectKey = Symbol('foo')
     const A = Vue.extend({
