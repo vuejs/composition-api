@@ -12,95 +12,66 @@ English | [**中文文档**](./README.zh-CN.md) / [**Composition API RFC**](http
 
 ---
 
-# Navigation
+## Installation
 
-- [Installation](#Installation)
-- [Usage](#Usage)
-- [TypeScript](#TypeScript)
-  - [TSX](#tsx)
-- [Limitations](#Limitations)
-- [Changelog](https://github.com/vuejs/composition-api/blob/master/CHANGELOG.md)
-
-# Installation
-
-**npm**
+### NPM
 
 ```bash
 npm install @vue/composition-api
-```
-
-**yarn**
-
-```bash
+# or
 yarn add @vue/composition-api
 ```
 
-**CDN**
-
-```html
-<script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
-```
-
-By using the global variable `window.vueCompositionApi`
-
-# Usage
-
-You must install `@vue/composition-api` via `Vue.use()` before using other APIs:
+You must install `@vue/composition-api` as a plugin via `Vue.use()` before you can use the [Composition API](https://composition-api.vuejs.org/) to compose your component.
 
 ```js
-import Vue from 'vue';
-import VueCompositionApi from '@vue/composition-api';
+import Vue from 'vue'
+import VueCompositionAPI from '@vue/composition-api'
 
-Vue.use(VueCompositionApi);
+Vue.use(VueCompositionAPI)
 ```
 
-After installing the plugin you can use the [Composition API](https://vue-composition-api-rfc.netlify.com/) to compose your component.
+```js
+// use the APIs
+import { ref, reactive } from '@vue/composition-api'
+```
 
-# TypeScript
+> :bulb: When you migrate to Vue 3, just replacing `@vue/composition-api` to `vue` and your code should just work.
 
-**This plugin requires TypeScript version >3.5.1. If you are using vetur, make sure to set `vetur.useWorkspaceDependencies` to `true`.**
+### CDN
 
-To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`:
+Include `@vue/composition-api` after Vue and it will install itself automatically.
+
+<!--cdn-links-start-->
+```html
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.7"></script>
+```
+<!--cdn-links-end-->
+
+`@vue/composition-api` will be exposed to global variable `window.vueCompositionApi`. 
 
 ```ts
-import { defineComponent } from '@vue/composition-api';
+const { ref, reactive } = vueCompositionApi
+```
 
-const Component = defineComponent({
+## TypeScript Support
+
+> TypeScript version **>3.5.1** is required
+
+To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`
+
+```ts
+import { defineComponent } from '@vue/composition-api'
+
+export default defineComponent({
   // type inference enabled
-});
-
-const Component = {
-  // this will NOT have type inference,
-  // because TypeScript can't tell this is options for a Vue component.
-};
+})
 ```
 
-## TSX
+### JSX/TSX
 
-:rocket: An Example [Repository](https://github.com/liximomo/vue-composition-api-tsx-example) with TS and TSX support is provided to help you start.
-
-To support TSX, create a declaration file with following content in your project.
-
-```ts
-// file: shim-tsx.d.ts
-import Vue, { VNode } from 'vue';
-import { ComponentRenderProxy } from '@vue/composition-api';
-
-declare global {
-  namespace JSX {
-    // tslint:disable no-empty-interface
-    interface Element extends VNode {}
-    // tslint:disable no-empty-interface
-    interface ElementClass extends ComponentRenderProxy {}
-    interface ElementAttributesProperty {
-      $props: any; // specify the property name to use
-    }
-    interface IntrinsicElements {
-      [elem: string]: any;
-    }
-  }
-}
-```
+To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
 # Limitations
 
@@ -304,11 +275,8 @@ You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
 import Vue from 'vue';
-import VueCompositionApi from '@vue/composition-api';
 
-Vue.use(VueCompositionApi);
-
-declare module '@vue/composition-api/dist/component/component' {
+declare module '@vue/composition-api' {
   interface SetupContext {
     readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
   }
