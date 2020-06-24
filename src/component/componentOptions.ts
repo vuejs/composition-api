@@ -1,11 +1,7 @@
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
 import { VNode } from 'vue'
-import {
-  ComponentInstance,
-  VueProxy,
-  ComponentRenderProxy,
-} from './componentProxy'
+import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
 
 import { ComponentOptions as Vue2ComponentOptions } from 'vue'
 
@@ -52,7 +48,7 @@ interface ComponentOptionsBase<
     Vue2ComponentOptions<Vue, D, M, C, Props>,
     'data' | 'computed' | 'method' | 'setup' | 'props'
   > {
-  data?: D | (() => D)
+  data?: (this: Props, vm: Props) => D
   computed?: C
   methods?: M
 }

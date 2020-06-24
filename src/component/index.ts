@@ -1,4 +1,4 @@
-export { defineComponent } from './defineComponent'
+export { defineComponent, createComponent } from './defineComponent'
 export { SetupFunction, SetupContext } from './componentOptions'
 export { ComponentInstance, ComponentRenderProxy } from './componentProxy'
 export { Data } from './common'

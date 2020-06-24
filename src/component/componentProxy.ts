@@ -25,18 +25,19 @@ export type ComponentRenderProxy<
   PublicProps = P
 > = {
   $data: D
-  $props: P & PublicProps
+  $props: Readonly<P & PublicProps>
   $attrs: Data
   $refs: Data
   $slots: Data
   $root: ComponentInstance | null
   $parent: ComponentInstance | null
   $emit: (event: string, ...args: unknown[]) => void
-} & P &
+} & Readonly<P> &
   UnwrapRef<B> &
   D &
   M &
-  ExtractComputedReturns<C>
+  ExtractComputedReturns<C> &
+  Vue
 
 // for Vetur and TSX support
 type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
@@ -55,8 +56,8 @@ export type VueProxy<
   PropsOptions,
   RawBindings,
   Data = DefaultData<Vue>,
-  Methods = DefaultMethods<Vue>,
-  Computed = DefaultComputed
+  Computed = DefaultComputed,
+  Methods = DefaultMethods<Vue>
 > = Vue2ComponentOptions<
   Vue,
   UnwrapRef<RawBindings> & Data,

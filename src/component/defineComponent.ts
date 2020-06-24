@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { ComponentPropsOptions } from './componentProps'
 import {
   MethodOptions,
@@ -8,6 +9,7 @@ import {
 } from './componentOptions'
 import { VueProxy } from './componentProxy'
 import { Data } from './common'
+import { HasDefined } from '../types/basic'
 
 // overload 1: object format with no props
 export function defineComponent<
@@ -43,11 +45,18 @@ export function defineComponent<
   M extends MethodOptions = {},
   PropsOptions extends ComponentPropsOptions = ComponentPropsOptions
 >(
-  options: ComponentOptionsWithProps<PropsOptions, RawBindings, D, C, M>
+  options: HasDefined<Props> extends true
+    ? ComponentOptionsWithProps<PropsOptions, RawBindings, D, C, M, Props>
+    : ComponentOptionsWithProps<PropsOptions, RawBindings, D, C, M>
 ): VueProxy<PropsOptions, RawBindings, D, C, M>
 // implementation, close to no-op
 export function defineComponent(options: any) {
   return options as any
 }
 
-export { defineComponent as createComponent }
+export const createComponent = ((options: any) => {
+  if (__DEV__) {
+    Vue.util.warn('`createComponent` has been renamed to `defineComponent`.')
+  }
+  return defineComponent(options)
+}) as typeof defineComponent
