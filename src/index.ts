@@ -14,6 +14,8 @@ const VueCompositionAPI = {
 }
 
 export default VueCompositionAPI
+
+export { nextTick } from './nextTick'
 export { default as createElement } from './createElement'
 export { SetupContext }
 export {
