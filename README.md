@@ -49,7 +49,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 ```ts
 const { ref, reactive } = VueCompositionAPI
 ```
-
+<!--cdn-links-end-->
 
 ## TypeScript Support
 

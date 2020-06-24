@@ -1,3 +1,20 @@
+<a name="0.6.7"></a>
+## [0.6.7](https://github.com/vuejs/composition-api/compare/v0.6.6...v0.6.7) (2020-06-24)
+
+
+### Bug Fixes
+
+* **toRefs:** do not warn when toRefs is called in a prop value ([#405](https://github.com/vuejs/composition-api/issues/405)) ([048b6d3](https://github.com/vuejs/composition-api/commit/048b6d3))
+* **type:** improve defineComponent type for option apis ([#406](https://github.com/vuejs/composition-api/issues/406)) ([1c64108](https://github.com/vuejs/composition-api/commit/1c64108))
+
+
+### Features
+
+* auto install when using CDN ([#403](https://github.com/vuejs/composition-api/issues/403)) ([77ba15b](https://github.com/vuejs/composition-api/commit/77ba15b))
+* export nextTick ([#401](https://github.com/vuejs/composition-api/issues/401)) ([d70c904](https://github.com/vuejs/composition-api/commit/d70c904))
+
+
+
 <a name="0.6.6"></a>
 ## [0.6.6](https://github.com/vuejs/composition-api/compare/v0.6.5...v0.6.6) (2020-06-21)
 

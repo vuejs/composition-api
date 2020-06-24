@@ -1,4 +1,4 @@
-import { Data } from './component'
+import { Data } from './common'
 
 export type ComponentPropsOptions<P = Data> =
   | ComponentObjectPropsOptions<P>
