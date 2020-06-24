@@ -9,7 +9,6 @@ const {
   toRefs,
   markRaw,
 } = require('../src')
-const { nextTick } = require('process')
 
 describe('setup', () => {
   beforeEach(() => {
