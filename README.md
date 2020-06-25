@@ -160,26 +160,27 @@ b.list[0].count.value === 0 // true
 
 <details>
 <summary>
-❌ <b>Should</b> always use <code>ref</code> in a <code>reactive</code> when working with <code>Array</code>
+✅ <b>Should</b> always use <code>ref</code> in a <code>reactive</code> when working with <code>Array</code>
 </summary>
 
 ```js
 const a = reactive({
-  count: ref(0),
-})
-const b = reactive({
-  list: [a],
+  list: [
+    reactive({
+      count: ref(0),
+    })
+  ],
 })
 // unwrapped
-b.list[0].count === 0 // true
+a.list[0].count === 0 // true
 
-b.list.push(
+a.list.push(
   reactive({
     count: ref(1),
   })
 )
 // unwrapped
-b.list[1].count === 1 // true
+a.list[1].count === 1 // true
 ```
 
 </details>
