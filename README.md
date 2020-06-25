@@ -1,11 +1,11 @@
-# Vue Composition API
+# @vue/composition-api
 
-Vue 2 plugin for **Composition API** in Vue 3.
+Vue 2 plugin for **Composition API**
 
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
-English | [**中文文档**](./README.zh-CN.md) / [**Composition API RFC**](https://composition-api.vuejs.org/)
+English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
 
 
 **Note: the primary goal of this package is to allow the community to experiment with the API and provide feedback before it's finalized. The implementation may contain minor inconsistencies with the RFC as the latter gets updated. We do not recommend using this package for production yet at this stage.**
@@ -73,38 +73,74 @@ export default defineComponent({
 
 To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
-# Limitations
 
-## `Ref` Unwrap
+
+## SSR
+
+Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
+
+```js
+import { onServerPrefetch } from '@vue/composition-api'
+
+export default {
+  setup (props, { ssrContext }) {
+    const result = ref()
+
+    onServerPrefetch(async () => {
+      result.value = await callApi(ssrContext.someId)
+    })
+
+    return {
+      result,
+    }
+  },
+};
+```
+
+## Limitations
+
+> :white_check_mark:
+> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
+
+### `Ref` Unwrap
 
 `Unwrap` is not working with Array index.
 
-### **Should not** store `ref` as a **direct** child of `Array`:
+<details>
+<summary>
+❌ <b>Should NOT</b> store <code>ref</code> as a <b>direct</b> child of <code>Array</code>
+</summary>
 
 ```js
 const state = reactive({
   list: [ref(0)],
-});
+})
 // no unwrap, `.value` is required
-state.list[0].value === 0; // true
+state.list[0].value === 0 // true
 
-state.list.push(ref(1));
+state.list.push(ref(1))
 // no unwrap, `.value` is required
-state.list[1].value === 1; // true
+state.list[1].value === 1 // true
 ```
 
-### **Should not** use `ref` in a plain object when working with `Array`:
+</details>
+
+<details>
+<summary>
+❌ <b>Should NOT</b> use <code>ref</code> in a plain object when working with <code>Array</code>
+</summary>
+
 
 ```js
 const a = {
   count: ref(0),
-};
+}
 const b = reactive({
   list: [a], // `a.count` will not unwrap!!
-});
+})
 
 // no unwrap for `count`, `.value` is required
-b.list[0].count.value === 0; // true
+b.list[0].count.value === 0 // true
 ```
 
 ```js
@@ -114,53 +150,47 @@ const b = reactive({
       count: ref(0), // no unwrap!!
     },
   ],
-});
+})
 
 // no unwrap for `count`, `.value` is required
-b.list[0].count.value === 0; // true
+b.list[0].count.value === 0 // true
 ```
 
-### **Should** always use `ref` in a `reactive` when working with `Array`:
+</details>
+
+<details>
+<summary>
+❌ <b>Should</b> always use <code>ref</code> in a <code>reactive</code> when working with <code>Array</code>
+</summary>
 
 ```js
 const a = reactive({
   count: ref(0),
-});
+})
 const b = reactive({
   list: [a],
-});
+})
 // unwrapped
-b.list[0].count === 0; // true
+b.list[0].count === 0 // true
 
 b.list.push(
   reactive({
     count: ref(1),
   })
-);
+)
 // unwrapped
-b.list[1].count === 1; // true
+b.list[1].count === 1 // true
 ```
 
-### ***Using*** `reactive` will mutate the origin object
+</details>
 
-This is an limitation of using `Vue.observable` in Vue 2.
-> Vue 3 will return an new proxy object.
 
----
+### Template Refs
 
-## `watch()` API
-
-`onTrack` and `onTrigger` are not available in `WatchOptions`.
-
----
-
-## Template Refs
-
-> :white_check_mark:
-> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
-
-:white_check_mark:
-String ref && return it from `setup()`:
+<details>
+<summary>
+✅ String ref && return it from <code>setup()</code>
+</summary>
 
 ```html
 <template>
@@ -170,46 +200,56 @@ String ref && return it from `setup()`:
 <script>
   export default {
     setup() {
-      const root = ref(null);
+      const root = ref(null)
 
       onMounted(() => {
         // the DOM element will be assigned to the ref after initial render
-        console.log(root.value); // <div/>
-      });
+        console.log(root.value) // <div/>
+      })
 
       return {
         root,
-      };
+      }
     },
-  };
+  }
 </script>
 ```
 
-:white_check_mark:
-String ref && return it from `setup()` && Render Function / JSX:
+</details>
+
+
+<details>
+<summary>
+✅ String ref && return it from <code>setup()</code> && Render Function / JSX
+</summary>
 
 ```jsx
 export default {
   setup() {
-    const root = ref(null);
+    const root = ref(null)
 
     onMounted(() => {
       // the DOM element will be assigned to the ref after initial render
-      console.log(root.value); // <div/>
-    });
+      console.log(root.value) // <div/>
+    })
 
     return {
       root,
-    };
+    }
   },
   render() {
     // with JSX
-    return () => <div ref="root" />;
+    return () => <div ref="root" />
   },
-};
+}
 ```
+</details>
 
-:x: Function ref:
+
+<details>
+<summary>
+❌ Function ref
+</summary>
 
 ```html
 <template>
@@ -219,73 +259,141 @@ export default {
 <script>
   export default {
     setup() {
-      const root = ref(null);
+      const root = ref(null)
 
       return {
         root,
-      };
+      }
     },
-  };
+  }
 </script>
 ```
 
-:x: Render Function / JSX in `setup()`:
+</details>
+
+
+<details>
+<summary>
+❌ Render Function / JSX in <code>setup()</code>
+</summary>
 
 ```jsx
 export default {
   setup() {
-    const root = ref(null);
+    const root = ref(null)
 
     return () =>
       h('div', {
         ref: root,
-      });
+      })
 
     // with JSX
-    return () => <div ref={root} />;
+    return () => <div ref={root} />
   },
-};
+}
 ```
 
-If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+</details>
+
+<details>
+<summary>
+⚠️ <code>$refs</code> accessing workaround
+</summary>
+
+<br>
 
 > :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
-```js
+If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`
+
+
+```jsx
 export default {
   setup(initProps, setupContext) {
-    const refs = setupContext.refs;
+    const refs = setupContext.refs
     onMounted(() => {
       // the DOM element will be assigned to the ref after initial render
-      console.log(refs.root); // <div/>
-    });
+      console.log(refs.root) // <div/>
+    })
 
     return () =>
       h('div', {
         ref: 'root',
-      });
+      })
 
     // with JSX
-    return () => <div ref="root" />;
+    return () => <div ref="root" />
   },
-};
+}
 ```
 
 You may also need to augment the `SetupContext` when working with TypeScript:
 
 ```ts
-import Vue from 'vue';
+import Vue from 'vue'
 
 declare module '@vue/composition-api' {
   interface SetupContext {
-    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] };
+    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
   }
 }
 ```
 
-### :x: Reactive APIs in `data()`
+</details>
 
-Passing `ref`, `reactive` or other reactive apis to `data()` would not work.
+### Reactive
+
+<details>
+<summary>
+⚠️ <code>reactive()</code> <b>mutates</b> the original object
+</summary>
+
+`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
+
+> :bulb: In Vue 3, it will return an new proxy object.
+
+
+</details>
+
+### Watch
+
+<details>
+<summary>
+❌ <code>onTrack</code> and <code>onTrigger</code> are not available in <code>WatchOptions</code>
+</summary>
+
+```js
+watch(() => {
+  /* ... */
+}, {
+  immediate: true,
+  onTrack() {},  // not available
+  onTrigger() {},  // not available
+})
+```
+
+</details>
+
+### Missing APIs
+
+The following APIs introduced in Vue 3 are not available in this plugin.
+
+- `readonly`
+- `shallowReadonly`
+- `defineAsyncComponent`
+- `onRenderTracked`
+- `onRenderTriggered`
+- `customRef`
+- `isProxy`
+- `isReadonly`
+- `isVNode`
+
+### Reactive APIs in `data()`
+
+<details>
+<summary>
+❌ Passing <code>ref</code>, <code>reactive</code> or other reactive apis to <code>data()</code> would not work.
+</summary>
 
 ```jsx
 export default {
@@ -295,27 +403,15 @@ export default {
       a: ref(1) 
     }
   },
-};
+}
 ```
 
-## SSR
+</details>
 
-Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
 
-```js
-import { onServerPrefetch } from '@vue/composition-api';
+### Performance Impact
 
-export default {
-  setup (props, { ssrContext }) {
-    const result = ref();
+Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. It shouldn't bother you unless in extreme environments.
 
-    onServerPrefetch(async () => {
-      result.value = await callApi(ssrContext.someId);
-    });
+You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
 
-    return {
-      result,
-    };
-  },
-};
-```
