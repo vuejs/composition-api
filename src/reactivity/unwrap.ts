@@ -27,6 +27,11 @@ export function unwrapRefProxy(value: any, map = new WeakMap()) {
     (s) => (obj[s] = (value as any)[s])
   )
 
+  // copy __ob__
+  if (value.__ob__) {
+    Object.defineProperty(obj, '__ob__', value.__ob__)
+  }
+
   for (const k of Object.keys(value)) {
     const r = value[k]
     // don't process on falsy or raw
