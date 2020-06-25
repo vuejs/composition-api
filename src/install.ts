@@ -46,10 +46,19 @@ export function install(
     if (__DEV__) {
       assert(
         false,
-        'already installed. Vue.use(plugin) should be called only once'
+        'already installed. Vue.use(VueCompositionAPI) should be called only once.'
       )
     }
     return
+  }
+
+  if (__DEV__) {
+    if (!Vue.version.startsWith('2.')) {
+      assert(
+        false,
+        `@vue/composition-api only works with Vue 2, v${Vue.version} found.`
+      )
+    }
   }
 
   Vue.config.optionMergeStrategies.setup = function (
