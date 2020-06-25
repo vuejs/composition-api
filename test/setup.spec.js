@@ -708,7 +708,7 @@ describe('setup', () => {
           },
         },
         setup(props) {
-          expect(props.obj).toEqual({ bar: 1 })
+          expect(toRaw(props.obj)).toEqual({ bar: 1 })
           return {}
         },
       }
