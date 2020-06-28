@@ -49,7 +49,6 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 ```ts
 const { ref, reactive } = VueCompositionAPI
 ```
-<!--cdn-links-end-->
 
 ## TypeScript Support
 
@@ -95,8 +94,7 @@ export default {
 
 ## Limitations
 
-> :white_check_mark:
-> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
+> :white_check_mark: Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
 ### `Ref` Unwrap
 
@@ -106,15 +104,6 @@ export default {
 <summary>
 ❌ <b>Should NOT</b> store <code>ref</code> as a <b>direct</b> child of <code>Array</code>
 </summary>
-
-You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
-
-
-### `Ref` Unwrap
-
-:x: `Unwrap` is not working with Array index.
-
-#### **Should NOT** store `ref` as a **direct** child of `Array`:
 
 ```js
 const state = reactive({
