@@ -5,7 +5,7 @@ Vue 2 plugin for **Composition API**
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
-English | [中文](./README.zh-CN.md) · [**Composition API Docs**](https://composition-api.vuejs.org/)
+English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
 
 ## Installation
 
@@ -69,14 +69,43 @@ export default defineComponent({
 
 To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
+
+
+## SSR
+
+Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
+
+```js
+import { onServerPrefetch } from '@vue/composition-api'
+
+export default {
+  setup (props, { ssrContext }) {
+    const result = ref()
+
+    onServerPrefetch(async () => {
+      result.value = await callApi(ssrContext.someId)
+    })
+
+    return {
+      result,
+    }
+  },
+};
+```
+
 ## Limitations
 
 > :white_check_mark:
 > Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
-### Performance Impact
+### `Ref` Unwrap
 
-Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs.
+`Unwrap` is not working with Array index.
+
+<details>
+<summary>
+❌ <b>Should NOT</b> store <code>ref</code> as a <b>direct</b> child of <code>Array</code>
+</summary>
 
 You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
 
@@ -99,7 +128,13 @@ state.list.push(ref(1))
 state.list[1].value === 1 // true
 ```
 
-#### **Should NOT** use `ref` in a plain object when working with `Array`:
+</details>
+
+<details>
+<summary>
+❌ <b>Should NOT</b> use <code>ref</code> in a plain object when working with <code>Array</code>
+</summary>
+
 
 ```js
 const a = {
@@ -126,42 +161,42 @@ const b = reactive({
 b.list[0].count.value === 0 // true
 ```
 
-#### **Should** always use `ref` in a `reactive` when working with `Array`:
+</details>
+
+<details>
+<summary>
+✅ <b>Should</b> always use <code>ref</code> in a <code>reactive</code> when working with <code>Array</code>
+</summary>
 
 ```js
 const a = reactive({
-  count: ref(0),
-})
-const b = reactive({
-  list: [a],
+  list: [
+    reactive({
+      count: ref(0),
+    })
+  ],
 })
 // unwrapped
-b.list[0].count === 0 // true
+a.list[0].count === 0 // true
 
-b.list.push(
+a.list.push(
   reactive({
     count: ref(1),
   })
 )
 // unwrapped
-b.list[1].count === 1 // true
+a.list[1].count === 1 // true
 ```
 
-### :warning: `reactive` ***mutates*** the original object
+</details>
 
-`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
-
-> :bulb: Vue 3 will return an new proxy object.
-
-
-### `watch()` API
-
-:x: `onTrack` and `onTrigger` are not available in `WatchOptions`.
 
 ### Template Refs
 
-:white_check_mark:
-String ref && return it from `setup()`:
+<details>
+<summary>
+✅ String ref && return it from <code>setup()</code>
+</summary>
 
 ```html
 <template>
@@ -186,8 +221,13 @@ String ref && return it from `setup()`:
 </script>
 ```
 
-:white_check_mark:
-String ref && return it from `setup()` && Render Function / JSX:
+</details>
+
+
+<details>
+<summary>
+✅ String ref && return it from <code>setup()</code> && Render Function / JSX
+</summary>
 
 ```jsx
 export default {
@@ -209,8 +249,13 @@ export default {
   },
 }
 ```
+</details>
 
-:x: Function ref:
+
+<details>
+<summary>
+❌ Function ref
+</summary>
 
 ```html
 <template>
@@ -230,7 +275,13 @@ export default {
 </script>
 ```
 
-:x: Render Function / JSX in `setup()`:
+</details>
+
+
+<details>
+<summary>
+❌ Render Function / JSX in <code>setup()</code>
+</summary>
 
 ```jsx
 export default {
@@ -248,15 +299,18 @@ export default {
 }
 ```
 
+</details>
+
 <details>
-<summary><code>$refs</code> accessing workaround
+<summary>
+⚠️ <code>$refs</code> accessing workaround
 </summary>
 
 <br>
 
 > :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
-If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`.
+If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`
 
 
 ```jsx
@@ -293,10 +347,59 @@ declare module '@vue/composition-api' {
 
 </details>
 
+### Reactive
 
-### :x: Reactive APIs in `data()`
+<details>
+<summary>
+⚠️ <code>reactive()</code> <b>mutates</b> the original object
+</summary>
 
-Passing `ref`, `reactive` or other reactive apis to `data()` would not work.
+`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
+
+> :bulb: In Vue 3, it will return an new proxy object.
+
+
+</details>
+
+### Watch
+
+<details>
+<summary>
+❌ <code>onTrack</code> and <code>onTrigger</code> are not available in <code>WatchOptions</code>
+</summary>
+
+```js
+watch(() => {
+  /* ... */
+}, {
+  immediate: true,
+  onTrack() {},  // not available
+  onTrigger() {},  // not available
+})
+```
+
+</details>
+
+### Missing APIs
+
+The following APIs introduced in Vue 3 are not available in this plugin.
+
+- `readonly`
+- `shallowReadonly`
+- `defineAsyncComponent`
+- `onRenderTracked`
+- `onRenderTriggered`
+- `customRef`
+- `isProxy`
+- `isReadonly`
+- `isVNode`
+
+### Reactive APIs in `data()`
+
+<details>
+<summary>
+❌ Passing <code>ref</code>, <code>reactive</code> or other reactive apis to <code>data()</code> would not work.
+</summary>
 
 ```jsx
 export default {
@@ -306,27 +409,15 @@ export default {
       a: ref(1) 
     }
   },
-};
-```
-
-## SSR
-
-Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
-
-```js
-import { onServerPrefetch } from '@vue/composition-api'
-
-export default {
-  setup (props, { ssrContext }) {
-    const result = ref()
-
-    onServerPrefetch(async () => {
-      result.value = await callApi(ssrContext.someId)
-    })
-
-    return {
-      result,
-    }
-  },
 }
 ```
+
+</details>
+
+
+### Performance Impact
+
+Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. It shouldn't bother you unless in extreme environments.
+
+You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
+
