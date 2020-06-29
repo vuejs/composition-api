@@ -14,6 +14,7 @@ const VueCompositionAPI = {
 }
 
 export default VueCompositionAPI
+export { createApp } from './createApp'
 export { nextTick } from './nextTick'
 export { createElement as h } from './createElement'
 export { getCurrentInstance } from './runtimeContext'
