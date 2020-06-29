@@ -36,7 +36,7 @@ export type SetupFunction<Props, RawBindings> = (
   this: void,
   props: Props,
   ctx: SetupContext
-) => RawBindings | (() => VNode | null)
+) => RawBindings | (() => VNode | undefined | void)
 
 interface ComponentOptionsBase<
   Props,
