@@ -4,7 +4,7 @@ import {
   onBeforeMount,
   onMounted,
   ref,
-  createElement as h,
+  h,
   onBeforeUpdate,
   onUpdated,
   onBeforeUnmount,

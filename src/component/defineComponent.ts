@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { ComponentPropsOptions } from './componentProps'
 import {
   MethodOptions,
@@ -53,10 +52,3 @@ export function defineComponent<
 export function defineComponent(options: any) {
   return options as any
 }
-
-export const createComponent = ((options: any) => {
-  if (__DEV__) {
-    Vue.util.warn('`createComponent` has been renamed to `defineComponent`.')
-  }
-  return defineComponent(options)
-}) as typeof defineComponent

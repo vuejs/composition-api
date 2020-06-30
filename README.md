@@ -7,11 +7,6 @@ Vue 2 plugin for **Composition API**
 
 English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
 
-
-**Note: the primary goal of this package is to allow the community to experiment with the API and provide feedback before it's finalized. The implementation may contain minor inconsistencies with the RFC as the latter gets updated. We do not recommend using this package for production yet at this stage.**
-
----
-
 ## Installation
 
 ### NPM
@@ -45,14 +40,14 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.7"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@0.6.5"></script>
 ```
 <!--cdn-links-end-->
 
-`@vue/composition-api` will be exposed to global variable `window.vueCompositionApi`. 
+`@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`. 
 
 ```ts
-const { ref, reactive } = vueCompositionApi
+const { ref, reactive } = VueCompositionAPI
 ```
 
 ## TypeScript Support
@@ -99,8 +94,7 @@ export default {
 
 ## Limitations
 
-> :white_check_mark:
-> Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
+> :white_check_mark: Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
 ### `Ref` Unwrap
 
@@ -374,6 +368,27 @@ watch(() => {
 ```
 
 </details>
+
+### createApp
+
+<details>
+<summary>
+⚠️ <code>createApp()</code> is global
+</summary>
+
+In Vue 3, `createApp()` is introduced to provide context(plugin, components, etc.) isolation between app instances. Due the the design of Vue 2, in this plugin, we provide `createApp()` as a forward compatible API which is just an alias of the global.
+
+```ts
+const app1 = createApp(RootComponent1)
+app1.component('Foo', Foo) // equivalent to Vue.component('Foo', Foo)
+app1.use(VueRouter) // equivalent to Vue.use(VueRouter)
+
+const app2 = createApp(RootComponent2)
+app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
+```
+
+</details>
+
 
 ### Missing APIs
 

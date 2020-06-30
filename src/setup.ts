@@ -6,7 +6,7 @@ import {
   Data,
 } from './component'
 import { Ref, isRef, isReactive, markRaw } from './reactivity'
-import { getCurrentVM, setCurrentVM } from './runtimeContext'
+import { getCurrentInstance, setCurrentVM } from './runtimeContext'
 import { resolveSlots, createSlotProxy } from './helper'
 import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils'
 import { ref } from './apis/state'
@@ -112,7 +112,7 @@ function activateCurrentInstance(
   fn: (vm_: ComponentInstance) => any,
   onError?: (err: Error) => void
 ) {
-  let preVm = getCurrentVM()
+  let preVm = getCurrentInstance()
   setCurrentVM(vm)
   try {
     return fn(vm)
