@@ -696,6 +696,33 @@ describe('setup', () => {
         },
       })
     })
+
+    // #392
+    it('should copy __ob__ and make toRaw work when passing via props', () => {
+      const Foo = {
+        template: '<p>{{obj.bar}}</p>',
+        props: {
+          obj: {
+            type: Object,
+            required: true,
+          },
+        },
+        setup(props) {
+          expect(toRaw(props.obj)).toEqual({ bar: 1 })
+          return {}
+        },
+      }
+
+      const vm = new Vue({
+        template: '<Foo :obj="obj" />',
+        components: { Foo },
+        setup() {
+          return { obj: { bar: ref(1) } }
+        },
+      }).$mount()
+
+      expect(vm.$el.textContent).toBe('1')
+    })
   })
 
   it('should not unwrap built-in objects on the template', () => {
