@@ -1,6 +1,11 @@
 <a name="1.0.0-beta.1"></a>
 # [1.0.0-beta.1](https://github.com/vuejs/composition-api/compare/v0.6.7...v1.0.0-beta.1) (2020-06-30)
 
+## BREAKING CHANGES
+* change umd exported name to `VueCompositionAPI` ([#399](https://github.com/vuejs/composition-api/issues/399))
+* rename `createElement` to `h` ([#400](https://github.com/vuejs/composition-api/issues/400))
+* drop `createComponent` ([#389](https://github.com/vuejs/composition-api/issues/389))
+* match dist file naming with vue-next ([#413](https://github.com/vuejs/composition-api/issues/413))
 
 ### Bug Fixes
 
