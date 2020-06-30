@@ -369,6 +369,27 @@ watch(() => {
 
 </details>
 
+### createApp
+
+<details>
+<summary>
+⚠️ <code>createApp()</code> is global
+</summary>
+
+In Vue 3, `createApp()` is introduced to provide context(plugin, components, etc.) isolation between app instances. Due the the design of Vue 2, in this plugin, we provide `createApp()` as a forward compatible API which is just an alias of the global.
+
+```ts
+const app1 = createApp(RootComponent1)
+app1.component('Foo', Foo) // equivalent to Vue.component('Foo', Foo)
+app1.use(VueRouter) // equivalent to Vue.use(VueRouter)
+
+const app2 = createApp(RootComponent2)
+app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
+```
+
+</details>
+
+
 ### Missing APIs
 
 The following APIs introduced in Vue 3 are not available in this plugin.
