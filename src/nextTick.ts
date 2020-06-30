@@ -7,5 +7,5 @@ export const nextTick: NextTick = function nextTick(
   this: ThisType<NextTick>,
   ...args: Parameters<NextTick>
 ) {
-  return currentVue?.nextTick.bind(this, args)
+  return currentVue?.nextTick.apply(this, args)
 } as any
