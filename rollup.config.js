@@ -7,27 +7,27 @@ import dts from 'rollup-plugin-dts'
 
 const builds = {
   'cjs-dev': {
-    outFile: 'vue-composition-api.js',
+    outFile: 'vue-composition-api.common.js',
     format: 'cjs',
     mode: 'development',
   },
   'cjs-prod': {
-    outFile: 'vue-composition-api.min.js',
+    outFile: 'vue-composition-api.common.prod.js',
     format: 'cjs',
     mode: 'production',
   },
   'umd-dev': {
-    outFile: 'vue-composition-api.umd.js',
+    outFile: 'vue-composition-api.js',
     format: 'umd',
     mode: 'development',
   },
   'umd-prod': {
-    outFile: 'vue-composition-api.umd.min.js',
+    outFile: 'vue-composition-api.prod.js',
     format: 'umd',
     mode: 'production',
   },
-  es: {
-    outFile: 'vue-composition-api.module.js',
+  esm: {
+    outFile: 'vue-composition-api.esm.js',
     format: 'es',
     mode: 'development',
   },
