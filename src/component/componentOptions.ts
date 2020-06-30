@@ -32,11 +32,11 @@ export interface MethodOptions {
   [key: string]: Function
 }
 
-export type SetupFunction<Props, RawBindings> = (
+export type SetupFunction<Props, RawBindings = {}> = (
   this: void,
   props: Props,
   ctx: SetupContext
-) => RawBindings | (() => VNode | null)
+) => RawBindings | (() => VNode | null) | void
 
 interface ComponentOptionsBase<
   Props,
