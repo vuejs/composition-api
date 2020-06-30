@@ -1,3 +1,21 @@
+<a name="1.0.0-beta.1"></a>
+# [1.0.0-beta.1](https://github.com/vuejs/composition-api/compare/v0.6.7...v1.0.0-beta.1) (2020-06-30)
+
+
+### Bug Fixes
+
+* **unwrapRef:** copy __ob__ and make toRaw work in props ([#409](https://github.com/vuejs/composition-api/issues/409)) ([5f23886](https://github.com/vuejs/composition-api/commit/5f23886)), closes [#392](https://github.com/vuejs/composition-api/issues/392)
+* nextTick await ([#414](https://github.com/vuejs/composition-api/issues/414)) ([85ffede](https://github.com/vuejs/composition-api/commit/85ffede))
+* **type:** accept undefined return for setup() ([#417](https://github.com/vuejs/composition-api/issues/417)) ([64b16ff](https://github.com/vuejs/composition-api/commit/64b16ff))
+
+
+### Features
+
+* add createApp ([#415](https://github.com/vuejs/composition-api/issues/415)) ([391a0d9](https://github.com/vuejs/composition-api/commit/391a0d9))
+* Vue version warning in dev mode ([#408](https://github.com/vuejs/composition-api/issues/408)) ([0840aa8](https://github.com/vuejs/composition-api/commit/0840aa8))
+
+
+
 <a name="0.6.7"></a>
 ## [0.6.7](https://github.com/vuejs/composition-api/compare/v0.6.6...v0.6.7) (2020-06-24)
 
