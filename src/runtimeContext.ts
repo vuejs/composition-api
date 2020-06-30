@@ -7,7 +7,10 @@ let currentVM: ComponentInstance | null = null
 
 export function getCurrentVue(): VueConstructor {
   if (__DEV__) {
-    assert(currentVue, `must call Vue.use(plugin) before using any function.`)
+    assert(
+      currentVue,
+      `must call Vue.use(VueCompositionAPI) before using any function.`
+    )
   }
 
   return currentVue!
