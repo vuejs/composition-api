@@ -1,5 +1,5 @@
 import { VueConstructor } from 'vue'
-import { VfaState } from './vmStateManager'
+import { VfaState } from './utils/vmStateManager'
 import { VueWatcher } from './apis/watch'
 
 declare global {
@@ -13,7 +13,7 @@ declare module 'vue/types/vue' {
     readonly _uid: number
     readonly _data: Record<string, any>
     _watchers: VueWatcher[]
-    __secret_vfa_state__?: VfaState
+    __composition_api_state__?: VfaState
   }
 
   interface VueConstructor {

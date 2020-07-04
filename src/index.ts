@@ -1,22 +1,8 @@
-import Vue, { VueConstructor } from 'vue'
+import type Vue from 'vue'
 import { Data, SetupFunction } from './component'
-import { install } from './install'
-import { mixin } from './setup'
+import { Plugin } from './install'
 
-declare module 'vue/types/options' {
-  interface ComponentOptions<V extends Vue> {
-    setup?: SetupFunction<Data, Data>
-  }
-}
-
-const VueCompositionAPI = {
-  install: (Vue: VueConstructor) => install(Vue, mixin),
-}
-
-export default VueCompositionAPI
-export { createApp } from './createApp'
-export { nextTick } from './nextTick'
-export { createElement as h } from './createElement'
+export * from './apis'
 export { getCurrentInstance } from './runtimeContext'
 export {
   defineComponent,
@@ -25,14 +11,15 @@ export {
   PropOptions,
   SetupContext,
 } from './component'
+export default Plugin
 
-export * from './apis/state'
-export * from './apis/lifecycle'
-export * from './apis/watch'
-export * from './apis/computed'
-export * from './apis/inject'
+declare module 'vue/types/options' {
+  interface ComponentOptions<V extends Vue> {
+    setup?: SetupFunction<Data, Data>
+  }
+}
 
 // auto install when using CDN
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(VueCompositionAPI)
+  window.Vue.use(Plugin)
 }

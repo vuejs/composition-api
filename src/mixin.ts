@@ -1,18 +1,31 @@
-import { VueConstructor } from 'vue'
+import type { VueConstructor } from 'vue'
 import {
   ComponentInstance,
   SetupContext,
   SetupFunction,
   Data,
 } from './component'
-import { Ref, isRef, isReactive, markRaw } from './reactivity'
-import { getCurrentInstance, setCurrentVM } from './runtimeContext'
-import { resolveSlots, createSlotProxy } from './helper'
-import { hasOwn, isPlainObject, assert, proxy, warn, isFunction } from './utils'
-import { ref } from './apis/state'
-import vmStateManager from './vmStateManager'
-import { unwrapRefProxy } from './reactivity/unwrap'
-import { markReactive } from './reactivity/reactive'
+import {
+  Ref,
+  isRef,
+  isReactive,
+  markRaw,
+  unwrapRefProxy,
+  markReactive,
+} from './reactivity'
+import { getCurrentInstance, setCurrentInstance } from './runtimeContext'
+import {
+  resolveSlots,
+  createSlotProxy,
+  hasOwn,
+  isPlainObject,
+  assert,
+  proxy,
+  warn,
+  isFunction,
+} from './utils'
+import { ref } from './apis'
+import vmStateManager from './utils/vmStateManager'
 
 function asVmProperty(
   vm: ComponentInstance,
@@ -83,11 +96,11 @@ function resolveScopedSlots(
   vm: ComponentInstance,
   slotsProxy: { [x: string]: Function }
 ): void {
-  const parentVode = (vm.$options as any)._parentVnode
-  if (!parentVode) return
+  const parentVNode = (vm.$options as any)._parentVnode
+  if (!parentVNode) return
 
   const prevSlots = vmStateManager.get(vm, 'slots') || []
-  const curSlots = resolveSlots(parentVode.data.scopedSlots, vm.$slots)
+  const curSlots = resolveSlots(parentVNode.data.scopedSlots, vm.$slots)
   // remove staled slots
   for (let index = 0; index < prevSlots.length; index++) {
     const key = prevSlots[index]
@@ -113,7 +126,7 @@ function activateCurrentInstance(
   onError?: (err: Error) => void
 ) {
   let preVm = getCurrentInstance()
-  setCurrentVM(vm)
+  setCurrentInstance(vm)
   try {
     return fn(vm)
   } catch (err) {
@@ -123,7 +136,7 @@ function activateCurrentInstance(
       throw err
     }
   } finally {
-    setCurrentVM(preVm)
+    setCurrentInstance(preVm)
   }
 }
 

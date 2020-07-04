@@ -1,7 +1,7 @@
 import type Vue from 'vue'
 import { VueConstructor } from 'vue/types/umd'
-import { getCurrentVue } from './runtimeContext'
-import { warn } from './utils'
+import { getVueConstructor } from '../runtimeContext'
+import { warn } from '../utils'
 
 export interface App {
   config: VueConstructor['config']
@@ -14,7 +14,7 @@ export interface App {
 }
 
 export function createApp(rootComponent: any, rootProps: any = undefined): App {
-  const V = getCurrentVue()!
+  const V = getVueConstructor()!
 
   let mountedVM: Vue | undefined = undefined
 

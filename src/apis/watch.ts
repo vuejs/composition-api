@@ -1,9 +1,12 @@
 import { ComponentInstance } from '../component'
 import { Ref, isRef, isReactive } from '../reactivity'
 import { assert, logError, noopFn, warn, isFunction } from '../utils'
-import { defineComponentInstance } from '../helper'
-import { getCurrentInstance, getCurrentVue } from '../runtimeContext'
-import { WatcherPreFlushQueueKey, WatcherPostFlushQueueKey } from '../symbols'
+import { defineComponentInstance } from '../utils/helper'
+import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
+import {
+  WatcherPreFlushQueueKey,
+  WatcherPostFlushQueueKey,
+} from '../utils/symbols'
 import { ComputedRef } from './computed'
 
 export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
@@ -98,7 +101,7 @@ function getWatcherVM() {
   let vm = getCurrentInstance()
   if (!vm) {
     if (!fallbackVM) {
-      fallbackVM = defineComponentInstance(getCurrentVue())
+      fallbackVM = defineComponentInstance(getVueConstructor())
     }
     vm = fallbackVM
   } else if (!hasWatchEnv(vm)) {

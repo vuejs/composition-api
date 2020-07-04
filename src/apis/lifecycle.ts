@@ -1,18 +1,18 @@
 import { VueConstructor } from 'vue'
 import { ComponentInstance } from '../component'
 import {
-  getCurrentVue,
-  setCurrentVM,
+  getVueConstructor,
+  setCurrentInstance,
   getCurrentInstance,
 } from '../runtimeContext'
-import { currentVMInFn } from '../helper'
+import { currentVMInFn } from '../utils/helper'
 
 const genName = (name: string) => `on${name[0].toUpperCase() + name.slice(1)}`
 function createLifeCycle(lifeCyclehook: string) {
   return (callback: Function) => {
     const vm = currentVMInFn(genName(lifeCyclehook))
     if (vm) {
-      injectHookOption(getCurrentVue(), vm, lifeCyclehook, callback)
+      injectHookOption(getVueConstructor(), vm, lifeCyclehook, callback)
     }
   }
 }
@@ -31,11 +31,11 @@ function injectHookOption(
 function wrapHookCall(vm: ComponentInstance, fn: Function) {
   return (...args: any) => {
     let preVm = getCurrentInstance()
-    setCurrentVM(vm)
+    setCurrentInstance(vm)
     try {
       return fn(...args)
     } finally {
-      setCurrentVM(preVm)
+      setCurrentInstance(preVm)
     }
   }
 }
