@@ -1,5 +1,5 @@
 import { Data } from '../component'
-import { RefKey } from '../symbols'
+import { RefKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
 import { ComputedRef } from '../apis/computed'

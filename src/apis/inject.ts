@@ -1,6 +1,5 @@
 import { ComponentInstance } from '../component'
-import { currentVMInFn } from '../helper'
-import { hasOwn, warn } from '../utils'
+import { hasOwn, warn, currentVMInFn } from '../utils'
 import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}

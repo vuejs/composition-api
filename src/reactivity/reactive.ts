@@ -1,13 +1,13 @@
 import { AnyObject } from '../types/basic'
-import { getCurrentVue } from '../runtimeContext'
+import { getVueConstructor } from '../runtimeContext'
 import { isPlainObject, def, hasOwn, warn } from '../utils'
-import { isComponentInstance, defineComponentInstance } from '../helper'
+import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import {
   AccessControlIdentifierKey,
   ReactiveIdentifierKey,
   RawIdentifierKey,
   RefKey,
-} from '../symbols'
+} from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
 
 const AccessControlIdentifier = {}
@@ -115,7 +115,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
 }
 
 function observe<T>(obj: T): T {
-  const Vue = getCurrentVue()
+  const Vue = getVueConstructor()
   let observed: T
   if (Vue.observable) {
     observed = Vue.observable(obj)

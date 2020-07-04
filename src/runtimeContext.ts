@@ -2,30 +2,32 @@ import { VueConstructor } from 'vue'
 import { ComponentInstance } from './component'
 import { assert } from './utils'
 
-let currentVue: VueConstructor | null = null
-let currentVM: ComponentInstance | null = null
+let vueConstructor: VueConstructor | null = null
+let currentInstance: ComponentInstance | null = null
 
-export function getCurrentVue(): VueConstructor {
+export function isVueRegistered() {
+  return !!vueConstructor
+}
+
+export function getVueConstructor(): VueConstructor {
   if (__DEV__) {
     assert(
-      currentVue,
+      vueConstructor,
       `must call Vue.use(VueCompositionAPI) before using any function.`
     )
   }
 
-  return currentVue!
+  return vueConstructor!
 }
 
-export function setCurrentVue(vue: VueConstructor) {
-  currentVue = vue
+export function setVueConstructor(Vue: VueConstructor) {
+  vueConstructor = Vue
 }
 
 export function getCurrentInstance(): ComponentInstance | null {
-  return currentVM
+  return currentInstance
 }
 
-export function setCurrentVM(vm: ComponentInstance | null) {
-  currentVM = vm
+export function setCurrentInstance(vm: ComponentInstance | null) {
+  currentInstance = vm
 }
-
-export { currentVue, currentVM }

@@ -5,6 +5,7 @@ export {
   shallowReactive,
   toRaw,
   isRaw,
+  markReactive,
 } from './reactive'
 export {
   ref,
@@ -19,3 +20,4 @@ export {
   triggerRef,
 } from './ref'
 export { set } from './set'
+export { unwrapRefProxy } from './unwrap'
