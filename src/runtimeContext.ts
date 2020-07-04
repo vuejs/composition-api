@@ -1,12 +1,18 @@
-import { VueConstructor } from 'vue'
+import type { VueConstructor } from 'vue'
 import { ComponentInstance } from './component'
-import { assert } from './utils'
+import { assert, hasOwn } from './utils'
 
 let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
 
-export function isVueRegistered() {
+const PluginInstalledFlag = '__composition_api_installed__'
+
+export function isPluginInstalled() {
   return !!vueConstructor
+}
+
+export function isVueRegistered(Vue: VueConstructor) {
+  return hasOwn(Vue, PluginInstalledFlag)
 }
 
 export function getVueConstructor(): VueConstructor {
@@ -22,6 +28,11 @@ export function getVueConstructor(): VueConstructor {
 
 export function setVueConstructor(Vue: VueConstructor) {
   vueConstructor = Vue
+  Object.defineProperty(Vue, PluginInstalledFlag, {
+    configurable: true,
+    writable: true,
+    value: true,
+  })
 }
 
 export function getCurrentInstance(): ComponentInstance | null {
