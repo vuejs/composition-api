@@ -1,5 +1,6 @@
 import {
   ref,
+  customRef,
   reactive,
   isRef,
   toRef,
@@ -308,34 +309,37 @@ describe('reactivity/ref', () => {
     expect(dummyY).toBe(5)
   })
 
-  // test('customRef', () => {
-  //   let value = 1;
-  //   let _trigger: () => void;
+  test('customRef', () => {
+    let value = 1
+    let _trigger: () => void
 
-  //   const custom = customRef((track, trigger) => ({
-  //     get() {
-  //       track();
-  //       return value;
-  //     },
-  //     set(newValue: number) {
-  //       value = newValue;
-  //       _trigger = trigger;
-  //     },
-  //   }));
+    const custom = customRef((track, trigger) => ({
+      get() {
+        track()
+        return value
+      },
+      set(newValue: number) {
+        value = newValue
+        _trigger = trigger
+      },
+    }))
 
-  //   expect(isRef(custom)).toBe(true);
+    expect(isRef(custom)).toBe(true)
 
-  //   let dummy;
-  //   watchEffect(() => {
-  //     dummy = custom.value;
-  //   }, {flush: 'sync'});
-  //   expect(dummy).toBe(1);
+    let dummy
+    watchEffect(
+      () => {
+        dummy = custom.value
+      },
+      { flush: 'sync' }
+    )
+    expect(dummy).toBe(1)
 
-  //   custom.value = 2;
-  //   // should not trigger yet
-  //   expect(dummy).toBe(1);
+    custom.value = 2
+    // should not trigger yet
+    expect(dummy).toBe(1)
 
-  //   _trigger!();
-  //   expect(dummy).toBe(2);
-  // });
+    _trigger!()
+    expect(dummy).toBe(2)
+  })
 })

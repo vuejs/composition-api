@@ -1,6 +1,7 @@
 export {
   reactive,
   ref,
+  customRef,
   Ref,
   isRef,
   toRefs,
