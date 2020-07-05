@@ -53,7 +53,7 @@ export function inject(
     if (val !== NOT_FOUND) {
       return val
     } else {
-      if (defaultValue === undefined && process.env.NODE_ENV !== 'production') {
+      if (defaultValue === undefined && __DEV__) {
         warn(`Injection "${String(key)}" not found`, vm)
       }
       return defaultValue

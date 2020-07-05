@@ -69,9 +69,12 @@ function genConfig({ outFile, format, mode }) {
       }),
       resolve(),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(
-          isProd ? 'production' : 'development'
-        ),
+        'process.env.NODE_ENV':
+          format === 'es'
+            ? // preserve to be handled by bundlers
+              'process.env.NODE_ENV'
+            : // hard coded dev/prod builds
+              JSON.stringify(isProd ? 'production' : 'development'),
         __DEV__:
           format === 'es'
             ? // preserve to be handled by bundlers
