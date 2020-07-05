@@ -29,7 +29,10 @@ export function unwrapRefProxy(value: any, map = new WeakMap()) {
 
   // copy __ob__
   if (value.__ob__) {
-    Object.defineProperty(obj, '__ob__', value.__ob__)
+    Object.defineProperty(obj, '__ob__', {
+      enumerable: false,
+      value: value.__ob__,
+    })
   }
 
   for (const k of Object.keys(value)) {

@@ -269,7 +269,7 @@ export function markRaw<T extends object>(obj: T): T {
 }
 
 export function toRaw<T>(observed: T): T {
-  if (isRaw(observe) || !Object.isExtensible(observed)) {
+  if (isRaw(observed) || !Object.isExtensible(observed)) {
     return observed
   }
 
