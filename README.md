@@ -399,7 +399,6 @@ The following APIs introduced in Vue 3 are not available in this plugin.
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
-- `customRef`
 - `isProxy`
 - `isReadonly`
 - `isVNode`
