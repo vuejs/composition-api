@@ -2,7 +2,11 @@ import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
 import { hasSymbol, hasOwn, isPlainObject, assert } from './utils'
 import { isRef } from './reactivity'
-import { setVueConstructor, isVueRegistered } from './runtimeContext'
+import {
+  setVueConstructor,
+  isVueRegistered,
+  isPluginInstalled,
+} from './runtimeContext'
 import { mixin } from './mixin'
 
 /**
@@ -40,7 +44,7 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
 }
 
 export function install(Vue: VueConstructor) {
-  if (isVueRegistered()) {
+  if (isPluginInstalled() || isVueRegistered(Vue)) {
     if (__DEV__) {
       assert(
         false,
@@ -52,10 +56,7 @@ export function install(Vue: VueConstructor) {
 
   if (__DEV__) {
     if (!Vue.version.startsWith('2.')) {
-      assert(
-        false,
-        `@vue/composition-api only works with Vue 2, v${Vue.version} found.`
-      )
+      assert(false, `only works with Vue 2, v${Vue.version} found.`)
     }
   }
 
