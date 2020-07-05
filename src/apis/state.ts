@@ -5,6 +5,7 @@ export {
   markReactive,
   reactive,
   ref,
+  customRef,
   Ref,
   set,
   shallowReactive,

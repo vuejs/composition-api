@@ -128,6 +128,26 @@ export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
   return ret
 }
 
+export type CustomRefFactory<T> = (
+  track: () => void,
+  trigger: () => void
+) => {
+  get: () => T
+  set: (value: T) => void
+}
+
+export function customRef<T>(factory: CustomRefFactory<T>): Ref<T> {
+  const version = ref(0)
+  return createRef(
+    factory(
+      () => void version.value,
+      () => {
+        ++version.value
+      }
+    )
+  )
+}
+
 export function toRef<T extends object, K extends keyof T>(
   object: T,
   key: K

@@ -9,6 +9,7 @@ export {
 } from './reactive'
 export {
   ref,
+  customRef,
   isRef,
   Ref,
   createRef,
