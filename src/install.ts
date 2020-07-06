@@ -1,8 +1,13 @@
+import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
 import { hasSymbol, hasOwn, isPlainObject, assert } from './utils'
 import { isRef } from './reactivity'
-import { setCurrentVue, currentVue } from './runtimeContext'
-import { VueConstructor } from 'vue'
+import {
+  setVueConstructor,
+  isVueRegistered,
+  isPluginInstalled,
+} from './runtimeContext'
+import { mixin } from './mixin'
 
 /**
  * Helper that recursively merges two data objects together.
@@ -38,11 +43,8 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
   return to
 }
 
-export function install(
-  Vue: VueConstructor,
-  _install: (Vue: VueConstructor) => void
-) {
-  if (currentVue && currentVue === Vue) {
+export function install(Vue: VueConstructor) {
+  if (isPluginInstalled() || isVueRegistered(Vue)) {
     if (__DEV__) {
       assert(
         false,
@@ -54,10 +56,7 @@ export function install(
 
   if (__DEV__) {
     if (!Vue.version.startsWith('2.')) {
-      assert(
-        false,
-        `@vue/composition-api only works with Vue 2, v${Vue.version} found.`
-      )
+      assert(false, `only works with Vue 2, v${Vue.version} found.`)
     }
   }
 
@@ -73,6 +72,10 @@ export function install(
     }
   }
 
-  setCurrentVue(Vue)
-  _install(Vue)
+  setVueConstructor(Vue)
+  mixin(Vue)
+}
+
+export const Plugin = {
+  install: (Vue: VueConstructor) => install(Vue),
 }

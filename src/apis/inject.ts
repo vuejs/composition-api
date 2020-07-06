@@ -1,6 +1,5 @@
 import { ComponentInstance } from '../component'
-import { currentVMInFn } from '../helper'
-import { hasOwn, warn } from '../utils'
+import { hasOwn, warn, currentVMInFn } from '../utils'
 import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}
@@ -54,7 +53,7 @@ export function inject(
     if (val !== NOT_FOUND) {
       return val
     } else {
-      if (defaultValue === undefined && process.env.NODE_ENV !== 'production') {
+      if (defaultValue === undefined && __DEV__) {
         warn(`Injection "${String(key)}" not found`, vm)
       }
       return defaultValue

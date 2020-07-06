@@ -1,6 +1,6 @@
 import Vue, { VNode, ComponentOptions, VueConstructor } from 'vue'
-import { ComponentInstance } from './component'
-import { currentVue, getCurrentInstance } from './runtimeContext'
+import { ComponentInstance } from '../component'
+import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
 import { warn } from './utils'
 
 export function currentVMInFn(hook: string): ComponentInstance | null {
@@ -27,7 +27,8 @@ export function defineComponentInstance<V extends Vue = Vue>(
 }
 
 export function isComponentInstance(obj: any) {
-  return currentVue && obj instanceof currentVue
+  const Vue = getVueConstructor()
+  return Vue && obj instanceof Vue
 }
 
 export function createSlotProxy(vm: ComponentInstance, slotName: string) {

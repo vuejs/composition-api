@@ -1,3 +1,21 @@
+<a name="1.0.0-beta.2"></a>
+# [1.0.0-beta.2](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2020-07-05)
+
+
+### Bug Fixes
+
+* prevent multiple plugins get installed ([#427](https://github.com/vuejs/composition-api/issues/427)) ([94d4d87](https://github.com/vuejs/composition-api/commit/94d4d87))
+* remove "browser" field in package.json ([#424](https://github.com/vuejs/composition-api/issues/424)) ([4ebeda4](https://github.com/vuejs/composition-api/commit/4ebeda4))
+* toRaw typo ([#429](https://github.com/vuejs/composition-api/issues/429)) ([9468f72](https://github.com/vuejs/composition-api/commit/9468f72))
+
+
+### Features
+
+* add customRef ([#423](https://github.com/vuejs/composition-api/issues/423)) ([a8686bb](https://github.com/vuejs/composition-api/commit/a8686bb))
+* add useCSSModule api ([#420](https://github.com/vuejs/composition-api/issues/420)) ([1ceac1d](https://github.com/vuejs/composition-api/commit/1ceac1d))
+
+
+
 <a name="1.0.0-beta.1"></a>
 # [1.0.0-beta.1](https://github.com/vuejs/composition-api/compare/v0.6.7...v1.0.0-beta.1) (2020-06-30)
 

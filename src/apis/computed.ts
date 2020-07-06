@@ -1,6 +1,6 @@
-import { getCurrentVue, getCurrentInstance } from '../runtimeContext'
+import { getVueConstructor, getCurrentInstance } from '../runtimeContext'
 import { createRef, Ref } from '../reactivity'
-import { defineComponentInstance } from '../helper'
+import { defineComponentInstance } from '../utils/helper'
 import { warn } from '../utils'
 
 interface Option<T> {
@@ -31,7 +31,7 @@ export function computed<T>(
     set = options.set
   }
 
-  const computedHost = defineComponentInstance(getCurrentVue(), {
+  const computedHost = defineComponentInstance(getVueConstructor(), {
     computed: {
       $$state: {
         get,

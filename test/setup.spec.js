@@ -8,6 +8,7 @@ const {
   reactive,
   toRefs,
   markRaw,
+  toRaw,
 } = require('../src')
 
 describe('setup', () => {
@@ -548,6 +549,8 @@ describe('setup', () => {
       expect(
         JSON.parse(vm.$el.querySelector('#refList').textContent)
       ).toMatchObject([{ value: '1' }, { value: '2' }, { value: '3' }])
+
+      expect(warn).not.toHaveBeenCalled()
     })
 
     test('nested', () => {
@@ -614,6 +617,8 @@ describe('setup', () => {
       expect(vm.$el.querySelector('#nested_aaa_b').textContent).toBe('aaa')
       expect(vm.$el.querySelector('#nested_aaa_bb_c').textContent).toBe('aaa')
       expect(vm.$el.querySelector('#nested_aaa_bb_cc').textContent).toBe('aaa')
+
+      expect(warn).not.toHaveBeenCalled()
     })
 
     it('recursive', () => {
@@ -671,6 +676,8 @@ describe('setup', () => {
       expect(
         vm.$el.querySelector('#recursive_b_recursive_recursive_r').textContent
       ).toBe('r')
+
+      expect(warn).not.toHaveBeenCalled()
     })
 
     // #384
@@ -695,10 +702,14 @@ describe('setup', () => {
           value: 'r',
         },
       })
+
+      expect(warn).not.toHaveBeenCalled()
     })
 
     // #392
     it('should copy __ob__ and make toRaw work when passing via props', () => {
+      let propsObj = null
+
       const Foo = {
         template: '<p>{{obj.bar}}</p>',
         props: {
@@ -708,7 +719,7 @@ describe('setup', () => {
           },
         },
         setup(props) {
-          expect(toRaw(props.obj)).toEqual({ bar: 1 })
+          propsObj = toRaw(props.obj)
           return {}
         },
       }
@@ -722,6 +733,9 @@ describe('setup', () => {
       }).$mount()
 
       expect(vm.$el.textContent).toBe('1')
+      expect(propsObj).toEqual({ bar: 1 })
+
+      expect(warn).not.toHaveBeenCalled()
     })
   })
 

@@ -1,4 +1,4 @@
-import { getCurrentVue } from '../runtimeContext'
+import { getVueConstructor } from '../runtimeContext'
 import { isArray } from '../utils'
 import { defineAccessControl, markReactive } from './reactive'
 
@@ -27,7 +27,7 @@ function isValidArrayIndex(val: any): boolean {
  * already exist.
  */
 export function set<T>(target: any, key: any, val: T): T {
-  const Vue = getCurrentVue()
+  const Vue = getVueConstructor()
   const { warn, defineReactive } = Vue.util
   if (__DEV__ && (isUndef(target) || isPrimitive(target))) {
     warn(
