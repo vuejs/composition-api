@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.3"></a>
+# [1.0.0-beta.3](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2020-07-09)
+
+
+### Bug Fixes
+
+* unwrap warning, fix [#425](https://github.com/vuejs/composition-api/issues/425) ([#430](https://github.com/vuejs/composition-api/issues/430)) ([d5123ec](https://github.com/vuejs/composition-api/commit/d5123ec))
+
+
+
 <a name="1.0.0-beta.2"></a>
 # [1.0.0-beta.2](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2020-07-05)
 
