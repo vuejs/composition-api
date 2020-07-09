@@ -1,5 +1,5 @@
 import { isRef } from './ref'
-import { proxy, isFunction, isPlainObject, isArray } from '../utils'
+import { proxy, isFunction, isPlainObject, isArray, hasOwn } from '../utils'
 import { isReactive, isRaw } from './reactive'
 
 export function unwrapRefProxy(value: any, map = new WeakMap()) {
@@ -28,7 +28,7 @@ export function unwrapRefProxy(value: any, map = new WeakMap()) {
   )
 
   // copy __ob__
-  if (value.__ob__) {
+  if (hasOwn(value, '__ob__')) {
     Object.defineProperty(obj, '__ob__', {
       enumerable: false,
       value: value.__ob__,
