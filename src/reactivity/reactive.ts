@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isPlainObject, def, hasOwn, warn } from '../utils'
+import { isPlainObject, def, hasOwn, warn, isObject } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import {
   AccessControlIdentifierKey,
@@ -22,6 +22,7 @@ export function isRaw(obj: any): boolean {
 
 export function isReactive(obj: any): boolean {
   return (
+    isObject(obj) &&
     Object.isExtensible(obj) &&
     hasOwn(obj, ReactiveIdentifierKey) &&
     obj[ReactiveIdentifierKey] === ReactiveIdentifier
