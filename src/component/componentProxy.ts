@@ -27,17 +27,12 @@ export type ComponentRenderProxy<
   $data: D
   $props: Readonly<P & PublicProps>
   $attrs: Data
-  $refs: Data
-  $slots: Data
-  $root: ComponentInstance | null
-  $parent: ComponentInstance | null
-  $emit: (event: string, ...args: unknown[]) => void
 } & Readonly<P> &
   UnwrapRef<B> &
   D &
   M &
   ExtractComputedReturns<C> &
-  Vue
+  Omit<Vue, '$data' | '$props' | '$attrs'>
 
 // for Vetur and TSX support
 type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
