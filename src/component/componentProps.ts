@@ -43,7 +43,7 @@ type ExtractFunctionPropType<
   T extends Function,
   TArgs extends Array<any> = any[],
   TResult = any
-> = T extends (...args: TArgs) => TResult ? T : never
+> = T extends (...args: TArgs) => TResult ? T : any
 
 type ExtractCorrectPropType<T> = T extends Function
   ? ExtractFunctionPropType<T>
