@@ -9,7 +9,7 @@ import { mockWarn } from '../../helpers/mockWarn'
 import { nextTick } from '../../helpers/utils'
 
 describe('reactivity/computed', () => {
-  mockWarn()
+  mockWarn(true)
 
   it('should return updated value', async () => {
     const value = reactive<{ foo?: number }>({ foo: undefined })

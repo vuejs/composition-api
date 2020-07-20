@@ -71,7 +71,7 @@ describe('Hooks computed', () => {
     })
     vm.b = 2
     expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: Computed property was assigned to but it has no setter.'
+      '[Vue warn]: Write operation failed: computed value is readonly.'
     )
   })
 
@@ -200,7 +200,7 @@ describe('Hooks computed', () => {
     const x = computed(() => a)
     expect(isReadonly(x)).toBe(true)
     expect(isReadonly(x.value)).toBe(false)
-    expect(isReadonly(x.value.a)).toBe(false) // false
+    expect(isReadonly(x.value.a)).toBe(false)
     const z = computed({
       get() {
         return a
@@ -209,7 +209,7 @@ describe('Hooks computed', () => {
         a = v
       },
     })
-    expect(isReadonly(z.value)).toBe(false) // false
-    expect(isReadonly(z.value.a)).toBe(false) // false
+    expect(isReadonly(z.value)).toBe(false)
+    expect(isReadonly(z.value.a)).toBe(false)
   })
 })

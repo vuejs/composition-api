@@ -47,7 +47,7 @@ export function computed<T>(
       get: () => (computedHost as any).$$state,
       set: (v: T) => {
         if (__DEV__ && !set) {
-          warn('Computed property was assigned to but it has no setter.', vm!)
+          warn('Write operation failed: computed value is readonly.', vm!)
           return
         }
 
