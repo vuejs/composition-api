@@ -43,7 +43,7 @@ type ExtractFunctionPropType<
   T extends Function,
   TArgs extends Array<any> = any[],
   TResult = any
-> = T extends (...args: TArgs) => TResult ? T : any
+> = T extends (...args: TArgs) => TResult ? T : never
 
 type ExtractCorrectPropType<T> = T extends Function
   ? ExtractFunctionPropType<T>
@@ -58,8 +58,10 @@ type InferPropType<T> = T extends null
       ? { [key: string]: any }
       : T extends BooleanConstructor | { type: BooleanConstructor }
         ? boolean
-        : T extends Prop<infer V>
-          ? ExtractCorrectPropType<V> : T;
+        : T extends FunctionConstructor
+          ? Function
+          : T extends Prop<infer V>
+            ? ExtractCorrectPropType<V> : T;
 
 export type ExtractPropTypes<
   O,

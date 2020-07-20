@@ -3,6 +3,7 @@ import {
   reactive,
   expectType,
   expectError,
+  isNotAnyOrUndefined,
   defineComponent,
   PropType,
 } from './index'
@@ -87,6 +88,20 @@ describe('with object props', () => {
       expectType<ExpectedProps['eee']>(props.eee)
       expectType<ExpectedProps['fff']>(props.fff)
       expectType<ExpectedProps['hhh']>(props.hhh)
+
+      isNotAnyOrUndefined(props.a)
+      isNotAnyOrUndefined(props.b)
+      isNotAnyOrUndefined(props.e)
+      isNotAnyOrUndefined(props.bb)
+      isNotAnyOrUndefined(props.cc)
+      isNotAnyOrUndefined(props.dd)
+      isNotAnyOrUndefined(props.ee)
+      isNotAnyOrUndefined(props.ff)
+      isNotAnyOrUndefined(props.ccc)
+      isNotAnyOrUndefined(props.ddd)
+      isNotAnyOrUndefined(props.eee)
+      isNotAnyOrUndefined(props.fff)
+      isNotAnyOrUndefined(props.hhh)
 
       expectError((props.a = 1))
 
