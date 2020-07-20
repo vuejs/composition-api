@@ -1,5 +1,5 @@
 import { Data } from '../component'
-import { RefKey } from '../utils/symbols'
+import { RefKey, ReadonlyIdentifierKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
 import { ComputedRef } from '../apis/computed'
@@ -81,11 +81,17 @@ class RefImpl<T> implements Ref<T> {
   }
 }
 
-export function createRef<T>(options: RefOption<T>) {
+export function createRef<T>(options: RefOption<T>, readonly = false) {
+  const r = new RefImpl<T>(options)
+  if (readonly) {
+    //@ts-ignore
+    r[ReadonlyIdentifierKey] = readonly
+  }
+
   // seal the ref, this could prevent ref from being observed
   // It's safe to seal the ref, since we really shouldn't extend it.
   // related issues: #79
-  return Object.seal(new RefImpl<T>(options))
+  return Object.seal(r)
 }
 
 export function ref<T extends object>(
