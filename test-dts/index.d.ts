@@ -8,4 +8,5 @@ export function expectAssignable<T, T2 extends T = T>(value: T2): void
 
 // https://stackoverflow.com/questions/49927523/disallow-call-with-any/49928360#49928360
 type IfNotAny<T> = 0 extends 1 & T ? never : T
-export function isNotAny<T>(value: IfNotAny<T>): void
+type IfNotUndefined<T> = Exclude<T, undefined> extends never ? never : T
+export function isNotAnyOrUndefined<T>(value: IfNotAny<IfNotUndefined<T>>): void
