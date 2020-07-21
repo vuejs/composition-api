@@ -38,13 +38,15 @@ import { ref, reactive } from '@vue/composition-api'
 Include `@vue/composition-api` after Vue and it will install itself automatically.
 
 <!--cdn-links-start-->
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
 <script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.4"></script>
 ```
+
 <!--cdn-links-end-->
 
-`@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`. 
+`@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`.
 
 ```ts
 const { ref, reactive } = VueCompositionAPI
@@ -68,8 +70,6 @@ export default defineComponent({
 
 To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
-
-
 ## SSR
 
 Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the `onServerPrefetch` lifecycle hook that allows you to use the `serverPrefetch` hook found in the classic API.
@@ -78,7 +78,7 @@ Even if there is no definitive Vue 3 API for SSR yet, this plugin implements the
 import { onServerPrefetch } from '@vue/composition-api'
 
 export default {
-  setup (props, { ssrContext }) {
+  setup(props, { ssrContext }) {
     const result = ref()
 
     onServerPrefetch(async () => {
@@ -89,7 +89,7 @@ export default {
       result,
     }
   },
-};
+}
 ```
 
 ## Limitations
@@ -123,7 +123,6 @@ state.list[1].value === 1 // true
 <summary>
 ❌ <b>Should NOT</b> use <code>ref</code> in a plain object when working with <code>Array</code>
 </summary>
-
 
 ```js
 const a = {
@@ -162,7 +161,7 @@ const a = reactive({
   list: [
     reactive({
       count: ref(0),
-    })
+    }),
   ],
 })
 // unwrapped
@@ -178,7 +177,6 @@ a.list[1].count === 1 // true
 ```
 
 </details>
-
 
 ### Template Refs
 
@@ -212,7 +210,6 @@ a.list[1].count === 1 // true
 
 </details>
 
-
 <details>
 <summary>
 ✅ String ref && return it from <code>setup()</code> && Render Function / JSX
@@ -238,8 +235,8 @@ export default {
   },
 }
 ```
-</details>
 
+</details>
 
 <details>
 <summary>
@@ -265,7 +262,6 @@ export default {
 ```
 
 </details>
-
 
 <details>
 <summary>
@@ -300,7 +296,6 @@ export default {
 > :warning: **Warning**: The `SetupContext.refs` won't exist in `Vue 3.0`. `@vue/composition-api` provide it as a workaround here.
 
 If you really want to use template refs in this case, you can access `vm.$refs` via `SetupContext.refs`
-
 
 ```jsx
 export default {
@@ -343,10 +338,9 @@ declare module '@vue/composition-api' {
 ⚠️ <code>reactive()</code> <b>mutates</b> the original object
 </summary>
 
-`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
+`reactive` uses `Vue.observable` underneath which will **_mutate_** the original object.
 
 > :bulb: In Vue 3, it will return an new proxy object.
-
 
 </details>
 
@@ -358,13 +352,16 @@ declare module '@vue/composition-api' {
 </summary>
 
 ```js
-watch(() => {
-  /* ... */
-}, {
-  immediate: true,
-  onTrack() {},  // not available
-  onTrigger() {},  // not available
-})
+watch(
+  () => {
+    /* ... */
+  },
+  {
+    immediate: true,
+    onTrack() {}, // not available
+    onTrigger() {}, // not available
+  }
+)
 ```
 
 </details>
@@ -389,18 +386,26 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
+### shallowReadonly
+
+<details>
+<summary>
+⚠️ <code>shallowReadonly()</code> will create a new object and with the same root properties, new properties added will <b>not</b> be readonly or reactive.
+</summary>
+
+> :bulb: In Vue 3, it will return an new proxy object.
+
+</details>
 
 ### Missing APIs
 
 The following APIs introduced in Vue 3 are not available in this plugin.
 
 - `readonly`
-- `shallowReadonly`
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
 - `isProxy`
-- `isReadonly`
 - `isVNode`
 
 ### Reactive APIs in `data()`
@@ -415,7 +420,7 @@ export default {
   data() {
     return {
       // will result { a: { value: 1 } } in template
-      a: ref(1) 
+      a: ref(1),
     }
   },
 }
@@ -423,10 +428,8 @@ export default {
 
 </details>
 
-
 ### Performance Impact
 
 Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. It shouldn't bother you unless in extreme environments.
 
 You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
-
