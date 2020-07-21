@@ -78,7 +78,7 @@ export default defineComponent({
 import { onServerPrefetch } from '@vue/composition-api'
 
 export default {
-  setup (props, { ssrContext }) {
+  setup(props, { ssrContext }) {
     const result = ref()
 
     onServerPrefetch(async () => {
@@ -86,9 +86,9 @@ export default {
     })
 
     return {
-      result,
+      result
     }
-  },
+  }
 }
 ```
 
@@ -130,27 +130,27 @@ state.list[1].value === 1 // true
 
 ```js
 const a = {
-  count: ref(0),
+  count: ref(0)
 }
 const b = reactive({
-  list: [a], // `a.count` 不会自动展开!!
+  list: [a] // `a.count` 不会自动展开!!
 })
 
 // `count` 不会自动展开, 须使用 `.value`
-b.list[0].count.value === 0; // true
+b.list[0].count.value === 0 // true
 ```
 
 ```js
 const b = reactive({
   list: [
     {
-      count: ref(0), // 不会自动展开!!
-    },
-  ],
+      count: ref(0) // 不会自动展开!!
+    }
+  ]
 })
 
 // `count` 不会自动展开, 须使用 `.value`
-b.list[0].count.value === 0; // true
+b.list[0].count.value === 0 // true
 ```
 
 </details>
@@ -163,17 +163,17 @@ b.list[0].count.value === 0; // true
 
 ```js
 const a = reactive({
-  count: ref(0),
+  count: ref(0)
 })
 const b = reactive({
-  list: [a],
+  list: [a]
 })
 // 自动展开
 b.list[0].count === 0 // true
 
 b.list.push(
   reactive({
-    count: ref(1),
+    count: ref(1)
   })
 )
 // 自动展开
@@ -205,9 +205,9 @@ b.list[1].count === 1; // true
       })
 
       return {
-        root,
+        root
       }
-    },
+    }
   }
 </script>
 ```
@@ -232,13 +232,13 @@ export default {
     })
 
     return {
-      root,
+      root
     }
   },
   render() {
     // 使用 JSX
     return () => <div ref="root" />
-  },
+  }
 }
 ```
 
@@ -262,9 +262,9 @@ export default {
       const root = ref(null)
 
       return {
-        root,
+        root
       }
-    },
+    }
   }
 </script>
 ```
@@ -289,7 +289,7 @@ export default {
 
     // 使用 JSX
     return () => <div ref={root} />
-  },
+  }
 }
 ```
 
@@ -348,7 +348,7 @@ declare module '@vue/composition-api' {
 
 此行为与 Vue 2 中的 `Vue.observable` 一致
 
-> :bulb: 在 Vue 3 中，`reactive()` 会返回一个新的的代理对象.
+> :bulb: 在 Vue 3 中，`reactive()` 会返回一个新的的代理对象
 
 </details>
 
@@ -361,32 +361,41 @@ declare module '@vue/composition-api' {
 </summary>
 
 ```js
-watch(() => {
-  /* ... */
-}, {
-  immediate: true,
-  onTrack() {},  // 不可用
-  onTrigger() {},  // 不可用
-})
+watch(
+  () => {
+    /* ... */
+  }, {
+    immediate: true,
+    onTrack() {},  // 不可用
+    onTrigger() {},  // 不可用
+  }
+)
 ```
 
 </details>
 
+### shallowReadonly
+
+<details>
+<summary>
+⚠️ <code>shallowReadonly()</code> 会返回一个新的浅拷贝对象，在此之后新加的字段<b>将不会</b>获得只读或响应式状态。
+</summary>
+
+> :bulb: 在 Vue 3 中，`shallowReadonly()` 会返回一个新的的代理对象
+
+</details>
 
 ### 缺失的 API
 
 以下在 Vue 3 新引入的 API ，在本插件中暂不适用：
 
 - `readonly`
-- `shallowReadonly`
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
 - `customRef`
 - `isProxy`
-- `isReadonly`
 - `isVNode`
-
 
 ### 在 `data()` 中使用组合式 API
 
@@ -402,7 +411,7 @@ export default {
       // 在模版中会成为 { a: { value: 1 } }
       a: ref(1) 
     }
-  },
+  }
 }
 ```
 
