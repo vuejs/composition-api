@@ -88,7 +88,7 @@ export default {
     return {
       result,
     }
-  },
+  }
 }
 ```
 
@@ -162,7 +162,7 @@ const a = reactive({
     reactive({
       count: ref(0),
     }),
-  ],
+  ]
 })
 // unwrapped
 a.list[0].count === 0 // true
@@ -338,7 +338,7 @@ declare module '@vue/composition-api' {
 ⚠️ <code>reactive()</code> <b>mutates</b> the original object
 </summary>
 
-`reactive` uses `Vue.observable` underneath which will **_mutate_** the original object.
+`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
 
 > :bulb: In Vue 3, it will return an new proxy object.
 
@@ -352,16 +352,13 @@ declare module '@vue/composition-api' {
 </summary>
 
 ```js
-watch(
-  () => {
+watch(() => {
     /* ... */
-  },
-  {
-    immediate: true,
-    onTrack() {}, // not available
-    onTrigger() {}, // not available
-  }
-)
+}, {
+  immediate: true,
+  onTrack() {}, // not available
+  onTrigger() {}, // not available
+})
 ```
 
 </details>
