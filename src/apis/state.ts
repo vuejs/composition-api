@@ -16,4 +16,6 @@ export {
   triggerRef,
   unref,
   UnwrapRef,
+  isReadonly,
+  shallowReadonly,
 } from '../reactivity'

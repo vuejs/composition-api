@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, computed } = require('../../src')
+const { ref, computed, isReadonly } = require('../../src')
 
 describe('Hooks computed', () => {
   beforeEach(() => {
@@ -71,7 +71,7 @@ describe('Hooks computed', () => {
     })
     vm.b = 2
     expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: Computed property was assigned to but it has no setter.'
+      '[Vue warn]: Write operation failed: computed value is readonly.'
     )
   })
 
@@ -193,5 +193,23 @@ describe('Hooks computed', () => {
 
     expect(app.$children[0].example).toBe('A')
     expect(app.$children[1].example).toBe('B')
+  })
+
+  it('should be readonly', () => {
+    let a = { a: 1 }
+    const x = computed(() => a)
+    expect(isReadonly(x)).toBe(true)
+    expect(isReadonly(x.value)).toBe(false)
+    expect(isReadonly(x.value.a)).toBe(false)
+    const z = computed({
+      get() {
+        return a
+      },
+      set(v) {
+        a = v
+      },
+    })
+    expect(isReadonly(z.value)).toBe(false)
+    expect(isReadonly(z.value.a)).toBe(false)
   })
 })
