@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.6"></a>
+# [1.0.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2020-07-22)
+
+
+### Features
+
+* **shallowReadonly:** add shallowReadonly and set computed to be shallowReadonly ([#447](https://github.com/vuejs/composition-api/issues/447)) ([cfbbcec](https://github.com/vuejs/composition-api/commit/cfbbcec))
+
+
+
 <a name="1.0.0-beta.5"></a>
 # [1.0.0-beta.5](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2020-07-20)
 

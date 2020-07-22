@@ -38,12 +38,10 @@ import { ref, reactive } from '@vue/composition-api'
 Include `@vue/composition-api` after Vue and it will install itself automatically.
 
 <!--cdn-links-start-->
-
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.6"></script>
 ```
-
 <!--cdn-links-end-->
 
 `@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`.
