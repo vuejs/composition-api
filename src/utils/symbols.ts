@@ -16,6 +16,9 @@ export const AccessControlIdentifierKey = createSymbol(
 export const ReactiveIdentifierKey = createSymbol(
   'composition-api.reactiveIdentifier'
 )
+export const PropsReactiveIdentifierKey = createSymbol(
+  'composition-api.propsReactiveIdentifier'
+)
 export const RawIdentifierKey = createSymbol('composition-api.rawIdentifierKey')
 export const ReadonlyIdentifierKey = createSymbol(
   'composition-api.readonlyIdentifierKey'

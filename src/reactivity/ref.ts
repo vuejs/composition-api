@@ -1,7 +1,7 @@
 import { Data } from '../component'
 import { RefKey, ReadonlyIdentifierKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
-import { reactive, isReactive, shallowReactive } from './reactive'
+import { reactive, isReactive, shallowReactive, isProp } from './reactive'
 import { ComputedRef } from '../apis/computed'
 
 declare const _refBrand: unique symbol
@@ -122,7 +122,7 @@ export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
 export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
   if (!isPlainObject(obj)) return obj as any
 
-  if (__DEV__ && !isReactive(obj)) {
+  if (__DEV__ && !isReactive(obj) && !isProp(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
 

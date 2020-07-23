@@ -8,11 +8,13 @@ import {
   RawIdentifierKey,
   ReadonlyIdentifierKey,
   RefKey,
+  PropsReactiveIdentifierKey,
 } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
 
 const AccessControlIdentifier = {}
 const ReactiveIdentifier = {}
+const PropsReactiveIdentifier = {}
 const RawIdentifier = {}
 
 export function isRaw(obj: any): boolean {
@@ -31,6 +33,15 @@ export function isReactive(obj: any): boolean {
     Object.isExtensible(obj) &&
     hasOwn(obj, ReactiveIdentifierKey) &&
     obj[ReactiveIdentifierKey] === ReactiveIdentifier
+  )
+}
+
+export function isProp(obj: any): boolean {
+  return (
+    isObject(obj) &&
+    Object.isExtensible(obj) &&
+    hasOwn(obj, PropsReactiveIdentifierKey) &&
+    obj[PropsReactiveIdentifierKey] === PropsReactiveIdentifier
   )
 }
 
@@ -199,6 +210,34 @@ export function shallowReactive<T extends object = any>(obj: T): T {
     })
   }
   return (observed as unknown) as T
+}
+
+export function markPropsReactive(props: any) {
+  if (
+    !isPlainObject(props) ||
+    isRaw(props) ||
+    Array.isArray(props) ||
+    isRef(props) ||
+    isComponentInstance(props)
+  ) {
+    return
+  }
+
+  if (
+    hasOwn(props, PropsReactiveIdentifierKey) &&
+    props[PropsReactiveIdentifierKey] === PropsReactiveIdentifier
+  ) {
+    return
+  }
+
+  if (Object.isExtensible(props)) {
+    def(props, PropsReactiveIdentifierKey, PropsReactiveIdentifier)
+  }
+
+  const keys = Object.keys(props)
+  for (let i = 0; i < keys.length; i++) {
+    markPropsReactive(props[keys[i]])
+  }
 }
 
 export function markReactive(target: any, shallow = false) {

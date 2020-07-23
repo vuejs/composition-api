@@ -9,6 +9,8 @@ const {
   toRefs,
   markRaw,
   toRaw,
+  defineComponent,
+  onMounted,
 } = require('../src')
 
 describe('setup', () => {
@@ -845,5 +847,66 @@ describe('setup', () => {
 
     const vm = new Vue(Constructor).$mount()
     expect(vm.$el.textContent).toBe('Composition-api')
+  })
+
+  // #448
+  it('should not cause infinite loop', async () => {
+    const A = defineComponent({
+      template: `<div></div>`,
+      props: {
+        pattern: {
+          type: RegExp,
+          required: true,
+        },
+      },
+
+      setup(props) {
+        return {
+          props,
+        }
+      },
+    })
+    const B = defineComponent({
+      template: `<div></div>`,
+      setup(props, { emit }) {
+        onMounted(() => {
+          emit('ev', true)
+        })
+
+        return {}
+      },
+    })
+
+    const vm = new Vue(
+      defineComponent({
+        components: {
+          A,
+          B,
+        },
+
+        template: `  <div>
+      <A :pattern="/./"/>
+  
+      <div
+        v-for="(k, v) in o.v"
+        :key="v"
+      >{{v}}</div>
+  
+      <B @ev="(v) => { o = v; }"/>
+    </div>`,
+        setup(props, { emit }) {
+          const o = ref([false])
+
+          return {
+            o,
+            emit,
+          }
+        },
+      })
+    ).$mount()
+
+    await vm.$nextTick()
+
+    expect(warn).not.toBeCalled()
   })
 })
