@@ -72,3 +72,36 @@ export function resolveSlots(
 
   return res
 }
+
+let vueInternalClasses:
+  | {
+      Watcher: any
+      Dep: any
+    }
+  | undefined
+
+export const getVueInternalClasses = () => {
+  if (!vueInternalClasses) {
+    const vm: any = defineComponentInstance(getVueConstructor(), {
+      computed: {
+        value() {
+          return 0
+        },
+      },
+    })
+
+    // to get Watcher class
+    const Watcher = vm._computedWatchers.value.constructor
+    // to get Dep class
+    const Dep = vm._data.__ob__.dep.constructor
+
+    vueInternalClasses = {
+      Watcher,
+      Dep,
+    }
+
+    vm.$destroy()
+  }
+
+  return vueInternalClasses
+}
