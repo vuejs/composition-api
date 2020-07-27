@@ -42,15 +42,18 @@ export function computed<T>(
 
   vm && vm.$on('hook:destroyed', () => computedHost.$destroy())
 
-  return createRef<T>({
-    get: () => (computedHost as any).$$state,
-    set: (v: T) => {
-      if (__DEV__ && !set) {
-        warn('Computed property was assigned to but it has no setter.', vm!)
-        return
-      }
+  return createRef<T>(
+    {
+      get: () => (computedHost as any).$$state,
+      set: (v: T) => {
+        if (__DEV__ && !set) {
+          warn('Write operation failed: computed value is readonly.', vm!)
+          return
+        }
 
-      ;(computedHost as any).$$state = v
+        ;(computedHost as any).$$state = v
+      },
     },
-  })
+    !set
+  )
 }

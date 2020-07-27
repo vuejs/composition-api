@@ -294,11 +294,11 @@ function createWatcher(
   }
   let callback = createScheduler(applyCb)
   if (options.immediate) {
-    const originalCallbck = callback
+    const originalCallback = callback
     // `shiftCallback` is used to handle the first sync effect run.
     // The subsequent callbacks will redirect to `callback`.
     let shiftCallback = (n: any, o: any) => {
-      shiftCallback = originalCallbck
+      shiftCallback = originalCallback
       applyCb(n, o)
     }
     callback = (n: any, o: any) => {

@@ -1,11 +1,12 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isPlainObject, def, hasOwn, warn } from '../utils'
+import { isPlainObject, def, hasOwn, warn, isObject } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import {
   AccessControlIdentifierKey,
   ReactiveIdentifierKey,
   RawIdentifierKey,
+  ReadonlyIdentifierKey,
   RefKey,
 } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
@@ -20,8 +21,13 @@ export function isRaw(obj: any): boolean {
   )
 }
 
+export function isReadonly(obj: any): boolean {
+  return hasOwn(obj, ReadonlyIdentifierKey) && obj[ReadonlyIdentifierKey]
+}
+
 export function isReactive(obj: any): boolean {
   return (
+    isObject(obj) &&
     Object.isExtensible(obj) &&
     hasOwn(obj, ReactiveIdentifierKey) &&
     obj[ReactiveIdentifierKey] === ReactiveIdentifier
@@ -250,6 +256,57 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   markReactive(obj)
   setupAccessControl(observed)
   return observed as UnwrapRef<T>
+}
+
+export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
+  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
+    //@ts-ignore
+    return obj // just typing
+  }
+
+  const readonlyObj = {
+    [ReadonlyIdentifierKey]: true,
+  }
+
+  const source = reactive({})
+  const ob = (source as any).__ob__
+
+  for (const key of Object.keys(obj)) {
+    let val = obj[key]
+    let getter: (() => any) | undefined
+    let setter: ((x: any) => void) | undefined
+    const property = Object.getOwnPropertyDescriptor(obj, key)
+    if (property) {
+      if (property.configurable === false) {
+        continue
+      }
+      getter = property.get
+      setter = property.set
+      if (
+        (!getter || setter) /* not only have getter */ &&
+        arguments.length === 2
+      ) {
+        val = obj[key]
+      }
+    }
+
+    Object.defineProperty(readonlyObj, key, {
+      enumerable: true,
+      configurable: true,
+      get: function getterHandler() {
+        const value = getter ? getter.call(obj) : val
+        ob.dep.depend()
+        return value
+      },
+      set(v) {
+        if (__DEV__) {
+          warn(`Set operation on key "${key}" failed: target is readonly.`)
+        }
+      },
+    })
+  }
+
+  return readonlyObj as any
 }
 
 /**

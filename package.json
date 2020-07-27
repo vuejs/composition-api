@@ -1,6 +1,6 @@
 {
   "name": "@vue/composition-api",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.6",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
     "vue",
@@ -27,7 +27,7 @@
     "index.js"
   ],
   "scripts": {
-    "start": "concurrently \"tsc --emitDeclarationOnly -w\" \"cross-env TARGET=es rollup -c -w\"",
+    "start": "concurrently \"tsc --emitDeclarationOnly -w\" \"cross-env rollup -c -w\"",
     "build": "rimraf dist typings && tsc --emitDeclarationOnly && rollup -c",
     "lint": "prettier --write --parser typescript \"{src,test,test-dts}/**/*.ts?(x)\" && prettier --write \"{src,test}/**/*.js\"",
     "test": "yarn test-dts && yarn test-unit",
@@ -35,10 +35,8 @@
     "test-dts": "tsc -p ./test-dts/tsconfig.json && yarn build && tsc -p ./test-dts/tsconfig.build.json",
     "update-readme": "node ./scripts/update-readme.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "prepublish": "yarn test",
-    "postpublish": "yarn release-gh",
     "version": "yarn changelog && yarn update-readme && git add CHANGELOG.md README.*",
-    "release": "yarn version && git push --follow-tags && yarn publish --non-interactive",
+    "release": "yarn test && npx bumpp --tag --commit --push && yarn publish --non-interactive && yarn release-gh",
     "release-gh": "conventional-github-releaser -p angular"
   },
   "bugs": {

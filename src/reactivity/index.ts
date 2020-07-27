@@ -6,6 +6,8 @@ export {
   toRaw,
   isRaw,
   markReactive,
+  isReadonly,
+  shallowReadonly,
 } from './reactive'
 export {
   ref,

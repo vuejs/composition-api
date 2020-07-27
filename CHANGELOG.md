@@ -1,3 +1,44 @@
+<a name="1.0.0-beta.6"></a>
+# [1.0.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2020-07-22)
+
+
+### Features
+
+* **shallowReadonly:** add shallowReadonly and set computed to be shallowReadonly ([#447](https://github.com/vuejs/composition-api/issues/447)) ([cfbbcec](https://github.com/vuejs/composition-api/commit/cfbbcec))
+
+
+
+<a name="1.0.0-beta.5"></a>
+# [1.0.0-beta.5](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2020-07-20)
+
+
+
+<a name="1.0.0-beta.4"></a>
+# [1.0.0-beta.4](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2020-07-18)
+
+
+### Bug Fixes
+
+* **IE11:** replace `startsWith` to be IE11 compatible ([#442](https://github.com/vuejs/composition-api/issues/442)) ([b31c74a](https://github.com/vuejs/composition-api/commit/b31c74a))
+* **type:** fix tying issues in [#428](https://github.com/vuejs/composition-api/issues/428) ([#444](https://github.com/vuejs/composition-api/issues/444)) ([98c7041](https://github.com/vuejs/composition-api/commit/98c7041))
+
+
+### Features
+
+* ie11 isReactive fix ([#441](https://github.com/vuejs/composition-api/issues/441)) ([e8ea208](https://github.com/vuejs/composition-api/commit/e8ea208))
+
+
+
+<a name="1.0.0-beta.3"></a>
+# [1.0.0-beta.3](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2020-07-09)
+
+
+### Bug Fixes
+
+* unwrap warning, fix [#425](https://github.com/vuejs/composition-api/issues/425) ([#430](https://github.com/vuejs/composition-api/issues/430)) ([d5123ec](https://github.com/vuejs/composition-api/commit/d5123ec))
+
+
+
 <a name="1.0.0-beta.2"></a>
 # [1.0.0-beta.2](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2020-07-05)
 

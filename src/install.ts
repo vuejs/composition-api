@@ -55,7 +55,7 @@ export function install(Vue: VueConstructor) {
   }
 
   if (__DEV__) {
-    if (!Vue.version.startsWith('2.')) {
+    if (Vue.version[0] !== '2' || Vue.version[1] !== '.') {
       assert(false, `only works with Vue 2, v${Vue.version} found.`)
     }
   }

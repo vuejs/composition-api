@@ -1,9 +1,15 @@
-import { computed, reactive, ref, watchEffect } from '../../../src'
+import {
+  computed,
+  reactive,
+  ref,
+  watchEffect,
+  WritableComputedRef,
+} from '../../../src'
 import { mockWarn } from '../../helpers/mockWarn'
 import { nextTick } from '../../helpers/utils'
 
 describe('reactivity/computed', () => {
-  mockWarn()
+  mockWarn(true)
 
   it('should return updated value', async () => {
     const value = reactive<{ foo?: number }>({ foo: undefined })
@@ -175,12 +181,14 @@ describe('reactivity/computed', () => {
     expect(dummy).toBe(-1)
   })
 
-  // it('should warn if trying to set a readonly computed', async () => {
-  //   const n = ref(1);
-  //   const plusOne = computed(() => n.value + 1);
-  //   (plusOne as WritableComputedRef<number>).value++; // Type cast to prevent TS from preventing the error
-  //   await nextTick();
+  it('should warn if trying to set a readonly computed', async () => {
+    const n = ref(1)
+    const plusOne = computed(() => n.value + 1)
+    ;(plusOne as WritableComputedRef<number>).value++ // Type cast to prevent TS from preventing the error
+    await nextTick()
 
-  //   expect('Write operation failed: computed value is readonly').toHaveBeenWarnedLast();
-  // });
+    expect(
+      'Write operation failed: computed value is readonly'
+    ).toHaveBeenWarnedLast()
+  })
 })
