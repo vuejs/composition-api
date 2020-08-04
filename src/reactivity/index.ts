@@ -21,6 +21,7 @@ export {
   unref,
   shallowRef,
   triggerRef,
+  proxyRefs,
+  ShallowUnwrapRef,
 } from './ref'
 export { set } from './set'
-export { unwrapRefProxy } from './unwrap'

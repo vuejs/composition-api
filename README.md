@@ -392,6 +392,17 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
+### props
+<details>
+<summary>
+⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
+⚠️ <code>isReactive(props.foo.bar)</code> will return false.
+</summary>
+TODO add description
+</details>
+
+
+
 ### Missing APIs
 
 The following APIs introduced in Vue 3 are not available in this plugin.
