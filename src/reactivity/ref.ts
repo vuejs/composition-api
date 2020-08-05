@@ -167,7 +167,10 @@ export function toRef<T extends object, K extends keyof T>(
   })
 }
 
-export function shallowRef<T>(value: T): T extends Ref ? T : Ref<T>
+export function shallowRef<T extends object>(
+  value: T
+): T extends Ref ? T : Ref<T>
+export function shallowRef<T>(value: T): Ref<T>
 export function shallowRef<T = any>(): Ref<T | undefined>
 export function shallowRef(raw?: unknown) {
   if (isRef(raw)) {
