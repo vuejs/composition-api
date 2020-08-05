@@ -1,12 +1,11 @@
 # @vue/composition-api
 
-Vue 2 插件用于提供 Vue 3 中的 **组合式 API**.
+用于提供 **组合式 API** 的 Vue 2 插件.
 
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
 [English](./README.md) | 中文 ・ [**组合式 API 文档**](https://composition-api.vuejs.org/zh)
-
 
 ## 安装
 
@@ -18,7 +17,7 @@ npm install @vue/composition-api
 yarn add @vue/composition-api
 ```
 
-在使用 `@vue/composition-api` 前，必须先先通过 `Vue.use()` 进行安装后方可使用使用新的 [**组合式 API**](https://composition-api.vuejs.org/zh) 进行组件开发。
+在使用 `@vue/composition-api` 前，必须先通过 `Vue.use()` 进行安装。之后才可使用新的 [**组合式 API**](https://composition-api.vuejs.org/zh) 进行组件开发。
 
 ```js
 import Vue from 'vue'
@@ -34,16 +33,17 @@ import { ref, reactive } from '@vue/composition-api'
 
 > :bulb: 当迁移到 Vue 3 时，只需简单的将 `@vue/composition-api` 替换成 `vue` 即可。你现有的代码几乎无需进行额外的改动。
 
-
 ### CDN
 
 在 Vue 之后引入 `@vue/composition-api` ，插件将会自动完成安装。
 
 <!--cdn-links-start-->
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
 <script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.6"></script>
 ```
+
 <!--cdn-links-end-->
 
 `@vue/composition-api` 将会暴露在全局变量 `window.VueCompositionAPI` 中。
@@ -56,7 +56,7 @@ const { ref, reactive } = VueCompositionAPI
 
 > 本插件要求使用 TypeScript **3.5.1** 或以上版本
 
-为了让 TypeScript 在 Vue 组件选项中正确地推导类型，我们必须使用 `defineComponent` 来定义组件:
+为了让 TypeScript 在 Vue 组件选项中正确地进行类型推导，我们必须使用 `defineComponent` 来定义组件:
 
 ```ts
 import { defineComponent } from '@vue/composition-api'
@@ -72,7 +72,7 @@ export default defineComponent({
 
 ## SSR
 
-尽管 Vue 3 暂时没有给出确定的 SSR 的 API，这个插件实现了 `onServerPrefetch` 生命周期钩子函数。这个钩子允许你使用在传统 API 中的 `serverPrefetch` 函数。
+尽管 Vue 3 暂时没有给出确定的 SSR 的 API，这个插件实现了 `onServerPrefetch` 生命周期钩子函数。这个钩子允许你使用传统 API 中的 `serverPrefetch` 函数。
 
 ```js
 import { onServerPrefetch } from '@vue/composition-api'
@@ -86,9 +86,9 @@ export default {
     })
 
     return {
-      result
+      result,
     }
-  }
+  },
 }
 ```
 
@@ -96,11 +96,9 @@ export default {
 
 > :white_check_mark: 支持 &nbsp;&nbsp;&nbsp;&nbsp;:x: 不支持
 
-
 ### `Ref` 自动展开 (unwrap)
 
 数组索引属性无法进行自动展开:
-
 
 <details>
 <summary>
@@ -121,19 +119,17 @@ state.list[1].value === 1 // true
 
 </details>
 
-
 <details>
 <summary>
 ❌ <b>不要</b> 在数组中使用含有 <code>ref</code> 的普通对象
 </summary>
 
-
 ```js
 const a = {
-  count: ref(0)
+  count: ref(0),
 }
 const b = reactive({
-  list: [a] // `a.count` 不会自动展开!!
+  list: [a], // `a.count` 不会自动展开!!
 })
 
 // `count` 不会自动展开, 须使用 `.value`
@@ -144,9 +140,9 @@ b.list[0].count.value === 0 // true
 const b = reactive({
   list: [
     {
-      count: ref(0) // 不会自动展开!!
-    }
-  ]
+      count: ref(0), // 不会自动展开!!
+    },
+  ],
 })
 
 // `count` 不会自动展开, 须使用 `.value`
@@ -155,7 +151,6 @@ b.list[0].count.value === 0 // true
 
 </details>
 
-
 <details>
 <summary>
 ✅ 在数组中，<b>应该</b> 总是将 <code>ref</code> 存放到 <code>reactive</code> 对象中
@@ -163,21 +158,21 @@ b.list[0].count.value === 0 // true
 
 ```js
 const a = reactive({
-  count: ref(0)
+  count: ref(0),
 })
 const b = reactive({
-  list: [a]
+  list: [a],
 })
 // 自动展开
 b.list[0].count === 0 // true
 
 b.list.push(
   reactive({
-    count: ref(1)
+    count: ref(1),
   })
 )
 // 自动展开
-b.list[1].count === 1; // true
+b.list[1].count === 1 // true
 ```
 
 </details>
@@ -205,16 +200,14 @@ b.list[1].count === 1; // true
       })
 
       return {
-        root
+        root,
       }
-    }
+    },
   }
 </script>
 ```
 
 </details>
-
-
 
 <details>
 <summary>
@@ -232,24 +225,22 @@ export default {
     })
 
     return {
-      root
+      root,
     }
   },
   render() {
     // 使用 JSX
     return () => <div ref="root" />
-  }
+  },
 }
 ```
 
 </details>
 
-
 <details>
 <summary>
 ❌ 函数 ref
 </summary>
-
 
 ```html
 <template>
@@ -262,15 +253,14 @@ export default {
       const root = ref(null)
 
       return {
-        root
+        root,
       }
-    }
+    },
   }
 </script>
 ```
 
 </details>
-
 
 <details>
 <summary>
@@ -289,7 +279,7 @@ export default {
 
     // 使用 JSX
     return () => <div ref={root} />
-  }
+  },
 }
 ```
 
@@ -299,7 +289,6 @@ export default {
 <summary>
 ⚠️ <code>$refs</code> 访问的变通方案
 </summary>
-
 
 > :warning: **警告**: `SetupContext.refs` 并不属于 `Vue 3.0` 的一部分, `@vue/composition-api` 将其曝光在 `SetupContext` 中只是临时提供一种变通方案。
 
@@ -311,7 +300,7 @@ export default {
     const refs = setupContext.refs
     onMounted(() => {
       // 在初次渲染后 DOM 元素会被赋值给 ref
-      console.log(refs.root); // <div/>
+      console.log(refs.root) // <div/>
     })
 
     return () =>
@@ -352,7 +341,6 @@ declare module '@vue/composition-api' {
 
 </details>
 
-
 ### Watch
 
 <details>
@@ -364,10 +352,11 @@ declare module '@vue/composition-api' {
 watch(
   () => {
     /* ... */
-  }, {
+  },
+  {
     immediate: true,
-    onTrack() {},  // 不可用
-    onTrigger() {},  // 不可用
+    onTrack() {}, // 不可用
+    onTrigger() {}, // 不可用
   }
 )
 ```
@@ -409,17 +398,16 @@ export default {
   data() {
     return {
       // 在模版中会成为 { a: { value: 1 } }
-      a: ref(1) 
+      a: ref(1),
     }
-  }
+  },
 }
 ```
 
 </details>
 
-
 ### 性能影响
 
-用于 Vue 2 所提供的公共 API 的限制，`@vue/composition-api` 不可避免地引入了额外的性能开销。在非极端情况下，这并不会对你造成影响。
+由于 Vue 2 的公共 API 的限制，`@vue/composition-api` 不可避免地引入了额外的性能开销。除非在极端情况下，否则这并不会对你造成影响。
 
 你可以查看这个 [跑分结果](https://antfu.github.io/vue-composition-api-benchmark-results/) 了解更多信息。
