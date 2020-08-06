@@ -5,13 +5,7 @@ import {
   SetupFunction,
   Data,
 } from './component'
-import {
-  isRef,
-  isReactive,
-  markRaw,
-  unwrapRefProxy,
-  markReactive,
-} from './reactivity'
+import { isRef, isReactive, markRaw, markReactive } from './reactivity'
 import { isPlainObject, assert, proxy, warn, isFunction } from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
@@ -79,7 +73,7 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!
     const ctx = createSetupContext(vm)
 
-    // mark props as reactive
+    // mark props
     markReactive(props)
 
     // resolve scopedSlots and slots to functions
@@ -116,12 +110,8 @@ export function mixin(Vue: VueConstructor) {
             if (isFunction(bindingValue)) {
               bindingValue = bindingValue.bind(vm)
             }
-            // unwrap all ref properties
-            const unwrapped = unwrapRefProxy(bindingValue)
-            // mark the object as reactive
-            markReactive(unwrapped)
             // a non-reactive should not don't get reactivity
-            bindingValue = ref(markRaw(unwrapped))
+            bindingValue = ref(markRaw(bindingValue))
           }
         }
         asVmProperty(vm, name, bindingValue)

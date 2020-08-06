@@ -177,54 +177,55 @@ describe('setup', () => {
     )
   })
 
-  it('not warn doing toRef on props', async () => {
-    const Foo = {
-      props: {
-        obj: {
-          type: Object,
-          required: true,
-        },
-      },
-      setup(props) {
-        return () =>
-          h('div', null, [
-            h('span', toRefs(props.obj).bar.value),
-            h('span', toRefs(props.obj.nested).baz.value),
-          ])
-      },
-    }
+  // `props` are not deeply reactive
+  // it('not warn doing toRef on props', async () => {
+  //   const Foo = {
+  //     props: {
+  //       obj: {
+  //         type: Object,
+  //         required: true,
+  //       },
+  //     },
+  //     setup(props) {
+  //       return () =>
+  //         h('div', null, [
+  //           h('span', toRefs(props.obj).bar.value),
+  //           h('span', toRefs(props.obj.nested).baz.value),
+  //         ])
+  //     },
+  //   }
 
-    let bar
-    let baz
+  //   let bar
+  //   let baz
 
-    const vm = new Vue({
-      template: `<div id="app"><Foo :obj="obj" /></div>`,
-      components: { Foo },
-      setup() {
-        bar = ref(3)
-        baz = ref(1)
-        return {
-          obj: {
-            bar,
-            nested: {
-              baz,
-            },
-          },
-        }
-      },
-    })
-    vm.$mount()
+  //   const vm = new Vue({
+  //     template: `<div id="app"><Foo :obj="obj" /></div>`,
+  //     components: { Foo },
+  //     setup() {
+  //       bar = ref(3)
+  //       baz = ref(1)
+  //       return {
+  //         obj: {
+  //           bar,
+  //           nested: {
+  //             baz,
+  //           },
+  //         },
+  //       }
+  //     },
+  //   })
+  //   vm.$mount()
 
-    expect(warn).not.toHaveBeenCalled()
-    expect(vm.$el.textContent).toBe('31')
+  //   expect(warn).not.toHaveBeenCalled()
+  //   expect(vm.$el.textContent).toBe('31')
 
-    bar.value = 4
-    baz.value = 2
+  //   bar.value = 4
+  //   baz.value = 2
 
-    await vm.$nextTick()
-    expect(warn).not.toHaveBeenCalled()
-    expect(vm.$el.textContent).toBe('42')
-  })
+  //   await vm.$nextTick()
+  //   expect(warn).not.toHaveBeenCalled()
+  //   expect(vm.$el.textContent).toBe('42')
+  // })
 
   it('should merge result properly', () => {
     const injectKey = Symbol('foo')
@@ -608,11 +609,21 @@ describe('setup', () => {
         </div>`,
       }).$mount()
 
-      expect(vm.$el.querySelector('#nested').textContent).toBe('a')
+      expect(
+        JSON.parse(vm.$el.querySelector('#nested').textContent)
+      ).toMatchObject({
+        value: 'a',
+      })
 
-      expect(vm.$el.querySelector('#nested_aa_b').textContent).toBe('aa')
+      expect(
+        JSON.parse(vm.$el.querySelector('#nested_aa_b').textContent)
+      ).toMatchObject({
+        value: 'aa',
+      })
       expect(vm.$el.querySelector('#nested_aa_bb_c').textContent).toBe('aa')
-      expect(vm.$el.querySelector('#nested_aa_bb_cc').textContent).toBe('aa')
+      expect(
+        JSON.parse(vm.$el.querySelector('#nested_aa_bb_cc').textContent)
+      ).toMatchObject({ value: 'aa' })
 
       expect(vm.$el.querySelector('#nested_aaa_b').textContent).toBe('aaa')
       expect(vm.$el.querySelector('#nested_aaa_bb_c').textContent).toBe('aaa')
@@ -657,7 +668,9 @@ describe('setup', () => {
       }).$mount()
       expect(vm.$el.querySelector('#recursive_a').textContent).toBe('a')
       expect(vm.$el.querySelector('#recursive_b_c').textContent).toBe('c')
-      expect(vm.$el.querySelector('#recursive_b_r').textContent).toBe('r')
+      expect(
+        JSON.parse(vm.$el.querySelector('#recursive_b_r').textContent)
+      ).toMatchObject({ value: 'r' })
 
       expect(vm.$el.querySelector('#recursive_b_recursive_a').textContent).toBe(
         'a'
@@ -665,17 +678,19 @@ describe('setup', () => {
       expect(vm.$el.querySelector('#recursive_b_recursive_c').textContent).toBe(
         'c'
       )
-      expect(vm.$el.querySelector('#recursive_b_recursive_r').textContent).toBe(
-        'r'
-      )
+      expect(
+        JSON.parse(vm.$el.querySelector('#recursive_b_recursive_r').textContent)
+      ).toMatchObject({ value: 'r' })
 
       expect(
         vm.$el.querySelector('#recursive_b_recursive_recursive_c').textContent
       ).toBe('c')
 
       expect(
-        vm.$el.querySelector('#recursive_b_recursive_recursive_r').textContent
-      ).toBe('r')
+        JSON.parse(
+          vm.$el.querySelector('#recursive_b_recursive_recursive_r').textContent
+        )
+      ).toMatchObject({ value: 'r' })
 
       expect(warn).not.toHaveBeenCalled()
     })
@@ -732,8 +747,8 @@ describe('setup', () => {
         },
       }).$mount()
 
-      expect(vm.$el.textContent).toBe('1')
-      expect(propsObj).toEqual({ bar: 1 })
+      expect(JSON.parse(vm.$el.textContent)).toMatchObject({ value: 1 })
+      expect(propsObj).toMatchObject({ bar: { value: 1 } })
 
       expect(warn).not.toHaveBeenCalled()
     })
