@@ -4,6 +4,7 @@ describe('api/isVNode', () => {
   beforeEach(() => {
     warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
   })
+
   afterEach(() => {
     warn.mockRestore()
   })
