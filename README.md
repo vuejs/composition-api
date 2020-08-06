@@ -424,7 +424,6 @@ The following APIs introduced in Vue 3 are not available in this plugin.
 - `onRenderTracked`
 - `onRenderTriggered`
 - `isProxy`
-- `isVNode`
 
 ### Reactive APIs in `data()`
 
