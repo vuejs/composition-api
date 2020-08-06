@@ -361,7 +361,7 @@ watch(() => {
 
 </details>
 
-### createApp
+### `createApp`
 
 <details>
 <summary>
@@ -381,7 +381,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
-### shallowReadonly
+### `shallowReadonly`
 
 <details>
 <summary>
@@ -392,13 +392,14 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
-### props
+### `props`
 <details>
 <summary>
 ⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
 ⚠️ <code>isReactive(props.foo.bar)</code> will return false.
 </summary>
-\`\`\`
+  
+```
 defineComponent({
   setup(props) {
     const { bar } = toRefs(props.foo) // won't work
@@ -408,7 +409,8 @@ defineComponent({
     const a = foo.value.bar
   }
 })
-\`\`\`
+```
+
 </details>
 
 
