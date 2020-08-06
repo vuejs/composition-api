@@ -398,7 +398,17 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 ⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
 ⚠️ <code>isReactive(props.foo.bar)</code> will return false.
 </summary>
-TODO add description
+\`\`\`
+defineComponent({
+  setup(props) {
+    const { bar } = toRefs(props.foo) // won't work
+    
+    // use this instead 
+    const { foo } = toRefs(props)
+    const a = foo.value.bar
+  }
+})
+\`\`\`
 </details>
 
 
