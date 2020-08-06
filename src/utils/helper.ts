@@ -77,6 +77,7 @@ let vueInternalClasses:
   | {
       Watcher: any
       Dep: any
+      VNode: any
     }
   | undefined
 
@@ -94,10 +95,12 @@ export const getVueInternalClasses = () => {
     const Watcher = vm._computedWatchers.value.constructor
     // to get Dep class
     const Dep = vm._data.__ob__.dep.constructor
+    const VNode = vm.$createElement().constructor
 
     vueInternalClasses = {
       Watcher,
       Dep,
+      VNode,
     }
 
     vm.$destroy()
