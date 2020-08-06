@@ -18,4 +18,6 @@ export {
   UnwrapRef,
   isReadonly,
   shallowReadonly,
+  proxyRefs,
+  ShallowUnwrapRef,
 } from '../reactivity'

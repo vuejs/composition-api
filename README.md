@@ -361,7 +361,7 @@ watch(() => {
 
 </details>
 
-### createApp
+### `createApp`
 
 <details>
 <summary>
@@ -381,7 +381,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
-### shallowReadonly
+### `shallowReadonly`
 
 <details>
 <summary>
@@ -391,6 +391,29 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 > :bulb: In Vue 3, it will return an new proxy object.
 
 </details>
+
+### `props`
+<details>
+<summary>
+⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
+⚠️ <code>isReactive(props.foo.bar)</code> will return false.
+</summary>
+  
+```ts
+defineComponent({
+  setup(props) {
+    const { bar } = toRefs(props.foo) // it will `warn`
+    
+    // use this instead 
+    const { foo } = toRefs(props)
+    const a = foo.value.bar
+  }
+})
+```
+
+</details>
+
+
 
 ### Missing APIs
 

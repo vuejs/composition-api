@@ -2,7 +2,6 @@ import { Data } from '../component'
 import { RefKey, ReadonlyIdentifierKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
-import { ComputedRef } from '../apis/computed'
 
 declare const _refBrand: unique symbol
 export interface Ref<T = any> {
@@ -22,16 +21,18 @@ type WeakCollections = WeakMap<any, any> | WeakSet<any>
 // RelativePath extends object -> true
 type BaseTypes = string | number | boolean | Node | Window
 
-export type UnwrapRef<T> = T extends ComputedRef<infer V>
-  ? UnwrapRefSimple<V>
-  : T extends Ref<infer V>
+export type ShallowUnwrapRef<T> = {
+  [K in keyof T]: T[K] extends Ref<infer V> ? V : T[K]
+}
+
+export type UnwrapRef<T> = T extends Ref<infer V>
   ? UnwrapRefSimple<V>
   : UnwrapRefSimple<T>
 
 type UnwrapRefSimple<T> = T extends Function | CollectionTypes | BaseTypes | Ref
   ? T
   : T extends Array<any>
-  ? T
+  ? { [K in keyof T]: UnwrapRefSimple<T[K]> }
   : T extends object
   ? UnwrappedObject<T>
   : T
@@ -50,6 +51,7 @@ type SymbolExtract<T> = (T extends { [Symbol.asyncIterator]: infer V }
     : {}) &
   (T extends { [Symbol.iterator]: infer V } ? { [Symbol.iterator]: V } : {}) &
   (T extends { [Symbol.match]: infer V } ? { [Symbol.match]: V } : {}) &
+  (T extends { [Symbol.matchAll]: infer V } ? { [Symbol.matchAll]: V } : {}) &
   (T extends { [Symbol.replace]: infer V } ? { [Symbol.replace]: V } : {}) &
   (T extends { [Symbol.search]: infer V } ? { [Symbol.search]: V } : {}) &
   (T extends { [Symbol.species]: infer V } ? { [Symbol.species]: V } : {}) &
@@ -187,4 +189,32 @@ export function triggerRef(value: any) {
   if (!isRef(value)) return
 
   value.value = value.value
+}
+
+export function proxyRefs<T extends object>(
+  objectWithRefs: T
+): ShallowUnwrapRef<T> {
+  if (isReactive(objectWithRefs)) {
+    return objectWithRefs as ShallowUnwrapRef<T>
+  }
+  const value: Record<string, any> = reactive({ [RefKey]: objectWithRefs })
+
+  for (const key of Object.keys(objectWithRefs)) {
+    proxy(value, key, {
+      get() {
+        if (isRef(value[key])) {
+          return value[key].value
+        }
+        return value[key]
+      },
+      set(v: unknown) {
+        if (isRef(value[key])) {
+          return (value[key].value = unref(v))
+        }
+        value[key] = unref(v)
+      },
+    })
+  }
+
+  return value as ShallowUnwrapRef<T>
 }

@@ -1,5 +1,5 @@
 import { ExtractPropTypes } from './componentProps'
-import { UnwrapRef } from '..'
+import { ShallowUnwrapRef } from '..'
 import { Data } from './common'
 
 import Vue, {
@@ -28,7 +28,7 @@ export type ComponentRenderProxy<
   $props: Readonly<P & PublicProps>
   $attrs: Data
 } & Readonly<P> &
-  UnwrapRef<B> &
+  ShallowUnwrapRef<B> &
   D &
   M &
   ExtractComputedReturns<C> &
@@ -38,7 +38,7 @@ export type ComponentRenderProxy<
 type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
   new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
-    UnwrapRef<RawBindings>,
+    ShallowUnwrapRef<RawBindings>,
     ExtractPropTypes<PropsOptions, false>
   >
 }
@@ -55,7 +55,7 @@ export type VueProxy<
   Methods = DefaultMethods<Vue>
 > = Vue2ComponentOptions<
   Vue,
-  UnwrapRef<RawBindings> & Data,
+  ShallowUnwrapRef<RawBindings> & Data,
   Methods,
   Computed,
   PropsOptions,
