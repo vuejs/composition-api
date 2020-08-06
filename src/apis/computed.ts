@@ -1,7 +1,11 @@
 import { getVueConstructor, getCurrentInstance } from '../runtimeContext'
 import { createRef, Ref } from '../reactivity'
-import { defineComponentInstance } from '../utils/helper'
-import { warn } from '../utils'
+import {
+  warn,
+  noopFn,
+  defineComponentInstance,
+  getVueInternalClasses,
+} from '../utils'
 
 interface Option<T> {
   get: () => T
@@ -31,28 +35,61 @@ export function computed<T>(
     set = options.set
   }
 
-  const computedHost = defineComponentInstance(getVueConstructor(), {
-    computed: {
-      $$state: {
-        get,
-        set,
-      },
-    },
-  })
+  let computedSetter
+  let computedGetter
 
-  vm && vm.$on('hook:destroyed', () => computedHost.$destroy())
+  if (vm) {
+    const { Watcher, Dep } = getVueInternalClasses()
+    let watcher: any
+    computedGetter = () => {
+      if (!watcher) {
+        watcher = new Watcher(vm, get, noopFn, { lazy: true })
+      }
+      if (watcher.dirty) {
+        watcher.evaluate()
+      }
+      if (Dep.target) {
+        watcher.depend()
+      }
+      return watcher.value
+    }
+
+    computedSetter = (v: T) => {
+      if (__DEV__ && !set) {
+        warn('Write operation failed: computed value is readonly.', vm!)
+        return
+      }
+
+      if (set) {
+        set(v)
+      }
+    }
+  } else {
+    // fallback
+    const computedHost = defineComponentInstance(getVueConstructor(), {
+      computed: {
+        $$state: {
+          get,
+          set,
+        },
+      },
+    })
+
+    computedGetter = () => (computedHost as any).$$state
+    computedSetter = (v: T) => {
+      if (__DEV__ && !set) {
+        warn('Write operation failed: computed value is readonly.', vm!)
+        return
+      }
+
+      ;(computedHost as any).$$state = v
+    }
+  }
 
   return createRef<T>(
     {
-      get: () => (computedHost as any).$$state,
-      set: (v: T) => {
-        if (__DEV__ && !set) {
-          warn('Write operation failed: computed value is readonly.', vm!)
-          return
-        }
-
-        ;(computedHost as any).$$state = v
-      },
+      get: computedGetter,
+      set: computedSetter,
     },
     !set
   )
