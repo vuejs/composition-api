@@ -99,8 +99,6 @@ export function mixin(Vue: VueConstructor) {
       const bindingObj = binding
       vmStateManager.set(vm, 'rawBindings', binding)
 
-      // binding = proxyRefs(binding);
-
       Object.keys(binding).forEach((name) => {
         let bindingValue = bindingObj[name]
         // only make primitive value reactive
