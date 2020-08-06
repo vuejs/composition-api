@@ -192,8 +192,7 @@ export function proxyRefs<T extends object>(
   objectWithRefs: T
 ): ShallowUnwrapRef<T> {
   if (isReactive(objectWithRefs)) {
-    //@ts-ignore
-    return objectWithRefs
+    return objectWithRefs as ShallowUnwrapRef<T>
   }
   const value: Record<string, any> = reactive({ [RefKey]: objectWithRefs })
 
@@ -214,6 +213,5 @@ export function proxyRefs<T extends object>(
     })
   }
 
-  // @ts-ignore
-  return value
+  return value as ShallowUnwrapRef<T>
 }

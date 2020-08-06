@@ -177,6 +177,7 @@ describe('setup', () => {
     )
   })
 
+  // `props` are not deeply reactive
   // it('not warn doing toRef on props', async () => {
   //   const Foo = {
   //     props: {

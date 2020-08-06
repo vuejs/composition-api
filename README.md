@@ -399,10 +399,10 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 ⚠️ <code>isReactive(props.foo.bar)</code> will return false.
 </summary>
   
-```
+```ts
 defineComponent({
   setup(props) {
-    const { bar } = toRefs(props.foo) // won't work
+    const { bar } = toRefs(props.foo) // it will `warn`
     
     // use this instead 
     const { foo } = toRefs(props)
