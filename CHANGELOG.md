@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.8"></a>
+# [1.0.0-beta.8](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2020-08-07)
+
+
+### Bug Fixes
+
+* SSR renderComponent computed error, [#464](https://github.com/vuejs/composition-api/issues/464) ([#465](https://github.com/vuejs/composition-api/issues/465)) ([123e60e](https://github.com/vuejs/composition-api/commit/123e60e))
+
+
+
 <a name="1.0.0-beta.6"></a>
 # [1.0.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2020-07-22)
 

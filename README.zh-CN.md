@@ -38,12 +38,10 @@ import { ref, reactive } from '@vue/composition-api'
 在 Vue 之后引入 `@vue/composition-api` ，插件将会自动完成安装。
 
 <!--cdn-links-start-->
-
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.8"></script>
 ```
-
 <!--cdn-links-end-->
 
 `@vue/composition-api` 将会暴露在全局变量 `window.VueCompositionAPI` 中。
