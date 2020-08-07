@@ -6,6 +6,25 @@
 
 * SSR renderComponent computed error, [#464](https://github.com/vuejs/composition-api/issues/464) ([#465](https://github.com/vuejs/composition-api/issues/465)) ([123e60e](https://github.com/vuejs/composition-api/commit/123e60e))
 
+<a name="1.0.0-beta.7"></a>
+# [1.0.0-beta.7](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2020-08-07)
+
+### BREAKING CHANGES
+
+* template auto ref unwrapping are now applied shallowly,
+i.e. only at the root level. See https://github.com/vuejs/vue-next/pull/1682 for
+more details.
+
+
+### Features
+
+* `proxyRefs` method and `ShallowUnwrapRefs` type ([#456](https://github.com/vuejs/composition-api/issues/456)) ([149821a](https://github.com/vuejs/composition-api/commit/149821a))
+
+
+### Performance Improvements
+
+* more light-weight computed ([#452](https://github.com/vuejs/composition-api/issues/452)) ([95d87f1](https://github.com/vuejs/composition-api/commit/95d87f1))
+
 
 
 <a name="1.0.0-beta.6"></a>
