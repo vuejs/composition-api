@@ -38,7 +38,7 @@ export function computed<T>(
   let computedSetter
   let computedGetter
 
-  if (vm) {
+  if (vm && !vm.$isServer) {
     const { Watcher, Dep } = getVueInternalClasses()
     let watcher: any
     computedGetter = () => {
@@ -74,6 +74,8 @@ export function computed<T>(
         },
       },
     })
+
+    vm && vm.$on('hook:destroyed', () => computedHost.$destroy())
 
     computedGetter = () => (computedHost as any).$$state
     computedSetter = (v: T) => {
