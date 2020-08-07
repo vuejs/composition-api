@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, reactive, watch, watchEffect } = require('../../src')
+const { ref, reactive, watch, watchEffect, set } = require('../../src')
 
 describe('api/watch', () => {
   const anyFn = expect.any(Function)
@@ -744,5 +744,17 @@ describe('api/watch', () => {
         })
         .then(done)
     })
+  })
+
+  it('should execute watch when new key is added', () => {
+    const r = reactive({})
+
+    const cb = jest.fn()
+
+    watch(r, cb, { deep: true })
+
+    set(r, 'a', 1)
+
+    expect(cb).toHaveBeenCalled()
   })
 })

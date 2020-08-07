@@ -50,6 +50,9 @@ export interface VueWatcher {
   lazy: boolean
   get(): any
   teardown(): void
+  run(): void
+
+  value: any
 }
 
 export type WatchStopHandle = () => void
@@ -315,6 +318,19 @@ function createWatcher(
 
   // Once again, we have to hack the watcher for proper teardown
   const watcher = vm._watchers[vm._watchers.length - 1]
+
+  // if the return value is reactive and deep:true
+  // watch for changes, this might happen when new key is added
+  if (isReactive(watcher.value) && deep) {
+    watcher.value.__ob__.dep.addSub({
+      update() {
+        // this will force the source to be revaluated and the callback
+        // executed if needed
+        watcher.run()
+      },
+    })
+  }
+
   patchWatcherTeardown(watcher, runCleanup)
 
   return () => {
