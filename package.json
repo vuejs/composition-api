@@ -13,7 +13,7 @@
   },
   "main": "index.js",
   "module": "dist/vue-composition-api.esm.js",
-  "unpkg": "dist/vue-composition-ap.prod.js",
+  "unpkg": "dist/vue-composition-api.prod.js",
   "jsdelivr": "dist/vue-composition-api.prod.js",
   "typings": "dist/index.d.ts",
   "author": {
