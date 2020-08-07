@@ -38,7 +38,7 @@ export function computed<T>(
   let computedSetter
   let computedGetter
 
-  if (vm) {
+  if (vm && !vm.$isServer) {
     const { Watcher, Dep } = getVueInternalClasses()
     let watcher: any
     computedGetter = () => {
