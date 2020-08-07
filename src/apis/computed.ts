@@ -74,6 +74,8 @@ export function computed<T>(
         },
       },
     })
+    
+    vm && vm.$on('hook:destroyed', () => computedHost.$destroy())
 
     computedGetter = () => (computedHost as any).$$state
     computedSetter = (v: T) => {
