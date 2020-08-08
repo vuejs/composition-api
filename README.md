@@ -176,6 +176,27 @@ a.list[1].count === 1 // true
 
 </details>
 
+<details1>
+<summary>
+⚠️ adding new reactive properties `Vue.set`
+</summary>
+
+> Part of the limitation of [Vue 2.x reactivity](https://vuejs.org/v2/guide/reactivity.html#For-Objects) is to track new keys on an `object` you need to call `Vue.set`.
+
+```ts
+import { reactive, set } from '@vue/composition-api'
+
+const a = reactive({
+  foo: 1
+})
+
+// add new reactive key
+set(a, 'bar', 1)
+```
+
+
+</details>
+
 ### Template Refs
 
 <details>
