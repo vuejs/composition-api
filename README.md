@@ -178,10 +178,10 @@ a.list[1].count === 1 // true
 
 <details1>
 <summary>
-⚠️ adding new reactive properties `Vue.set`
+⚠️ `set` workaround for adding new reactive properties
 </summary>
 
-> Part of the limitation of [Vue 2.x reactivity](https://vuejs.org/v2/guide/reactivity.html#For-Objects) is to track new keys on an `object` you need to call `Vue.set`.
+> ⚠️ Warning: `set` does NOT exist in Vue 3. We provide it as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects). In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
 
 ```ts
 import { reactive, set } from '@vue/composition-api'
