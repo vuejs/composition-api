@@ -176,7 +176,7 @@ a.list[1].count === 1 // true
 
 </details>
 
-<details1>
+<details>
 <summary>
 ⚠️ `set` workaround for adding new reactive properties
 </summary>
