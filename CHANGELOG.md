@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.9"></a>
+# [1.0.0-beta.9](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2020-08-11)
+
+
+### Bug Fixes
+
+* **watch:** watch will trigger when added new keys using `set` ([#468](https://github.com/vuejs/composition-api/issues/468)) ([13bfed1](https://github.com/vuejs/composition-api/commit/13bfed1))
+
+
+
 <a name="1.0.0-beta.8"></a>
 # [1.0.0-beta.8](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2020-08-07)
 
