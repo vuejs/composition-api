@@ -175,6 +175,27 @@ b.list[1].count === 1 // true
 
 </details>
 
+
+<details>
+<summary>
+⚠️ `set` 添加响应式属性变通方案
+</summary>
+
+> ⚠️ 警告: `set` 并非 `Vue 3.0` 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
+
+```ts
+import { reactive, set } from '@vue/composition-api'
+
+const a = reactive({
+  foo: 1
+})
+
+// 添加新的响应式属性
+set(a, 'bar', 1)
+```
+
+</details>
+
 ### 模板 Refs
 
 <details>
@@ -288,7 +309,7 @@ export default {
 ⚠️ <code>$refs</code> 访问的变通方案
 </summary>
 
-> :warning: **警告**: `SetupContext.refs` 并不属于 `Vue 3.0` 的一部分, `@vue/composition-api` 将其曝光在 `SetupContext` 中只是临时提供一种变通方案。
+> :warning: **警告**: `SetupContext.refs` 并非 `Vue 3.0` 的一部分, `@vue/composition-api` 将其暴露在 `SetupContext` 中只是临时提供一种变通方案。
 
 如果你依然选择在 `setup()` 中写 `render` 函数，那么你可以使用 `SetupContext.refs` 来访问模板引用，它等价于 Vue 2.x 中的 `this.$refs`:
 
@@ -380,9 +401,7 @@ watch(
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
-- `customRef`
 - `isProxy`
-- `isVNode`
 
 ### 在 `data()` 中使用组合式 API
 
