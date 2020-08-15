@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.10"></a>
+# [1.0.0-beta.10](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2020-08-15)
+
+
+### Bug Fixes
+
+* **watch:** check if __ob__ has value before addSub ([#477](https://github.com/vuejs/composition-api/issues/477)) ([d8cd30d](https://github.com/vuejs/composition-api/commit/d8cd30d))
+
+
+
 <a name="1.0.0-beta.9"></a>
 # [1.0.0-beta.9](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2020-08-11)
 
