@@ -321,7 +321,7 @@ function createWatcher(
 
   // if the return value is reactive and deep:true
   // watch for changes, this might happen when new key is added
-  if (isReactive(watcher.value) && deep) {
+  if (isReactive(watcher.value) && watcher.value.__ob__?.dep && deep) {
     watcher.value.__ob__.dep.addSub({
       update() {
         // this will force the source to be revaluated and the callback
