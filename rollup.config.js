@@ -4,6 +4,7 @@ import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 import replace from '@rollup/plugin-replace'
 import dts from 'rollup-plugin-dts'
+import { version } from './package.json'
 
 const builds = {
   'cjs-dev': {
@@ -81,6 +82,7 @@ function genConfig({ outFile, format, mode }) {
               `(process.env.NODE_ENV !== 'production')`
             : // hard coded dev/prod builds
               !isProd,
+        __VERSION__: JSON.stringify(version),
       }),
       isProd && terser(),
     ].filter(Boolean),
