@@ -91,7 +91,8 @@
   "jest": {
     "verbose": true,
     "globals": {
-      "__DEV__": true
+      "__DEV__": true,
+      "__VERSION__": "0.0.0"
     },
     "setupFiles": [
       "<rootDir>/test/setupTest.js"
