@@ -54,12 +54,13 @@ export function inject(
   }
 
   const val = resolveInject(key, vm)
-  if (val === NOT_FOUND) {
-    if (defaultValue === undefined && __DEV__) {
-      warn(`Injection "${String(key)}" not found`, vm)
-    }
-    return defaultValue
+  if (val !== NOT_FOUND) {
+    return val;
+  }
+  
+  if (defaultValue === undefined && __DEV__) {
+    warn(`Injection "${String(key)}" not found`, vm)
   }
 
-  return val
+  return defaultValue
 }
