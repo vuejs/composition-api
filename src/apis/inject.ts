@@ -48,17 +48,18 @@ export function inject(
   }
 
   const vm = getCurrentInstance()
-  if (vm) {
-    const val = resolveInject(key, vm)
-    if (val !== NOT_FOUND) {
-      return val
-    } else {
-      if (defaultValue === undefined && __DEV__) {
-        warn(`Injection "${String(key)}" not found`, vm)
-      }
-      return defaultValue
-    }
-  } else {
+  if (!vm) {
     warn(`inject() can only be used inside setup() or functional components.`)
+    return
   }
+
+  const val = resolveInject(key, vm)
+  if (val === NOT_FOUND) {
+    if (defaultValue === undefined && __DEV__) {
+      warn(`Injection "${String(key)}" not found`, vm)
+    }
+    return defaultValue
+  }
+
+  return val
 }
