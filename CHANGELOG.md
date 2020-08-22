@@ -1,3 +1,14 @@
+<a name="1.0.0-beta.11"></a>
+# [1.0.0-beta.11](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.9...v1.0.0-beta.11) (2020-08-22)
+
+
+### Bug Fixes
+
+* **setup:** handle updates for directly return a reactive object ([#488](https://github.com/vuejs/composition-api/issues/488)) ([a7f2c25](https://github.com/vuejs/composition-api/commit/a7f2c25)), closes [#487](https://github.com/vuejs/composition-api/issues/487)
+* **watch:** check if __ob__ has value before addSub ([#477](https://github.com/vuejs/composition-api/issues/477)) ([d8cd30d](https://github.com/vuejs/composition-api/commit/d8cd30d))
+
+
+
 <a name="1.0.0-beta.10"></a>
 # [1.0.0-beta.10](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2020-08-15)
 
