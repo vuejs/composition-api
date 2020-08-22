@@ -9,7 +9,9 @@ const {
   toRefs,
   markRaw,
   toRaw,
+  nextTick,
 } = require('../src')
+const { sleep } = require('./helpers/utils')
 
 describe('setup', () => {
   beforeEach(() => {
@@ -860,5 +862,28 @@ describe('setup', () => {
 
     const vm = new Vue(Constructor).$mount()
     expect(vm.$el.textContent).toBe('Composition-api')
+  })
+
+  // #487
+  it('should handle updates for directly return a reactive object.', async () => {
+    const opts = {
+      template: '<div>{{ count }}</div>',
+      setup() {
+        const state = reactive({ count: 1 })
+
+        setTimeout(() => {
+          state.count = 2
+        }, 1)
+
+        return state
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('1')
+    await sleep(10)
+    await nextTick()
+    expect(vm.$el.textContent).toBe('2')
   })
 })
