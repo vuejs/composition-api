@@ -9,8 +9,8 @@ import {
   onUpdated,
   onBeforeUnmount,
   onUnmounted,
+  nextTick,
 } from '../../../src'
-import { nextTick } from '../../helpers/utils'
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#lifecycle-hooks
 

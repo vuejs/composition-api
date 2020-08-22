@@ -4,9 +4,9 @@ import {
   ref,
   watchEffect,
   WritableComputedRef,
+  nextTick,
 } from '../../../src'
-import { mockWarn } from '../../helpers/mockWarn'
-import { nextTick } from '../../helpers/utils'
+import { mockWarn } from '../../helpers'
 
 describe('reactivity/computed', () => {
   mockWarn(true)

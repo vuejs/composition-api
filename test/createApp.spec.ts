@@ -1,19 +1,18 @@
-const Vue = require('vue/dist/vue.common.js')
-const { createApp, defineComponent, ref, h } = require('../src')
+import { createApp, defineComponent, ref, nextTick } from '../src'
 
 describe('createApp', () => {
   it('should work', async () => {
-    const vm = new Vue({
+    const app = createApp({
       setup() {
         return {
           a: ref(1),
         }
       },
       template: '<p>{{a}}</p>',
-    }).$mount()
+    })
+    const vm = app.mount()
 
-    await Vue.nextTick()
-    expect(vm.a).toBe(1)
+    await nextTick()
     expect(vm.$el.textContent).toBe('1')
   })
 
@@ -31,7 +30,7 @@ describe('createApp', () => {
     )
     const vm = app.mount()
 
-    await Vue.nextTick()
+    await nextTick()
     expect(vm.$el.textContent).toBe('foobar')
   })
 
@@ -60,7 +59,7 @@ describe('createApp', () => {
     app.component('Foo', Foo)
     const vm = app.mount()
 
-    await Vue.nextTick()
+    await nextTick()
     expect(vm.$el.textContent).toBe('foobar')
   })
 })

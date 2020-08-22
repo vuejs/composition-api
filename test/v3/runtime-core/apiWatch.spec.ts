@@ -6,8 +6,8 @@ import {
   ref,
   set,
   shallowReactive,
+  nextTick,
 } from '../../../src'
-import { nextTick } from '../../helpers/utils'
 import Vue from 'vue'
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#watch
@@ -514,7 +514,6 @@ describe('api: watch', () => {
   //   expect(spy).toHaveBeenCalledTimes(1);
   //   expect(warnSpy).toHaveBeenCalledWith(`"deep" option is only respected`);
   // });
-
 
   // #388
   it('should not call the callback multiple times', () => {

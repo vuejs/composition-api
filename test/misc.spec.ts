@@ -1,9 +1,9 @@
-const Vue = require('vue/dist/vue.common.js')
-const { ref, nextTick } = require('../src')
+import Vue from './vue'
+import { ref, nextTick } from '../src'
 
 describe('nextTick', () => {
-  it('should works', () => {
-    const vm = new Vue({
+  it('should works with callbacks', () => {
+    const vm = new Vue<{ a: number }>({
       template: `<div>{{a}}</div>`,
       setup() {
         return {
@@ -28,7 +28,7 @@ describe('nextTick', () => {
   })
 
   it('should works with await', async () => {
-    const vm = new Vue({
+    const vm = new Vue<{ a: number }>({
       template: `<div>{{a}}</div>`,
       setup() {
         return {
