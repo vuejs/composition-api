@@ -5,7 +5,14 @@ import {
   SetupFunction,
   Data,
 } from './component'
-import { isRef, isReactive, markRaw, markReactive } from './reactivity'
+import {
+  isRef,
+  isReactive,
+  markRaw,
+  markReactive,
+  toRef,
+  toRefs,
+} from './reactivity'
 import { isPlainObject, assert, proxy, warn, isFunction } from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
@@ -94,8 +101,9 @@ export function mixin(Vue: VueConstructor) {
         return activateCurrentInstance(vm, () => bindingFunc())
       }
       return
-    }
-    if (isPlainObject(binding)) {
+    } else if (isPlainObject(binding)) {
+      if (isReactive(binding)) binding = toRefs(binding)
+
       const bindingObj = binding
       vmStateManager.set(vm, 'rawBindings', binding)
 
