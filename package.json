@@ -36,7 +36,7 @@
     "update-readme": "node ./scripts/update-readme.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "version": "yarn changelog && yarn update-readme && git add CHANGELOG.md README.*",
-    "release": "yarn test && yarn publish && git push && yarn release-gh",
+    "release": "yarn version && yarn test && yarn publish --non-interactive && git push --follow-tags",
     "release-gh": "conventional-github-releaser -p angular"
   },
   "bugs": {
@@ -91,7 +91,8 @@
   "jest": {
     "verbose": true,
     "globals": {
-      "__DEV__": true
+      "__DEV__": true,
+      "__VERSION__": "0.0.0"
     },
     "setupFiles": [
       "<rootDir>/test/setupTest.js"

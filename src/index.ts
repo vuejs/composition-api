@@ -2,6 +2,8 @@ import type Vue from 'vue'
 import { Data, SetupFunction } from './component'
 import { Plugin } from './install'
 
+export const version = __VERSION__
+
 export * from './apis'
 export { getCurrentInstance } from './runtimeContext'
 export {
