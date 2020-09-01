@@ -8,6 +8,7 @@ import {
   isPluginInstalled,
 } from './runtimeContext'
 import { mixin } from './mixin'
+import { createElement } from './apis/createElement'
 
 /**
  * Helper that recursively merges two data objects together.
@@ -42,8 +43,10 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
   }
   return to
 }
-
-export function install(Vue: VueConstructor) {
+interface PluginOptions {
+  jsx?: { enable?: boolean }
+}
+export function install(Vue: VueConstructor, options?: PluginOptions) {
   if (isPluginInstalled() || isVueRegistered(Vue)) {
     if (__DEV__) {
       assert(
@@ -65,9 +68,19 @@ export function install(Vue: VueConstructor) {
     child: Function
   ) {
     return function mergedSetupFn(props: any, context: any) {
+      let extraContext = {}
+      if (options?.jsx?.enable === true) {
+        Reflect.set(extraContext, '$createElement', createElement)
+      }
+      let isEmpty = Reflect.ownKeys(extraContext).length === 0
       return mergeData(
-        typeof parent === 'function' ? parent(props, context) || {} : undefined,
-        typeof child === 'function' ? child(props, context) || {} : undefined
+        typeof parent === 'function'
+          ? parent.call(isEmpty ? undefined : extraContext, props, context) ||
+              {}
+          : undefined,
+        typeof child === 'function'
+          ? child.call(isEmpty ? undefined : extraContext, props, context) || {}
+          : undefined
       )
     }
   }
@@ -77,5 +90,6 @@ export function install(Vue: VueConstructor) {
 }
 
 export const Plugin = {
-  install: (Vue: VueConstructor) => install(Vue),
+  install: (Vue: VueConstructor, options?: PluginOptions) =>
+    install(Vue, options),
 }
