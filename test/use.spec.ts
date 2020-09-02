@@ -6,8 +6,6 @@ describe('use', () => {
   mockWarn(true)
 
   it('should allow install in multiple vue', () => {
-    // @ts-ignore
-    global.jest = undefined
     const localVueOne = createLocalVue()
     localVueOne.use(CompositionApi)
 
