@@ -5,6 +5,11 @@ import Vue, { VueConstructor } from 'vue'
 export function createLocalVue(_Vue: VueConstructor = Vue) {
   const instance = _Vue.extend()
 
+  Object.keys(_Vue).forEach((key) => {
+    // @ts-ignore
+    instance[key] = _Vue[key]
+  })
+
   // @ts-ignore
   if (instance._installedPlugins && instance._installedPlugins.length) {
     // @ts-ignore

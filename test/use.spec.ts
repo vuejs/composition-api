@@ -5,15 +5,6 @@ import { mockWarn } from './helpers'
 describe('use', () => {
   mockWarn(true)
 
-  const __jest = global.jest
-
-  beforeEach(() => {
-    global.jest = __jest
-  })
-  afterEach(() => {
-    global.jest = __jest
-  })
-
   it('should allow install in multiple vue', () => {
     // @ts-ignore
     global.jest = undefined
