@@ -1,6 +1,6 @@
 import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
-import { hasSymbol, hasOwn, isPlainObject, assert } from './utils'
+import { hasSymbol, hasOwn, isPlainObject, assert, warn } from './utils'
 import { isRef } from './reactivity'
 import { setVueConstructor, isVueRegistered } from './runtimeContext'
 import { mixin } from './mixin'
@@ -51,8 +51,12 @@ export function install(Vue: VueConstructor) {
   }
 
   if (__DEV__) {
-    if (Vue.version && (Vue.version[0] !== '2' || Vue.version[1] !== '.')) {
-      assert(false, `only works with Vue 2, v${Vue.version} found.`)
+    if (Vue.version) {
+      if (Vue.version[0] !== '2' || Vue.version[1] !== '.') {
+        assert(false, `only works with Vue 2, v${Vue.version} found.`)
+      }
+    } else {
+      warn('Vue version not found')
     }
   }
 

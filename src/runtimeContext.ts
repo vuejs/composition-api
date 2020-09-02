@@ -28,10 +28,7 @@ export function getVueConstructor(): VueConstructor {
 
 export function setVueConstructor(Vue: VueConstructor) {
   if (__DEV__ && vueConstructor) {
-    // don't warn in jest
-    if ('jest' in global) {
-      warn('Another instance of vue installed')
-    }
+    warn('Another instance of vue installed')
   }
   vueConstructor = Vue
   Object.defineProperty(Vue, PluginInstalledFlag, {
