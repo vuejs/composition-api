@@ -5,21 +5,25 @@ import { mockWarn } from './helpers'
 describe('use', () => {
   mockWarn(true)
 
+  const __jest = global.jest
+
+  beforeEach(() => {
+    global.jest = __jest
+  })
+  afterEach(() => {
+    global.jest = __jest
+  })
+
   it('should allow install in multiple vue', () => {
-    let __jest = global.jest
-    try {
-      // @ts-ignore
-      global.jest = undefined
-      const localVueOne = createLocalVue()
-      localVueOne.use(CompositionApi)
+    // @ts-ignore
+    global.jest = undefined
+    const localVueOne = createLocalVue()
+    localVueOne.use(CompositionApi)
 
-      const localVueTwo = createLocalVue()
-      localVueTwo.use(CompositionApi)
+    const localVueTwo = createLocalVue()
+    localVueTwo.use(CompositionApi)
 
-      expect('Another instance of vue installed').toHaveBeenWarned()
-    } finally {
-      global.jest = __jest
-    }
+    expect('Another instance of vue installed').toHaveBeenWarned()
   })
 
   it('should warn installing multiple times', () => {
@@ -37,5 +41,7 @@ describe('use', () => {
     }).toThrowError(
       'already installed. Vue.use(VueCompositionAPI) should be called only once.'
     )
+
+    expect('Another instance of vue installed').toHaveBeenWarned()
   })
 })
