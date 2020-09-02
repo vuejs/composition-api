@@ -22,8 +22,8 @@ describe('use', () => {
     expect(() => {
       // vue prevents the same plugin of being installed, this will create a new plugin instance
       localVueOne.use({
-        install(...args: any[]) {
-          CompositionApi.install(...args)
+        install(v) {
+          CompositionApi.install(v)
         },
       })
     }).toThrowError(
