@@ -360,6 +360,31 @@ declare module '@vue/composition-api' {
 
 </details>
 
+<details>
+<summary>
+❌ <code>reactive</code> 数组无法追踪
+</summary>
+
+`reactive` 在下面使用 `Vue.observable`，不支持纯数组。
+```ts
+const array = reactive([])
+
+// reactive([]) 无法追踪，而且 computed 永远不会重新评估
+const arrayString = computed(() => array.join())
+
+// reactive([]) 不能被追踪，并且 watch effect 将永远不会重新运行
+watchEffect(() => console.log(array.length))
+```
+将数组放入对象中，或使用 `ref`
+```ts
+// 可以追踪
+const arrayInObject = reactive({ array: [] })
+
+// 可以追踪
+const arrayRef = ref([])
+```
+</details>
+
 ### Watch
 
 <details>

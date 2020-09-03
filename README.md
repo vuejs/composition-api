@@ -366,6 +366,31 @@ declare module '@vue/composition-api' {
 
 </details>
 
+<details>
+<summary>
+❌ <code>reactive</code> arrays can't be tracked
+</summary>
+
+`reactive` uses `Vue.observable` underneath which does not support plain arrays.
+```ts
+const array = reactive([])
+
+// reactive([]) can't be tracked, and computed will never re-evaluate
+const arrayString = computed(() => array.join())
+
+// reactive([]) can't be tracked, and watch effect will never re-run
+watchEffect(() => console.log(array.length))
+```
+Put arrays into objects, or use `ref`.
+```ts
+// Can be tracked
+const arrayInObject = reactive({ array: [] })
+
+// Can be tracked
+const arrayRef = ref([])
+```
+</details>
+
 ### Watch
 
 <details>
