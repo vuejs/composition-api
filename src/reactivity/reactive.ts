@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isPlainObject, def, warn } from '../utils'
+import { isPlainObject, def, warn, isFunction } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { ReadonlyIdentifierKey, RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
@@ -237,6 +237,21 @@ export function markReactive(target: any, shallow = false) {
   }
 
   if (Array.isArray(target)) {
+    if (
+      // @ts-ignore
+      target.__ob__ &&
+      // @ts-ignore
+      target.__ob__.dep &&
+      // @ts-ignore
+      isFunction(target.__ob__.dep.addSub)
+    ) {
+      // @ts-ignore
+      target.__ob__.dep.addSub({
+        update() {
+          target.forEach((x) => markReactive(x))
+        },
+      })
+    }
     // TODO way to track new array items
     target.forEach((x) => markReactive(x))
     return
