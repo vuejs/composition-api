@@ -145,4 +145,25 @@ describe('Hooks provide/inject', () => {
     expect(obj1.msg).toBe('foo')
     expect(obj2.msg).toBe('bar')
   })
+
+  it('should call default value as factory', () => {
+    const State = Symbol()
+    let fn = jest.fn()
+    new Vue({
+      template: `<child/>`,
+      setup() {},
+      provide: {
+        X: { msg: 'bar' },
+      },
+      components: {
+        child: {
+          setup() {
+            inject(State, fn, true)
+          },
+          template: `<div/>`,
+        },
+      },
+    }).$mount()
+    expect(fn).toHaveBeenCalled()
+  })
 })
