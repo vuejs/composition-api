@@ -1,5 +1,5 @@
 import { ComponentInstance } from '../component'
-import { hasOwn, warn, currentVMInFn } from '../utils'
+import { hasOwn, warn, currentVMInFn, isFunction } from '../utils'
 import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}
@@ -38,10 +38,15 @@ export function provide<T>(key: InjectionKey<T> | string, value: T): void {
 }
 
 export function inject<T>(key: InjectionKey<T> | string): T | undefined
-export function inject<T>(key: InjectionKey<T> | string, defaultValue: T): T
+export function inject<T>(
+  key: InjectionKey<T> | string,
+  defaultValue: T,
+  treatDefaultAsFactory?: boolean
+): T
 export function inject(
   key: InjectionKey<any> | string,
-  defaultValue?: unknown
+  defaultValue?: unknown,
+  treatDefaultAsFactory = false
 ) {
   if (!key) {
     return defaultValue
@@ -55,12 +60,14 @@ export function inject(
 
   const val = resolveInject(key, vm)
   if (val !== NOT_FOUND) {
-    return val;
+    return val
   }
-  
+
   if (defaultValue === undefined && __DEV__) {
     warn(`Injection "${String(key)}" not found`, vm)
   }
 
-  return defaultValue
+  return treatDefaultAsFactory && isFunction(defaultValue)
+    ? defaultValue()
+    : defaultValue
 }
