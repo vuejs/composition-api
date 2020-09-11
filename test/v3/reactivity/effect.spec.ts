@@ -1,5 +1,4 @@
 import Vue from '../../vue'
-
 import {
   effect,
   reactive,
@@ -65,59 +64,54 @@ describe('reactivity/effect', () => {
     effect(() => (dummy = obj.prop))
 
     expect(dummy).toBe('value')
-    // @ts-ignore
-    delete obj.prop
-    // Vue.delete(obj, 'prop')
+    Vue.delete(obj, 'prop')
     expect(dummy).toBe(undefined)
   })
 
-  it('should observe has operations', () => {
-    let dummy
-    const obj = reactive<{ prop: string | number }>({ prop: 'value' })
-    effect(() => (dummy = 'prop' in obj))
+  // it('should observe has operations', () => {
+  //   let dummy
+  //   const obj = reactive<{ prop: string | number }>({ prop: 'value' })
+  //   effect(() => (dummy = 'prop' in obj))
 
-    expect(dummy).toBe(true)
-    // @ts-ignore
-    delete obj.prop
-    expect(dummy).toBe(false)
-    obj.prop = 12
-    expect(dummy).toBe(true)
-  })
+  //   expect(dummy).toBe(true)
+  //   Vue.delete(obj, 'prop')
+  //   expect(dummy).toBe(false)
+  //   obj.prop = 12
+  //   expect(dummy).toBe(true)
+  // })
 
-  it('should observe properties on the prototype chain', () => {
-    let dummy
-    const counter = reactive({ num: 0 })
-    const parentCounter = reactive({ num: 2 })
-    Object.setPrototypeOf(counter, parentCounter)
-    effect(() => (dummy = counter.num))
+  // it('should observe properties on the prototype chain', () => {
+  //   let dummy
+  //   const counter = reactive({ num: 0 })
+  //   const parentCounter = reactive({ num: 2 })
+  //   Object.setPrototypeOf(counter, parentCounter)
+  //   effect(() => (dummy = counter.num))
 
-    expect(dummy).toBe(0)
-    // @ts-ignore
-    delete counter.num
-    expect(dummy).toBe(2)
-    parentCounter.num = 4
-    expect(dummy).toBe(4)
-    counter.num = 3
-    expect(dummy).toBe(3)
-  })
+  //   expect(dummy).toBe(0)
+  //   // @ts-ignore
+  //   delete counter.num
+  //   expect(dummy).toBe(2)
+  //   parentCounter.num = 4
+  //   expect(dummy).toBe(4)
+  //   counter.num = 3
+  //   expect(dummy).toBe(3)
+  // })
 
-  it('should observe has operations on the prototype chain', () => {
-    let dummy
-    const counter = reactive({ num: 0 })
-    const parentCounter = reactive({ num: 2 })
-    Object.setPrototypeOf(counter, parentCounter)
-    effect(() => (dummy = 'num' in counter))
+  // it('should observe has operations on the prototype chain', () => {
+  //   let dummy
+  //   const counter = reactive({ num: 0 })
+  //   const parentCounter = reactive({ num: 2 })
+  //   Object.setPrototypeOf(counter, parentCounter)
+  //   effect(() => (dummy = 'num' in counter))
 
-    expect(dummy).toBe(true)
-    // @ts-ignore
-    delete counter.num
-    expect(dummy).toBe(true)
-    // @ts-ignore
-    delete parentCounter.num
-    expect(dummy).toBe(false)
-    counter.num = 3
-    expect(dummy).toBe(true)
-  })
+  //   expect(dummy).toBe(true)
+  //   Vue.delete(counter, 'num')
+  //   expect(dummy).toBe(true)
+  //   Vue.delete(parentCounter, 'num')
+  //   expect(dummy).toBe(false)
+  //   counter.num = 3
+  //   expect(dummy).toBe(true)
+  // })
 
   it('should observe inherited property accessors', () => {
     let dummy, parentDummy, hiddenValue: any
@@ -159,42 +153,42 @@ describe('reactivity/effect', () => {
     expect(dummy).toBe(2)
   })
 
-  it('should observe iteration', () => {
-    let dummy
-    const list = reactive(['Hello'])
-    effect(() => (dummy = list.join(' ')))
+  // it('should observe iteration', () => {
+  //   let dummy
+  //   const list = reactive(['Hello'])
+  //   effect(() => (dummy = list.join(' ')))
 
-    expect(dummy).toBe('Hello')
-    list.push('World!')
-    expect(dummy).toBe('Hello World!')
-    list.shift()
-    expect(dummy).toBe('World!')
-  })
+  //   expect(dummy).toBe('Hello')
+  //   list.push('World!')
+  //   expect(dummy).toBe('Hello World!')
+  //   list.shift()
+  //   expect(dummy).toBe('World!')
+  // })
 
-  it('should observe implicit array length changes', () => {
-    let dummy
-    const list = reactive(['Hello'])
-    effect(() => (dummy = list.join(' ')))
+  // it('should observe implicit array length changes', () => {
+  //   let dummy
+  //   const list = reactive(['Hello'])
+  //   effect(() => (dummy = list.join(' ')))
 
-    expect(dummy).toBe('Hello')
-    list[1] = 'World!'
-    expect(dummy).toBe('Hello World!')
-    list[3] = 'Hello!'
-    expect(dummy).toBe('Hello World!  Hello!')
-  })
+  //   expect(dummy).toBe('Hello')
+  //   list[1] = 'World!'
+  //   expect(dummy).toBe('Hello World!')
+  //   list[3] = 'Hello!'
+  //   expect(dummy).toBe('Hello World!  Hello!')
+  // })
 
-  it('should observe sparse array mutations', () => {
-    let dummy
-    const list = reactive<string[]>([])
-    list[1] = 'World!'
-    effect(() => (dummy = list.join(' ')))
+  // it('should observe sparse array mutations', () => {
+  //   let dummy
+  //   const list = reactive<string[]>([])
+  //   list[1] = 'World!'
+  //   effect(() => (dummy = list.join(' ')))
 
-    expect(dummy).toBe(' World!')
-    list[0] = 'Hello'
-    expect(dummy).toBe('Hello World!')
-    list.pop()
-    expect(dummy).toBe('Hello')
-  })
+  //   expect(dummy).toBe(' World!')
+  //   list[0] = 'Hello'
+  //   expect(dummy).toBe('Hello World!')
+  //   list.pop()
+  //   expect(dummy).toBe('Hello')
+  // })
 
   it('should observe enumeration', () => {
     let dummy = 0

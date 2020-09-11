@@ -94,6 +94,11 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     configurable: true,
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val
+
+      if (typeof value !== 'object') {
+        target.__ob__.dep.depend()
+      }
+
       // if the key is equal to RefKey, skip the unwrap logic
       if (key !== RefKey && isRef(value)) {
         return value.value
@@ -114,6 +119,10 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
         setter.call(target, newVal)
       } else {
         val = newVal
+      }
+
+      if (typeof value !== 'object') {
+        target.__ob__.dep.notify()
       }
       setupAccessControl(newVal)
     },
