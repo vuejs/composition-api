@@ -192,27 +192,6 @@ export function createReactiveEffect<T = any>(
       newDeps.length = 0
     },
   }
-  // pushTarget(this)
-  // let value
-  // const vm = this.vm
-  // try {
-  //   value = this.getter.call(vm, vm)
-  // } catch (e) {
-  //   if (this.user) {
-  //     handleError(e, vm, `getter for watcher "${this.expression}"`)
-  //   } else {
-  //     throw e
-  //   }
-  // } finally {
-  //   // "touch" every property so they are all tracked as
-  //   // dependencies for deep watching
-  //   if (this.deep) {
-  //     traverse(value)
-  //   }
-  //   popTarget()
-  //   this.cleanupDeps()
-  // }
-  // return value
   pushTarget(target)
 
   const effect = function reactiveEffect(): any {
