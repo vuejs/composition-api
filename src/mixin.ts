@@ -80,15 +80,15 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!
     const ctx = createSetupContext(vm)
 
-    // mark props
-    // markReactive(props)
-    props.__ob__ = true // fake reactive
+    // fake reactive for `toRefs(props)`
+    props.__ob__ = true
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)
 
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null
     activateCurrentInstance(vm, () => {
+      // make props to be fake reactive, this is for `toRefs(props)`
       binding = setup(props, ctx)
     })
 

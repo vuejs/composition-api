@@ -72,14 +72,6 @@ export function install(Vue: VueConstructor) {
     }
   }
 
-  // const observable = Vue.observable
-
-  // Vue.observable = (obj: any) => {
-  //   const o = observable(obj)
-  //   // markReactive(o)
-  //   return o
-  // }
-
   setVueConstructor(Vue)
   mixin(Vue)
 }
