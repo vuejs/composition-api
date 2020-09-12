@@ -1,4 +1,4 @@
-if (!('WeakSet' in window)) {
+if (typeof window !== 'undefined' && !('WeakSet' in window)) {
   // simple polyfil for IE
   Object.defineProperty(window, 'WeakSet', {
     value: new (class {
