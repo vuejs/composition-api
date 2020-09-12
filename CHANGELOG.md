@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.13"></a>
+# [1.0.0-beta.13](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2020-09-12)
+
+
+### Bug Fixes
+
+* **sets:** check for window to avoid SSR errors ([#511](https://github.com/vuejs/composition-api/issues/511)) ([9ea7230](https://github.com/vuejs/composition-api/commit/9ea7230))
+
+
+
 <a name="1.0.0-beta.12"></a>
 # [1.0.0-beta.12](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2020-09-12)
 
