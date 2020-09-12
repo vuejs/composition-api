@@ -57,8 +57,8 @@ describe('reactivity/reactive', () => {
     }
     const observed = reactive(original)
     expect(isReactive(observed.nested)).toBe(true)
-    // expect(isReactive(observed.array)).toBe(true); //not supported by vue2
-    // expect(isReactive(observed.array[0])).toBe(true); //not supported by vue2
+    expect(isReactive(observed.array)).toBe(true)
+    expect(isReactive(observed.array[0])).toBe(true)
   })
 
   test('observed value should proxy mutations to original (Object)', () => {
