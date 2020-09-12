@@ -1,37 +1,21 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isPlainObject, def, hasOwn, warn, isObject } from '../utils'
+import { isPlainObject, def, warn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
-import {
-  AccessControlIdentifierKey,
-  ReactiveIdentifierKey,
-  RawIdentifierKey,
-  ReadonlyIdentifierKey,
-  RefKey,
-} from '../utils/symbols'
+import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
-
-const AccessControlIdentifier = {}
-const ReactiveIdentifier = {}
-const RawIdentifier = {}
+import { rawSet, readonlySet, reactiveSet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
-  return (
-    hasOwn(obj, RawIdentifierKey) && obj[RawIdentifierKey] === RawIdentifier
-  )
+  return rawSet.has(obj)
 }
 
 export function isReadonly(obj: any): boolean {
-  return hasOwn(obj, ReadonlyIdentifierKey) && obj[ReadonlyIdentifierKey]
+  return readonlySet.has(obj)
 }
 
 export function isReactive(obj: any): boolean {
-  return (
-    isObject(obj) &&
-    Object.isExtensible(obj) &&
-    hasOwn(obj, ReactiveIdentifierKey) &&
-    obj[ReactiveIdentifierKey] === ReactiveIdentifier
-  )
+  return reactiveSet.has(obj)
 }
 
 /**
@@ -45,20 +29,9 @@ function setupAccessControl(target: AnyObject): void {
     Array.isArray(target) ||
     isRef(target) ||
     isComponentInstance(target)
-  ) {
+  )
     return
-  }
 
-  if (
-    hasOwn(target, AccessControlIdentifierKey) &&
-    target[AccessControlIdentifierKey] === AccessControlIdentifier
-  ) {
-    return
-  }
-
-  if (Object.isExtensible(target)) {
-    def(target, AccessControlIdentifierKey, AccessControlIdentifier)
-  }
   const keys = Object.keys(target)
   for (let i = 0; i < keys.length; i++) {
     defineAccessControl(target, keys[i])
@@ -203,29 +176,32 @@ export function shallowReactive<T extends object = any>(obj: T): T {
 
 export function markReactive(target: any, shallow = false) {
   if (
-    !isPlainObject(target) ||
+    !(isPlainObject(target) || Array.isArray(target)) ||
+    // !isPlainObject(target) ||
     isRaw(target) ||
-    Array.isArray(target) ||
+    // Array.isArray(target) ||
     isRef(target) ||
     isComponentInstance(target)
   ) {
     return
   }
 
-  if (
-    hasOwn(target, ReactiveIdentifierKey) &&
-    target[ReactiveIdentifierKey] === ReactiveIdentifier
-  ) {
+  if (isReactive(target) || !Object.isExtensible(target)) {
     return
   }
 
-  if (Object.isExtensible(target)) {
-    def(target, ReactiveIdentifierKey, ReactiveIdentifier)
-  }
+  reactiveSet.add(target)
 
   if (shallow) {
     return
   }
+
+  if (Array.isArray(target)) {
+    // TODO way to track new array items
+    target.forEach((x) => markReactive(x))
+    return
+  }
+
   const keys = Object.keys(target)
   for (let i = 0; i < keys.length; i++) {
     markReactive(target[keys[i]])
@@ -264,9 +240,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
     return obj // just typing
   }
 
-  const readonlyObj = {
-    [ReadonlyIdentifierKey]: true,
-  }
+  const readonlyObj = {}
 
   const source = reactive({})
   const ob = (source as any).__ob__
@@ -306,6 +280,8 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
     })
   }
 
+  readonlySet.add(readonlyObj)
+
   return readonlyObj as any
 }
 
@@ -320,7 +296,7 @@ export function markRaw<T extends object>(obj: T): T {
   // set the vue observable flag at obj
   def(obj, '__ob__', (observe({}) as any).__ob__)
   // mark as Raw
-  def(obj, RawIdentifierKey, RawIdentifier)
+  rawSet.add(obj)
 
   return obj
 }

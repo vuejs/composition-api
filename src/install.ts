@@ -1,7 +1,7 @@
 import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
 import { hasSymbol, hasOwn, isPlainObject, assert } from './utils'
-import { isRef } from './reactivity'
+import { isRef, markReactive } from './reactivity'
 import {
   setVueConstructor,
   isVueRegistered,
@@ -70,6 +70,14 @@ export function install(Vue: VueConstructor) {
         typeof child === 'function' ? child(props, context) || {} : undefined
       )
     }
+  }
+
+  const observable = Vue.observable
+
+  Vue.observable = (obj: any) => {
+    const o = observable(obj)
+    markReactive(o)
+    return o
   }
 
   setVueConstructor(Vue)
