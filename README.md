@@ -43,7 +43,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.11"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.13"></script>
 ```
 <!--cdn-links-end-->
 
@@ -148,33 +148,6 @@ const b = reactive({
 
 // no unwrap for `count`, `.value` is required
 b.list[0].count.value === 0 // true
-```
-
-</details>
-
-<details>
-<summary>
-✅ <b>Should</b> always use <code>ref</code> in a <code>reactive</code> when working with <code>Array</code>
-</summary>
-
-```js
-const a = reactive({
-  list: [
-    reactive({
-      count: ref(0),
-    }),
-  ]
-})
-// unwrapped
-a.list[0].count === 0 // true
-
-a.list.push(
-  reactive({
-    count: ref(1),
-  })
-)
-// unwrapped
-a.list[1].count === 1 // true
 ```
 
 </details>
