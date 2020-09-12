@@ -1,12 +1,8 @@
 import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
-import { hasSymbol, hasOwn, isPlainObject, assert } from './utils'
+import { hasSymbol, hasOwn, isPlainObject, assert, warn } from './utils'
 import { isRef, markReactive } from './reactivity'
-import {
-  setVueConstructor,
-  isVueRegistered,
-  isPluginInstalled,
-} from './runtimeContext'
+import { setVueConstructor, isVueRegistered } from './runtimeContext'
 import { mixin } from './mixin'
 
 /**
@@ -44,7 +40,7 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
 }
 
 export function install(Vue: VueConstructor) {
-  if (isPluginInstalled() || isVueRegistered(Vue)) {
+  if (isVueRegistered(Vue)) {
     if (__DEV__) {
       assert(
         false,
@@ -55,8 +51,12 @@ export function install(Vue: VueConstructor) {
   }
 
   if (__DEV__) {
-    if (Vue.version[0] !== '2' || Vue.version[1] !== '.') {
-      assert(false, `only works with Vue 2, v${Vue.version} found.`)
+    if (Vue.version) {
+      if (Vue.version[0] !== '2' || Vue.version[1] !== '.') {
+        assert(false, `only works with Vue 2, v${Vue.version} found.`)
+      }
+    } else {
+      warn('Vue version not found')
     }
   }
 

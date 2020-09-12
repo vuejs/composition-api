@@ -1,6 +1,6 @@
 import type { VueConstructor } from 'vue'
 import { ComponentInstance } from './component'
-import { assert, hasOwn } from './utils'
+import { assert, hasOwn, warn } from './utils'
 
 let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
@@ -27,6 +27,9 @@ export function getVueConstructor(): VueConstructor {
 }
 
 export function setVueConstructor(Vue: VueConstructor) {
+  if (__DEV__ && vueConstructor) {
+    warn('Another instance of vue installed')
+  }
   vueConstructor = Vue
   Object.defineProperty(Vue, PluginInstalledFlag, {
     configurable: true,
