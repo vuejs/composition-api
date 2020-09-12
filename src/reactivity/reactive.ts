@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isPlainObject, def, warn, isFunction } from '../utils'
+import { isPlainObject, def, warn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
