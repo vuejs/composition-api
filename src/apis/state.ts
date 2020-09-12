@@ -2,7 +2,6 @@ export {
   isReactive,
   isRef,
   markRaw,
-  markReactive,
   reactive,
   ref,
   customRef,

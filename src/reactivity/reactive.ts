@@ -4,10 +4,10 @@ import { isPlainObject, def, warn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
-import { rawSet, readonlySet, reactiveSet } from '../utils/sets'
+import { rawSet, reactiveSet, readonlySet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
-  return rawSet.has(obj)
+  return obj && typeof obj === 'object' && '__ob__' in obj && obj.__ob__.__raw__
 }
 
 export function isReadonly(obj: any): boolean {
@@ -15,7 +15,13 @@ export function isReadonly(obj: any): boolean {
 }
 
 export function isReactive(obj: any): boolean {
-  return reactiveSet.has(obj)
+  return (
+    (obj &&
+      typeof obj === 'object' &&
+      '__ob__' in obj &&
+      !obj.__ob__.__raw__) ||
+    false
+  )
 }
 
 /**
@@ -28,7 +34,8 @@ function setupAccessControl(target: AnyObject): void {
     isRaw(target) ||
     Array.isArray(target) ||
     isRef(target) ||
-    isComponentInstance(target)
+    isComponentInstance(target) ||
+    reactiveSet.has(target)
   )
     return
 
@@ -43,6 +50,7 @@ function setupAccessControl(target: AnyObject): void {
  */
 export function defineAccessControl(target: AnyObject, key: any, val?: any) {
   if (key === '__ob__') return
+  if (isRaw(target[key])) return
 
   let getter: (() => any) | undefined
   let setter: ((x: any) => void) | undefined
@@ -117,17 +125,11 @@ export function shallowReactive<T extends object = any>(obj: T): T {
     return
   }
 
-  if (
-    !isPlainObject(obj) ||
-    isReactive(obj) ||
-    isRaw(obj) ||
-    !Object.isExtensible(obj)
-  ) {
+  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
     return obj as any
   }
 
   const observed = observe({})
-  markReactive(observed, true)
   setupAccessControl(observed)
 
   const ob = (observed as any).__ob__
@@ -174,40 +176,6 @@ export function shallowReactive<T extends object = any>(obj: T): T {
   return (observed as unknown) as T
 }
 
-export function markReactive(target: any, shallow = false) {
-  if (
-    !(isPlainObject(target) || Array.isArray(target)) ||
-    // !isPlainObject(target) ||
-    isRaw(target) ||
-    // Array.isArray(target) ||
-    isRef(target) ||
-    isComponentInstance(target)
-  ) {
-    return
-  }
-
-  if (isReactive(target) || !Object.isExtensible(target)) {
-    return
-  }
-
-  reactiveSet.add(target)
-
-  if (shallow) {
-    return
-  }
-
-  if (Array.isArray(target)) {
-    // TODO way to track new array items
-    target.forEach((x) => markReactive(x))
-    return
-  }
-
-  const keys = Object.keys(target)
-  for (let i = 0; i < keys.length; i++) {
-    markReactive(target[keys[i]])
-  }
-}
-
 /**
  * Make obj reactivity
  */
@@ -218,18 +186,12 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
     return
   }
 
-  if (
-    !isPlainObject(obj) ||
-    isReactive(obj) ||
-    isRaw(obj) ||
-    !Object.isExtensible(obj)
-  ) {
+  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
     return obj as any
   }
 
   const observed = observe(obj)
   // def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
-  markReactive(obj)
   setupAccessControl(observed)
   return observed as UnwrapRef<T>
 }
@@ -294,7 +256,10 @@ export function markRaw<T extends object>(obj: T): T {
   }
 
   // set the vue observable flag at obj
-  def(obj, '__ob__', (observe({}) as any).__ob__)
+  const ob = (observe({}) as any).__ob__
+  ob.__raw__ = true
+  def(obj, '__ob__', ob)
+
   // mark as Raw
   rawSet.add(obj)
 

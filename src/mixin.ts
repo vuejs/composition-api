@@ -5,7 +5,7 @@ import {
   SetupFunction,
   Data,
 } from './component'
-import { isRef, isReactive, markRaw, markReactive, toRefs } from './reactivity'
+import { isRef, isReactive, markRaw, toRefs } from './reactivity'
 import { isPlainObject, assert, proxy, warn, isFunction } from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
@@ -74,7 +74,8 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createSetupContext(vm)
 
     // mark props
-    markReactive(props)
+    // markReactive(props)
+    props.__ob__ = true // fake reactive
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)
