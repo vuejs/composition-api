@@ -53,6 +53,8 @@ interface WatchLikeTarget {
   update(): void
   addDep(dep: Dep2): void
   cleanupDeps(): void
+
+  cleanupEffect(): void
 }
 
 const targetDepMap = new WeakMap<object, { target?: WatchLikeTarget }>()
@@ -86,7 +88,7 @@ function cleanup(effect: ReactiveEffect) {
     deps.length = 0
   }
 
-  target.cleanupDeps()
+  target.cleanupEffect()
 }
 
 export function stop(effect: ReactiveEffect) {
@@ -190,6 +192,16 @@ export function createReactiveEffect<T = any>(
       deps = newDeps
       newDeps = tmpD
       newDeps.length = 0
+    },
+
+    cleanupEffect() {
+      let i = newDeps.length
+      while (i--) {
+        const dep = newDeps[i]
+        if (!depIds.has(dep.id)) {
+          dep.removeSub(this)
+        }
+      }
     },
   }
   pushTarget(target)

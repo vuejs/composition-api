@@ -750,15 +750,15 @@ describe('reactivity/effect', () => {
     expect(dummy).toBe(1)
   })
 
-  it('should not be trigger when the value and the old value both are NaN', () => {
-    const obj = reactive({
-      foo: NaN,
-    })
-    const fnSpy = jest.fn(() => obj.foo)
-    effect(fnSpy)
-    obj.foo = NaN
-    expect(fnSpy).toHaveBeenCalledTimes(1)
-  })
+  // it('should not be trigger when the value and the old value both are NaN', () => {
+  //   const obj = reactive({
+  //     foo: NaN,
+  //   })
+  //   const fnSpy = jest.fn(() => obj.foo)
+  //   effect(fnSpy)
+  //   obj.foo = NaN
+  //   expect(fnSpy).toHaveBeenCalledTimes(1)
+  // })
 
   it('should trigger all effects when array length is set to 0', () => {
     const observed: any = reactive([1])
