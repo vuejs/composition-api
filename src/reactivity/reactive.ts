@@ -271,5 +271,7 @@ export function toRaw<T>(observed: T): T {
     return observed
   }
 
-  return (observed as any).__ob__.value || observed
+  return (
+    ((observed as any).__ob__ && (observed as any).__ob__.value) || observed
+  )
 }

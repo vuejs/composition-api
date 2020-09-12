@@ -120,11 +120,10 @@ export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
 }
 
 export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
-  if (!isPlainObject(obj)) return obj as any
-
   if (__DEV__ && !isReactive(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
+  if (!isPlainObject(obj)) return obj as any
 
   const ret: any = {}
   for (const key in obj) {
