@@ -114,13 +114,16 @@ export function ref(raw?: unknown) {
 export function isRef<T>(value: any): value is Ref<T> {
   return value instanceof RefImpl
 }
+function isPropObject(obj: unknown) {
+  return obj && typeof obj === 'object' && '__props_reactive__' in obj
+}
 
 export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
   return isRef(ref) ? (ref.value as any) : ref
 }
 
 export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
-  if (__DEV__ && !isReactive(obj)) {
+  if (__DEV__ && !isReactive(obj) && !isPropObject(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
   if (!isPlainObject(obj)) return obj as any

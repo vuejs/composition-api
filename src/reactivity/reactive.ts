@@ -135,6 +135,7 @@ export function shallowReactive<T extends object = any>(obj: T): T {
   const ob = (observed as any).__ob__
 
   for (const key of Object.keys(obj)) {
+    // @ts-ignore
     let val = obj[key]
     let getter: (() => any) | undefined
     let setter: ((x: any) => void) | undefined
@@ -149,6 +150,7 @@ export function shallowReactive<T extends object = any>(obj: T): T {
         (!getter || setter) /* not only have getter */ &&
         arguments.length === 2
       ) {
+        // @ts-ignore
         val = obj[key]
       }
     }
@@ -208,6 +210,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
   const ob = (source as any).__ob__
 
   for (const key of Object.keys(obj)) {
+    // @ts-ignore
     let val = obj[key]
     let getter: (() => any) | undefined
     let setter: ((x: any) => void) | undefined
@@ -222,6 +225,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
         (!getter || setter) /* not only have getter */ &&
         arguments.length === 2
       ) {
+        // @ts-ignore
         val = obj[key]
       }
     }
