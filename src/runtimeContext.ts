@@ -2,6 +2,14 @@ import type { VueConstructor } from 'vue'
 import { ComponentInstance } from './component'
 import { assert, hasOwn, warn } from './utils'
 
+let vueDependency: VueConstructor | undefined = undefined
+
+try {
+  vueDependency = require('vue')
+} catch {
+  // not available
+}
+
 let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
 
@@ -24,6 +32,17 @@ export function getVueConstructor(): VueConstructor {
   }
 
   return vueConstructor!
+}
+
+// returns registered vue or `vue` dependency
+export function getRegisteredVueOrDefault(): VueConstructor {
+  let constructor = vueConstructor || vueDependency
+
+  if (__DEV__) {
+    assert(vueConstructor, `No vue dependency found.`)
+  }
+
+  return constructor!
 }
 
 export function setVueConstructor(Vue: VueConstructor) {
