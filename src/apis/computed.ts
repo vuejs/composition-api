@@ -7,32 +7,48 @@ import {
   getVueInternalClasses,
 } from '../utils'
 
-interface Option<T> {
-  get: () => T
-  set: (value: T) => void
-}
-
 export interface ComputedRef<T = any> extends WritableComputedRef<T> {
   readonly value: T
 }
 
-export interface WritableComputedRef<T> extends Ref<T> {}
+export interface WritableComputedRef<T> extends Ref<T> {
+  // readonly effect: ReactiveEffect<T>
+}
+
+export type ComputedGetter<T> = (ctx?: any) => T
+export type ComputedSetter<T> = (v: T) => void
+
+export interface WritableComputedOptions<T> {
+  get: ComputedGetter<T>
+  set: ComputedSetter<T>
+}
 
 // read-only
-export function computed<T>(getter: Option<T>['get']): ComputedRef<T>
+export function computed<T>(getter: ComputedGetter<T>): ComputedRef<T>
 // writable
-export function computed<T>(options: Option<T>): WritableComputedRef<T>
+export function computed<T>(
+  options: WritableComputedOptions<T>
+): WritableComputedRef<T>
 // implement
 export function computed<T>(
-  options: Option<T>['get'] | Option<T>
+  getterOrOptions: ComputedGetter<T> | WritableComputedOptions<T>
 ): ComputedRef<T> | WritableComputedRef<T> {
   const vm = getCurrentInstance()
-  let get: Option<T>['get'], set: Option<T>['set'] | undefined
-  if (typeof options === 'function') {
-    get = options
+
+  let get: ComputedGetter<T>
+  let set: ComputedSetter<T>
+
+  if (typeof getterOrOptions === 'function') {
+    get = getterOrOptions
+
+    set = __DEV__
+      ? () => {
+          warn('Write operation failed: computed value is readonly.', vm!)
+        }
+      : noopFn
   } else {
-    get = options.get
-    set = options.set
+    get = getterOrOptions.get
+    set = getterOrOptions.set
   }
 
   let computedSetter
@@ -54,16 +70,7 @@ export function computed<T>(
       return watcher.value
     }
 
-    computedSetter = (v: T) => {
-      if (__DEV__ && !set) {
-        warn('Write operation failed: computed value is readonly.', vm!)
-        return
-      }
-
-      if (set) {
-        set(v)
-      }
-    }
+    computedSetter = set
   } else {
     // fallback
     const computedHost = defineComponentInstance(getVueConstructor(), {

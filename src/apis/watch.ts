@@ -245,6 +245,8 @@ function createWatcher(
       try {
         running = true
         ;(source as WatchEffect)(registerCleanup)
+      } catch (e) {
+        debugger
       } finally {
         running = false
       }
