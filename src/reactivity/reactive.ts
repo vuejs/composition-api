@@ -1,5 +1,5 @@
 import { AnyObject } from '../types/basic'
-import { getVueConstructor } from '../runtimeContext'
+import { getRegisteredVueOrDefault } from '../runtimeContext'
 import { isPlainObject, def, warn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
@@ -94,7 +94,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
 }
 
 function observe<T>(obj: T): T {
-  const Vue = getVueConstructor()
+  const Vue = getRegisteredVueOrDefault()
   let observed: T
   if (Vue.observable) {
     observed = Vue.observable(obj)
