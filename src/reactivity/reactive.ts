@@ -39,6 +39,8 @@ function setupAccessControl(target: AnyObject): void {
   )
     return
 
+  reactiveSet.add(target)
+
   const keys = Object.keys(target)
   for (let i = 0; i < keys.length; i++) {
     defineAccessControl(target, keys[i])
