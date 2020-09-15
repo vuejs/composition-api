@@ -30,12 +30,12 @@ function injectHookOption(
 
 function wrapHookCall(vm: ComponentInstance, fn: Function) {
   return (...args: any) => {
-    let preVm = getCurrentInstance()
+    let preVm = getCurrentInstance()?.proxy
     setCurrentInstance(vm)
     try {
       return fn(...args)
     } finally {
-      setCurrentInstance(preVm)
+      setCurrentInstance(preVm!)
     }
   }
 }

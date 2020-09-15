@@ -112,7 +112,7 @@ export function activateCurrentInstance(
   fn: (vm_: ComponentInstance) => any,
   onError?: (err: Error) => void
 ) {
-  let preVm = getCurrentInstance()
+  let preVm = getCurrentInstance()?.proxy
   setCurrentInstance(vm)
   try {
     return fn(vm)
@@ -123,6 +123,6 @@ export function activateCurrentInstance(
       throw err
     }
   } finally {
-    setCurrentInstance(preVm)
+    setCurrentInstance(preVm!)
   }
 }

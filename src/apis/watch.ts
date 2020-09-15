@@ -101,7 +101,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
 }
 
 function getWatcherVM() {
-  let vm = getCurrentInstance()
+  let vm = getCurrentInstance()?.proxy
   if (!vm) {
     if (!fallbackVM) {
       fallbackVM = defineComponentInstance(getVueConstructor())

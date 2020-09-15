@@ -3,7 +3,7 @@ import { ComponentInstance } from '../component'
 import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
 import { warn } from './utils'
 
-export function currentVMInFn(hook: string): ComponentInstance | null {
+export function currentVMInFn(hook: string): ComponentInstance | undefined {
   const vm = getCurrentInstance()
   if (__DEV__ && !vm) {
     warn(
@@ -12,7 +12,7 @@ export function currentVMInFn(hook: string): ComponentInstance | null {
         `Lifecycle injection APIs can only be used during execution of setup().`
     )
   }
-  return vm
+  return vm?.proxy
 }
 
 export function defineComponentInstance<V extends Vue = Vue>(

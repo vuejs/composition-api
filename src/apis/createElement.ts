@@ -8,7 +8,7 @@ type CreateElement = Vue['$createElement']
 let fallbackCreateElement: CreateElement
 
 export const createElement = (function createElement(...args: any) {
-  const instance = getCurrentInstance()
+  const instance = getCurrentInstance()?.proxy
   if (!instance) {
     warn('`createElement()` has been called outside of render function.')
     if (!fallbackCreateElement) {
