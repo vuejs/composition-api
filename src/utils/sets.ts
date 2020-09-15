@@ -16,6 +16,6 @@ if (typeof window !== 'undefined' && !('WeakSet' in window)) {
   })
 }
 
-export const reactiveSet = new WeakSet()
+export const accessModifiedSet = new WeakSet()
 export const rawSet = new WeakSet()
 export const readonlySet = new WeakSet()
