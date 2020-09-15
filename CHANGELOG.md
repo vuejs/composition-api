@@ -1,3 +1,25 @@
+<a name="1.0.0-beta.13"></a>
+# [1.0.0-beta.13](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2020-09-12)
+
+
+### Bug Fixes
+
+* **sets:** check for window to avoid SSR errors ([#511](https://github.com/vuejs/composition-api/issues/511)) ([9ea7230](https://github.com/vuejs/composition-api/commit/9ea7230))
+
+
+
+<a name="1.0.0-beta.12"></a>
+# [1.0.0-beta.12](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2020-09-12)
+
+
+### Features
+
+* allow plugin to be installed in localVue ([#497](https://github.com/vuejs/composition-api/issues/497)) ([07be9d7](https://github.com/vuejs/composition-api/commit/07be9d7))
+* improve reactive checks ([#502](https://github.com/vuejs/composition-api/issues/502)) ([255dc72](https://github.com/vuejs/composition-api/commit/255dc72))
+* **inject:** add `treatDefaultAsFactory` argument ([#503](https://github.com/vuejs/composition-api/issues/503)) ([78592bf](https://github.com/vuejs/composition-api/commit/78592bf))
+
+
+
 <a name="1.0.0-beta.11"></a>
 # [1.0.0-beta.11](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.9...v1.0.0-beta.11) (2020-08-22)
 

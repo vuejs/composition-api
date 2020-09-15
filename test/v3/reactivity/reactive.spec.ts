@@ -129,8 +129,9 @@ describe('reactivity/reactive', () => {
   test('setting a property with an unobserved value should wrap with reactive', () => {
     const observed = reactive<{ foo?: object }>({})
     const raw = {}
-    observed.foo = raw
-    expect(observed.foo).not.toBe(raw)
+    set(observed, 'foo', raw) // v2 limitation
+
+    expect(observed.foo).toBe(raw) // v2 limitation
     expect(isReactive(observed.foo)).toBe(true)
   })
 

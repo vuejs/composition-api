@@ -239,23 +239,6 @@ export function markReactive(target: any, shallow = false) {
   }
 
   if (Array.isArray(target)) {
-    if (
-      // @ts-ignore
-      target.__ob__ &&
-      // @ts-ignore
-      target.__ob__.dep &&
-      // @ts-ignore
-      isFunction(target.__ob__.dep.addSub)
-    ) {
-      // @ts-ignore
-      target.__ob__.dep.addSub({
-        update() {
-          if (Array.isArray(target)) {
-            target.forEach((x) => markReactive(x))
-          }
-        },
-      })
-    }
     // TODO way to track new array items
     target.forEach((x) => markReactive(x))
     return
