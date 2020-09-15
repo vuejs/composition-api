@@ -5,8 +5,16 @@ import {
   SetupFunction,
   Data,
 } from './component'
-import { isRef, isReactive, markRaw, markReactive, toRefs } from './reactivity'
-import { isPlainObject, assert, proxy, warn, isFunction } from './utils'
+import { isRef, isReactive, toRefs } from './reactivity'
+import {
+  isPlainObject,
+  assert,
+  proxy,
+  warn,
+  isFunction,
+  isObject,
+  def,
+} from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
 import {
@@ -15,6 +23,7 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
+import { PropsReactive } from './utils/symbols'
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -73,14 +82,15 @@ export function mixin(Vue: VueConstructor) {
     const setup = vm.$options.setup!
     const ctx = createSetupContext(vm)
 
-    // mark props
-    markReactive(props)
+    // fake reactive for `toRefs(props)`
+    def(props, PropsReactive, true)
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)
 
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null
     activateCurrentInstance(vm, () => {
+      // make props to be fake reactive, this is for `toRefs(props)`
       binding = setup(props, ctx)
     })
 
@@ -99,22 +109,19 @@ export function mixin(Vue: VueConstructor) {
         binding = toRefs(binding) as Data
       }
 
-      const bindingObj = binding
       vmStateManager.set(vm, 'rawBindings', binding)
+      const bindingObj = binding
 
-      Object.keys(binding).forEach((name) => {
+      Object.keys(bindingObj).forEach((name) => {
         let bindingValue: any = bindingObj[name]
-        // only make primitive value reactive
+
         if (!isRef(bindingValue)) {
-          if (isReactive(bindingValue)) {
-            bindingValue = ref(bindingValue)
-          } else {
-            // bind function to the vm, this will make `this` = vm
+          if (!isReactive(bindingValue)) {
             if (isFunction(bindingValue)) {
               bindingValue = bindingValue.bind(vm)
+            } else if (!isObject(bindingValue)) {
+              bindingValue = ref(bindingValue)
             }
-            // a non-reactive should not don't get reactivity
-            bindingValue = ref(markRaw(bindingValue))
           }
         }
         asVmProperty(vm, name, bindingValue)

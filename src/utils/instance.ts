@@ -12,23 +12,32 @@ export function asVmProperty(
 ) {
   const props = vm.$options.props
   if (!(propName in vm) && !(props && hasOwn(props, propName))) {
-    proxy(vm, propName, {
-      get: () => propValue.value,
-      set: (val: unknown) => {
-        propValue.value = val
-      },
-    })
+    if (isRef(propValue)) {
+      proxy(vm, propName, {
+        get: () => propValue.value,
+        set: (val: unknown) => {
+          propValue.value = val
+        },
+      })
+    } else {
+      // @ts-ignore
+      vm[propName] = propValue
+    }
 
     if (__DEV__) {
       // expose binding to Vue Devtool as a data property
       // delay this until state has been resolved to prevent repeated works
       vm.$nextTick(() => {
-        proxy(vm._data, propName, {
-          get: () => propValue.value,
-          set: (val: unknown) => {
-            propValue.value = val
-          },
-        })
+        if (isRef(propValue)) {
+          proxy(vm._data, propName, {
+            get: () => propValue.value,
+            set: (val: unknown) => {
+              propValue.value = val
+            },
+          })
+        } else {
+          vm._data[propName] = propValue
+        }
       })
     }
   } else if (__DEV__) {
