@@ -1,3 +1,18 @@
+<a name="1.0.0-beta.14"></a>
+# [1.0.0-beta.14](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2020-09-15)
+
+
+### Bug Fixes
+
+* circular objects and making all Vue.observable objects isReactive ([#512](https://github.com/vuejs/composition-api/issues/512)) ([f204daa](https://github.com/vuejs/composition-api/commit/f204daa))
+
+
+### Features
+
+* **reactive:** allow usage of reactive before `Vue.use` ([#515](https://github.com/vuejs/composition-api/issues/515)) ([89fd11c](https://github.com/vuejs/composition-api/commit/89fd11c))
+
+
+
 <a name="1.0.0-beta.13"></a>
 # [1.0.0-beta.13](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2020-09-12)
 
