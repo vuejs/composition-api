@@ -13,6 +13,7 @@ import {
   warn,
   isFunction,
   isObject,
+  def,
 } from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
@@ -81,7 +82,7 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createSetupContext(vm)
 
     // fake reactive for `toRefs(props)`
-    props.__props_reactive__ = true
+    def(props, '__props_reactive__', true)
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)
