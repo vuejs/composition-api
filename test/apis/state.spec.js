@@ -392,4 +392,14 @@ describe('unwrapping', () => {
     expect(state.double).toBe(2)
     expect(spy).toHaveBeenCalled()
   })
+
+  // #517
+  it('should not throw callstack error', () => {
+    const a = {
+      b: 1,
+    }
+    a.a = a
+
+    reactive(a)
+  })
 })
