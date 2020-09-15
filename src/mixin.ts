@@ -23,6 +23,7 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
+import { PropsReactive } from './utils/symbols'
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -82,7 +83,7 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createSetupContext(vm)
 
     // fake reactive for `toRefs(props)`
-    def(props, '__props_reactive__', true)
+    def(props, PropsReactive, true)
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)

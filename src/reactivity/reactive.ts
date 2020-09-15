@@ -7,7 +7,7 @@ import { isRef, UnwrapRef } from './ref'
 import { rawSet, accessModifiedSet, readonlySet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
-  return obj && typeof obj === 'object' && '__ob__' in obj && obj.__ob__.__raw__
+  return Boolean(obj?.__ob__ && obj.__ob__?.__raw__)
 }
 
 export function isReadonly(obj: any): boolean {
@@ -15,13 +15,7 @@ export function isReadonly(obj: any): boolean {
 }
 
 export function isReactive(obj: any): boolean {
-  return (
-    (obj &&
-      typeof obj === 'object' &&
-      '__ob__' in obj &&
-      !obj.__ob__.__raw__) ||
-    false
-  )
+  return Boolean(obj?.__ob__ && !obj.__ob__?.__raw__)
 }
 
 /**
@@ -120,10 +114,10 @@ function observe<T>(obj: T): T {
   return observed
 }
 
-export function shallowReactive<T extends object = any>(obj: T): T {
+export function shallowReactive<T extends object = any>(obj: T): T
+export function shallowReactive(obj: any): any {
   if (__DEV__ && !obj) {
     warn('"shallowReactive()" is called without provide an "object".')
-    // @ts-ignore
     return
   }
 
@@ -137,7 +131,6 @@ export function shallowReactive<T extends object = any>(obj: T): T {
   const ob = (observed as any).__ob__
 
   for (const key of Object.keys(obj)) {
-    // @ts-ignore
     let val = obj[key]
     let getter: (() => any) | undefined
     let setter: ((x: any) => void) | undefined
@@ -152,12 +145,10 @@ export function shallowReactive<T extends object = any>(obj: T): T {
         (!getter || setter) /* not only have getter */ &&
         arguments.length === 2
       ) {
-        // @ts-ignore
         val = obj[key]
       }
     }
 
-    // setupAccessControl(val);
     Object.defineProperty(observed, key, {
       enumerable: true,
       configurable: true,
@@ -177,7 +168,7 @@ export function shallowReactive<T extends object = any>(obj: T): T {
       },
     })
   }
-  return (observed as unknown) as T
+  return observed
 }
 
 /**
@@ -195,15 +186,14 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   }
 
   const observed = observe(obj)
-  // def(obj, ReactiveIdentifierKey, ReactiveIdentifier);
   setupAccessControl(observed)
   return observed as UnwrapRef<T>
 }
 
-export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
+export function shallowReadonly<T extends object>(obj: T): Readonly<T>
+export function shallowReadonly(obj: any): any {
   if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
-    //@ts-ignore
-    return obj // just typing
+    return obj
   }
 
   const readonlyObj = {}
@@ -212,7 +202,6 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
   const ob = (source as any).__ob__
 
   for (const key of Object.keys(obj)) {
-    // @ts-ignore
     let val = obj[key]
     let getter: (() => any) | undefined
     let setter: ((x: any) => void) | undefined
@@ -227,7 +216,6 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
         (!getter || setter) /* not only have getter */ &&
         arguments.length === 2
       ) {
-        // @ts-ignore
         val = obj[key]
       }
     }
@@ -250,7 +238,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
 
   readonlySet.set(readonlyObj, true)
 
-  return readonlyObj as any
+  return readonlyObj
 }
 
 /**
@@ -277,7 +265,5 @@ export function toRaw<T>(observed: T): T {
     return observed
   }
 
-  return (
-    ((observed as any).__ob__ && (observed as any).__ob__.value) || observed
-  )
+  return (observed as any)?.__ob__?.value || observed
 }
