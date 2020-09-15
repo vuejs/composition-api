@@ -1,11 +1,31 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isPlainObject, def, warn, isFunction, isObject } from '../utils'
+import {
+  isPlainObject,
+  def,
+  warn,
+  isObject,
+  isArray,
+  isFunction,
+} from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
-import { isRef, UnwrapRef } from './ref'
-import { rawSet, readonlySet, reactiveSet } from '../utils/sets'
+import { isRef, Ref, UnwrapRef } from './ref'
+import { readonlySet, reactiveSet } from '../utils/sets'
 
+export const enum ReactiveFlags {
+  SKIP = '__v_skip',
+  IS_REACTIVE = '__v_isReactive',
+  IS_READONLY = '__v_isReadonly',
+  RAW = '__v_raw',
+}
+
+export interface Target {
+  [ReactiveFlags.SKIP]?: boolean
+  [ReactiveFlags.IS_REACTIVE]?: boolean
+  [ReactiveFlags.IS_READONLY]?: boolean
+  [ReactiveFlags.RAW]?: any
+}
 // vue3 utils
 const enum TargetType {
   INVALID = 0,
@@ -28,8 +48,9 @@ function targetTypeMap(rawType: string) {
   }
 }
 
-function getTargetType(value: object) {
-  return rawSet.has(value) || !Object.isExtensible(value)
+function getTargetType(value: Target) {
+  return (value && isObject(value) && value[ReactiveFlags.SKIP]) ||
+    !Object.isExtensible(value)
     ? TargetType.INVALID
     : targetTypeMap(toRawType(value))
 }
@@ -43,7 +64,7 @@ export const toTypeString = (value: unknown): string =>
   objectToString.call(value)
 
 export function isRaw(obj: any): boolean {
-  return rawSet.has(obj)
+  return obj && isObject(obj) && obj[ReactiveFlags.RAW]
 }
 
 export function isReadonly(obj: any): boolean {
@@ -65,7 +86,8 @@ function setupAccessControl(target: AnyObject): void {
     targetType === TargetType.INVALID ||
     isRaw(target) ||
     isRef(target) ||
-    isComponentInstance(target)
+    isComponentInstance(target) ||
+    isArray(target)
   )
     return
 
@@ -174,6 +196,7 @@ export function shallowReactive<T extends object = any>(obj: T): T {
   const ob = (observed as any).__ob__
 
   for (const key of Object.keys(obj)) {
+    // @ts-ignore
     let val = obj[key]
     let getter: (() => any) | undefined
     let setter: ((x: any) => void) | undefined
@@ -188,6 +211,7 @@ export function shallowReactive<T extends object = any>(obj: T): T {
         (!getter || setter) /* not only have getter */ &&
         arguments.length === 2
       ) {
+        // @ts-ignore
         val = obj[key]
       }
     }
@@ -250,10 +274,14 @@ export function markReactive(target: any, shallow = false) {
   }
 }
 
+// only unwrap nested ref
+type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRef<T>
+
 /**
  * Make obj reactivity
  */
-export function reactive<T extends object>(obj: T): UnwrapRef<T> {
+export function reactive<T extends object>(target: T): UnwrapNestedRefs<T>
+export function reactive(obj: object) {
   if (__DEV__ && !obj) {
     warn('"reactive()" is called without provide an "object".')
     // @ts-ignore
@@ -272,7 +300,7 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   const observed = observe(obj)
   markReactive(obj)
   setupAccessControl(observed)
-  return observed as UnwrapRef<T>
+  return observed
 }
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
@@ -287,6 +315,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
   const ob = (source as any).__ob__
 
   for (const key of Object.keys(obj)) {
+    // @ts-ignore
     let val = obj[key]
     let getter: (() => any) | undefined
     let setter: ((x: any) => void) | undefined
@@ -301,6 +330,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
         (!getter || setter) /* not only have getter */ &&
         arguments.length === 2
       ) {
+        // @ts-ignore
         val = obj[key]
       }
     }
@@ -336,8 +366,7 @@ export function markRaw<T extends object>(obj: T): T {
 
   // set the vue observable flag at obj
   def(obj, '__ob__', (observe({}) as any).__ob__)
-  // mark as Raw
-  rawSet.add(obj)
+  def(obj, ReactiveFlags.RAW, true)
 
   return obj
 }
@@ -354,18 +383,24 @@ export function toRaw<T>(observed: T): T {
 
 function accessControlCollection(collection: CollectionTypes) {
   if (!collectionTrackers.has(collection)) {
-    collectionTrackers.set(collection, observe({}) as any)
+    const o =
+      // @ts-ignore
+      (isFunction(collection.entries) &&
+        // @ts-ignore
+        Array.from(collection.entries()).reduce((p, [key, value]) => {
+          //@ts-ignore
+          p[key] = value
+          return p
+        }, {})) ||
+      {}
+
+    collectionTrackers.set(collection, observe(o) as any)
   }
 
   Object.keys(mutableInstrumentationsCollection).forEach((k: any) => {
     // @ts-ignore
     k in collection && (collection[k] = mutableInstrumentationsCollection[k])
   })
-
-  // if(targetType.endsWith("Map")){
-  //   collection.has =
-  // }
-  // return collection
 }
 
 const toReactive = <T extends unknown>(value: T): T =>
