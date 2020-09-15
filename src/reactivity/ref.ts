@@ -90,7 +90,7 @@ export function createRef<T>(options: RefOption<T>, readonly = false) {
   // related issues: #79
   const sealed = Object.seal(r)
 
-  readonlySet.add(sealed)
+  readonlySet.set(sealed, true)
   return sealed
 }
 

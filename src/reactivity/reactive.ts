@@ -39,7 +39,7 @@ function setupAccessControl(target: AnyObject): void {
   )
     return
 
-  accessModifiedSet.add(target)
+  accessModifiedSet.set(target, true)
 
   const keys = Object.keys(target)
   for (let i = 0; i < keys.length; i++) {
@@ -248,7 +248,7 @@ export function shallowReadonly<T extends object>(obj: T): Readonly<T> {
     })
   }
 
-  readonlySet.add(readonlyObj)
+  readonlySet.set(readonlyObj, true)
 
   return readonlyObj as any
 }
@@ -267,7 +267,7 @@ export function markRaw<T extends object>(obj: T): T {
   def(obj, '__ob__', ob)
 
   // mark as Raw
-  rawSet.add(obj)
+  rawSet.set(obj, true)
 
   return obj
 }
