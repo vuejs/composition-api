@@ -1,6 +1,6 @@
 import type { VueConstructor, VNode } from 'vue'
 import { ComponentInstance, Data } from './component'
-import { assert, hasOwn, warn } from './utils'
+import { assert, hasOwn, warn, proxy } from './utils'
 
 let vueDependency: VueConstructor | undefined = undefined
 
@@ -118,7 +118,14 @@ export declare interface ComponentInternalInstance {
   isDeactivated: boolean
 }
 
-const specialProps = ['data', 'props', 'attrs', 'refs', 'emit'] as const
+const specialProps = [
+  'data',
+  'props',
+  'attrs',
+  'refs',
+  'emit',
+  'vnode',
+] as const
 
 export function getCurrentInstance() {
   const internal = getCurrentInternalInstance()
@@ -144,22 +151,45 @@ export function getComponentInstanceVue3(
   const instance: ComponentInternalInstance = {
     ...o,
     proxy: componentInstance,
-
     update: componentInstance.$forceUpdate,
+    // @ts-ignore
+    uid: componentInstance._uid,
 
     parent: null,
     root: null as any,
 
     // TODO
-    subTree: null as any,
-    vnode: null as any,
-    uid: 0,
-
-    emitted: null,
-    isMounted: false,
-    isUnmounted: false,
-    isDeactivated: false,
+    subTree: null as any, // ??
   }
+
+  proxy(instance, 'isMounted', {
+    get() {
+      // @ts-ignore
+      return componentInstance._isMounted
+    },
+  })
+
+  proxy(instance, 'isUnmounted', {
+    get() {
+      // @ts-ignore
+      return componentInstance._isDestroyed
+    },
+  })
+
+  proxy(instance, 'isDeactivated', {
+    get() {
+      // @ts-ignore
+      return componentInstance._inactive
+    },
+  })
+
+  proxy(instance, 'emitted', {
+    get() {
+      // @ts-ignore
+      return componentInstance._events
+    },
+  })
+
   v3Cache.set(componentInstance, instance)
 
   if (componentInstance.$parent) {
