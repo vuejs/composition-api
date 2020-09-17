@@ -47,7 +47,7 @@ export function defineComponent<
   options: HasDefined<Props> extends true
     ? ComponentOptionsWithProps<PropsOptions, RawBindings, D, C, M, Props>
     : ComponentOptionsWithProps<PropsOptions, RawBindings, D, C, M>
-): VueProxy<PropsOptions, RawBindings, D, C, M>
+): VueProxy<Props, RawBindings, D, C, M>
 // implementation, close to no-op
 export function defineComponent(options: any) {
   return options as any
