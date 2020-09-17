@@ -125,10 +125,8 @@ export function shallowReactive(obj: any): any {
     return obj as any
   }
 
-  const observed = observe({})
-  setupAccessControl(observed)
-
-  const ob = (observed as any).__ob__
+  const observed = {}
+  const ob = (observe({}) as any).__ob__
 
   for (const key of Object.keys(obj)) {
     let val = obj[key]
@@ -168,6 +166,7 @@ export function shallowReactive(obj: any): any {
       },
     })
   }
+
   return observed
 }
 
