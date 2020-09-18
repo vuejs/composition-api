@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import CompositionApi from '../src'
 import { createLocalVue } from './helpers/create-local-vue'
 import { mockWarn } from './helpers'
@@ -12,7 +13,26 @@ describe('use', () => {
     const localVueTwo = createLocalVue()
     localVueTwo.use(CompositionApi)
 
-    expect('Another instance of vue installed').toHaveBeenWarned()
+    expect('Another instance of vue installed').not.toHaveBeenWarned()
+  })
+
+  it('should warn install in multiple vue', () => {
+    try {
+      const fakeVue = {
+        version: '2._.x',
+        config: {
+          optionMergeStrategies: {},
+        },
+        mixin: jest.fn(),
+      }
+
+      // @ts-ignore
+      CompositionApi.install(fakeVue)
+      expect('Another instance of vue installed').toHaveBeenWarned()
+    } finally {
+      Vue.use(CompositionApi)
+      expect('Another instance of vue installed').toHaveBeenWarned()
+    }
   })
 
   it('should warn installing multiple times', () => {
@@ -29,7 +49,5 @@ describe('use', () => {
     }).toThrowError(
       'already installed. Vue.use(VueCompositionAPI) should be called only once.'
     )
-
-    expect('Another instance of vue installed').toHaveBeenWarned()
   })
 })
