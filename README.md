@@ -6,6 +6,8 @@ Vue 2 plugin for **Composition API**
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 [![Minzipped size](https://badgen.net/bundlephobia/minzip/@vue/composition-api)](https://bundlephobia.com/result?p=@vue/composition-api)
 
+
+
 English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
 
 ## Installation
@@ -28,6 +30,7 @@ Vue.use(VueCompositionAPI)
 ```
 
 ```js
+// use the APIs
 import { ref, reactive } from '@vue/composition-api'
 ```
 
@@ -38,12 +41,10 @@ import { ref, reactive } from '@vue/composition-api'
 Include `@vue/composition-api` after Vue and it will install itself automatically.
 
 <!--cdn-links-start-->
-
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
 <script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.14"></script>
 ```
-
 <!--cdn-links-end-->
 
 `@vue/composition-api` will be exposed to global variable `window.VueCompositionAPI`.
@@ -88,7 +89,7 @@ export default {
     return {
       result,
     }
-  },
+  }
 }
 ```
 
@@ -109,10 +110,44 @@ export default {
 const state = reactive({
   list: [ref(0)],
 })
-state.list[0].value === 0
+// no unwrap, `.value` is required
+state.list[0].value === 0 // true
 
 state.list.push(ref(1))
+// no unwrap, `.value` is required
 state.list[1].value === 1 // true
+```
+
+</details>
+
+<details>
+<summary>
+❌ <b>Should NOT</b> use <code>ref</code> in a plain object when working with <code>Array</code>
+</summary>
+
+```js
+const a = {
+  count: ref(0),
+}
+const b = reactive({
+  list: [a], // `a.count` will not unwrap!!
+})
+
+// no unwrap for `count`, `.value` is required
+b.list[0].count.value === 0 // true
+```
+
+```js
+const b = reactive({
+  list: [
+    {
+      count: ref(0), // no unwrap!!
+    },
+  ],
+})
+
+// no unwrap for `count`, `.value` is required
+b.list[0].count.value === 0 // true
 ```
 
 </details>
@@ -128,46 +163,18 @@ const a = reactive({
     reactive({
       count: ref(0),
     }),
-  ],
+  ]
 })
-a.list[0].count === 0
+// unwrapped
+a.list[0].count === 0 // true
 
 a.list.push(
   reactive({
     count: ref(1),
   })
 )
+// unwrapped
 a.list[1].count === 1 // true
-```
-
-</details>
-
-<details>
-<summary>
-❌ <b>Should NOT</b> use <code>ref</code> in a plain object when working with <code>Array</code>
-</summary>
-
-```js
-const a = {
-  count: ref(0),
-}
-const b = reactive({
-  list: [a],
-})
-
-b.list[0].count.value === 0 // true
-```
-
-```js
-const b = reactive({
-  list: [
-    {
-      count: ref(0),
-    },
-  ],
-})
-
-b.list[0].count.value === 0 // true
 ```
 
 </details>
@@ -183,12 +190,13 @@ b.list[0].count.value === 0 // true
 import { reactive, set } from '@vue/composition-api'
 
 const a = reactive({
-  foo: 1,
+  foo: 1
 })
 
 // add new reactive key
 set(a, 'bar', 1)
 ```
+
 
 </details>
 
@@ -210,7 +218,8 @@ set(a, 'bar', 1)
       const root = ref(null)
 
       onMounted(() => {
-        console.log(root.value)
+        // the DOM element will be assigned to the ref after initial render
+        console.log(root.value) // <div/>
       })
 
       return {
@@ -234,7 +243,8 @@ export default {
     const root = ref(null)
 
     onMounted(() => {
-      console.log(root.value)
+      // the DOM element will be assigned to the ref after initial render
+      console.log(root.value) // <div/>
     })
 
     return {
@@ -242,6 +252,7 @@ export default {
     }
   },
   render() {
+    // with JSX
     return () => <div ref="root" />
   },
 }
@@ -289,6 +300,7 @@ export default {
         ref: root,
       })
 
+    // with JSX
     return () => <div ref={root} />
   },
 }
@@ -312,7 +324,8 @@ export default {
   setup(initProps, setupContext) {
     const refs = setupContext.refs
     onMounted(() => {
-      console.log(refs.root)
+      // the DOM element will be assigned to the ref after initial render
+      console.log(refs.root) // <div/>
     })
 
     return () =>
@@ -320,6 +333,7 @@ export default {
         ref: 'root',
       })
 
+    // with JSX
     return () => <div ref="root" />
   },
 }
@@ -346,7 +360,7 @@ declare module '@vue/composition-api' {
 ⚠️ <code>reactive()</code> <b>mutates</b> the original object
 </summary>
 
-`reactive` uses `Vue.observable` underneath which will **_mutate_** the original object.
+`reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
 
 > :bulb: In Vue 3, it will return an new proxy object.
 
@@ -360,9 +374,11 @@ declare module '@vue/composition-api' {
 </summary>
 
 ```js
-watch(() => {}, {
+watch(() => {
+    /* ... */
+}, {
   immediate: true,
-  onTrack() {},
+  onTrack() {}, // not available
   onTrigger() {}, // not available
 })
 ```
@@ -401,7 +417,6 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 </details>
 
 ### `props`
-
 <details>
 <summary>
 ⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
@@ -421,6 +436,8 @@ defineComponent({
 ```
 
 </details>
+
+
 
 ### Missing APIs
 
@@ -443,6 +460,7 @@ The following APIs introduced in Vue 3 are not available in this plugin.
 export default {
   data() {
     return {
+      // will result { a: { value: 1 } } in template
       a: ref(1),
     }
   },
