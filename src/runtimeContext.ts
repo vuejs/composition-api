@@ -13,7 +13,8 @@ try {
 let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
 
-const PluginInstalledFlag = '__composition_api_installed__'
+const randomStr = Math.random().toString(36).substring(2, 15) // Support multiple `composition-api` in one `VueConstructor`
+const PluginInstalledFlag = `__composition_api_${randomStr}_installed__`
 
 export function isPluginInstalled() {
   return !!vueConstructor
