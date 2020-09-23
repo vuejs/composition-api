@@ -29,7 +29,7 @@ import VueCompositionAPI from '@vue/composition-api'
 Vue.use(VueCompositionAPI)
 ```
 
-```js
+```jsgit@github.com:phbender/composition-api.git
 // use the APIs
 import { ref, reactive } from '@vue/composition-api'
 ```
@@ -410,6 +410,47 @@ defineComponent({
 
 </details>
 
+### Global state
+
+<details>
+<summary>When you use `ref` oder `reactive` before the plugin has been initialized, you may encounter an error `Error: [vue-composition-api] No vue dependency found.`.</summary>
+</details>
+
+In your `main.js`:
+
+```js
+import Vue from 'vue';
+import './composition-api';
+
+import './useSomething';
+
+// import and create your app etc.
+```
+
+Your `composition-api.js`:
+
+```js
+import Vue from 'vue';
+import VueCompositionAPI from '@vue/composition-api';
+Vue.use(VueCompositionAPI);
+```
+
+Your `useSomething.js`:
+
+```js
+import { ref } from '@vue/composition-api';
+
+const someState = ref(0);
+
+const someFeature = () => {
+  someState.value = someState.value + 1;
+}
+
+export {
+  someState,
+  someFeature
+}
+```
 
 
 ### Missing APIs
