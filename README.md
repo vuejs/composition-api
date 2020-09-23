@@ -29,7 +29,7 @@ import VueCompositionAPI from '@vue/composition-api'
 Vue.use(VueCompositionAPI)
 ```
 
-```jsgit@github.com:phbender/composition-api.git
+```js
 // use the APIs
 import { ref, reactive } from '@vue/composition-api'
 ```
