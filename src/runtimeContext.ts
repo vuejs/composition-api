@@ -39,7 +39,7 @@ export function getRegisteredVueOrDefault(): VueConstructor {
   let constructor = vueConstructor || vueDependency
 
   if (__DEV__) {
-    assert(vueConstructor, `No vue dependency found.`)
+    assert(constructor, `No vue dependency found.`)
   }
 
   return constructor!
