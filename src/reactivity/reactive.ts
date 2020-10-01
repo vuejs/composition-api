@@ -121,15 +121,20 @@ export function shallowReactive(obj: any): any {
     return
   }
 
-  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || Array.isArray(obj)) ||
+    isRaw(obj) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj as any
   }
 
-  const observed = observe({})
+  const observed = observe(Array.isArray(obj) ? [] : {})
   setupAccessControl(observed)
 
   const ob = (observed as any).__ob__
 
+  // TODO replace the methods to not make the children observable
   for (const key of Object.keys(obj)) {
     let val = obj[key]
     let getter: (() => any) | undefined
@@ -181,7 +186,11 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
     return
   }
 
-  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || Array.isArray(obj)) ||
+    isRaw(obj) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj as any
   }
 
@@ -192,7 +201,10 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T>
 export function shallowReadonly(obj: any): any {
-  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || Array.isArray(obj)) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj
   }
 
@@ -201,39 +213,41 @@ export function shallowReadonly(obj: any): any {
   const source = reactive({})
   const ob = (source as any).__ob__
 
-  for (const key of Object.keys(obj)) {
-    let val = obj[key]
-    let getter: (() => any) | undefined
-    let setter: ((x: any) => void) | undefined
-    const property = Object.getOwnPropertyDescriptor(obj, key)
-    if (property) {
-      if (property.configurable === false) {
-        continue
-      }
-      getter = property.get
-      setter = property.set
-      if (
-        (!getter || setter) /* not only have getter */ &&
-        arguments.length === 2
-      ) {
-        val = obj[key]
-      }
-    }
-
-    Object.defineProperty(readonlyObj, key, {
-      enumerable: true,
-      configurable: true,
-      get: function getterHandler() {
-        const value = getter ? getter.call(obj) : val
-        ob.dep.depend()
-        return value
-      },
-      set(v) {
-        if (__DEV__) {
-          warn(`Set operation on key "${key}" failed: target is readonly.`)
+  if (isPlainObject(obj)) {
+    for (const key of Object.keys(obj)) {
+      let val = obj[key]
+      let getter: (() => any) | undefined
+      let setter: ((x: any) => void) | undefined
+      const property = Object.getOwnPropertyDescriptor(obj, key)
+      if (property) {
+        if (property.configurable === false) {
+          continue
         }
-      },
-    })
+        getter = property.get
+        setter = property.set
+        if (
+          (!getter || setter) /* not only have getter */ &&
+          arguments.length === 2
+        ) {
+          val = obj[key]
+        }
+      }
+
+      Object.defineProperty(readonlyObj, key, {
+        enumerable: true,
+        configurable: true,
+        get: function getterHandler() {
+          const value = getter ? getter.call(obj) : val
+          ob.dep.depend()
+          return value
+        },
+        set(v) {
+          if (__DEV__) {
+            warn(`Set operation on key "${key}" failed: target is readonly.`)
+          }
+        },
+      })
+    }
   }
 
   readonlySet.set(readonlyObj, true)
@@ -245,12 +259,15 @@ export function shallowReadonly(obj: any): any {
  * Make sure obj can't be a reactive
  */
 export function markRaw<T extends object>(obj: T): T {
-  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || Array.isArray(obj)) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj
   }
 
   // set the vue observable flag at obj
-  const ob = (observe({}) as any).__ob__
+  const ob = (observe(Array.isArray(obj) ? [] : {}) as any).__ob__
   ob.__raw__ = true
   def(obj, '__ob__', ob)
 

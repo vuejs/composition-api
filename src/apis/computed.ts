@@ -6,6 +6,7 @@ import {
   defineComponentInstance,
   getVueInternalClasses,
 } from '../utils'
+import { isFunction } from 'util'
 
 interface Option<T> {
   get: () => T

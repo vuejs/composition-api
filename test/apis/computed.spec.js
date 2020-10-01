@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, computed, isReadonly } = require('../../src')
+const { ref, computed, isReadonly, reactive } = require('../../src')
 
 describe('Hooks computed', () => {
   beforeEach(() => {
@@ -211,5 +211,25 @@ describe('Hooks computed', () => {
     })
     expect(isReadonly(z.value)).toBe(false)
     expect(isReadonly(z.value.a)).toBe(false)
+  })
+
+  it('should support array', () => {
+    const a = reactive([1])
+
+    const d = a.__ob__.dep.depend
+
+    a.__ob__.dep.depend = () => {
+      debugger
+      return d(...arguments)
+    }
+
+    const len = computed(() => {
+      return a.length
+    })
+
+    expect(len.value).toBe(1)
+
+    a.push(1)
+    expect(len.value).toBe(2)
   })
 })

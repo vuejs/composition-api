@@ -10,6 +10,7 @@ const {
   markRaw,
   toRaw,
   nextTick,
+  shallowReactive,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -885,5 +886,28 @@ describe('setup', () => {
     await sleep(10)
     await nextTick()
     expect(vm.$el.textContent).toBe('2')
+  })
+
+  // #521
+  it('should handle array updates', (done) => {
+    const a = reactive([])
+    const opts = {
+      template: '<div>{{ a }}</div>',
+      setup() {
+        return {
+          a,
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+
+    expect(vm.$el.textContent).toBe('[]')
+
+    a.push(1)
+    waitForUpdate(() => {
+      expect(vm.$el.textContent).toBe('[ 1 ]')
+    }).then(done)
   })
 })
