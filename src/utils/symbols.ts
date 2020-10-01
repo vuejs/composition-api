@@ -13,4 +13,3 @@ export const WatcherPostFlushQueueKey = createSymbol(
 
 // must be a string, symbol key is ignored in reactive
 export const RefKey = 'composition-api.refKey'
-export const PropsReactive = '__props_reactive__'
