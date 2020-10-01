@@ -179,7 +179,9 @@ export function mixin(Vue: VueConstructor) {
       return true
     }
 
-    if (!isPlainObject(target) || isRaw(target)) return false
+    if (!isPlainObject(target) || isRaw(target)) {
+      return false
+    }
     return Object.keys(target).some((x) =>
       hasReactiveArrayChild(target[x], visited)
     )
