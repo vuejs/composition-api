@@ -10,6 +10,7 @@ const {
   markRaw,
   toRaw,
   nextTick,
+  isReactive,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -56,7 +57,7 @@ describe('setup', () => {
     expect(vm.b).toBe('foobar')
   })
 
-  it('should be overrided by data option of plain object', () => {
+  it('should be overridden by data option of plain object', () => {
     const vm = new Vue({
       setup() {
         return {
@@ -301,8 +302,9 @@ describe('setup', () => {
     expect(vm.$refs.test.b).toBe(1)
   })
 
-  it('props should not be reactive', (done) => {
+  it('props should be reactive', (done) => {
     let calls = 0
+    let _props
     const vm = new Vue({
       template: `<child :msg="msg"></child>`,
       setup() {
@@ -316,6 +318,8 @@ describe('setup', () => {
           template: `<span>{{ localMsg }}</span>`,
           props: ['msg'],
           setup(props) {
+            _props = props
+
             return {
               localMsg: props.msg,
               computedMsg: computed(() => props.msg + ' world'),
@@ -324,6 +328,9 @@ describe('setup', () => {
         },
       },
     }).$mount()
+
+    expect(isReactive(_props)).toBe(true)
+
     const child = vm.$children[0]
     expect(child.localMsg).toBe('hello')
     expect(child.computedMsg).toBe('hello world')

@@ -84,6 +84,7 @@ export function mixin(Vue: VueConstructor) {
 
     // fake reactive for `toRefs(props)`
     def(props, PropsReactive, true)
+    def(props, '__ob__', {})
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)
