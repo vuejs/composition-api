@@ -170,7 +170,9 @@ export function mixin(Vue: VueConstructor) {
   }
 
   function hasReactiveArrayChild(target: object, visited = new Map()): boolean {
-    if (visited.has(target)) return visited.get(target)
+    if (visited.has(target)) {
+      return visited.get(target)
+    }
     visited.set(target, false)
     if (Array.isArray(target) && isReactive(target)) {
       visited.set(target, true)
