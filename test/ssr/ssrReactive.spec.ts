@@ -3,9 +3,8 @@
  */
 
 import Vue from '../vue'
-import { isReactive, reactive, ref } from '../../src'
+import { isReactive, reactive, ref, isRaw, isRef, shallowRef } from '../../src'
 import { createRenderer } from 'vue-server-renderer'
-import { isRaw, shallowRef } from '../../src/reactivity'
 
 describe('SSR Reactive', () => {
   beforeEach(() => {
@@ -14,7 +13,6 @@ describe('SSR Reactive', () => {
 
   it('should in SSR context', async () => {
     expect(typeof window).toBe('undefined')
-    // expect((Vue as any).$isServer).toBe(true)
     expect((Vue.observable({}) as any).__ob__).toBeUndefined()
   })
 
@@ -41,9 +39,9 @@ describe('SSR Reactive', () => {
     expect(isRaw(state)).toBe(false)
   })
 
-  it('shallowRef + isReactive', async () => {
+  it('shallowRef + isRef', async () => {
     const state = shallowRef({})
-    expect(isReactive(state)).toBe(true)
+    expect(isRef(state)).toBe(true)
     expect(isRaw(state)).toBe(false)
   })
 })
