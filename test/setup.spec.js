@@ -10,6 +10,8 @@ const {
   markRaw,
   toRaw,
   nextTick,
+  defineComponent,
+  onMounted,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -885,5 +887,66 @@ describe('setup', () => {
     await sleep(10)
     await nextTick()
     expect(vm.$el.textContent).toBe('2')
+  })
+
+  // #448
+  it('should not cause infinite loop', async () => {
+    const A = defineComponent({
+      template: `<div></div>`,
+      props: {
+        pattern: {
+          type: RegExp,
+          required: true,
+        },
+      },
+
+      setup(props) {
+        return {
+          props,
+        }
+      },
+    })
+    const B = defineComponent({
+      template: `<div></div>`,
+      setup(props, { emit }) {
+        onMounted(() => {
+          emit('ev', true)
+        })
+
+        return {}
+      },
+    })
+
+    const vm = new Vue(
+      defineComponent({
+        components: {
+          A,
+          B,
+        },
+
+        template: `  <div>
+      <A :pattern="/./"/>
+  
+      <div
+        v-for="(k, v) in o.v"
+        :key="v"
+      >{{v}}</div>
+  
+      <B @ev="(v) => { o = v; }"/>
+    </div>`,
+        setup(props, { emit }) {
+          const o = ref([false])
+
+          return {
+            o,
+            emit,
+          }
+        },
+      })
+    ).$mount()
+
+    await vm.$nextTick()
+
+    expect(warn).not.toBeCalled()
   })
 })
