@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic'
 import { getRegisteredVueOrDefault } from '../runtimeContext'
-import { isPlainObject, def, warn } from '../utils'
+import { isPlainObject, def, warn, hasOwn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
@@ -111,6 +111,11 @@ function observe<T>(obj: T): T {
     observed = vm._data.$$state
   }
 
+  // in SSR, there is no __ob__. Mock for reactivity check
+  if (!hasOwn(observed, '__ob__')) {
+    def(observed, '__ob__', {})
+  }
+
   return observed
 }
 
@@ -154,7 +159,7 @@ export function shallowReactive(obj: any): any {
       configurable: true,
       get: function getterHandler() {
         const value = getter ? getter.call(obj) : val
-        ob.dep.depend()
+        ob.dep?.depend()
         return value
       },
       set: function setterHandler(newVal) {
@@ -164,7 +169,7 @@ export function shallowReactive(obj: any): any {
         } else {
           val = newVal
         }
-        ob.dep.notify()
+        ob.dep?.notify()
       },
     })
   }
