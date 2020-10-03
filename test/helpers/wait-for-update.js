@@ -13,7 +13,7 @@ const Vue = require('vue')
 // })
 // .then(done)
 
-window.waitForUpdate = (initialCb) => {
+const waitForUpdate = (initialCb) => {
   let end
   const queue = initialCb ? [initialCb] : []
 
@@ -69,7 +69,11 @@ window.waitForUpdate = (initialCb) => {
   return chainer
 }
 
-exports.waitForUpdate = window.waitForUpdate
+if (typeof window !== 'undefined') {
+  window.waitForUpdate = waitForUpdate
+}
+
+exports.waitForUpdate = waitForUpdate
 
 function timeout(n) {
   return (next) => setTimeout(next, n)
