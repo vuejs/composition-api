@@ -119,6 +119,10 @@ function observe<T>(obj: T): T {
   return observed
 }
 
+export function createObserver() {
+  return observe<any>({}).__ob__ || {}
+}
+
 export function shallowReactive<T extends object = any>(obj: T): T
 export function shallowReactive(obj: any): any {
   if (__DEV__ && !obj) {
@@ -255,7 +259,7 @@ export function markRaw<T extends object>(obj: T): T {
   }
 
   // set the vue observable flag at obj
-  const ob = (observe({}) as any).__ob__
+  const ob = createObserver()
   ob.__raw__ = true
   def(obj, '__ob__', ob)
 

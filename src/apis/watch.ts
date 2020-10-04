@@ -182,7 +182,7 @@ function createVueWatcher(
 }
 
 // We have to monkeypatch the teardown function so Vue will run
-// runCleanup() when it tears down the watcher on unmmount.
+// runCleanup() when it tears down the watcher on unmounted.
 function patchWatcherTeardown(watcher: VueWatcher, runCleanup: () => void) {
   const _teardown = watcher.teardown
   watcher.teardown = function (...args) {
