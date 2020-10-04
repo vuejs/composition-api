@@ -896,6 +896,110 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('2')
   })
 
+  // #524
+  it('should work with reactive arrays.', async () => {
+    const opts = {
+      template: `<div>{{items.length}}</div>`,
+      setup() {
+        const items = reactive([])
+
+        setTimeout(() => {
+          items.push(2)
+        }, 1)
+
+        return {
+          items,
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('0')
+    await sleep(10)
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  it('should work with reactive array nested', async () => {
+    const opts = {
+      template: `<div>{{a.items.length}}</div>`,
+      setup() {
+        const items = reactive([])
+
+        setTimeout(() => {
+          items.push(2)
+        }, 1)
+
+        return {
+          a: {
+            items,
+          },
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('0')
+    await sleep(10)
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  it('should not unwrap reactive array nested', async () => {
+    const opts = {
+      template: `<div>{{a.items}}</div>`,
+      setup() {
+        const items = reactive([])
+
+        setTimeout(() => {
+          items.push(ref(1))
+        }, 1)
+
+        return {
+          a: {
+            items,
+          },
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('[]')
+    await sleep(10)
+    await nextTick()
+    expect(JSON.parse(vm.$el.textContent)).toStrictEqual([{ value: 1 }])
+  })
+
+  // TODO make this pass
+  // it('should work with computed', async ()=>{
+  //   const opts = {
+  //     template: `<div>{{len}}</div>`,
+  //     setup() {
+  //       const array = reactive([]);
+  //       const len = computed(()=> array.length);
+
+  //       setTimeout(() => {
+  //         array.push(2)
+  //       }, 1)
+
+  //       return {
+  //         len
+  //       }
+  //     },
+  //   }
+  //   const Constructor = Vue.extend(opts).extend({})
+
+  //   const vm = new Vue(Constructor).$mount()
+  //   expect(vm.$el.textContent).toBe('0')
+  //   await sleep(10)
+  //   await nextTick()
+  //   expect(vm.$el.textContent).toBe('1')
+  // })
+  
+  
   // #448
   it('should not cause infinite loop', async () => {
     const A = defineComponent({

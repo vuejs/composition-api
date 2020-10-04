@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic'
 import { getRegisteredVueOrDefault } from '../runtimeContext'
-import { isPlainObject, def, warn, hasOwn } from '../utils'
+import { isPlainObject, def, warn, isArray, hasOwn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
@@ -130,7 +130,11 @@ export function shallowReactive(obj: any): any {
     return
   }
 
-  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || isArray(obj)) ||
+    isRaw(obj) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj as any
   }
 
@@ -190,7 +194,11 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
     return
   }
 
-  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || isArray(obj)) ||
+    isRaw(obj) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj as any
   }
 
@@ -201,7 +209,7 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T>
 export function shallowReadonly(obj: any): any {
-  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
+  if (!(isPlainObject(obj) || isArray(obj)) || !Object.isExtensible(obj)) {
     return obj
   }
 
@@ -254,7 +262,7 @@ export function shallowReadonly(obj: any): any {
  * Make sure obj can't be a reactive
  */
 export function markRaw<T extends object>(obj: T): T {
-  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
+  if (!(isPlainObject(obj) || isArray(obj)) || !Object.isExtensible(obj)) {
     return obj
   }
 
