@@ -120,7 +120,7 @@ function observe<T>(obj: T): T {
 }
 
 export function createObserver() {
-  return (observe({}) as any).__ob__ || {}
+  return observe<any>({}).__ob__ || {}
 }
 
 export function shallowReactive<T extends object = any>(obj: T): T
