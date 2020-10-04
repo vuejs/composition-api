@@ -23,6 +23,7 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
+import { createObserver } from './reactivity/reactive'
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -82,7 +83,7 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createSetupContext(vm)
 
     // fake reactive for `toRefs(props)`
-    def(props, '__ob__', {})
+    def(props, '__ob__', createObserver())
 
     // resolve scopedSlots and slots to functions
     resolveScopedSlots(vm, ctx.slots)
