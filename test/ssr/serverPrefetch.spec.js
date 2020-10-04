@@ -4,8 +4,8 @@ const {
   ref,
   onServerPrefetch,
   getCurrentInstance,
-  provide,
-  inject,
+  isReactive,
+  reactive,
 } = require('../../src')
 
 function fetch(result) {

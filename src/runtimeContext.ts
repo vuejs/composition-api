@@ -39,14 +39,15 @@ export function getRegisteredVueOrDefault(): VueConstructor {
   let constructor = vueConstructor || vueDependency
 
   if (__DEV__) {
-    assert(vueConstructor, `No vue dependency found.`)
+    assert(constructor, `No vue dependency found.`)
   }
 
   return constructor!
 }
 
 export function setVueConstructor(Vue: VueConstructor) {
-  if (__DEV__ && vueConstructor) {
+  // @ts-ignore
+  if (__DEV__ && vueConstructor && Vue.__proto__ !== vueConstructor.__proto__) {
     warn('Another instance of vue installed')
   }
   vueConstructor = Vue
