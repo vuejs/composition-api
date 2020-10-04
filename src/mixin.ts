@@ -14,6 +14,7 @@ import {
   isFunction,
   isObject,
   def,
+  isArray,
 } from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
@@ -23,8 +24,6 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
-import { PropsReactive } from './utils/symbols'
-import { isArray } from 'util'
 import { getVueConstructor } from './runtimeContext'
 import { createObserver } from './reactivity/reactive'
 
