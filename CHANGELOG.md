@@ -1,3 +1,17 @@
+<a name="1.0.0-beta.15"></a>
+# [1.0.0-beta.15](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2020-10-04)
+
+
+### Bug Fixes
+
+* **reactive:** fix issue when using reactive `array` in the template ([#532](https://github.com/vuejs/composition-api/issues/532)) ([d99b91d](https://github.com/vuejs/composition-api/commit/d99b91d))
+* `reactive` in SSR ([#546](https://github.com/vuejs/composition-api/issues/546)) ([535c829](https://github.com/vuejs/composition-api/commit/535c829))
+* incorrect warning for `getRegisteredVueOrDefault`, resolve [#544](https://github.com/vuejs/composition-api/issues/544) ([3a1d992](https://github.com/vuejs/composition-api/commit/3a1d992))
+* reactive for props ([#547](https://github.com/vuejs/composition-api/issues/547)) ([4d39443](https://github.com/vuejs/composition-api/commit/4d39443))
+* **vue-test:** prevent warning when using multiple `localVue` ([#531](https://github.com/vuejs/composition-api/issues/531)) ([5484bb7](https://github.com/vuejs/composition-api/commit/5484bb7))
+
+
+
 <a name="1.0.0-beta.14"></a>
 # [1.0.0-beta.14](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2020-09-15)
 
