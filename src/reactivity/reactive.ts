@@ -1,6 +1,6 @@
 import { AnyObject } from '../types/basic'
 import { getRegisteredVueOrDefault } from '../runtimeContext'
-import { isPlainObject, def, warn, isArray, hasOwn } from '../utils'
+import { isPlainObject, def, warn, isArray, hasOwn, noopFn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
@@ -113,14 +113,26 @@ function observe<T>(obj: T): T {
 
   // in SSR, there is no __ob__. Mock for reactivity check
   if (!hasOwn(observed, '__ob__')) {
-    def(observed, '__ob__', {})
+    def(observed, '__ob__', mockObserver(observed))
   }
 
   return observed
 }
 
 export function createObserver() {
-  return observe<any>({}).__ob__ || {}
+  return observe<any>({}).__ob__
+}
+
+function mockObserver(value: any = {}): any {
+  return {
+    value,
+    dep: {
+      notify: noopFn,
+      depend: noopFn,
+      addSub: noopFn,
+      removeSub: noopFn,
+    },
+  }
 }
 
 export function shallowReactive<T extends object = any>(obj: T): T
