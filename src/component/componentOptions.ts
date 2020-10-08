@@ -70,6 +70,7 @@ export type ComponentOptionsWithProps<
   Props = ExtractPropTypes<PropsOptions>
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropsOptions
+  emits?: string[] | Record<string, null | ((emitData: any) => boolean) >
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
@@ -82,6 +83,7 @@ export type ComponentOptionsWithArrayProps<
   Props = Readonly<{ [key in PropNames]?: any }>
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropNames[]
+  emits?: string[] | Record<string, null | ((emitData: any) => boolean)>
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
@@ -93,6 +95,7 @@ export type ComponentOptionsWithoutProps<
   M extends MethodOptions = {}
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: undefined
+  emits?: string[] | Record<string, null | ((emitData: any) => boolean)>
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
