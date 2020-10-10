@@ -1,3 +1,14 @@
+<a name="1.0.0-beta.16"></a>
+# [1.0.0-beta.16](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2020-10-10)
+
+
+### Bug Fixes
+
+* **SSR:** value set for props, fix [#550](https://github.com/vuejs/composition-api/issues/550) ([#551](https://github.com/vuejs/composition-api/issues/551)) ([5b1b094](https://github.com/vuejs/composition-api/commit/5b1b094))
+* add emits options to defineComponent(fix [#553](https://github.com/vuejs/composition-api/issues/553)) ([#554](https://github.com/vuejs/composition-api/issues/554)) ([e44311f](https://github.com/vuejs/composition-api/commit/e44311f))
+
+
+
 <a name="1.0.0-beta.15"></a>
 # [1.0.0-beta.15](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2020-10-04)
 
