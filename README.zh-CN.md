@@ -448,7 +448,7 @@ export default {
 
 <details>
 <summary>
-❌ TS: 在 <code>defineComponent</code> 选项中添加 <code>emit</code> 事件校验将不会有任何效果, 这仅为针对 Vue3 的选项对齐。
+❌ <code>emit</code> 仅因在类型定义中对齐 Vue3 的选项而提供，<b>不会</b>有任何效果。
 </summary>
 
 ```ts
