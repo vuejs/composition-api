@@ -469,7 +469,7 @@ export default {
 
 <details>
 <summary>
-❌ Typescript Defining validators in <code>emit</code> options for emit event in <code>defineComponent</code> options will not work. This is just an alignment to Vue3.
+❌ <code>emit</code> option is provided in type-level only, in order to align with Vue 3's type interface. Does NOT have actual effects on the code.
 </summary>
 
 ```ts
