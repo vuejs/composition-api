@@ -42,21 +42,22 @@ type ExtractCorrectPropType<T> = T extends Function
   ? ExtractFunctionPropType<T>
   : Exclude<T, Function>
 
+// prettier-ignore
 type InferPropType<T> = T extends null
   ? any // null & true would fail to infer
   : T extends { type: null | true }
-  ? any // As TS issue https://github.com/Microsoft/TypeScript/issues/14829 // somehow `ObjectConstructor` when inferred from { (): T } becomes `any` // `BooleanConstructor` when inferred from PropConstructor(with PropMethod) becomes `Boolean`
-  : T extends ObjectConstructor | { type: ObjectConstructor }
-  ? Record<string, any>
-  : T extends BooleanConstructor | { type: BooleanConstructor }
-  ? boolean
-  : T extends FunctionConstructor
-  ? Function
-  : T extends Prop<infer V, infer D>
-  ? unknown extends V
-    ? D
-    : ExtractCorrectPropType<V>
-  : T
+    ? any // As TS issue https://github.com/Microsoft/TypeScript/issues/14829 // somehow `ObjectConstructor` when inferred from { (): T } becomes `any` // `BooleanConstructor` when inferred from PropConstructor(with PropMethod) becomes `Boolean`
+    : T extends ObjectConstructor | { type: ObjectConstructor }
+      ? Record<string, any>
+      : T extends BooleanConstructor | { type: BooleanConstructor }
+        ? boolean
+        : T extends FunctionConstructor
+          ? Function
+          : T extends Prop<infer V, infer D>
+            ? unknown extends V
+              ? D
+              : ExtractCorrectPropType<V>
+            : T
 
 export type ExtractPropTypes<O> = O extends object
   ? { [K in RequiredKeys<O>]: InferPropType<O[K]> } &
