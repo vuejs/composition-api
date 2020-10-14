@@ -14,6 +14,7 @@ describe('with object props', () => {
     b: string
     e?: Function
     bb: string
+    bbb: string
     cc?: string[] | undefined
     dd: { n: 1 }
     ee?: () => string
@@ -23,6 +24,9 @@ describe('with object props', () => {
     eee: () => { a: string }
     fff: (a: number, b: string) => { a: boolean }
     hhh: boolean
+    ggg: 'foo' | 'bar'
+    ffff: (a: number, b: string) => { a: boolean }
+    validated?: string
   }
 
   type GT = string & { __brand: unknown }
@@ -39,6 +43,11 @@ describe('with object props', () => {
       // default value should infer type and make it non-void
       bb: {
         default: 'hello',
+      },
+      bbb: {
+        // Note: default function value requires arrow syntax + explicit
+        // annotation
+        default: (props: any) => (props.bb as string) || 'foo',
       },
       // explicit type casting
       cc: Array as PropType<string[]>,
@@ -68,9 +77,24 @@ describe('with object props', () => {
         type: Function as PropType<(a: number, b: string) => { a: boolean }>,
         required: true,
       },
+      // default + type casting
+      ggg: {
+        type: String as PropType<'foo' | 'bar'>,
+        default: 'foo',
+      },
       hhh: {
         type: Boolean,
         required: true,
+      },
+      // default + function
+      ffff: {
+        type: Function as PropType<(a: number, b: string) => { a: boolean }>,
+        default: (_a: number, _b: string) => ({ a: true }),
+      },
+      validated: {
+        type: String,
+        // validator requires explicit annotation
+        validator: (val: unknown) => val !== '',
       },
     },
     setup(props) {
@@ -83,11 +107,15 @@ describe('with object props', () => {
       expectType<ExpectedProps['dd']>(props.dd)
       expectType<ExpectedProps['ee']>(props.ee)
       expectType<ExpectedProps['ff']>(props.ff)
+      expectType<ExpectedProps['bbb']>(props.bbb)
       expectType<ExpectedProps['ccc']>(props.ccc)
       expectType<ExpectedProps['ddd']>(props.ddd)
       expectType<ExpectedProps['eee']>(props.eee)
       expectType<ExpectedProps['fff']>(props.fff)
+      expectType<ExpectedProps['ggg']>(props.ggg)
       expectType<ExpectedProps['hhh']>(props.hhh)
+      expectType<ExpectedProps['ffff']>(props.ffff)
+      expectType<ExpectedProps['validated']>(props.validated)
 
       isNotAnyOrUndefined(props.a)
       isNotAnyOrUndefined(props.b)
@@ -97,11 +125,14 @@ describe('with object props', () => {
       isNotAnyOrUndefined(props.dd)
       isNotAnyOrUndefined(props.ee)
       isNotAnyOrUndefined(props.ff)
+      isNotAnyOrUndefined(props.bbb)
       isNotAnyOrUndefined(props.ccc)
       isNotAnyOrUndefined(props.ddd)
       isNotAnyOrUndefined(props.eee)
       isNotAnyOrUndefined(props.fff)
+      isNotAnyOrUndefined(props.ggg)
       isNotAnyOrUndefined(props.hhh)
+      isNotAnyOrUndefined(props.ffff)
 
       expectError((props.a = 1))
 
@@ -126,11 +157,15 @@ describe('with object props', () => {
       expectType<ExpectedProps['dd']>(props.dd)
       expectType<ExpectedProps['ee']>(props.ee)
       expectType<ExpectedProps['ff']>(props.ff)
+      expectType<ExpectedProps['bbb']>(props.bbb)
       expectType<ExpectedProps['ccc']>(props.ccc)
       expectType<ExpectedProps['ddd']>(props.ddd)
       expectType<ExpectedProps['eee']>(props.eee)
       expectType<ExpectedProps['fff']>(props.fff)
+      expectType<ExpectedProps['ggg']>(props.ggg)
       expectType<ExpectedProps['hhh']>(props.hhh)
+      expectType<ExpectedProps['ffff']>(props.ffff)
+      expectType<ExpectedProps['validated']>(props.validated)
 
       // @ts-expect-error props should be readonly
       expectError((props.a = 1))
@@ -144,10 +179,13 @@ describe('with object props', () => {
       expectType<ExpectedProps['dd']>(this.dd)
       expectType<ExpectedProps['ee']>(this.ee)
       expectType<ExpectedProps['ff']>(this.ff)
+      expectType<ExpectedProps['bbb']>(this.bbb)
       expectType<ExpectedProps['ccc']>(this.ccc)
       expectType<ExpectedProps['ddd']>(this.ddd)
       expectType<ExpectedProps['eee']>(this.eee)
       expectType<ExpectedProps['fff']>(this.fff)
+      expectType<ExpectedProps['ggg']>(this.ggg)
+      expectType<ExpectedProps['ffff']>(this.ffff)
       expectType<ExpectedProps['hhh']>(this.hhh)
 
       // @ts-expect-error props on `this` should be readonly

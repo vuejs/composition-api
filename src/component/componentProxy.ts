@@ -39,7 +39,7 @@ type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
   new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
     ShallowUnwrapRef<RawBindings>,
-    ExtractPropTypes<PropsOptions, false>
+    ExtractPropTypes<PropsOptions>
   >
 }
 
@@ -59,6 +59,6 @@ export type VueProxy<
   Methods,
   Computed,
   PropsOptions,
-  ExtractPropTypes<PropsOptions, false>
+  ExtractPropTypes<PropsOptions>
 > &
   VueConstructorProxy<PropsOptions, RawBindings>
