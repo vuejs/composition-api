@@ -83,7 +83,7 @@ function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
     ...{
       immediate: false,
       deep: false,
-      flush: 'post',
+      flush: 'pre',
     },
     ...options,
   }
@@ -94,7 +94,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
     ...{
       immediate: true,
       deep: false,
-      flush: 'post',
+      flush: 'pre',
     },
     ...options,
   }
