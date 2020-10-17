@@ -1,4 +1,4 @@
-import { ExtractPropTypes } from './componentProps'
+import { ExtractDefaultPropTypes, ExtractPropTypes } from './componentProps'
 import { ShallowUnwrapRef } from '..'
 import { Data } from './common'
 
@@ -22,10 +22,16 @@ export type ComponentRenderProxy<
   D = {}, // return from data()
   C extends ComputedOptions = {},
   M extends MethodOptions = {},
-  PublicProps = P
+  PublicProps = P,
+  Defaults = {},
+  MakeDefaultsOptional extends boolean = false
 > = {
   $data: D
-  $props: Readonly<P & PublicProps>
+  $props: Readonly<
+    MakeDefaultsOptional extends true
+      ? Partial<Defaults> & Omit<P & PublicProps, keyof Defaults>
+      : P & PublicProps
+  >
   $attrs: Data
 } & Readonly<P> &
   ShallowUnwrapRef<B> &
@@ -39,7 +45,12 @@ type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
   new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
     ShallowUnwrapRef<RawBindings>,
-    ExtractPropTypes<PropsOptions>
+    ExtractPropTypes<PropsOptions>,
+    {},
+    {},
+    ExtractPropTypes<PropsOptions>,
+    ExtractDefaultPropTypes<PropsOptions>,
+    true
   >
 }
 
