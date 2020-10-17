@@ -6,8 +6,6 @@ Vue 2 plugin for **Composition API**
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 [![Minzipped size](https://badgen.net/bundlephobia/minzip/@vue/composition-api)](https://bundlephobia.com/result?p=@vue/composition-api)
 
-
-
 English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
 
 ## Installation
@@ -181,7 +179,7 @@ a.list[1].count === 1 // true
 
 <details>
 <summary>
-⚠️ `set` workaround for adding new reactive properties
+⚠️ <code>set</code> workaround for adding new reactive properties
 </summary>
 
 > ⚠️ Warning: `set` does NOT exist in Vue 3. We provide it as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects). In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
@@ -196,7 +194,6 @@ const a = reactive({
 // add new reactive key
 set(a, 'bar', 1)
 ```
-
 
 </details>
 
@@ -417,6 +414,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 </details>
 
 ### `props`
+
 <details>
 <summary>
 ⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
@@ -427,8 +425,8 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 defineComponent({
   setup(props) {
     const { bar } = toRefs(props.foo) // it will `warn`
-    
-    // use this instead 
+
+    // use this instead
     const { foo } = toRefs(props)
     const a = foo.value.bar
   }
@@ -436,8 +434,6 @@ defineComponent({
 ```
 
 </details>
-
-
 
 ### Missing APIs
 
@@ -465,6 +461,31 @@ export default {
     }
   },
 }
+```
+
+</details>
+
+### `emit` Options
+
+<details>
+<summary>
+❌ <code>emit</code> option is provided in type-level only, in order to align with Vue 3's type interface. Does NOT have actual effects on the code.
+</summary>
+
+```ts
+defineComponent({
+  emit: {
+    // has no effects
+    submit: (eventOption) => {
+      if (...) {
+        return true
+      } else {
+        console.warn('Invalid submit event payload!')
+        return false
+      }
+    }
+  }
+})
 ```
 
 </details>

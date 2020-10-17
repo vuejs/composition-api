@@ -175,10 +175,9 @@ b.list[1].count === 1 // true
 
 </details>
 
-
 <details>
 <summary>
-⚠️ `set` 添加响应式属性变通方案
+⚠️ <code>set</code> 添加响应式属性变通方案
 </summary>
 
 > ⚠️ 警告: `set` 并非 `Vue 3.0` 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
@@ -393,6 +392,28 @@ watch(
 
 </details>
 
+### `props`
+
+<details>
+<summary>
+⚠️ 当使用 <code>toRefs</code> 访问深层属性对象 （如 <code>toRefs(props.foo.bar)</code> 时将会得到不正确的警告。
+⚠️ <code>isReactive(props.foo.bar)</code> 将会返回 false。
+</summary>
+  
+```ts
+defineComponent({
+  setup(props) {
+    const { bar } = toRefs(props.foo) // it will `warn`
+
+    // use this instead
+    const { foo } = toRefs(props)
+    const a = foo.value.bar
+  }
+})
+```
+
+</details>
+
 ### 缺失的 API
 
 以下在 Vue 3 新引入的 API ，在本插件中暂不适用：
@@ -419,6 +440,31 @@ export default {
     }
   },
 }
+```
+
+</details>
+
+### `emit` 选项
+
+<details>
+<summary>
+❌ <code>emit</code> 仅因在类型定义中对齐 Vue3 的选项而提供，<b>不会</b>有任何效果。
+</summary>
+
+```ts
+defineComponent({
+  emit: {
+    // 无效
+    submit: (eventOption) => {
+      if (...) {
+        return true
+      } else {
+        console.warn('Invalid submit event payload!')
+        return false
+      }
+    }
+  }
+})
 ```
 
 </details>
