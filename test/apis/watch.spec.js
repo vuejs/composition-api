@@ -178,7 +178,7 @@ describe('api/watch', () => {
             spy(newVal, oldVal)
             rerenderedText = vm.$el.textContent
           },
-          { lazy: true }
+          { lazy: true, flush: 'post' }
         )
         return {
           a,
@@ -210,7 +210,7 @@ describe('api/watch', () => {
               rerenderedText = vm.$el.textContent
             }
           },
-          { immediate: true }
+          { immediate: true, flush: 'post' }
         )
         return {
           a,
