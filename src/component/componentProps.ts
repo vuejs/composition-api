@@ -8,14 +8,14 @@ export type ComponentObjectPropsOptions<P = Data> = {
   [K in keyof P]: Prop<P[K]> | null
 }
 
-export type Prop<T> = PropOptions<T> | PropType<T>
+export type Prop<T, D = T> = PropOptions<T, D> | PropType<T>
 
 type DefaultFactory<T> = () => T | null | undefined
 
-export interface PropOptions<T = any> {
+export interface PropOptions<T = any, D = T> {
   type?: PropType<T> | true | null
   required?: boolean
-  default?: T | DefaultFactory<T> | null | undefined
+  default?: D | DefaultFactory<D> | null | undefined | object
   validator?(value: unknown): boolean
 }
 
@@ -26,18 +26,11 @@ type PropConstructor<T> =
   | { (): T }
   | { new (...args: string[]): Function }
 
-type RequiredKeys<T, MakeDefaultRequired> = {
-  [K in keyof T]: T[K] extends
-    | { required: true }
-    | (MakeDefaultRequired extends true ? { default: any } : never)
-    ? K
-    : never
+type RequiredKeys<T> = {
+  [K in keyof T]: T[K] extends { required: true } | { default: any } ? K : never
 }[keyof T]
 
-type OptionalKeys<T, MakeDefaultRequired> = Exclude<
-  keyof T,
-  RequiredKeys<T, MakeDefaultRequired>
->
+type OptionalKeys<T> = Exclude<keyof T, RequiredKeys<T>>
 
 type ExtractFunctionPropType<
   T extends Function,
@@ -55,18 +48,18 @@ type InferPropType<T> = T extends null
   : T extends { type: null | true }
     ? any // As TS issue https://github.com/Microsoft/TypeScript/issues/14829 // somehow `ObjectConstructor` when inferred from { (): T } becomes `any` // `BooleanConstructor` when inferred from PropConstructor(with PropMethod) becomes `Boolean`
     : T extends ObjectConstructor | { type: ObjectConstructor }
-      ? { [key: string]: any }
+      ? Record<string, any>
       : T extends BooleanConstructor | { type: BooleanConstructor }
         ? boolean
         : T extends FunctionConstructor
           ? Function
-          : T extends Prop<infer V>
-            ? ExtractCorrectPropType<V> : T;
+          : T extends Prop<infer V, infer D>
+            ? unknown extends V
+              ? D
+              : ExtractCorrectPropType<V>
+            : T
 
-export type ExtractPropTypes<
-  O,
-  MakeDefaultRequired extends boolean = true
-> = O extends object
-  ? { [K in RequiredKeys<O, MakeDefaultRequired>]: InferPropType<O[K]> } &
-      { [K in OptionalKeys<O, MakeDefaultRequired>]?: InferPropType<O[K]> }
+export type ExtractPropTypes<O> = O extends object
+  ? { [K in RequiredKeys<O>]: InferPropType<O[K]> } &
+      { [K in OptionalKeys<O>]?: InferPropType<O[K]> }
   : { [K in string]: any }
