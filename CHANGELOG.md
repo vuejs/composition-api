@@ -1,3 +1,31 @@
+<a name="1.0.0-beta.17"></a>
+# [1.0.0-beta.17](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2020-10-17)
+
+
+### Bug Fixes
+
+* **types:** prop type infer, fix [#555](https://github.com/vuejs/composition-api/issues/555) ([#561](https://github.com/vuejs/composition-api/issues/561)) ([35f8fec](https://github.com/vuejs/composition-api/commit/35f8fec))
+
+
+### Code Refactoring
+
+* watch APIs default to trigger pre-flush ([#566](https://github.com/vuejs/composition-api/issues/566)) ([ded5ab7](https://github.com/vuejs/composition-api/commit/ded5ab7)), closes [#1706](https://github.com/vuejs/composition-api/issues/1706)
+
+
+### BREAKING CHANGES
+
+* watch APIs now default to use `flush: 'pre'` instead of
+`flush: 'post'`.
+
+  - Check https://github.com/vuejs/vue-next/commit/49bb44756fda0a7019c69f2fa6b880d9e41125aa 
+
+  - This change affects `watch`, `watchEffect`, the `watch` component
+    option, and `this.$watch`.
+
+  - As pointed out by @skirtles-code in
+
+
+
 <a name="1.0.0-beta.16"></a>
 # [1.0.0-beta.16](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2020-10-10)
 
