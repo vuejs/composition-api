@@ -24,3 +24,4 @@ export {
   ShallowUnwrapRef,
 } from './ref'
 export { set } from './set'
+export { del } from './del'

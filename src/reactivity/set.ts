@@ -1,25 +1,6 @@
 import { getVueConstructor } from '../runtimeContext'
-import { isArray } from '../utils'
+import { isArray, isPrimitive, isUndef, isValidArrayIndex } from '../utils'
 import { defineAccessControl } from './reactive'
-
-function isUndef(v: any): boolean {
-  return v === undefined || v === null
-}
-
-function isPrimitive(value: any): boolean {
-  return (
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    // $flow-disable-line
-    typeof value === 'symbol' ||
-    typeof value === 'boolean'
-  )
-}
-
-function isValidArrayIndex(val: any): boolean {
-  const n = parseFloat(String(val))
-  return n >= 0 && Math.floor(n) === n && isFinite(val)
-}
 
 /**
  * Set a property on an object. Adds the new property, triggers change

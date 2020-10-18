@@ -48,8 +48,23 @@ export function assert(condition: any, msg: string) {
   if (!condition) throw new Error(`[vue-composition-api] ${msg}`)
 }
 
+export function isPrimitive(value: any): boolean {
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    // $flow-disable-line
+    typeof value === 'symbol' ||
+    typeof value === 'boolean'
+  )
+}
+
 export function isArray<T>(x: unknown): x is T[] {
   return Array.isArray(x)
+}
+
+export function isValidArrayIndex(val: any): boolean {
+  const n = parseFloat(String(val))
+  return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
 export function isObject(val: unknown): val is Record<any, any> {
@@ -62,6 +77,10 @@ export function isPlainObject(x: unknown): x is Record<any, any> {
 
 export function isFunction(x: unknown): x is Function {
   return typeof x === 'function'
+}
+
+export function isUndef(v: any): boolean {
+  return v === undefined || v === null
 }
 
 export function warn(msg: string, vm?: Vue) {

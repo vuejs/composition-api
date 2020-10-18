@@ -1,4 +1,5 @@
 export {
+  del,
   isReactive,
   isRef,
   isRaw,
