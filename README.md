@@ -186,7 +186,7 @@ a.list[1].count === 1 // true
 >
 > In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
 >
-> Similarly, in Vue 2 you will need to call `del` to [ensure a key deletion trigger view updates](https://vuejs.org/v2/api/#Vue-delete) in reactive objects (similar to `Vue.delete` but for `reactive objects` created by the Composition API). In Vue 3 you can just delete them by calling `delete foo.bar`.
+> Similarly, in Vue 2 you will need to call `del` to [ensure a key deletion triggers view updates](https://vuejs.org/v2/api/#Vue-delete) in reactive objects (similar to `Vue.delete` but for `reactive objects` created by the Composition API). In Vue 3 you can just delete them by calling `delete foo.bar`.
 
 ```ts
 import { reactive, set } from '@vue/composition-api'
