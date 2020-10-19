@@ -10,10 +10,10 @@ try {
     vueDependency = requiredVue
   } else if (
     requiredVue &&
-    'deafult' in requiredVue &&
-    isVue(requiredVue.deafult)
+    'default' in requiredVue &&
+    isVue(requiredVue.default)
   ) {
-    vueDependency = requiredVue.deafult
+    vueDependency = requiredVue.default
   }
 } catch {
   // not available
