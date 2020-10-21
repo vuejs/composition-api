@@ -5,7 +5,16 @@ import { assert, hasOwn, warn } from './utils'
 let vueDependency: VueConstructor | undefined = undefined
 
 try {
-  vueDependency = require('vue')
+  const requiredVue = require('vue')
+  if (requiredVue && isVue(requiredVue)) {
+    vueDependency = requiredVue
+  } else if (
+    requiredVue &&
+    'default' in requiredVue &&
+    isVue(requiredVue.default)
+  ) {
+    vueDependency = requiredVue.default
+  }
 } catch {
   // not available
 }
@@ -14,6 +23,10 @@ let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
 
 const PluginInstalledFlag = '__composition_api_installed__'
+
+function isVue(obj: any): obj is VueConstructor {
+  return obj && typeof obj === 'function' && obj.name === 'Vue'
+}
 
 export function isPluginInstalled() {
   return !!vueConstructor
