@@ -200,10 +200,14 @@ a.list[1].count === 1 // true
 
 <details>
 <summary>
-⚠️ <code>set</code> workaround for adding new reactive properties
+⚠️ <code>set</code> and <code>del</code> workaround for adding and deleting reactive properties
 </summary>
 
-> ⚠️ Warning: `set` does NOT exist in Vue 3. We provide it as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects). In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
+> ⚠️ Warning: `set` and `del` do NOT exist in Vue 3. We provide them as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects).
+>
+> In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
+>
+> Similarly, in Vue 2 you will need to call `del` to [ensure a key deletion triggers view updates](https://vuejs.org/v2/api/#Vue-delete) in reactive objects (similar to `Vue.delete` but for `reactive objects` created by the Composition API). In Vue 3 you can just delete them by calling `delete foo.bar`.
 
 ```ts
 import { reactive, set } from '@vue/composition-api'
@@ -214,6 +218,9 @@ const a = reactive({
 
 // add new reactive key
 set(a, 'bar', 1)
+
+// remove a key and trigger reactivity
+del(a, 'bar')
 ```
 
 </details>
@@ -441,7 +448,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 ⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
 ⚠️ <code>isReactive(props.foo.bar)</code> will return false.
 </summary>
-  
+
 ```ts
 defineComponent({
   setup(props) {
