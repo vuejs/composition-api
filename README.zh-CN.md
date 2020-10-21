@@ -66,7 +66,28 @@ export default defineComponent({
 
 ### JSX/TSX
 
-要使得 `@vue/composition-api` 支持 JSX/TSX，请前往查看由 [@luwanquan](https://github.com/luwanquan) 开发的 Babel 插件[babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx)。
+JSX 现已在 [vuejs/jsx](https://github.com/vuejs/jsx) 中官方支持。你可以根据[这篇文档](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage)开启支持。你也可以使用由 [@luwanquan](https://github.com/luwanquan) 维护的社区版本 [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx)。
+
+对于 TSX 支持，请在你的项目中创建如下声明文件：
+
+```ts
+// file: shim-tsx.d.ts
+import Vue, { VNode } from 'vue';
+import { ComponentRenderProxy } from '@vue/composition-api';
+
+declare global {
+  namespace JSX {
+    interface Element extends VNode {}
+    interface ElementClass extends ComponentRenderProxy {}
+    interface ElementAttributesProperty {
+      $props: any; // specify the property name to use
+    }
+    interface IntrinsicElements {
+      [elem: string]: any;
+    }
+  }
+}
+```
 
 ## SSR
 
