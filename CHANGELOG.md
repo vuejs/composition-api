@@ -1,3 +1,19 @@
+<a name="1.0.0-beta.18"></a>
+# [1.0.0-beta.18](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2020-10-21)
+
+
+### Bug Fixes
+
+* **type:** vue constructor should not require props with default values ([#567](https://github.com/vuejs/composition-api/issues/567)) ([964f9f3](https://github.com/vuejs/composition-api/commit/964f9f3))
+* better `vueDependency` importing, close [#564](https://github.com/vuejs/composition-api/issues/564) ([#572](https://github.com/vuejs/composition-api/issues/572)) ([555f20a](https://github.com/vuejs/composition-api/commit/555f20a))
+
+
+### Features
+
+* **reactivity:** add Vue.delete workaround ([#571](https://github.com/vuejs/composition-api/issues/571)) ([b41da83](https://github.com/vuejs/composition-api/commit/b41da83))
+
+
+
 <a name="1.0.0-beta.17"></a>
 # [1.0.0-beta.17](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2020-10-17)
 
