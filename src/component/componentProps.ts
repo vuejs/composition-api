@@ -63,3 +63,12 @@ export type ExtractPropTypes<O> = O extends object
   ? { [K in RequiredKeys<O>]: InferPropType<O[K]> } &
       { [K in OptionalKeys<O>]?: InferPropType<O[K]> }
   : { [K in string]: any }
+
+type DefaultKeys<T> = {
+  [K in keyof T]: T[K] extends { default: any } ? K : never
+}[keyof T]
+
+// extract props which defined with default from prop options
+export type ExtractDefaultPropTypes<O> = O extends object
+  ? { [K in DefaultKeys<O>]: InferPropType<O[K]> }
+  : {}
