@@ -198,10 +198,10 @@ b.list[1].count === 1 // true
 
 <details>
 <summary>
-⚠️ <code>set</code> 添加响应式属性变通方案
+⚠️ <code>set</code> 和 <code>del</code> 添加与刪除响应式属性变通方案
 </summary>
 
-> ⚠️ 警告: `set` 并非 `Vue 3.0` 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
+> ⚠️ 警告: `set` 和 `del` 并非 Vue 3 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
 
 ```ts
 import { reactive, set } from '@vue/composition-api'
@@ -212,6 +212,9 @@ const a = reactive({
 
 // 添加新的响应式属性
 set(a, 'bar', 1)
+
+// 刪除属性并触发响应式更新
+del(a, 'bar')
 ```
 
 </details>
