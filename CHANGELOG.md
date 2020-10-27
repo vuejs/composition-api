@@ -331,6 +331,7 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 
 - The `lazy` option of `watch` has been replaced by the opposite `immediate` option, which defaults to false. (It's ignored when using the effect signature). [more details](https://github.com/vuejs/vue-next/blob/master/CHANGELOG.md#breaking-changes-12) (#266)
 - Rename `nonReactive` to `markRaw` 
+- `watchEffect` now follows the same behaviour as v3 (triggers immediately).
 - `UnwrapRef` types from `vue-next` this can cause some incompatibilities.
 
 ## Bug Fixes
