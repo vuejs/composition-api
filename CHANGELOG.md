@@ -334,7 +334,6 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 - `watchEffect` now follows the same behaviour as v3 (triggers immediately).
 - `UnwrapRef` types from `vue-next` this can cause some incompatibilities.
 
-
 ## Bug Fixes
 
 - Added missing reactivity API from vue-next, #311, @pikax 
