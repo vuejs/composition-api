@@ -4,7 +4,7 @@ import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
 import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
 
 export interface SetupContext {
-  readonly attrs: Record<string, string>
+  readonly attrs: Data
   readonly slots: { [key: string]: (...args: any[]) => VNode[] }
   readonly parent: ComponentInstance | null
   readonly root: ComponentInstance
