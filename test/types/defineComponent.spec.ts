@@ -1,10 +1,4 @@
-import {
-  defineComponent,
-  h,
-  ref,
-  SetupContext,
-  PropType,
-} from '../../src'
+import { defineComponent, h, ref, SetupContext, PropType } from '../../src'
 import Router from 'vue-router'
 
 const Vue = require('vue/dist/vue.common.js')
@@ -165,6 +159,14 @@ describe('defineComponent', () => {
     })
     new Vue(App)
     expect.assertions(2)
+  })
+
+  it('should any custom options', () => {
+    const App = defineComponent({
+      foo: 'foo',
+      bar: 'bar',
+    })
+    new Vue(App)
   })
 
   it('infer the required prop', () => {
