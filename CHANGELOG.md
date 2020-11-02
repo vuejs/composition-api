@@ -1,3 +1,15 @@
+<a name="1.0.0-beta.19"></a>
+# [1.0.0-beta.19](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2020-11-02)
+
+
+### Bug Fixes
+
+* **types:** allow any custom options for defineComponent, fix [#579](https://github.com/vuejs/composition-api/issues/579) ([#584](https://github.com/vuejs/composition-api/issues/584)) ([7cdf1e5](https://github.com/vuejs/composition-api/commit/7cdf1e5))
+* **types:** attrs in SetupContext fix[#562](https://github.com/vuejs/composition-api/issues/562) ([#582](https://github.com/vuejs/composition-api/issues/582)) ([2d6de26](https://github.com/vuejs/composition-api/commit/2d6de26))
+* **types:** this type in data(), fix [#570](https://github.com/vuejs/composition-api/issues/570) ([#576](https://github.com/vuejs/composition-api/issues/576)) ([9a5b438](https://github.com/vuejs/composition-api/commit/9a5b438))
+
+
+
 <a name="1.0.0-beta.18"></a>
 # [1.0.0-beta.18](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2020-10-21)
 
