@@ -242,6 +242,7 @@ describe('type inference w/ options API', () => {
       // Limitation: we cannot expose the return result of setup() on `this`
       // here in data() - somehow that would mess up the inference
       expectType<number | undefined>(this.a)
+      expectType<Function>(this.$emit)
       return {
         c: this.a || 123,
       }

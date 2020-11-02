@@ -1,9 +1,7 @@
+import { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
-import { VNode } from 'vue'
 import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
-
-import { ComponentOptions as Vue2ComponentOptions } from 'vue'
 
 export interface SetupContext {
   readonly attrs: Record<string, string>
@@ -43,12 +41,11 @@ interface ComponentOptionsBase<
   D = Data,
   C extends ComputedOptions = {},
   M extends MethodOptions = {}
->
-  extends Omit<
+> extends Omit<
     Vue2ComponentOptions<Vue, D, M, C, Props>,
     'data' | 'computed' | 'method' | 'setup' | 'props'
   > {
-  data?: (this: Props, vm: Props) => D
+  data?: (this: Props & Vue, vm: Props) => D
   computed?: C
   methods?: M
 }
@@ -70,7 +67,7 @@ export type ComponentOptionsWithProps<
   Props = ExtractPropTypes<PropsOptions>
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropsOptions
-  emits?: string[] | Record<string, null | ((emitData: any) => boolean) >
+  emits?: string[] | Record<string, null | ((emitData: any) => boolean)>
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
