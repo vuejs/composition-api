@@ -45,6 +45,10 @@ interface ComponentOptionsBase<
     Vue2ComponentOptions<Vue, D, M, C, Props>,
     'data' | 'computed' | 'method' | 'setup' | 'props'
   > {
+  // allow any custom options
+  [key: string]: any
+
+  // rewrite options api types
   data?: (this: Props & Vue, vm: Props) => D
   computed?: C
   methods?: M
