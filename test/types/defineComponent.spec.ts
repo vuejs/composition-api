@@ -161,7 +161,7 @@ describe('defineComponent', () => {
     expect.assertions(2)
   })
 
-  it('should any custom options', () => {
+  it('should allow any custom options', () => {
     const App = defineComponent({
       foo: 'foo',
       bar: 'bar',
