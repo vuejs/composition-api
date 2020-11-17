@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { h } = require('../src')
+const { h, createApp } = require('../src')
 
 describe('setupContext', () => {
   it('should have proper properties', () => {
@@ -23,7 +23,7 @@ describe('setupContext', () => {
   })
 
   it('slots should work in render function', () => {
-    const vm = new Vue({
+    const vm = createApp({
       template: `
         <test>
           <template slot="default">
@@ -43,7 +43,8 @@ describe('setupContext', () => {
           },
         },
       },
-    }).$mount()
+    }).mount()
+
     expect(vm.$el.innerHTML).toBe('<span>foo</span><span>meh</span>')
   })
 

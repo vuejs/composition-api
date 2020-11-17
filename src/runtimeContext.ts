@@ -1,6 +1,6 @@
 import type { VueConstructor, VNode } from 'vue'
 import { ComponentInstance, Data } from './component'
-import { assert, hasOwn, warn, proxy } from './utils'
+import { assert, hasOwn, warn, proxy, UnionToIntersection } from './utils'
 
 let vueDependency: VueConstructor | undefined = undefined
 
@@ -57,22 +57,37 @@ export function setVueConstructor(Vue: VueConstructor) {
   })
 }
 
-export function getCurrentInternalInstance(): ComponentInstance | null {
-  return currentInstance
-}
-
 export function setCurrentInstance(vm: ComponentInstance | null) {
-  currentInstance?.$scopedSlots
+  // currentInstance?.$scopedSlots
   currentInstance = vm
 }
-
-const v3Cache = new WeakMap<ComponentInstance, ComponentInternalInstance>()
 
 export type Slot = (...args: any[]) => VNode[]
 
 export type InternalSlots = {
   [name: string]: Slot | undefined
 }
+
+export type ObjectEmitsOptions = Record<
+  string,
+  ((...args: any[]) => any) | null
+>
+export type EmitsOptions = ObjectEmitsOptions | string[]
+
+export type EmitFn<
+  Options = ObjectEmitsOptions,
+  Event extends keyof Options = keyof Options
+> = Options extends Array<infer V>
+  ? (event: V, ...args: any[]) => void
+  : {} extends Options // if the emit is empty object (usually the default value for emit) should be converted to function
+  ? (event: string, ...args: any[]) => void
+  : UnionToIntersection<
+      {
+        [key in Event]: Options[key] extends (...args: infer Args) => any
+          ? (event: key, ...args: Args) => void
+          : (event: key, ...args: any[]) => void
+      }[Event]
+    >
 
 /**
  * We expose a subset of properties on the internal instance as they are
@@ -90,11 +105,11 @@ export declare interface ComponentInternalInstance {
    * Vnode representing this component in its parent's vdom tree
    */
   vnode: VNode
-  /* Excluded from this release type: next */
   /**
    * Root vnode of this component's own vdom tree
    */
-  subTree: VNode // not sure
+  // subTree: VNode // does not exist in Vue 2
+
   /**
    * The reactive effect for rendering and patching the component. Callable.
    */
@@ -104,100 +119,105 @@ export declare interface ComponentInternalInstance {
   props: Data
   attrs: Data
   refs: Data
-  // emit: EmitFn
-  emit: Function // todo better typing
+  emit: EmitFn
 
   slots: InternalSlots
   emitted: Record<string, boolean> | null
 
   proxy: ComponentInstance
 
-  // TODO this
   isMounted: boolean
   isUnmounted: boolean
   isDeactivated: boolean
 }
 
-const specialProps = [
-  'data',
-  'props',
-  'attrs',
-  'refs',
-  'emit',
-  'vnode',
-] as const
+export function getCurrentVu2Instance() {
+  return currentInstance
+}
 
 export function getCurrentInstance() {
-  const internal = getCurrentInternalInstance()
-  if (internal) {
-    return getComponentInstanceVue3(internal)
+  if (currentInstance) {
+    return toVue3ComponentInstance(currentInstance)
   }
   return null
 }
 
-export function getComponentInstanceVue3(
-  componentInstance: ComponentInstance
+const instanceMapCache = new WeakMap<
+  ComponentInstance,
+  ComponentInternalInstance
+>()
+
+function toVue3ComponentInstance(
+  vue2Instance: ComponentInstance
 ): ComponentInternalInstance {
-  if (v3Cache.has(componentInstance)) {
-    return v3Cache.get(componentInstance)!
+  if (instanceMapCache.has(vue2Instance)) {
+    return instanceMapCache.get(vue2Instance)!
   }
 
-  const o = specialProps.reduce((p, c) => {
-    // @ts-ignore
-    p[c] = componentInstance[`$${c}`]
-    return p
-  }, {} as Record<keyof ComponentInternalInstance, any>)
-
-  const instance: ComponentInternalInstance = {
-    ...o,
-    proxy: componentInstance,
-    update: componentInstance.$forceUpdate,
-    // @ts-ignore
-    uid: componentInstance._uid,
+  const instance: ComponentInternalInstance = ({
+    proxy: vue2Instance,
+    update: vue2Instance.$forceUpdate,
+    uid: vue2Instance._uid,
 
     parent: null,
     root: null as any,
+  } as unknown) as ComponentInternalInstance
 
-    // TODO
-    subTree: null as any, // ??
-  }
+  // map vm.$props =
+  const instanceProps = [
+    'data',
+    'props',
+    'attrs',
+    'refs',
+    'emit',
+    'vnode',
+  ] as const
+
+  instanceProps.forEach((prop) => {
+    proxy(instance, prop, {
+      get() {
+        // @ts-expect-error
+        return vue2Instance[`$${c}`]
+      },
+    })
+  })
 
   proxy(instance, 'isMounted', {
     get() {
-      // @ts-ignore
-      return componentInstance._isMounted
+      // @ts-expect-error private api
+      return vue2Instance._isMounted
     },
   })
 
   proxy(instance, 'isUnmounted', {
     get() {
-      // @ts-ignore
-      return componentInstance._isDestroyed
+      // @ts-expect-error private api
+      return vue2Instance._isDestroyed
     },
   })
 
   proxy(instance, 'isDeactivated', {
     get() {
-      // @ts-ignore
-      return componentInstance._inactive
+      // @ts-expect-error private api
+      return vue2Instance._inactive
     },
   })
 
   proxy(instance, 'emitted', {
     get() {
-      // @ts-ignore
-      return componentInstance._events
+      // @ts-expect-error private api
+      return vue2Instance._events
     },
   })
 
-  v3Cache.set(componentInstance, instance)
+  instanceMapCache.set(vue2Instance, instance)
 
-  if (componentInstance.$parent) {
-    instance.parent = getComponentInstanceVue3(componentInstance.$parent)
+  if (vue2Instance.$parent) {
+    instance.parent = toVue3ComponentInstance(vue2Instance.$parent)
   }
 
-  if (componentInstance.$root) {
-    instance.root = getComponentInstanceVue3(componentInstance.$root)
+  if (vue2Instance.$root) {
+    instance.root = toVue3ComponentInstance(vue2Instance.$root)
   }
 
   return instance
