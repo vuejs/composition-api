@@ -405,7 +405,7 @@ watch(
 
 </details>
 
-### shallowReadonly
+### `shallowReadonly`
 
 <details>
 <summary>
@@ -413,6 +413,17 @@ watch(
 </summary>
 
 > :bulb: 在 Vue 3 中，`shallowReadonly()` 会返回一个新的的代理对象
+
+</details>
+
+### `readonly`
+
+<details>
+<summary>
+⚠️ <code>readonly()</code> **只提供类型层面**的只读。
+</summary>
+
+`readonly()` 只在类型层面提供和 Vue 3 的对齐。在其返回值或其属性上使用 <code>isReadonly()</code> 检查的结果将无法保证。
 
 </details>
 
@@ -442,7 +453,6 @@ defineComponent({
 
 以下在 Vue 3 新引入的 API ，在本插件中暂不适用：
 
-- `readonly`
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`

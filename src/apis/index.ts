@@ -21,6 +21,8 @@ export {
   shallowReadonly,
   proxyRefs,
   ShallowUnwrapRef,
+  readonly,
+  DeepReadonly,
 } from '../reactivity'
 export * from './lifecycle'
 export * from './watch'
