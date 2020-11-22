@@ -5,7 +5,7 @@ import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
 
 export interface SetupContext {
   readonly attrs: Data
-  readonly slots: Readonly<{ [key: string]: (...args: any[]) => VNode[] }>
+  readonly slots: Readonly<{ [key in string]?: (...args: any[]) => VNode[] }>
 
   /**
    * @deprecated not avaliable in Vue 3
@@ -20,12 +20,12 @@ export interface SetupContext {
   /**
    * @deprecated not avaliable in Vue 3
    */
-  readonly listeners: { [key: string]: Function }
+  readonly listeners: { [key in string]?: Function }
 
   /**
    * @deprecated not avaliable in Vue 3
    */
-  readonly refs: { [key: string]: any }
+  readonly refs: Data
 
   emit(event: string, ...args: any[]): void
 }
