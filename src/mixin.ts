@@ -88,6 +88,7 @@ export function mixin(Vue: VueConstructor) {
     def(props, '__ob__', createObserver())
 
     // resolve scopedSlots and slots to functions
+    // @ts-expect-error
     resolveScopedSlots(vm, ctx.slots)
 
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null
@@ -102,6 +103,7 @@ export function mixin(Vue: VueConstructor) {
       const bindingFunc = binding
       // keep currentInstance accessible for createElement
       vm.$options.render = () => {
+        // @ts-expect-error
         resolveScopedSlots(vm, ctx.slots)
         return activateCurrentInstance(vm, () => bindingFunc())
       }
