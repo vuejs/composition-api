@@ -6,7 +6,7 @@ Vue 2 plugin for **Composition API**
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 [![Minzipped size](https://badgen.net/bundlephobia/minzip/@vue/composition-api)](https://bundlephobia.com/result?p=@vue/composition-api)
 
-English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
+English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://v3.vuejs.org/guide/composition-api-introduction.html)
 
 ## Installation
 
