@@ -9,7 +9,7 @@ describe('api/warn', () => {
     warn.mockRestore()
   })
 
-  it('should work', () => {
+  it('can be called inside a component', () => {
     new Vue({
       setup() {
         apiWarn('warned')
@@ -17,9 +17,16 @@ describe('api/warn', () => {
       template: `<div></div>`,
     }).$mount()
 
-    expect(warn).toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledTimes(1)
     expect(warn.mock.calls[0][0]).toMatch(
-      /\[Vue warn\]: warned.?[\s\S]*\(found in <Root>\)/
+      /\[Vue warn\]: warned[\s\S]*\(found in <Root>\)/
     )
+  })
+
+  it('can be called outside a component', () => {
+    apiWarn('warned')
+
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith('[Vue warn]: warned')
   })
 })
