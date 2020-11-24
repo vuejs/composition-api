@@ -1,3 +1,18 @@
+<a name="1.0.0-beta.20"></a>
+# [1.0.0-beta.20](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2020-11-24)
+
+
+### Bug Fixes
+
+* **types:** improve SetupContext types ([#595](https://github.com/vuejs/composition-api/issues/595)) ([49766bf](https://github.com/vuejs/composition-api/commit/49766bf))
+
+
+### Features
+
+* add warn ([#596](https://github.com/vuejs/composition-api/issues/596)) ([dd2cd6b](https://github.com/vuejs/composition-api/commit/dd2cd6b))
+
+
+
 <a name="1.0.0-beta.19"></a>
 # [1.0.0-beta.19](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2020-11-02)
 
