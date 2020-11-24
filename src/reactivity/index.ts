@@ -15,6 +15,7 @@ export {
   Ref,
   createRef,
   UnwrapRef,
+  ToRefs,
   toRefs,
   toRef,
   unref,
