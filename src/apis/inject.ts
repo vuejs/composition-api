@@ -82,7 +82,8 @@ export function supply<T extends Data = Data>(
   const data = <ToRefs<T>>{}
 
   const setValue = (item: any, key: any) => {
-    const value = toRef(item, key)
+    const raw = item[key]
+    const value = isFunction(raw) ? raw : toRef(item, key)
     provide(key, value)
     set(data, key, inject(key))
   }
