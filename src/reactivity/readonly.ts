@@ -43,10 +43,7 @@ type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRef<T>
 export function readonly<T extends object>(
   target: T
 ): DeepReadonly<UnwrapNestedRefs<T>> {
-  if (isRef(target)) {
-    return target as any
-  }
-  return shallowReadonly(target) as any
+  return target as any
 }
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T>
