@@ -520,6 +520,6 @@ defineComponent({
 
 ### Performance Impact
 
-Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. It shouldn't bother you unless in extreme environments.
+Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduces some performance overhead. Note that in most scenarios, this shouldn't be the source of performance issues.
 
 You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.
