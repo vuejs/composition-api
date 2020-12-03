@@ -1,7 +1,6 @@
 import { reactive, Ref, UnwrapRef } from '.'
 import { isArray, isPlainObject, warn } from '../utils'
 import { readonlySet } from '../utils/sets'
-import { isRef } from './ref'
 
 export function isReadonly(obj: any): boolean {
   return readonlySet.has(obj)
