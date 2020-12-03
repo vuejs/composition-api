@@ -8,10 +8,6 @@ Vue 2 plugin for **Composition API**
 
 English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://v3.vuejs.org/guide/composition-api-introduction.html)
 
-## Browser Compatibility
-
-`@vue/composition-api` supports all modern browsers and IE11+. For lower versions IE you should install `WeakMap` polyfill (for example from `core-js` package).
-
 ## Installation
 
 ### NPM
@@ -115,6 +111,10 @@ export default {
   }
 }
 ```
+
+## Browser Compatibility
+
+`@vue/composition-api` supports all modern browsers and IE11+. For lower versions IE you should install `WeakMap` polyfill (for example from `core-js` package).
 
 ## Limitations
 
