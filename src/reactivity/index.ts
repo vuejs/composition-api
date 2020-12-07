@@ -5,8 +5,6 @@ export {
   shallowReactive,
   toRaw,
   isRaw,
-  isReadonly,
-  shallowReadonly,
 } from './reactive'
 export {
   ref,
@@ -23,5 +21,6 @@ export {
   proxyRefs,
   ShallowUnwrapRef,
 } from './ref'
+export { readonly, isReadonly, shallowReadonly, DeepReadonly } from './readonly'
 export { set } from './set'
 export { del } from './del'

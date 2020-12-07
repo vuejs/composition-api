@@ -4,14 +4,10 @@ import { isPlainObject, def, warn, isArray, hasOwn, noopFn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
-import { rawSet, accessModifiedSet, readonlySet } from '../utils/sets'
+import { rawSet, accessModifiedSet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
   return Boolean(obj?.__ob__ && obj.__ob__?.__raw__)
-}
-
-export function isReadonly(obj: any): boolean {
-  return readonlySet.has(obj)
 }
 
 export function isReactive(obj: any): boolean {
@@ -217,57 +213,6 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   const observed = observe(obj)
   setupAccessControl(observed)
   return observed as UnwrapRef<T>
-}
-
-export function shallowReadonly<T extends object>(obj: T): Readonly<T>
-export function shallowReadonly(obj: any): any {
-  if (!(isPlainObject(obj) || isArray(obj)) || !Object.isExtensible(obj)) {
-    return obj
-  }
-
-  const readonlyObj = {}
-
-  const source = reactive({})
-  const ob = (source as any).__ob__
-
-  for (const key of Object.keys(obj)) {
-    let val = obj[key]
-    let getter: (() => any) | undefined
-    let setter: ((x: any) => void) | undefined
-    const property = Object.getOwnPropertyDescriptor(obj, key)
-    if (property) {
-      if (property.configurable === false) {
-        continue
-      }
-      getter = property.get
-      setter = property.set
-      if (
-        (!getter || setter) /* not only have getter */ &&
-        arguments.length === 2
-      ) {
-        val = obj[key]
-      }
-    }
-
-    Object.defineProperty(readonlyObj, key, {
-      enumerable: true,
-      configurable: true,
-      get: function getterHandler() {
-        const value = getter ? getter.call(obj) : val
-        ob.dep.depend()
-        return value
-      },
-      set(v) {
-        if (__DEV__) {
-          warn(`Set operation on key "${key}" failed: target is readonly.`)
-        }
-      },
-    })
-  }
-
-  readonlySet.set(readonlyObj, true)
-
-  return readonlyObj
 }
 
 /**
