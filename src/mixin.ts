@@ -25,7 +25,7 @@ import {
   asVmProperty,
 } from './utils/instance'
 import { getVueConstructor } from './runtimeContext'
-import { createObserver } from './reactivity/reactive'
+import { createObserver, reactive } from './reactivity/reactive'
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -192,38 +192,59 @@ export function mixin(Vue: VueConstructor) {
   function createSetupContext(
     vm: ComponentInstance & { [x: string]: any }
   ): SetupContext {
-    const ctx = {
-      slots: {},
-    } as SetupContext
-    const props: Array<string | [string, string]> = [
+    const ctx = { slots: {} } as SetupContext
+
+    const propsPlain = [
       'root',
       'parent',
       'refs',
-      'attrs',
       'listeners',
       'isServer',
       'ssrContext',
     ]
+    const propsReactiveProxy = ['attrs']
     const methodReturnVoid = ['emit']
-    props.forEach((key) => {
-      let targetKey: string
-      let srcKey: string
-      if (Array.isArray(key)) {
-        ;[targetKey, srcKey] = key
-      } else {
-        targetKey = srcKey = key
-      }
-      srcKey = `$${srcKey}`
-      proxy(ctx, targetKey, {
+
+    propsPlain.forEach((key) => {
+      let srcKey = `$${key}`
+      proxy(ctx, key, {
         get: () => vm[srcKey],
         set() {
           warn(
-            `Cannot assign to '${targetKey}' because it is a read-only property`,
+            `Cannot assign to '${key}' because it is a read-only property`,
             vm
           )
         },
       })
     })
+
+    propsReactiveProxy.forEach((key) => {
+      let srcKey = `$${key}`
+      proxy(ctx, key, {
+        get: () => {
+          const data = reactive({})
+          const source = vm[srcKey]
+
+          for (const attr of Object.keys(source)) {
+            proxy(data, attr, {
+              get: () => {
+                // to ensure it always return the latest value
+                return vm[srcKey][attr]
+              },
+            })
+          }
+
+          return data
+        },
+        set() {
+          warn(
+            `Cannot assign to '${key}' because it is a read-only property`,
+            vm
+          )
+        },
+      })
+    })
+
     methodReturnVoid.forEach((key) => {
       const srcKey = `$${key}`
       proxy(ctx, key, {
