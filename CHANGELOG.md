@@ -1,3 +1,18 @@
+<a name="1.0.0-beta.21"></a>
+# [1.0.0-beta.21](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2020-12-07)
+
+
+### Bug Fixes
+
+* destructure `attrs` from context keep reactive, close [#264](https://github.com/vuejs/composition-api/issues/264) ([#594](https://github.com/vuejs/composition-api/issues/594)) ([4eecd66](https://github.com/vuejs/composition-api/commit/4eecd66))
+
+
+### Features
+
+* add type-level `readonly()` api ([#593](https://github.com/vuejs/composition-api/issues/593)) ([3b726d4](https://github.com/vuejs/composition-api/commit/3b726d4))
+
+
+
 <a name="1.0.0-beta.20"></a>
 # [1.0.0-beta.20](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2020-11-24)
 
