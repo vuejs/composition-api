@@ -667,3 +667,41 @@ describe('emits', () => {
   })
   */
 })
+
+describe('vetur', () => {
+  // #609
+  it('should have access to options API', () => {
+    const Comp = defineComponent({
+      data() {
+        return {
+          a: 1,
+        }
+      },
+
+      computed: {
+        ac() {
+          return 1
+        },
+      },
+
+      methods: {
+        callA(b: number) {
+          return b
+        },
+      },
+
+      setup() {
+        return {
+          sa: '1',
+        }
+      },
+    })
+
+    const comp = new Comp()
+
+    expectType<number>(comp.a)
+    expectType<number>(comp.ac)
+    expectType<string>(comp.sa)
+    expectType<(b: number) => number>(comp.callA)
+  })
+})
