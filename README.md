@@ -112,6 +112,10 @@ export default {
 }
 ```
 
+## Browser Compatibility
+
+`@vue/composition-api` supports all modern browsers and IE11+. For lower versions IE you should install `WeakMap` polyfill (for example from `core-js` package).
+
 ## Limitations
 
 > :white_check_mark: Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
