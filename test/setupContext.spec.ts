@@ -22,14 +22,13 @@ describe('setupContext', () => {
 
     expect(context).toBeDefined()
     expect('parent' in context).toBe(true)
-    expect(context.root).toBe(vm.$root)
-    expect(context.parent).toBe(vm.$parent)
     expect(context.slots).toBeDefined()
     expect(context.attrs).toEqual(vm.$attrs)
-    expect(context.listeners).toBe(vm.$listeners)
 
-    // CAUTION: this will be removed in 3.0
-    // @ts-expect-error
+    // CAUTION: these will be removed in 3.0
+    expect(context.root).toBe(vm.$root)
+    expect(context.parent).toBe(vm.$parent)
+    expect(context.listeners).toBe(vm.$listeners)
     expect(context.refs).toBe(vm.$refs)
     expect(typeof context.emit === 'function').toBe(true)
   })
@@ -51,7 +50,7 @@ describe('setupContext', () => {
           test: defineComponent({
             setup(_, { slots }) {
               return () => {
-                return h('div', [slots.default(), slots.item()])
+                return h('div', [slots.default?.(), slots.item?.()])
               }
             },
           }),
@@ -78,7 +77,7 @@ describe('setupContext', () => {
         components: {
           test: {
             setup(_, { slots }) {
-              slots.default()
+              slots.default?.()
             },
           },
         },
