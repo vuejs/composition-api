@@ -41,13 +41,19 @@ export type ComponentRenderProxy<
   Omit<Vue, '$data' | '$props' | '$attrs'>
 
 // for Vetur and TSX support
-type VueConstructorProxy<PropsOptions, RawBindings> = VueConstructor & {
+type VueConstructorProxy<
+  PropsOptions,
+  RawBindings,
+  Data,
+  Computed extends ComputedOptions,
+  Methods extends MethodOptions
+> = VueConstructor & {
   new (...args: any[]): ComponentRenderProxy<
     ExtractPropTypes<PropsOptions>,
     ShallowUnwrapRef<RawBindings>,
-    ExtractPropTypes<PropsOptions>,
-    {},
-    {},
+    Data,
+    Computed,
+    Methods,
     ExtractPropTypes<PropsOptions>,
     ExtractDefaultPropTypes<PropsOptions>,
     true
@@ -62,8 +68,8 @@ export type VueProxy<
   PropsOptions,
   RawBindings,
   Data = DefaultData<Vue>,
-  Computed = DefaultComputed,
-  Methods = DefaultMethods<Vue>
+  Computed extends ComputedOptions = DefaultComputed,
+  Methods extends MethodOptions = DefaultMethods<Vue>
 > = Vue2ComponentOptions<
   Vue,
   ShallowUnwrapRef<RawBindings> & Data,
@@ -72,4 +78,4 @@ export type VueProxy<
   PropsOptions,
   ExtractPropTypes<PropsOptions>
 > &
-  VueConstructorProxy<PropsOptions, RawBindings>
+  VueConstructorProxy<PropsOptions, RawBindings, Data, Computed, Methods>
