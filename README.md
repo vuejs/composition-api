@@ -375,7 +375,7 @@ import Vue from 'vue'
 
 declare module '@vue/composition-api' {
   interface SetupContext {
-    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
+    readonly refs: { [key: string]: unknown };
   }
 }
 ```
