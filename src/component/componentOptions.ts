@@ -1,4 +1,4 @@
-import { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
+import Vue, { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
 import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
@@ -25,7 +25,7 @@ export interface SetupContext {
   /**
    * @deprecated not avaliable in Vue 3
    */
-  readonly refs: Data
+  readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
 
   emit(event: string, ...args: any[]): void
 }
