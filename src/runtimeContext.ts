@@ -185,13 +185,13 @@ function toVue3ComponentInstance(
     'refs',
     'emit',
     'vnode',
+    'slots',
   ] as const
 
   instanceProps.forEach((prop) => {
     proxy(instance, prop, {
       get() {
-        // @ts-expect-error
-        return vue2Instance[`$${c}`]
+        return (vue2Instance as any)[`$${prop}`]
       },
     })
   })

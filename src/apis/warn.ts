@@ -8,5 +8,5 @@ import { warn as vueWarn } from '../utils'
  * @param message warning message to be displayed
  */
 export function warn(message: string) {
-  vueWarn(message, getCurrentInstance())
+  vueWarn(message, getCurrentInstance()?.proxy)
 }
