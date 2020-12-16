@@ -1,3 +1,114 @@
+<a name="1.0.0-beta.21"></a>
+# [1.0.0-beta.21](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2020-12-07)
+
+
+### Bug Fixes
+
+* destructure `attrs` from context keep reactive, close [#264](https://github.com/vuejs/composition-api/issues/264) ([#594](https://github.com/vuejs/composition-api/issues/594)) ([4eecd66](https://github.com/vuejs/composition-api/commit/4eecd66))
+
+
+### Features
+
+* add type-level `readonly()` api ([#593](https://github.com/vuejs/composition-api/issues/593)) ([3b726d4](https://github.com/vuejs/composition-api/commit/3b726d4))
+
+
+
+<a name="1.0.0-beta.20"></a>
+# [1.0.0-beta.20](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2020-11-24)
+
+
+### Bug Fixes
+
+* **types:** improve SetupContext types ([#595](https://github.com/vuejs/composition-api/issues/595)) ([49766bf](https://github.com/vuejs/composition-api/commit/49766bf))
+
+
+### Features
+
+* add warn ([#596](https://github.com/vuejs/composition-api/issues/596)) ([dd2cd6b](https://github.com/vuejs/composition-api/commit/dd2cd6b))
+
+
+
+<a name="1.0.0-beta.19"></a>
+# [1.0.0-beta.19](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2020-11-02)
+
+
+### Bug Fixes
+
+* **types:** allow any custom options for defineComponent, fix [#579](https://github.com/vuejs/composition-api/issues/579) ([#584](https://github.com/vuejs/composition-api/issues/584)) ([7cdf1e5](https://github.com/vuejs/composition-api/commit/7cdf1e5))
+* **types:** attrs in SetupContext fix[#562](https://github.com/vuejs/composition-api/issues/562) ([#582](https://github.com/vuejs/composition-api/issues/582)) ([2d6de26](https://github.com/vuejs/composition-api/commit/2d6de26))
+* **types:** this type in data(), fix [#570](https://github.com/vuejs/composition-api/issues/570) ([#576](https://github.com/vuejs/composition-api/issues/576)) ([9a5b438](https://github.com/vuejs/composition-api/commit/9a5b438))
+
+
+
+<a name="1.0.0-beta.18"></a>
+# [1.0.0-beta.18](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2020-10-21)
+
+
+### Bug Fixes
+
+* **type:** vue constructor should not require props with default values ([#567](https://github.com/vuejs/composition-api/issues/567)) ([964f9f3](https://github.com/vuejs/composition-api/commit/964f9f3))
+* better `vueDependency` importing, close [#564](https://github.com/vuejs/composition-api/issues/564) ([#572](https://github.com/vuejs/composition-api/issues/572)) ([555f20a](https://github.com/vuejs/composition-api/commit/555f20a))
+
+
+### Features
+
+* **reactivity:** add Vue.delete workaround ([#571](https://github.com/vuejs/composition-api/issues/571)) ([b41da83](https://github.com/vuejs/composition-api/commit/b41da83))
+
+
+
+<a name="1.0.0-beta.17"></a>
+# [1.0.0-beta.17](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2020-10-17)
+
+
+### Bug Fixes
+
+* **types:** prop type infer, fix [#555](https://github.com/vuejs/composition-api/issues/555) ([#561](https://github.com/vuejs/composition-api/issues/561)) ([35f8fec](https://github.com/vuejs/composition-api/commit/35f8fec))
+
+
+### Code Refactoring
+
+* watch APIs default to trigger pre-flush ([#566](https://github.com/vuejs/composition-api/issues/566)) ([ded5ab7](https://github.com/vuejs/composition-api/commit/ded5ab7)), closes [#1706](https://github.com/vuejs/composition-api/issues/1706)
+
+
+### BREAKING CHANGES
+
+* watch APIs now default to use `flush: 'pre'` instead of
+`flush: 'post'`.
+
+  - Check https://github.com/vuejs/vue-next/commit/49bb44756fda0a7019c69f2fa6b880d9e41125aa 
+
+  - This change affects `watch`, `watchEffect`, the `watch` component
+    option, and `this.$watch`.
+
+  - As pointed out by @skirtles-code in
+
+
+
+<a name="1.0.0-beta.16"></a>
+# [1.0.0-beta.16](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2020-10-10)
+
+
+### Bug Fixes
+
+* **SSR:** value set for props, fix [#550](https://github.com/vuejs/composition-api/issues/550) ([#551](https://github.com/vuejs/composition-api/issues/551)) ([5b1b094](https://github.com/vuejs/composition-api/commit/5b1b094))
+* add emits options to defineComponent(fix [#553](https://github.com/vuejs/composition-api/issues/553)) ([#554](https://github.com/vuejs/composition-api/issues/554)) ([e44311f](https://github.com/vuejs/composition-api/commit/e44311f))
+
+
+
+<a name="1.0.0-beta.15"></a>
+# [1.0.0-beta.15](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2020-10-04)
+
+
+### Bug Fixes
+
+* **reactive:** fix issue when using reactive `array` in the template ([#532](https://github.com/vuejs/composition-api/issues/532)) ([d99b91d](https://github.com/vuejs/composition-api/commit/d99b91d))
+* `reactive` in SSR ([#546](https://github.com/vuejs/composition-api/issues/546)) ([535c829](https://github.com/vuejs/composition-api/commit/535c829))
+* incorrect warning for `getRegisteredVueOrDefault`, resolve [#544](https://github.com/vuejs/composition-api/issues/544) ([3a1d992](https://github.com/vuejs/composition-api/commit/3a1d992))
+* reactive for props ([#547](https://github.com/vuejs/composition-api/issues/547)) ([4d39443](https://github.com/vuejs/composition-api/commit/4d39443))
+* **vue-test:** prevent warning when using multiple `localVue` ([#531](https://github.com/vuejs/composition-api/issues/531)) ([5484bb7](https://github.com/vuejs/composition-api/commit/5484bb7))
+
+
+
 <a name="1.0.0-beta.14"></a>
 # [1.0.0-beta.14](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2020-09-15)
 
@@ -262,6 +373,7 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 
 - The `lazy` option of `watch` has been replaced by the opposite `immediate` option, which defaults to false. (It's ignored when using the effect signature). [more details](https://github.com/vuejs/vue-next/blob/master/CHANGELOG.md#breaking-changes-12) (#266)
 - Rename `nonReactive` to `markRaw` 
+- `watchEffect` now follows the same behaviour as v3 (triggers immediately).
 - `UnwrapRef` types from `vue-next` this can cause some incompatibilities.
 
 ## Bug Fixes

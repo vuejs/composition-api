@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
-[English](./README.md) | 中文 ・ [**组合式 API 文档**](https://composition-api.vuejs.org/zh)
+[English](./README.md) | 中文 ・ [**组合式 API 文档**](https://v3.cn.vuejs.org/guide/composition-api-introduction.html)
 
 ## 安装
 
@@ -40,7 +40,7 @@ import { ref, reactive } from '@vue/composition-api'
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.14"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.21"></script>
 ```
 <!--cdn-links-end-->
 
@@ -66,7 +66,28 @@ export default defineComponent({
 
 ### JSX/TSX
 
-要使得 `@vue/composition-api` 支持 JSX/TSX，请前往查看由 [@luwanquan](https://github.com/luwanquan) 开发的 Babel 插件[babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx)。
+JSX 现已在 [vuejs/jsx](https://github.com/vuejs/jsx) 中官方支持。你可以根据[这篇文档](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage)开启支持。你也可以使用由 [@luwanquan](https://github.com/luwanquan) 维护的社区版本 [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx)。
+
+对于 TSX 支持，请在你的项目中创建如下声明文件：
+
+```ts
+// file: shim-tsx.d.ts
+import Vue, { VNode } from 'vue';
+import { ComponentRenderProxy } from '@vue/composition-api';
+
+declare global {
+  namespace JSX {
+    interface Element extends VNode {}
+    interface ElementClass extends ComponentRenderProxy {}
+    interface ElementAttributesProperty {
+      $props: any; // specify the property name to use
+    }
+    interface IntrinsicElements {
+      [elem: string]: any;
+    }
+  }
+}
+```
 
 ## SSR
 
@@ -175,13 +196,12 @@ b.list[1].count === 1 // true
 
 </details>
 
-
 <details>
 <summary>
-⚠️ `set` 添加响应式属性变通方案
+⚠️ <code>set</code> 和 <code>del</code> 添加与刪除响应式属性变通方案
 </summary>
 
-> ⚠️ 警告: `set` 并非 `Vue 3.0` 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
+> ⚠️ 警告: `set` 和 `del` 并非 Vue 3 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
 
 ```ts
 import { reactive, set } from '@vue/composition-api'
@@ -192,6 +212,9 @@ const a = reactive({
 
 // 添加新的响应式属性
 set(a, 'bar', 1)
+
+// 刪除属性并触发响应式更新
+del(a, 'bar')
 ```
 
 </details>
@@ -382,7 +405,7 @@ watch(
 
 </details>
 
-### shallowReadonly
+### `shallowReadonly`
 
 <details>
 <summary>
@@ -393,11 +416,43 @@ watch(
 
 </details>
 
+### `readonly`
+
+<details>
+<summary>
+⚠️ <code>readonly()</code> **只提供类型层面**的只读。
+</summary>
+
+`readonly()` 只在类型层面提供和 Vue 3 的对齐。在其返回值或其属性上使用 <code>isReadonly()</code> 检查的结果将无法保证。
+
+</details>
+
+### `props`
+
+<details>
+<summary>
+⚠️ 当使用 <code>toRefs</code> 访问深层属性对象 （如 <code>toRefs(props.foo.bar)</code> 时将会得到不正确的警告。
+⚠️ <code>isReactive(props.foo.bar)</code> 将会返回 false。
+</summary>
+  
+```ts
+defineComponent({
+  setup(props) {
+    const { bar } = toRefs(props.foo) // it will `warn`
+
+    // use this instead
+    const { foo } = toRefs(props)
+    const a = foo.value.bar
+  }
+})
+```
+
+</details>
+
 ### 缺失的 API
 
 以下在 Vue 3 新引入的 API ，在本插件中暂不适用：
 
-- `readonly`
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
@@ -419,6 +474,31 @@ export default {
     }
   },
 }
+```
+
+</details>
+
+### `emit` 选项
+
+<details>
+<summary>
+❌ <code>emit</code> 仅因在类型定义中对齐 Vue3 的选项而提供，<b>不会</b>有任何效果。
+</summary>
+
+```ts
+defineComponent({
+  emit: {
+    // 无效
+    submit: (eventOption) => {
+      if (...) {
+        return true
+      } else {
+        console.warn('Invalid submit event payload!')
+        return false
+      }
+    }
+  }
+})
 ```
 
 </details>

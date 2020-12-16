@@ -83,7 +83,7 @@ function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
     ...{
       immediate: false,
       deep: false,
-      flush: 'post',
+      flush: 'pre',
     },
     ...options,
   }
@@ -94,7 +94,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
     ...{
       immediate: true,
       deep: false,
-      flush: 'post',
+      flush: 'pre',
     },
     ...options,
   }
@@ -182,7 +182,7 @@ function createVueWatcher(
 }
 
 // We have to monkeypatch the teardown function so Vue will run
-// runCleanup() when it tears down the watcher on unmmount.
+// runCleanup() when it tears down the watcher on unmounted.
 function patchWatcherTeardown(watcher: VueWatcher, runCleanup: () => void) {
   const _teardown = watcher.teardown
   watcher.teardown = function (...args) {

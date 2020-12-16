@@ -5,7 +5,7 @@ import {
   SetupFunction,
   Data,
 } from './component'
-import { isRef, isReactive, toRefs } from './reactivity'
+import { isRef, isReactive, toRefs, isRaw } from './reactivity'
 import {
   isPlainObject,
   assert,
@@ -14,6 +14,7 @@ import {
   isFunction,
   isObject,
   def,
+  isArray,
 } from './utils'
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
@@ -23,7 +24,8 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
-import { PropsReactive } from './utils/symbols'
+import { getVueConstructor } from './runtimeContext'
+import { createObserver, reactive } from './reactivity/reactive'
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
@@ -83,9 +85,10 @@ export function mixin(Vue: VueConstructor) {
     const ctx = createSetupContext(vm)
 
     // fake reactive for `toRefs(props)`
-    def(props, PropsReactive, true)
+    def(props, '__ob__', createObserver())
 
     // resolve scopedSlots and slots to functions
+    // @ts-expect-error
     resolveScopedSlots(vm, ctx.slots)
 
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null
@@ -100,6 +103,7 @@ export function mixin(Vue: VueConstructor) {
       const bindingFunc = binding
       // keep currentInstance accessible for createElement
       vm.$options.render = () => {
+        // @ts-expect-error
         resolveScopedSlots(vm, ctx.slots)
         return activateCurrentInstance(vm, () => bindingFunc())
       }
@@ -121,7 +125,13 @@ export function mixin(Vue: VueConstructor) {
               bindingValue = bindingValue.bind(vm)
             } else if (!isObject(bindingValue)) {
               bindingValue = ref(bindingValue)
+            } else if (hasReactiveArrayChild(bindingValue)) {
+              // creates a custom reactive properties without make the object explicitly reactive
+              // NOTE we should try to avoid this, better implementation needed
+              customReactive(bindingValue)
             }
+          } else if (isArray(bindingValue)) {
+            bindingValue = ref(bindingValue)
           }
         }
         asVmProperty(vm, name, bindingValue)
@@ -140,41 +150,101 @@ export function mixin(Vue: VueConstructor) {
     }
   }
 
+  function customReactive(target: object) {
+    if (
+      !isPlainObject(target) ||
+      isRef(target) ||
+      isReactive(target) ||
+      isRaw(target)
+    )
+      return
+    const Vue = getVueConstructor()
+    const defineReactive = Vue.util.defineReactive
+
+    Object.keys(target).forEach((k) => {
+      const val = target[k]
+      defineReactive(target, k, val)
+      if (val) {
+        customReactive(val)
+      }
+      return
+    })
+  }
+
+  function hasReactiveArrayChild(target: object, visited = new Map()): boolean {
+    if (visited.has(target)) {
+      return visited.get(target)
+    }
+    visited.set(target, false)
+    if (Array.isArray(target) && isReactive(target)) {
+      visited.set(target, true)
+      return true
+    }
+
+    if (!isPlainObject(target) || isRaw(target)) {
+      return false
+    }
+    return Object.keys(target).some((x) =>
+      hasReactiveArrayChild(target[x], visited)
+    )
+  }
+
   function createSetupContext(
     vm: ComponentInstance & { [x: string]: any }
   ): SetupContext {
-    const ctx = {
-      slots: {},
-    } as SetupContext
-    const props: Array<string | [string, string]> = [
+    const ctx = { slots: {} } as SetupContext
+
+    const propsPlain = [
       'root',
       'parent',
       'refs',
-      'attrs',
       'listeners',
       'isServer',
       'ssrContext',
     ]
+    const propsReactiveProxy = ['attrs']
     const methodReturnVoid = ['emit']
-    props.forEach((key) => {
-      let targetKey: string
-      let srcKey: string
-      if (Array.isArray(key)) {
-        ;[targetKey, srcKey] = key
-      } else {
-        targetKey = srcKey = key
-      }
-      srcKey = `$${srcKey}`
-      proxy(ctx, targetKey, {
+
+    propsPlain.forEach((key) => {
+      let srcKey = `$${key}`
+      proxy(ctx, key, {
         get: () => vm[srcKey],
         set() {
           warn(
-            `Cannot assign to '${targetKey}' because it is a read-only property`,
+            `Cannot assign to '${key}' because it is a read-only property`,
             vm
           )
         },
       })
     })
+
+    propsReactiveProxy.forEach((key) => {
+      let srcKey = `$${key}`
+      proxy(ctx, key, {
+        get: () => {
+          const data = reactive({})
+          const source = vm[srcKey]
+
+          for (const attr of Object.keys(source)) {
+            proxy(data, attr, {
+              get: () => {
+                // to ensure it always return the latest value
+                return vm[srcKey][attr]
+              },
+            })
+          }
+
+          return data
+        },
+        set() {
+          warn(
+            `Cannot assign to '${key}' because it is a read-only property`,
+            vm
+          )
+        },
+      })
+    })
+
     methodReturnVoid.forEach((key) => {
       const srcKey = `$${key}`
       proxy(ctx, key, {

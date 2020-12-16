@@ -6,9 +6,7 @@ Vue 2 plugin for **Composition API**
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 [![Minzipped size](https://badgen.net/bundlephobia/minzip/@vue/composition-api)](https://bundlephobia.com/result?p=@vue/composition-api)
 
-
-
-English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://composition-api.vuejs.org/)
+English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://v3.vuejs.org/guide/composition-api-introduction.html)
 
 ## Installation
 
@@ -43,7 +41,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.14"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-beta.21"></script>
 ```
 <!--cdn-links-end-->
 
@@ -69,7 +67,28 @@ export default defineComponent({
 
 ### JSX/TSX
 
-To make JSX/TSX work with `@vue/composition-api`, check out [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
+JSX is now officially supported on [vuejs/jsx](https://github.com/vuejs/jsx). You can enabled it by following [this document](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage). A community maintained version can be found at [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
+
+To support TSX, create a declaration file with the following content in your project.
+
+```ts
+// file: shim-tsx.d.ts
+import Vue, { VNode } from 'vue';
+import { ComponentRenderProxy } from '@vue/composition-api';
+
+declare global {
+  namespace JSX {
+    interface Element extends VNode {}
+    interface ElementClass extends ComponentRenderProxy {}
+    interface ElementAttributesProperty {
+      $props: any; // specify the property name to use
+    }
+    interface IntrinsicElements {
+      [elem: string]: any;
+    }
+  }
+}
+```
 
 ## SSR
 
@@ -92,6 +111,10 @@ export default {
   }
 }
 ```
+
+## Browser Compatibility
+
+`@vue/composition-api` supports all modern browsers and IE11+. For lower versions IE you should install `WeakMap` polyfill (for example from `core-js` package).
 
 ## Limitations
 
@@ -154,10 +177,41 @@ b.list[0].count.value === 0 // true
 
 <details>
 <summary>
-⚠️ `set` workaround for adding new reactive properties
+✅ <b>Should</b> always use <code>ref</code> in a <code>reactive</code> when working with <code>Array</code>
 </summary>
 
-> ⚠️ Warning: `set` does NOT exist in Vue 3. We provide it as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects). In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
+```js
+const a = reactive({
+  list: [
+    reactive({
+      count: ref(0),
+    }),
+  ]
+})
+// unwrapped
+a.list[0].count === 0 // true
+
+a.list.push(
+  reactive({
+    count: ref(1),
+  })
+)
+// unwrapped
+a.list[1].count === 1 // true
+```
+
+</details>
+
+<details>
+<summary>
+⚠️ <code>set</code> and <code>del</code> workaround for adding and deleting reactive properties
+</summary>
+
+> ⚠️ Warning: `set` and `del` do NOT exist in Vue 3. We provide them as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects).
+>
+> In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
+>
+> Similarly, in Vue 2 you will need to call `del` to [ensure a key deletion triggers view updates](https://vuejs.org/v2/api/#Vue-delete) in reactive objects (similar to `Vue.delete` but for `reactive objects` created by the Composition API). In Vue 3 you can just delete them by calling `delete foo.bar`.
 
 ```ts
 import { reactive, set } from '@vue/composition-api'
@@ -168,8 +222,10 @@ const a = reactive({
 
 // add new reactive key
 set(a, 'bar', 1)
-```
 
+// remove a key and trigger reactivity
+del(a, 'bar')
+```
 
 </details>
 
@@ -312,18 +368,6 @@ export default {
 }
 ```
 
-You may also need to augment the `SetupContext` when working with TypeScript:
-
-```ts
-import Vue from 'vue'
-
-declare module '@vue/composition-api' {
-  interface SetupContext {
-    readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
-  }
-}
-```
-
 </details>
 
 ### Reactive
@@ -389,19 +433,31 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
+### `readonly`
+
+<details>
+<summary>
+⚠️ <code>readonly()</code> provides **only type-level** readonly check. 
+</summary>
+
+`readonly()` is provided as API alignment with Vue 3 on type-level only. Use <code>isReadonly()</code> on it or it's properties can not be guaranteed.
+
+</details>
+
 ### `props`
+
 <details>
 <summary>
 ⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
 ⚠️ <code>isReactive(props.foo.bar)</code> will return false.
 </summary>
-  
+
 ```ts
 defineComponent({
   setup(props) {
     const { bar } = toRefs(props.foo) // it will `warn`
-    
-    // use this instead 
+
+    // use this instead
     const { foo } = toRefs(props)
     const a = foo.value.bar
   }
@@ -410,13 +466,10 @@ defineComponent({
 
 </details>
 
-
-
 ### Missing APIs
 
 The following APIs introduced in Vue 3 are not available in this plugin.
 
-- `readonly`
 - `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
@@ -442,8 +495,33 @@ export default {
 
 </details>
 
+### `emit` Options
+
+<details>
+<summary>
+❌ <code>emit</code> option is provided in type-level only, in order to align with Vue 3's type interface. Does NOT have actual effects on the code.
+</summary>
+
+```ts
+defineComponent({
+  emit: {
+    // has no effects
+    submit: (eventOption) => {
+      if (...) {
+        return true
+      } else {
+        console.warn('Invalid submit event payload!')
+        return false
+      }
+    }
+  }
+})
+```
+
+</details>
+
 ### Performance Impact
 
-Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduced some extract costs. It shouldn't bother you unless in extreme environments.
+Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduces some performance overhead. Note that in most scenarios, this shouldn't be the source of performance issues.
 
 You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.

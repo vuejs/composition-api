@@ -1,35 +1,42 @@
-import { defineComponent, nextTick, SetupContext } from '../src'
-
-const { h, createApp } = require('../src')
+import {
+  h,
+  defineComponent,
+  createApp,
+  ref,
+  nextTick,
+  SetupContext,
+} from '../src'
 
 describe('setupContext', () => {
   it('should have proper properties', () => {
     let context: SetupContext = undefined!
+
     const vm = createApp(
       defineComponent({
         setup(_, ctx) {
           context = ctx
         },
+        template: '<div/>',
       })
     ).mount()
 
     expect(context).toBeDefined()
     expect('parent' in context).toBe(true)
+    expect(context.slots).toBeDefined()
+    expect(context.attrs).toEqual(vm.$attrs)
+
+    // CAUTION: these will be removed in 3.0
     expect(context.root).toBe(vm.$root)
     expect(context.parent).toBe(vm.$parent)
-    expect(context.slots).toBeDefined()
-    expect(context.attrs).toBe(vm.$attrs)
     expect(context.listeners).toBe(vm.$listeners)
-
-    // CAUTION: this will be removed in 3.0
-    // @ts-expect-error
     expect(context.refs).toBe(vm.$refs)
     expect(typeof context.emit === 'function').toBe(true)
   })
 
   it('slots should work in render function', () => {
-    const Foo = defineComponent({
-      template: `
+    const vm = createApp(
+      defineComponent({
+        template: `
         <test>
           <template slot="default">
             <span>foo</span>
@@ -39,18 +46,17 @@ describe('setupContext', () => {
           </template>
         </test>
       `,
-      components: {
-        test: {
-          setup(_, { slots }) {
-            return () => {
-              return h('div', [slots.default(), slots.item()])
-            }
-          },
+        components: {
+          test: defineComponent({
+            setup(_, { slots }) {
+              return () => {
+                return h('div', [slots.default?.(), slots.item?.()])
+              }
+            },
+          }),
         },
-      },
-    })
-    const vm = createApp(Foo).mount()
-
+      })
+    ).mount()
     expect(vm.$el.innerHTML).toBe('<span>foo</span><span>meh</span>')
   })
 
@@ -62,16 +68,16 @@ describe('setupContext', () => {
     createApp(
       defineComponent({
         template: `
-        <test>
-          <template slot="default">
-            <span>foo</span>
-          </template>
-        </test>
-      `,
+          <test>
+            <template slot="default">
+              <span>foo</span>
+            </template>
+          </test>
+        `,
         components: {
           test: {
             setup(_, { slots }) {
-              slots.default()
+              slots.default?.()
             },
           },
         },
@@ -87,20 +93,22 @@ describe('setupContext', () => {
     const Child = {
       template: '<div><slot value="foo"/></div>',
     }
-    const vm = createApp({
-      components: { Child },
-      template: `
-        <child>
-          <template slot-scope="{ value }" v-if="value">
-            foo {{ value }}
-          </template>
-        </child>
-      `,
-    }).mount()
+    const vm = createApp(
+      defineComponent({
+        components: { Child },
+        template: `
+          <child>
+            <template slot-scope="{ value }" v-if="value">
+              foo {{ value }}
+            </template>
+          </child>
+        `,
+      })
+    ).mount()
     expect(vm.$el.textContent).toMatch(`foo foo`)
   })
 
-  it('slots should be synchronized', async (done) => {
+  it('slots should be synchronized', async () => {
     let slotKeys: string[] = []
 
     const Foo = defineComponent({
@@ -118,31 +126,73 @@ describe('setupContext', () => {
       },
     })
 
-    const vm = createApp({
-      data: {
-        a: 'one',
-        b: 'two',
-      },
-      template: `
-        <foo>
-          <template #[a]="one">a {{ one }} </template>
-          <template v-slot:[b]="two">b {{ two }} </template>
-        </foo>
-      `,
-      components: { Foo },
-    }).mount()
+    const vm = createApp(
+      defineComponent({
+        data() {
+          return {
+            a: 'one',
+            b: 'two',
+          }
+        },
+        template: `
+          <foo>
+            <template #[a]="one">a {{ one }} </template>
+            <template v-slot:[b]="two">b {{ two }} </template>
+          </foo>
+        `,
+        components: { Foo },
+      })
+    ).mount()
 
     expect(slotKeys).toEqual(['one', 'two'])
     expect(vm.$el.innerHTML.replace(/\s+/g, ' ')).toMatch(
       `a from foo one b from foo two`
     )
+
+    // @ts-expect-error
     vm.a = 'two'
+    // @ts-expect-error
     vm.b = 'three'
+
     await nextTick()
     // expect(slotKeys).toEqual(['one', 'three']);
     expect(vm.$el.innerHTML.replace(/\s+/g, ' ')).toMatch(
       `a from foo two b from foo three `
     )
-    done()
+  })
+
+  // #264
+  it('attrs should be reactive after destructuring', async () => {
+    let _attrs: SetupContext['attrs'] = undefined!
+    const foo = ref('bar')
+
+    const ComponentA = defineComponent({
+      setup(_, { attrs }) {
+        _attrs = attrs
+      },
+      template: `<div>{{$attrs}}</div>`,
+    })
+    const Root = defineComponent({
+      components: {
+        ComponentA,
+      },
+      setup() {
+        return { foo }
+      },
+      template: `
+        <ComponentA :foo="foo"/>
+      `,
+    })
+
+    createApp(Root).mount()
+
+    expect(_attrs).toBeDefined()
+    expect(_attrs.foo).toBe('bar')
+
+    foo.value = 'bar2'
+
+    await nextTick()
+
+    expect(_attrs.foo).toBe('bar2')
   })
 })

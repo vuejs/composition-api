@@ -19,7 +19,7 @@ declare module 'vue/types/vue' {
   interface VueConstructor {
     observable<T>(x: any): T
     util: {
-      warn(msg: string, vm?: Vue)
+      warn(msg: string, vm?: Vue | null)
       defineReactive(
         obj: Object,
         key: string,

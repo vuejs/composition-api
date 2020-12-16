@@ -10,6 +10,9 @@ const {
   markRaw,
   toRaw,
   nextTick,
+  isReactive,
+  defineComponent,
+  onMounted,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -56,7 +59,7 @@ describe('setup', () => {
     expect(vm.b).toBe('foobar')
   })
 
-  it('should be overrided by data option of plain object', () => {
+  it('should be overridden by data option of plain object', () => {
     const vm = new Vue({
       setup() {
         return {
@@ -301,8 +304,9 @@ describe('setup', () => {
     expect(vm.$refs.test.b).toBe(1)
   })
 
-  it('props should not be reactive', (done) => {
+  it('props should be reactive', (done) => {
     let calls = 0
+    let _props
     const vm = new Vue({
       template: `<child :msg="msg"></child>`,
       setup() {
@@ -316,6 +320,8 @@ describe('setup', () => {
           template: `<span>{{ localMsg }}</span>`,
           props: ['msg'],
           setup(props) {
+            _props = props
+
             return {
               localMsg: props.msg,
               computedMsg: computed(() => props.msg + ' world'),
@@ -324,6 +330,9 @@ describe('setup', () => {
         },
       },
     }).$mount()
+
+    expect(isReactive(_props)).toBe(true)
+
     const child = vm.$children[0]
     expect(child.localMsg).toBe('hello')
     expect(child.computedMsg).toBe('hello world')
@@ -885,5 +894,169 @@ describe('setup', () => {
     await sleep(10)
     await nextTick()
     expect(vm.$el.textContent).toBe('2')
+  })
+
+  // #524
+  it('should work with reactive arrays.', async () => {
+    const opts = {
+      template: `<div>{{items.length}}</div>`,
+      setup() {
+        const items = reactive([])
+
+        setTimeout(() => {
+          items.push(2)
+        }, 1)
+
+        return {
+          items,
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('0')
+    await sleep(10)
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  it('should work with reactive array nested', async () => {
+    const opts = {
+      template: `<div>{{a.items.length}}</div>`,
+      setup() {
+        const items = reactive([])
+
+        setTimeout(() => {
+          items.push(2)
+        }, 1)
+
+        return {
+          a: {
+            items,
+          },
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('0')
+    await sleep(10)
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  it('should not unwrap reactive array nested', async () => {
+    const opts = {
+      template: `<div>{{a.items}}</div>`,
+      setup() {
+        const items = reactive([])
+
+        setTimeout(() => {
+          items.push(ref(1))
+        }, 1)
+
+        return {
+          a: {
+            items,
+          },
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.$el.textContent).toBe('[]')
+    await sleep(10)
+    await nextTick()
+    expect(JSON.parse(vm.$el.textContent)).toStrictEqual([{ value: 1 }])
+  })
+
+  // TODO make this pass
+  // it('should work with computed', async ()=>{
+  //   const opts = {
+  //     template: `<div>{{len}}</div>`,
+  //     setup() {
+  //       const array = reactive([]);
+  //       const len = computed(()=> array.length);
+
+  //       setTimeout(() => {
+  //         array.push(2)
+  //       }, 1)
+
+  //       return {
+  //         len
+  //       }
+  //     },
+  //   }
+  //   const Constructor = Vue.extend(opts).extend({})
+
+  //   const vm = new Vue(Constructor).$mount()
+  //   expect(vm.$el.textContent).toBe('0')
+  //   await sleep(10)
+  //   await nextTick()
+  //   expect(vm.$el.textContent).toBe('1')
+  // })
+
+  // #448
+  it('should not cause infinite loop', async () => {
+    const A = defineComponent({
+      template: `<div></div>`,
+      props: {
+        pattern: {
+          type: RegExp,
+          required: true,
+        },
+      },
+
+      setup(props) {
+        return {
+          props,
+        }
+      },
+    })
+    const B = defineComponent({
+      template: `<div></div>`,
+      setup(props, { emit }) {
+        onMounted(() => {
+          emit('ev', true)
+        })
+
+        return {}
+      },
+    })
+
+    const vm = new Vue(
+      defineComponent({
+        components: {
+          A,
+          B,
+        },
+
+        template: `  <div>
+      <A :pattern="/./"/>
+  
+      <div
+        v-for="(k, v) in o.v"
+        :key="v"
+      >{{v}}</div>
+  
+      <B @ev="(v) => { o = v; }"/>
+    </div>`,
+        setup(props, { emit }) {
+          const o = ref([false])
+
+          return {
+            o,
+            emit,
+          }
+        },
+      })
+    ).$mount()
+
+    await vm.$nextTick()
+
+    expect(warn).not.toBeCalled()
   })
 })

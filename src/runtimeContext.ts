@@ -5,7 +5,16 @@ import { assert, hasOwn, warn, proxy, UnionToIntersection } from './utils'
 let vueDependency: VueConstructor | undefined = undefined
 
 try {
-  vueDependency = require('vue')
+  const requiredVue = require('vue')
+  if (requiredVue && isVue(requiredVue)) {
+    vueDependency = requiredVue
+  } else if (
+    requiredVue &&
+    'default' in requiredVue &&
+    isVue(requiredVue.default)
+  ) {
+    vueDependency = requiredVue.default
+  }
 } catch {
   // not available
 }
@@ -14,6 +23,10 @@ let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
 
 const PluginInstalledFlag = '__composition_api_installed__'
+
+function isVue(obj: any): obj is VueConstructor {
+  return obj && typeof obj === 'function' && obj.name === 'Vue'
+}
 
 export function isPluginInstalled() {
   return !!vueConstructor
@@ -39,14 +52,15 @@ export function getRegisteredVueOrDefault(): VueConstructor {
   let constructor = vueConstructor || vueDependency
 
   if (__DEV__) {
-    assert(vueConstructor, `No vue dependency found.`)
+    assert(constructor, `No vue dependency found.`)
   }
 
   return constructor!
 }
 
 export function setVueConstructor(Vue: VueConstructor) {
-  if (__DEV__ && vueConstructor) {
+  // @ts-ignore
+  if (__DEV__ && vueConstructor && Vue.__proto__ !== vueConstructor.__proto__) {
     warn('Another instance of vue installed')
   }
   vueConstructor = Vue

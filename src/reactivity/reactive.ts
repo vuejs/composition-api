@@ -1,17 +1,13 @@
 import { AnyObject } from '../types/basic'
 import { getRegisteredVueOrDefault } from '../runtimeContext'
-import { isPlainObject, def, warn } from '../utils'
+import { isPlainObject, def, warn, isArray, hasOwn, noopFn } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
-import { rawSet, accessModifiedSet, readonlySet } from '../utils/sets'
+import { rawSet, accessModifiedSet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
   return Boolean(obj?.__ob__ && obj.__ob__?.__raw__)
-}
-
-export function isReadonly(obj: any): boolean {
-  return readonlySet.has(obj)
 }
 
 export function isReactive(obj: any): boolean {
@@ -111,7 +107,28 @@ function observe<T>(obj: T): T {
     observed = vm._data.$$state
   }
 
+  // in SSR, there is no __ob__. Mock for reactivity check
+  if (!hasOwn(observed, '__ob__')) {
+    def(observed, '__ob__', mockObserver(observed))
+  }
+
   return observed
+}
+
+export function createObserver() {
+  return observe<any>({}).__ob__
+}
+
+function mockObserver(value: any = {}): any {
+  return {
+    value,
+    dep: {
+      notify: noopFn,
+      depend: noopFn,
+      addSub: noopFn,
+      removeSub: noopFn,
+    },
+  }
 }
 
 export function shallowReactive<T extends object = any>(obj: T): T
@@ -121,7 +138,11 @@ export function shallowReactive(obj: any): any {
     return
   }
 
-  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || isArray(obj)) ||
+    isRaw(obj) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj as any
   }
 
@@ -154,7 +175,7 @@ export function shallowReactive(obj: any): any {
       configurable: true,
       get: function getterHandler() {
         const value = getter ? getter.call(obj) : val
-        ob.dep.depend()
+        ob.dep?.depend()
         return value
       },
       set: function setterHandler(newVal) {
@@ -164,7 +185,7 @@ export function shallowReactive(obj: any): any {
         } else {
           val = newVal
         }
-        ob.dep.notify()
+        ob.dep?.notify()
       },
     })
   }
@@ -181,7 +202,11 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
     return
   }
 
-  if (!isPlainObject(obj) || isRaw(obj) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || isArray(obj)) ||
+    isRaw(obj) ||
+    !Object.isExtensible(obj)
+  ) {
     return obj as any
   }
 
@@ -190,67 +215,16 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   return observed as UnwrapRef<T>
 }
 
-export function shallowReadonly<T extends object>(obj: T): Readonly<T>
-export function shallowReadonly(obj: any): any {
-  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
-    return obj
-  }
-
-  const readonlyObj = {}
-
-  const source = reactive({})
-  const ob = (source as any).__ob__
-
-  for (const key of Object.keys(obj)) {
-    let val = obj[key]
-    let getter: (() => any) | undefined
-    let setter: ((x: any) => void) | undefined
-    const property = Object.getOwnPropertyDescriptor(obj, key)
-    if (property) {
-      if (property.configurable === false) {
-        continue
-      }
-      getter = property.get
-      setter = property.set
-      if (
-        (!getter || setter) /* not only have getter */ &&
-        arguments.length === 2
-      ) {
-        val = obj[key]
-      }
-    }
-
-    Object.defineProperty(readonlyObj, key, {
-      enumerable: true,
-      configurable: true,
-      get: function getterHandler() {
-        const value = getter ? getter.call(obj) : val
-        ob.dep.depend()
-        return value
-      },
-      set(v) {
-        if (__DEV__) {
-          warn(`Set operation on key "${key}" failed: target is readonly.`)
-        }
-      },
-    })
-  }
-
-  readonlySet.set(readonlyObj, true)
-
-  return readonlyObj
-}
-
 /**
  * Make sure obj can't be a reactive
  */
 export function markRaw<T extends object>(obj: T): T {
-  if (!isPlainObject(obj) || !Object.isExtensible(obj)) {
+  if (!(isPlainObject(obj) || isArray(obj)) || !Object.isExtensible(obj)) {
     return obj
   }
 
   // set the vue observable flag at obj
-  const ob = (observe({}) as any).__ob__
+  const ob = createObserver()
   ob.__raw__ = true
   def(obj, '__ob__', ob)
 

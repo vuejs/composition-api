@@ -1,5 +1,5 @@
 import { Data } from '../component'
-import { RefKey, PropsReactive } from '../utils/symbols'
+import { RefKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
 import { readonlySet } from '../utils/sets'
@@ -114,16 +114,13 @@ export function ref(raw?: unknown) {
 export function isRef<T>(value: any): value is Ref<T> {
   return value instanceof RefImpl
 }
-function isPropObject(obj: unknown) {
-  return obj && typeof obj === 'object' && PropsReactive in obj
-}
 
 export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
   return isRef(ref) ? (ref.value as any) : ref
 }
 
 export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
-  if (__DEV__ && !isReactive(obj) && !isPropObject(obj)) {
+  if (__DEV__ && !isReactive(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
   if (!isPlainObject(obj)) return obj as any
