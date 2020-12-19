@@ -1,3 +1,36 @@
+<a name="1.0.0-beta.22"></a>
+# [1.0.0-beta.22](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2020-12-19)
+
+
+### Features
+
+* **getCurrentInstance:** Aligning with vue3 ([#520](https://github.com/vuejs/composition-api/issues/520)) ([1495a46](https://github.com/vuejs/composition-api/commit/1495a46))
+
+
+### BREAKING CHANGES
+
+* **getCurrentInstance:** The internal vm can be accessed with `getCurrentInstance().proxy`
+
+```js
+const vm = getCurrentInstance()
+
+// becomes
+
+const vm = getCurrentInstance().proxy
+```
+
+* chore: improve
+
+* changes
+
+* update tests
+
+* chore: add tests
+
+Co-authored-by: Anthony Fu <anthonyfu117@hotmail.com>
+
+
+
 <a name="1.0.0-beta.21"></a>
 # [1.0.0-beta.21](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2020-12-07)
 
