@@ -12,7 +12,7 @@ const {
   nextTick,
   isReactive,
   defineComponent,
-  onMounted
+  onMounted,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -998,8 +998,7 @@ describe('setup', () => {
   //   await nextTick()
   //   expect(vm.$el.textContent).toBe('1')
   // })
-  
-  
+
   // #448
   it('should not cause infinite loop', async () => {
     const A = defineComponent({

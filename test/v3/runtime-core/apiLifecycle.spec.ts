@@ -1,5 +1,3 @@
-import { VueConstructor } from 'vue'
-const Vue = require('vue/dist/vue.common.js') as VueConstructor
 import {
   onBeforeMount,
   onMounted,
@@ -10,6 +8,7 @@ import {
   onBeforeUnmount,
   onUnmounted,
   nextTick,
+  createApp,
 } from '../../../src'
 
 // reference: https://vue-composition-api-rfc.netlify.com/api.html#lifecycle-hooks
@@ -28,7 +27,7 @@ describe('api: lifecycle hooks', () => {
         return () => h('div')
       },
     }
-    new Vue(Comp).$mount(root)
+    createApp(Comp).mount(root)
     //render(h(Comp), root);
     expect(fn).toHaveBeenCalledTimes(1)
   })
@@ -46,7 +45,7 @@ describe('api: lifecycle hooks', () => {
         return () => h('div')
       },
     }
-    new Vue(Comp).$mount(root)
+    createApp(Comp).mount(root)
     //render(h(Comp), root);
     expect(fn).toHaveBeenCalledTimes(1)
   })
@@ -65,7 +64,7 @@ describe('api: lifecycle hooks', () => {
         return () => h('div', (count.value as unknown) as string)
       },
     }
-    const vm = new Vue(Comp).$mount()
+    const vm = createApp(Comp).mount()
     //render(h(Comp), root);
 
     count.value = 1
@@ -87,7 +86,7 @@ describe('api: lifecycle hooks', () => {
         return () => h('div', (count.value as unknown) as string)
       },
     }
-    const vm = new Vue(Comp).$mount()
+    const vm = createApp(Comp).mount()
     //render(h(Comp), root);
 
     count.value++
@@ -116,7 +115,7 @@ describe('api: lifecycle hooks', () => {
   //     },
   //   };
 
-  //   new Vue(Comp).$mount(root);
+  //   createApp(Comp).mount(root);
   //   //render(h(Comp), root);
 
   //   toggle.value = false;
@@ -145,7 +144,7 @@ describe('api: lifecycle hooks', () => {
   //     },
   //   };
 
-  //   new Vue(Comp).$mount(root);
+  //   createApp(Comp).mount(root);
   //   //render(h(Comp), root);
 
   //   toggle.value = false;
@@ -176,7 +175,7 @@ describe('api: lifecycle hooks', () => {
       },
     }
 
-    new Vue(Comp).$mount(root)
+    createApp(Comp).mount(root)
     //render(h(Comp), root);
 
     toggle.value = false
@@ -231,8 +230,8 @@ describe('api: lifecycle hooks', () => {
 
     // mount
     // render(h(Root), root);
-    const vm = new Vue(Root)
-    vm.$mount()
+    const vm = createApp(Root)
+    vm.mount()
     expect(calls).toEqual([
       'root onBeforeMount',
       'mid onBeforeMount',
@@ -262,7 +261,7 @@ describe('api: lifecycle hooks', () => {
 
     // unmount
     // render(null, root);
-    vm.$destroy()
+    vm.unmount()
     expect(calls).toEqual([
       'root onBeforeUnmount',
       'mid onBeforeUnmount',

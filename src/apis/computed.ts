@@ -26,7 +26,7 @@ export function computed<T>(options: Option<T>): WritableComputedRef<T>
 export function computed<T>(
   options: Option<T>['get'] | Option<T>
 ): ComputedRef<T> | WritableComputedRef<T> {
-  const vm = getCurrentInstance()
+  const vm = getCurrentInstance()?.proxy
   let get: Option<T>['get'], set: Option<T>['set'] | undefined
   if (typeof options === 'function') {
     get = options
