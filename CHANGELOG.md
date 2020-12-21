@@ -19,17 +19,6 @@ const vm = getCurrentInstance()
 const vm = getCurrentInstance().proxy
 ```
 
-* chore: improve
-
-* changes
-
-* update tests
-
-* chore: add tests
-
-Co-authored-by: Anthony Fu <anthonyfu117@hotmail.com>
-
-
 
 <a name="1.0.0-beta.21"></a>
 # [1.0.0-beta.21](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2020-12-07)
