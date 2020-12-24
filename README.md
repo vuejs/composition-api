@@ -495,16 +495,16 @@ export default {
 
 </details>
 
-### `emit` Options
+### `emits` Options
 
 <details>
 <summary>
-❌ <code>emit</code> option is provided in type-level only, in order to align with Vue 3's type interface. Does NOT have actual effects on the code.
+❌ <code>emits</code> option is provided in type-level only, in order to align with Vue 3's type interface. Does NOT have actual effects on the code.
 </summary>
 
 ```ts
 defineComponent({
-  emit: {
+  emits: {
     // has no effects
     submit: (eventOption) => {
       if (...) {
