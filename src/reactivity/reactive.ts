@@ -162,12 +162,6 @@ export function shallowReactive(obj: any): any {
       }
       getter = property.get
       setter = property.set
-      if (
-        (!getter || setter) /* not only have getter */ &&
-        arguments.length === 2
-      ) {
-        val = obj[key]
-      }
     }
 
     Object.defineProperty(observed, key, {
