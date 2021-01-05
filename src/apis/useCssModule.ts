@@ -12,7 +12,7 @@ export const useCSSModule = (name = '$style'): Record<string, string> => {
     return EMPTY_OBJ
   }
 
-  const mod = (instance as any)[name]
+  const mod = (instance.proxy as any)?.[name]
   if (!mod) {
     __DEV__ &&
       warn(`Current instance does not have CSS module named "${name}".`)
