@@ -59,20 +59,12 @@ export function shallowReadonly(obj: any): any {
   for (const key of Object.keys(obj)) {
     let val = obj[key]
     let getter: (() => any) | undefined
-    let setter: ((x: any) => void) | undefined
     const property = Object.getOwnPropertyDescriptor(obj, key)
     if (property) {
       if (property.configurable === false) {
         continue
       }
       getter = property.get
-      setter = property.set
-      if (
-        (!getter || setter) /* not only have getter */ &&
-        arguments.length === 2
-      ) {
-        val = obj[key]
-      }
     }
 
     Object.defineProperty(readonlyObj, key, {
