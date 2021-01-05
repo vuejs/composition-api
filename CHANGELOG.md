@@ -1,3 +1,14 @@
+<a name="1.0.0-beta.23"></a>
+# [1.0.0-beta.23](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2021-01-05)
+
+
+### Bug Fixes
+
+* useCSSModule to adapt the change of getCurrentInstance, close [#620](https://github.com/vuejs/composition-api/issues/620) ([#622](https://github.com/vuejs/composition-api/issues/622)) ([2ddead0](https://github.com/vuejs/composition-api/commit/2ddead0))
+* **README:** The correct option name is `emits` ([#617](https://github.com/vuejs/composition-api/issues/617)) ([4b2f1ab](https://github.com/vuejs/composition-api/commit/4b2f1ab))
+
+
+
 <a name="1.0.0-beta.22"></a>
 # [1.0.0-beta.22](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.21...v1.0.0-beta.22) (2020-12-19)
 
