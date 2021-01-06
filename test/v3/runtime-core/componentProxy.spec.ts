@@ -45,7 +45,12 @@ describe('component: proxy', () => {
       components: {
         Comp,
       },
-      template: '<Comp/>',
+      data() {
+        return {
+          update: 0,
+        }
+      },
+      template: '<Comp @update="update++"/>',
     }
     const app = createApp(Parent).mount(document.createElement('div'))
 
@@ -60,9 +65,16 @@ describe('component: proxy', () => {
       instance!.parent && instance!.parent.proxy
     )
     expect(instanceProxy.$root).toBe(instance!.root.proxy)
-    expect(instanceProxy.$emit).toBe(instance!.emit)
     expect(instance.isMounted).toBe(true)
     expect(instance.isUnmounted).toBe(false)
+
+    // @ts-expect-error no typings
+    expect(app.update).toBe(0)
+
+    instance!.emit('update')
+
+    // @ts-expect-error no typings
+    expect(app.update).toBe(1)
 
     // expect(instanceProxy.$el).toBe(instance!.vnode.el)
     // expect(instanceProxy.$options).toBe(instance!.type)
