@@ -145,7 +145,7 @@ export declare interface ComponentInternalInstance {
   isDeactivated: boolean
 }
 
-export function getCurrentVu2Instance() {
+export function getCurrentVue2Instance() {
   return currentInstance
 }
 
@@ -173,6 +173,9 @@ function toVue3ComponentInstance(
     update: vue2Instance.$forceUpdate,
     uid: vue2Instance._uid,
 
+    // $emit is defined on prototype and it expected to be bound
+    emit: vue2Instance.$emit.bind(vue2Instance),
+
     parent: null,
     root: null as any,
   } as unknown) as ComponentInternalInstance
@@ -183,7 +186,6 @@ function toVue3ComponentInstance(
     'props',
     'attrs',
     'refs',
-    'emit',
     'vnode',
     'slots',
   ] as const

@@ -1,6 +1,6 @@
 import { ComponentInstance } from '../component'
 import vmStateManager from './vmStateManager'
-import { setCurrentInstance, getCurrentVu2Instance } from '../runtimeContext'
+import { setCurrentInstance, getCurrentVue2Instance } from '../runtimeContext'
 import { Ref, isRef } from '../apis'
 import { hasOwn, proxy, warn } from './utils'
 import { createSlotProxy, resolveSlots } from './helper'
@@ -112,7 +112,7 @@ export function activateCurrentInstance(
   fn: (vm_: ComponentInstance) => any,
   onError?: (err: Error) => void
 ) {
-  let preVm = getCurrentVu2Instance()
+  let preVm = getCurrentVue2Instance()
   setCurrentInstance(vm)
   try {
     return fn(vm)
