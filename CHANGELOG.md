@@ -1,3 +1,13 @@
+<a name="1.0.0-beta.24"></a>
+# [1.0.0-beta.24](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.23...v1.0.0-beta.24) (2021-01-06)
+
+
+### Bug Fixes
+
+* **getCurrentInstance:** emit event ([#624](https://github.com/vuejs/composition-api/issues/624)) ([cf5fa2b](https://github.com/vuejs/composition-api/commit/cf5fa2b))
+
+
+
 <a name="1.0.0-beta.23"></a>
 # [1.0.0-beta.23](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.22...v1.0.0-beta.23) (2021-01-05)
 
