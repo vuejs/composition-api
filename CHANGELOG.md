@@ -1,3 +1,8 @@
+<a name="1.0.0-beta.25"></a>
+# [1.0.0-beta.25](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.24...v1.0.0-beta.25) (2021-01-08)
+
+
+
 <a name="1.0.0-beta.24"></a>
 # [1.0.0-beta.24](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.23...v1.0.0-beta.24) (2021-01-06)
 
