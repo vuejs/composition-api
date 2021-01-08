@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { useCSSModule } = require('../../src')
+const { useCssModule } = require('../../src')
 
 const style = { whateverStyle: 'whateverStyle' }
 
@@ -20,7 +20,7 @@ describe('api/useCssModule', () => {
       },
       template: '<div>{{style}}</div>',
       setup() {
-        const style = useCSSModule()
+        const style = useCssModule()
         return { style }
       },
     })

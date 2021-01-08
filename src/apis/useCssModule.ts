@@ -5,10 +5,10 @@ const EMPTY_OBJ: { readonly [key: string]: string } = __DEV__
   ? Object.freeze({})
   : {}
 
-export const useCSSModule = (name = '$style'): Record<string, string> => {
+export const useCssModule = (name = '$style'): Record<string, string> => {
   const instance = getCurrentInstance()
   if (!instance) {
-    __DEV__ && warn(`useCSSModule must be called inside setup()`)
+    __DEV__ && warn(`useCssModule must be called inside setup()`)
     return EMPTY_OBJ
   }
 
@@ -21,3 +21,8 @@ export const useCSSModule = (name = '$style'): Record<string, string> => {
 
   return mod as Record<string, string>
 }
+
+/**
+ * @deprecated use `useCssModule` instead.
+ */
+export const useCSSModule = useCssModule
