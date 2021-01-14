@@ -1,3 +1,15 @@
+<a name="1.0.0-beta.26"></a>
+# [1.0.0-beta.26](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.25...v1.0.0-beta.26) (2021-01-14)
+
+
+### Bug Fixes
+
+* **types:** expose ExtractPropTypes type, close [#628](https://github.com/vuejs/composition-api/issues/628) ([903a0aa](https://github.com/vuejs/composition-api/commit/903a0aa))
+* change duplicate installation from error to warn, close [#631](https://github.com/vuejs/composition-api/issues/631) ([#632](https://github.com/vuejs/composition-api/issues/632)) ([5301d49](https://github.com/vuejs/composition-api/commit/5301d49))
+* Date infer string in props ([#627](https://github.com/vuejs/composition-api/issues/627)) ([b2acb2d](https://github.com/vuejs/composition-api/commit/b2acb2d))
+
+
+
 <a name="1.0.0-beta.25"></a>
 # [1.0.0-beta.25](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.24...v1.0.0-beta.25) (2021-01-08)
 
