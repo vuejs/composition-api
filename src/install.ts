@@ -1,6 +1,6 @@
 import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
-import { hasSymbol, hasOwn, isPlainObject, assert, warn } from './utils'
+import { hasSymbol, hasOwn, isPlainObject, warn } from './utils'
 import { isRef } from './reactivity'
 import { setVueConstructor, isVueRegistered } from './runtimeContext'
 import { mixin } from './mixin'
@@ -42,9 +42,8 @@ function mergeData(from: AnyObject, to: AnyObject): Object {
 export function install(Vue: VueConstructor) {
   if (isVueRegistered(Vue)) {
     if (__DEV__) {
-      assert(
-        false,
-        'already installed. Vue.use(VueCompositionAPI) should be called only once.'
+      warn(
+        '[vue-composition-api] already installed. Vue.use(VueCompositionAPI) should be called only once.'
       )
     }
     return
@@ -53,10 +52,12 @@ export function install(Vue: VueConstructor) {
   if (__DEV__) {
     if (Vue.version) {
       if (Vue.version[0] !== '2' || Vue.version[1] !== '.') {
-        assert(false, `only works with Vue 2, v${Vue.version} found.`)
+        warn(
+          `[vue-composition-api] only works with Vue 2, v${Vue.version} found.`
+        )
       }
     } else {
-      warn('Vue version not found')
+      warn('[vue-composition-api] no Vue version found')
     }
   }
 
