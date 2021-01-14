@@ -61,7 +61,7 @@ export function getRegisteredVueOrDefault(): VueConstructor {
 export function setVueConstructor(Vue: VueConstructor) {
   // @ts-ignore
   if (__DEV__ && vueConstructor && Vue.__proto__ !== vueConstructor.__proto__) {
-    warn('Another instance of vue installed')
+    warn('[vue-composition-api] another instance of Vue installed')
   }
   vueConstructor = Vue
   Object.defineProperty(Vue, PluginInstalledFlag, {
