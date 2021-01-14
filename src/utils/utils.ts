@@ -45,7 +45,9 @@ export function hasOwn(obj: Object, key: string): boolean {
 }
 
 export function assert(condition: any, msg: string) {
-  if (!condition) throw new Error(`[vue-composition-api] ${msg}`)
+  if (!condition) {
+    throw new Error(`[vue-composition-api] ${msg}`)
+  }
 }
 
 export function isPrimitive(value: any): boolean {
