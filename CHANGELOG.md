@@ -507,7 +507,7 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 # 0.3.0
 
 - Improve TypeScript type definitions.
-- Fix `context.slots` not being avaliable before render [#84](https://github.com/vuejs/composition-api/issues/84).
+- Fix `context.slots` not being available before render [#84](https://github.com/vuejs/composition-api/issues/84).
 
 ## Changed
 
