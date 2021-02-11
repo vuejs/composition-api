@@ -1,6 +1,5 @@
 import { AsyncComponent } from 'vue'
-import { defineComponent } from '../src/component'
-import { defineAsyncComponent, expectType } from './index'
+import { defineAsyncComponent, defineComponent, expectType } from './index'
 
 function asyncComponent1() {
   return Promise.resolve().then(() => {
@@ -24,8 +23,8 @@ const syncComponent2 = {
   template: '',
 }
 
-defineComponent(asyncComponent1)
-defineComponent(asyncComponent2)
+defineAsyncComponent(asyncComponent1)
+defineAsyncComponent(asyncComponent2)
 
 defineAsyncComponent({
   loader: asyncComponent1,
