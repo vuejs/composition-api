@@ -1,18 +1,32 @@
 import { isFunction, isObject, warn } from '../utils'
 import { VueProxy } from './componentProxy'
+import { AsyncComponent } from 'vue'
 
-type Component = VueProxy<any, any>
+import {
+  ComponentOptionsWithoutProps,
+  ComponentOptionsWithArrayProps,
+  ComponentOptionsWithProps,
+} from './componentOptions'
 
-export type AsyncComponentResolveResult<T = Component> = T | { default: T } // es modules
+type ComponentOptions =
+  | ComponentOptionsWithoutProps
+  | ComponentOptionsWithArrayProps
+  | ComponentOptionsWithProps
 
-export type AsyncComponentLoader<T = any> = () => Promise<
-  AsyncComponentResolveResult<T>
->
+type Component = VueProxy<any, any, any, any, any>
 
-export interface AsyncComponentOptions<T = any> {
-  loader: AsyncComponentLoader<T>
-  loadingComponent?: Component
-  errorComponent?: Component
+type ComponentOrComponentOptions = ComponentOptions | Component
+
+export type AsyncComponentResolveResult<T = ComponentOrComponentOptions> =
+  | T
+  | { default: T } // es modules
+
+export type AsyncComponentLoader = () => Promise<AsyncComponentResolveResult>
+
+export interface AsyncComponentOptions {
+  loader: AsyncComponentLoader
+  loadingComponent?: ComponentOrComponentOptions
+  errorComponent?: ComponentOrComponentOptions
   delay?: number
   timeout?: number
   suspensible?: boolean
@@ -24,9 +38,9 @@ export interface AsyncComponentOptions<T = any> {
   ) => any
 }
 
-export function defineAsyncComponent<T extends Component>(
-  source: AsyncComponentLoader<T> | AsyncComponentOptions<T>
-) {
+export function defineAsyncComponent(
+  source: AsyncComponentLoader | AsyncComponentOptions
+): AsyncComponent {
   if (isFunction(source)) {
     source = { loader: source }
   }
@@ -56,8 +70,8 @@ export function defineAsyncComponent<T extends Component>(
     return load()
   }
 
-  const load = (): Promise<Component> => {
-    let thisRequest: Promise<Component>
+  const load = (): Promise<ComponentOrComponentOptions> => {
+    let thisRequest: Promise<ComponentOrComponentOptions>
     return (
       pendingRequest ||
       (thisRequest = pendingRequest = loader()
@@ -102,7 +116,7 @@ export function defineAsyncComponent<T extends Component>(
     const component = load()
 
     return {
-      component,
+      component: component as any, // there is a type missmatch between vue2 type and the docs
       delay,
       timeout,
       error: errorComponent,
