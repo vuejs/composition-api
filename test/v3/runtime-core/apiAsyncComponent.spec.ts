@@ -1,132 +1,153 @@
-import { defineAsyncComponent, h, ref, nextTick, createApp } from '../../../src'
-import { Component } from 'vue'
+import {
+  h,
+  createApp,
+  defineAsyncComponent,
+  nextTick,
+  ref,
+  defineComponent,
+} from '../../../src'
+// import { Component } from 'vue'
 
 // type Component =
 //   | ReturnType<typeof defineComponent>
 //   | Parameters<typeof defineComponent>
 //   | (() => string)
 
-const resolveComponent: Component = {
-  render(h) {
-    return h('resolved')
+const resolveComponent = {
+  render() {
+    return h('p', 'resolved')
   },
 }
 
-const nodeOps = document
-const serializeInner = (el: any) => el.innerHTML
+const loadingComponent = {
+  render() {
+    return h('p', 'loading')
+  },
+}
+
+const errorComponent = defineComponent({
+  props: {
+    error: {
+      type: Error,
+    },
+  },
+  render() {
+    return h('p', (this.error as Error).message)
+  },
+})
 
 const timeout = (n: number = 0) => new Promise((r) => setTimeout(r, n))
 
 describe('api: defineAsyncComponent', () => {
   test('simple usage', async () => {
-    let resolve: (comp: Component) => void
-    const Foo = defineAsyncComponent(
-      () =>
-        new Promise((r) => {
-          resolve = r as any
-        })
+    const Foo = defineAsyncComponent(() =>
+      Promise.resolve().then(() => resolveComponent)
     )
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
-    createApp({
+
+    const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
-    }).mount(root)
+    })
 
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
 
-    resolve!(resolveComponent)
+    expect(vm.$el.textContent).toBe('')
+
     // first time resolve, wait for macro task since there are multiple
     // microtasks / .then() calls
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // already resolved component should update on nextTick
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('with loading component', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (cmp: any) => void
     const Foo = defineAsyncComponent({
       loader: () =>
-        new Promise((r) => {
-          resolve = r as any
+        new Promise((res) => {
+          resolve = res
         }),
-      loadingComponent: () => 'loading',
+      loadingComponent: loadingComponent,
       delay: 1, // defaults to 200
     })
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
-    createApp({
+
+    const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
-    }).mount(root)
+    })
+
+    const vm = app.mount()
 
     // due to the delay, initial mount should be empty
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // loading show up after delay
-    await timeout(1)
-    expect(serializeInner(root)).toBe('loading')
+    await timeout(2)
+    expect(vm.$el.textContent).toBe('loading')
 
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // already resolved component should update on nextTick without loading
     // state
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('with loading component + explicit delay (0)', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     const Foo = defineAsyncComponent({
       loader: () =>
         new Promise((r) => {
           resolve = r as any
         }),
-      loadingComponent: () => 'loading',
+      loadingComponent: loadingComponent,
       delay: 0,
     })
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
-    createApp({
+
+    const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
-    }).mount(root)
+    })
+    const vm = app.mount()
 
     // with delay: 0, should show loading immediately
-    expect(serializeInner(root)).toBe('loading')
+    expect(vm.$el.textContent).toBe('loading')
 
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // already resolved component should update on nextTick without loading
     // state
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('error without error component', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     let reject: (e: Error) => void
     const Foo = defineAsyncComponent(
       () =>
@@ -137,40 +158,39 @@ describe('api: defineAsyncComponent', () => {
     )
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
 
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
 
     const err = new Error('foo')
     reject!(err)
     await timeout()
     expect(handler).toHaveBeenCalled()
     expect(handler.mock.calls[0][0]).toBe(err)
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // errored out on previous load, toggle and mock success this time
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // should render this time
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('error with error component', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     let reject: (e: Error) => void
     const Foo = defineAsyncComponent({
       loader: () =>
@@ -178,44 +198,44 @@ describe('api: defineAsyncComponent', () => {
           resolve = _resolve as any
           reject = _reject
         }),
-      errorComponent: (props: { error: Error }) => props.error.message,
+      errorComponent,
     })
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
+
     const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
 
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
 
     const err = new Error('errored out')
     reject!(err)
     await timeout()
     expect(handler).toHaveBeenCalled()
-    expect(serializeInner(root)).toBe('errored out')
+    expect(vm.$el.textContent).toBe('errored out')
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // errored out on previous load, toggle and mock success this time
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // should render this time
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   // #2129
   test('error with error component, without global handler', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     let reject: (e: Error) => void
     const Foo = defineAsyncComponent({
       loader: () =>
@@ -223,22 +243,21 @@ describe('api: defineAsyncComponent', () => {
           resolve = _resolve as any
           reject = _reject
         }),
-      errorComponent: (props: { error: Error }) => props.error.message,
+      errorComponent,
     })
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
     })
 
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
 
     const err = new Error('errored out')
     reject!(err)
     await timeout()
-    expect(serializeInner(root)).toBe('errored out')
+    expect(vm.$el.textContent).toBe('errored out')
     // TODO: Warning check?
     // expect(
     //   'Unhandled error during execution of async component loader'
@@ -246,21 +265,21 @@ describe('api: defineAsyncComponent', () => {
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // errored out on previous load, toggle and mock success this time
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // should render this time
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('error with error + loading components', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     let reject: (e: Error) => void
     const Foo = defineAsyncComponent({
       loader: () =>
@@ -274,49 +293,48 @@ describe('api: defineAsyncComponent', () => {
     })
 
     const toggle = ref(true)
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => (toggle.value ? h(Foo) : null),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
 
-    app.mount(root)
+    const vm = app.mount()
 
     // due to the delay, initial mount should be empty
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // loading show up after delay
     await timeout(1)
-    expect(serializeInner(root)).toBe('loading')
+    expect(vm.$el.textContent).toBe('loading')
 
     const err = new Error('errored out')
     reject!(err)
     await timeout()
     expect(handler).toHaveBeenCalled()
-    expect(serializeInner(root)).toBe('errored out')
+    expect(vm.$el.textContent).toBe('errored out')
 
     toggle.value = false
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // errored out on previous load, toggle and mock success this time
     toggle.value = true
     await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // loading show up after delay
     await timeout(1)
-    expect(serializeInner(root)).toBe('loading')
+    expect(vm.$el.textContent).toBe('loading')
 
     // should render this time
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('timeout without error component', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     const Foo = defineAsyncComponent({
       loader: () =>
         new Promise((_resolve) => {
@@ -325,31 +343,30 @@ describe('api: defineAsyncComponent', () => {
       timeout: 1,
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
 
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
 
     await timeout(1)
     expect(handler).toHaveBeenCalled()
     expect(handler.mock.calls[0][0].message).toMatch(
       `Async component timed out after 1ms.`
     )
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // if it resolved after timeout, should still work
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('timeout with error component', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     const Foo = defineAsyncComponent({
       loader: () =>
         new Promise((_resolve) => {
@@ -359,28 +376,27 @@ describe('api: defineAsyncComponent', () => {
       errorComponent: () => 'timed out',
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
 
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
 
     await timeout(1)
     expect(handler).toHaveBeenCalled()
-    expect(serializeInner(root)).toBe('timed out')
+    expect(vm.$el.textContent).toBe('timed out')
 
     // if it resolved after timeout, should still work
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('timeout with error + loading components', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     const Foo = defineAsyncComponent({
       loader: () =>
         new Promise((_resolve) => {
@@ -392,27 +408,27 @@ describe('api: defineAsyncComponent', () => {
       loadingComponent: () => 'loading',
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
     const handler = (app.config.errorHandler = jest.fn())
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+
+    expect(vm.$el.textContent).toBe('')
     await timeout(1)
-    expect(serializeInner(root)).toBe('loading')
+    expect(vm.$el.textContent).toBe('loading')
 
     await timeout(16)
-    expect(serializeInner(root)).toBe('timed out')
+    expect(vm.$el.textContent).toBe('timed out')
     expect(handler).toHaveBeenCalled()
 
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('timeout without error component, but with loading component', async () => {
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     const Foo = defineAsyncComponent({
       loader: () =>
         new Promise((_resolve) => {
@@ -423,15 +439,14 @@ describe('api: defineAsyncComponent', () => {
       loadingComponent: () => 'loading',
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
     const handler = (app.config.errorHandler = jest.fn())
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
     await timeout(1)
-    expect(serializeInner(root)).toBe('loading')
+    expect(vm.$el.textContent).toBe('loading')
 
     await timeout(16)
     expect(handler).toHaveBeenCalled()
@@ -439,16 +454,16 @@ describe('api: defineAsyncComponent', () => {
       `Async component timed out after 16ms.`
     )
     // should still display loading
-    expect(serializeInner(root)).toBe('loading')
+    expect(vm.$el.textContent).toBe('loading')
 
     resolve!(resolveComponent)
     await timeout()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('retry (success)', async () => {
     let loaderCallCount = 0
-    let resolve: (comp: Component) => void
+    let resolve: (comp: any) => void
     let reject: (e: Error) => void
 
     const Foo = defineAsyncComponent({
@@ -468,14 +483,13 @@ describe('api: defineAsyncComponent', () => {
       },
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
     expect(loaderCallCount).toBe(1)
 
     const err = new Error('foo')
@@ -483,13 +497,13 @@ describe('api: defineAsyncComponent', () => {
     await timeout()
     expect(handler).not.toHaveBeenCalled()
     expect(loaderCallCount).toBe(2)
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // should render this time
     resolve!(resolveComponent)
     await timeout()
     expect(handler).not.toHaveBeenCalled()
-    expect(serializeInner(root)).toBe('resolved')
+    expect(vm.$el.textContent).toBe('resolved')
   })
 
   test('retry (skipped)', async () => {
@@ -512,14 +526,13 @@ describe('api: defineAsyncComponent', () => {
       },
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
     expect(loaderCallCount).toBe(1)
 
     const err = new Error('foo')
@@ -529,7 +542,7 @@ describe('api: defineAsyncComponent', () => {
     expect(handler).toHaveBeenCalled()
     expect(handler.mock.calls[0][0]).toBe(err)
     expect(loaderCallCount).toBe(1)
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
   })
 
   test('retry (fail w/ max retry attempts)', async () => {
@@ -552,14 +565,13 @@ describe('api: defineAsyncComponent', () => {
       },
     })
 
-    const root = nodeOps.createElement('div')
     const app = createApp({
       render: () => h(Foo),
     })
 
     const handler = (app.config.errorHandler = jest.fn())
-    app.mount(root)
-    expect(serializeInner(root)).toBe('<!---->')
+    const vm = app.mount()
+    expect(vm.$el.textContent).toBe('')
     expect(loaderCallCount).toBe(1)
 
     // first retry
@@ -568,7 +580,7 @@ describe('api: defineAsyncComponent', () => {
     await timeout()
     expect(handler).not.toHaveBeenCalled()
     expect(loaderCallCount).toBe(2)
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
 
     // 2nd retry, should fail due to reaching maxRetries
     reject!(err)
@@ -576,51 +588,51 @@ describe('api: defineAsyncComponent', () => {
     expect(handler).toHaveBeenCalled()
     expect(handler.mock.calls[0][0]).toBe(err)
     expect(loaderCallCount).toBe(2)
-    expect(serializeInner(root)).toBe('<!---->')
+    expect(vm.$el.textContent).toBe('')
   })
 
-  test('template ref forwarding', async () => {
-    let resolve: (comp: Component) => void
-    const Foo = defineAsyncComponent(
-      () =>
-        new Promise((r) => {
-          resolve = r as any
-        })
-    )
+  // test('template ref forwarding', async () => {
+  //   let resolve: (comp: Component) => void
+  //   const Foo = defineAsyncComponent(
+  //     () =>
+  //       new Promise((r) => {
+  //         resolve = r as any
+  //       })
+  //   )
 
-    const fooRef = ref()
-    const toggle = ref(true)
-    const root = nodeOps.createElement('div')
-    createApp({
-      render: () => (toggle.value ? h(Foo, { ref: fooRef } as any) : null),
-    }).mount(root)
+  //   const fooRef = ref()
+  //   const toggle = ref(true)
+  //   const root = nodeOps.createElement('div')
+  //   createApp({
+  //     render: () => (toggle.value ? h(Foo, { ref: fooRef } as any) : null),
+  //   }).mount(root)
 
-    expect(serializeInner(root)).toBe('<!---->')
-    expect(fooRef.value).toBe(null)
+  //   expect(vm.$el.textContent).toBe('')
+  //   expect(fooRef.value).toBe(null)
 
-    resolve!({
-      data() {
-        return {
-          id: 'foo',
-        }
-      },
-      render: resolveComponent.render,
-    })
-    // first time resolve, wait for macro task since there are multiple
-    // microtasks / .then() calls
-    await timeout()
-    expect(serializeInner(root)).toBe('resolved')
-    expect(fooRef.value.id).toBe('foo')
+  //   resolve!({
+  //     data() {
+  //       return {
+  //         id: 'foo',
+  //       }
+  //     },
+  //     render: resolveComponent.render,
+  //   })
+  //   // first time resolve, wait for macro task since there are multiple
+  //   // microtasks / .then() calls
+  //   await timeout()
+  //   expect(vm.$el.textContent).toBe('resolved')
+  //   expect(fooRef.value.id).toBe('foo')
 
-    toggle.value = false
-    await nextTick()
-    expect(serializeInner(root)).toBe('<!---->')
-    expect(fooRef.value).toBe(null)
+  //   toggle.value = false
+  //   await nextTick()
+  //   expect(vm.$el.textContent).toBe('')
+  //   expect(fooRef.value).toBe(null)
 
-    // already resolved component should update on nextTick
-    toggle.value = true
-    await nextTick()
-    expect(serializeInner(root)).toBe('resolved')
-    expect(fooRef.value.id).toBe('foo')
-  })
+  //   // already resolved component should update on nextTick
+  //   toggle.value = true
+  //   await nextTick()
+  //   expect(vm.$el.textContent).toBe('resolved')
+  //   expect(fooRef.value.id).toBe('foo')
+  // })
 })
