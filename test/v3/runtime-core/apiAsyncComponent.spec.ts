@@ -1,11 +1,13 @@
 import {
   defineAsyncComponent,
   h,
-  Component,
   ref,
+  defineComponent,
   nextTick,
   createApp
 } from '../../../src'
+
+type Component = ReturnType<typeof defineComponent> | Parameters<typeof defineComponent>
 
 const nodeOps = document;
 const serializeInner = (el: any) => el.innerHTML
