@@ -1,3 +1,18 @@
+<a name="1.0.0-rc.2"></a>
+# [1.0.0-rc.2](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2021-02-18)
+
+
+### Bug Fixes
+
+* add missing App export ([#640](https://github.com/vuejs/composition-api/issues/640)) ([eda6b22](https://github.com/vuejs/composition-api/commit/eda6b22))
+
+
+### Features
+
+* add defineAsyncComponent API ([#644](https://github.com/vuejs/composition-api/issues/644)) ([8409f48](https://github.com/vuejs/composition-api/commit/8409f48))
+
+
+
 <a name="1.0.0-rc.1"></a>
 # [1.0.0-rc.1](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.26...v1.0.0-rc.1) (2021-01-20)
 
