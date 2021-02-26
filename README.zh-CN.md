@@ -453,7 +453,6 @@ defineComponent({
 
 以下在 Vue 3 新引入的 API ，在本插件中暂不适用：
 
-- `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
 - `isProxy`
