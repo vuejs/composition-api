@@ -7,32 +7,39 @@ import {
   getVueInternalClasses,
 } from '../utils'
 
-interface Option<T> {
-  get: () => T
-  set: (value: T) => void
-}
-
 export interface ComputedRef<T = any> extends WritableComputedRef<T> {
   readonly value: T
 }
 
 export interface WritableComputedRef<T> extends Ref<T> {}
 
+export type ComputedGetter<T> = (ctx?: any) => T
+export type ComputedSetter<T> = (v: T) => void
+
+export interface WritableComputedOptions<T> {
+  get: ComputedGetter<T>
+  set: ComputedSetter<T>
+}
+
 // read-only
-export function computed<T>(getter: Option<T>['get']): ComputedRef<T>
+export function computed<T>(getter: ComputedGetter<T>): ComputedRef<T>
 // writable
-export function computed<T>(options: Option<T>): WritableComputedRef<T>
+export function computed<T>(
+  options: WritableComputedOptions<T>
+): WritableComputedRef<T>
 // implement
 export function computed<T>(
-  options: Option<T>['get'] | Option<T>
+  getterOrOptions: ComputedGetter<T> | WritableComputedOptions<T>
 ): ComputedRef<T> | WritableComputedRef<T> {
   const vm = getCurrentInstance()?.proxy
-  let get: Option<T>['get'], set: Option<T>['set'] | undefined
-  if (typeof options === 'function') {
-    get = options
+  let getter: ComputedGetter<T>
+  let setter: ComputedSetter<T> | undefined
+
+  if (typeof getterOrOptions === 'function') {
+    getter = getterOrOptions
   } else {
-    get = options.get
-    set = options.set
+    getter = getterOrOptions.get
+    setter = getterOrOptions.set
   }
 
   let computedSetter
@@ -43,7 +50,7 @@ export function computed<T>(
     let watcher: any
     computedGetter = () => {
       if (!watcher) {
-        watcher = new Watcher(vm, get, noopFn, { lazy: true })
+        watcher = new Watcher(vm, getter, noopFn, { lazy: true })
       }
       if (watcher.dirty) {
         watcher.evaluate()
@@ -55,13 +62,13 @@ export function computed<T>(
     }
 
     computedSetter = (v: T) => {
-      if (__DEV__ && !set) {
+      if (__DEV__ && !setter) {
         warn('Write operation failed: computed value is readonly.', vm!)
         return
       }
 
-      if (set) {
-        set(v)
+      if (setter) {
+        setter(v)
       }
     }
   } else {
@@ -69,8 +76,8 @@ export function computed<T>(
     const computedHost = defineComponentInstance(getVueConstructor(), {
       computed: {
         $$state: {
-          get,
-          set,
+          get: getter,
+          set: setter,
         },
       },
     })
@@ -79,7 +86,7 @@ export function computed<T>(
 
     computedGetter = () => (computedHost as any).$$state
     computedSetter = (v: T) => {
-      if (__DEV__ && !set) {
+      if (__DEV__ && !setter) {
         warn('Write operation failed: computed value is readonly.', vm!)
         return
       }
@@ -93,6 +100,6 @@ export function computed<T>(
       get: computedGetter,
       set: computedSetter,
     },
-    !set
+    !setter
   )
 }
