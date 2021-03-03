@@ -1,3 +1,13 @@
+<a name="1.0.0-rc.3"></a>
+# [1.0.0-rc.3](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2021-03-03)
+
+
+### Bug Fixes
+
+* update types to algin with vue-next ([#653](https://github.com/vuejs/composition-api/issues/653)) ([24eaa56](https://github.com/vuejs/composition-api/commit/24eaa56))
+
+
+
 <a name="1.0.0-rc.2"></a>
 # [1.0.0-rc.2](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2021-02-18)
 
