@@ -191,11 +191,7 @@ describe('defineComponent', () => {
       setup(props) {
         type PropsType = typeof props
         isSubType<
-          {
-            readonly foo: string
-            readonly bar?: string
-            readonly zoo?: string
-          },
+          { readonly foo: string; readonly bar?: string; readonly zoo?: string },
           PropsType
         >(true)
         isSubType<
