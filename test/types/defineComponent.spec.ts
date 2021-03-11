@@ -58,8 +58,8 @@ describe('defineComponent', () => {
       setup(props, ctx) {
         type PropsType = typeof props
         isTypeEqual<SetupContext, typeof ctx>(true)
-        isSubType<PropsType, { readonly b?: string; readonly a?: number }>(true)
-        isSubType<{ readonly b?: string; readonly a?: number }, PropsType>(true)
+        isSubType<PropsType, { readonly b?: string; readonly a: number }>(true)
+        isSubType<{ readonly b?: string; readonly a: number }, PropsType>(true)
         return () => null
       },
     })
@@ -191,12 +191,12 @@ describe('defineComponent', () => {
       setup(props) {
         type PropsType = typeof props
         isSubType<
-          { readonly foo: string; readonly bar?: string; readonly zoo?: string },
+          { readonly foo: string; readonly bar: string; readonly zoo?: string },
           PropsType
         >(true)
         isSubType<
           PropsType,
-          { readonly foo: string; readonly bar?: string; readonly zoo?: string }
+          { readonly foo: string; readonly bar: string; readonly zoo?: string }
         >(true)
         return () => null
       },
