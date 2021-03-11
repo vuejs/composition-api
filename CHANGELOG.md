@@ -1,3 +1,13 @@
+<a name="1.0.0-rc.4"></a>
+# [1.0.0-rc.4](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2021-03-11)
+
+
+### Bug Fixes
+
+* **types:** RequiredKeys type ([#655](https://github.com/vuejs/composition-api/issues/655)) ([0677a18](https://github.com/vuejs/composition-api/commit/0677a18))
+
+
+
 <a name="1.0.0-rc.3"></a>
 # [1.0.0-rc.3](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2021-03-03)
 
