@@ -13,8 +13,8 @@ describe('with object props', () => {
     a?: number | undefined
     b: string
     e?: Function
-    bb: string
-    bbb: string
+    bb?: string
+    bbb?: string
     cc?: string[] | undefined
     dd: { n: 1 }
     ee?: () => string
@@ -24,8 +24,8 @@ describe('with object props', () => {
     eee: () => { a: string }
     fff: (a: number, b: string) => { a: boolean }
     hhh: boolean
-    ggg: 'foo' | 'bar'
-    ffff: (a: number, b: string) => { a: boolean }
+    ggg?: 'foo' | 'bar'
+    ffff?: (a: number, b: string) => { a: boolean }
     validated?: string
     date: Date
   }
