@@ -1,4 +1,3 @@
-import { Data } from '../component'
 import { RefKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
@@ -119,7 +118,7 @@ export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
   return isRef(ref) ? (ref.value as any) : ref
 }
 
-export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
+export function toRefs<T extends object>(obj: T): ToRefs<T> {
   if (__DEV__ && !isReactive(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
