@@ -1,3 +1,13 @@
+<a name="1.0.0-rc.6"></a>
+# [1.0.0-rc.6](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2021-03-29)
+
+
+### Bug Fixes
+
+* **types:** allow any object in toRefs ([#668](https://github.com/vuejs/composition-api/issues/668)) ([7284ad9](https://github.com/vuejs/composition-api/commit/7284ad9))
+
+
+
 <a name="1.0.0-rc.5"></a>
 # [1.0.0-rc.5](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2021-03-11)
 
