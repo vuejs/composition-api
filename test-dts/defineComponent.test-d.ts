@@ -85,7 +85,6 @@ describe('with object props', () => {
       },
       hhh: {
         type: Boolean,
-        required: true,
       },
       // default + function
       ffff: {
