@@ -6,7 +6,7 @@ export const version = __VERSION__
 
 export * from './apis'
 export * from './component'
-export { getCurrentInstance } from './runtimeContext'
+export { getCurrentInstance, ComponentInternalInstance } from './runtimeContext'
 
 export default Plugin
 
