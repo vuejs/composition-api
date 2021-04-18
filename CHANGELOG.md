@@ -1,3 +1,18 @@
+<a name="1.0.0-rc.7"></a>
+# [1.0.0-rc.7](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2021-04-18)
+
+
+### Bug Fixes
+
+* **types:** optional Boolean prop types [#636](https://github.com/vuejs/composition-api/issues/636) ([#678](https://github.com/vuejs/composition-api/issues/678)) ([a081227](https://github.com/vuejs/composition-api/commit/a081227))
+
+
+### Features
+
+* **types:** export ComponentInternalInstance, close [#677](https://github.com/vuejs/composition-api/issues/677), close [#675](https://github.com/vuejs/composition-api/issues/675) ([ccae670](https://github.com/vuejs/composition-api/commit/ccae670))
+
+
+
 <a name="1.0.0-rc.6"></a>
 # [1.0.0-rc.6](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2021-03-29)
 
