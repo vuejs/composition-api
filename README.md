@@ -67,7 +67,7 @@ export default defineComponent({
 
 ### JSX/TSX
 
-JSX is now officially supported on [vuejs/jsx](https://github.com/vuejs/jsx). You can enabled it by following [this document](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage). A community maintained version can be found at [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
+JSX is now officially supported on [vuejs/jsx](https://github.com/vuejs/jsx). You can enable it by following [this document](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage). A community maintained version can be found at [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
 To support TSX, create a declaration file with the following content in your project.
 
