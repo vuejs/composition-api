@@ -2,7 +2,7 @@ import Vue, { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
 import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
-
+export { ComponentPropsOptions } from './componentProps'
 export interface SetupContext {
   readonly attrs: Data
   readonly slots: Readonly<{ [key in string]?: (...args: any[]) => VNode[] }>
