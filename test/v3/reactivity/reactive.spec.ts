@@ -142,6 +142,7 @@ describe('reactivity/reactive', () => {
   test('non-observable values', () => {
     const assertValue = (value: any) => {
       expect(isReactive(reactive(value))).toBe(false)
+      expect(reactive(value)).toBe(value)
       // expect(warnSpy).toHaveBeenLastCalledWith(`value cannot be made reactive: ${String(value)}`);
     }
 
@@ -167,7 +168,7 @@ describe('reactivity/reactive', () => {
     const d = new Date()
     expect(reactive(d)).toBe(d)
 
-    expect(warn).toBeCalledTimes(3)
+    expect(warn).toBeCalledTimes(12)
     expect(
       warn.mock.calls.map((call) => {
         expect(call[0]).toBe(

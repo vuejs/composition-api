@@ -1,6 +1,14 @@
 import { AnyObject } from '../types/basic'
 import { getRegisteredVueOrDefault } from '../runtimeContext'
-import { isPlainObject, def, warn, isArray, hasOwn, noopFn } from '../utils'
+import {
+  isPlainObject,
+  def,
+  warn,
+  isArray,
+  hasOwn,
+  noopFn,
+  isObject,
+} from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
@@ -190,10 +198,11 @@ export function shallowReactive(obj: any): any {
  * Make obj reactivity
  */
 export function reactive<T extends object>(obj: T): UnwrapRef<T> {
-  if (__DEV__ && !obj) {
-    warn('"reactive()" is called without provide an "object".')
-    // @ts-ignore
-    return
+  if (!isObject(obj)) {
+    if (__DEV__) {
+      warn('"reactive()" is called without provide an "object".')
+    }
+    return obj as any
   }
 
   if (
