@@ -1,3 +1,14 @@
+<a name="1.0.0-rc.8"></a>
+# [1.0.0-rc.8](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.7...v1.0.0-rc.8) (2021-04-29)
+
+
+### Bug Fixes
+
+* **reactive:** align behavior with vue-next ([#689](https://github.com/vuejs/composition-api/issues/689)) ([37fcbaa](https://github.com/vuejs/composition-api/commit/37fcbaa))
+* Memory leak caused by global variables. ([#686](https://github.com/vuejs/composition-api/issues/686)) ([badff82](https://github.com/vuejs/composition-api/commit/badff82))
+
+
+
 <a name="1.0.0-rc.7"></a>
 # [1.0.0-rc.7](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2021-04-18)
 
