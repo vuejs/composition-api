@@ -14,21 +14,17 @@ export const hasSymbol =
 
 export const noopFn: any = (_: any) => _
 
-const sharedPropertyDefinition = {
-  enumerable: true,
-  configurable: true,
-  get: noopFn,
-  set: noopFn,
-}
-
 export function proxy(
   target: any,
   key: string,
   { get, set }: { get?: Function; set?: Function }
 ) {
-  sharedPropertyDefinition.get = get || noopFn
-  sharedPropertyDefinition.set = set || noopFn
-  Object.defineProperty(target, key, sharedPropertyDefinition)
+  Object.defineProperty(target, key, {
+    enumerable: true,
+    configurable: true,
+    get: get || noopFn,
+    set: set || noopFn,
+  })
 }
 
 export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
