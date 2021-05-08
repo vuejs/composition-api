@@ -13,6 +13,8 @@ const {
   isReactive,
   defineComponent,
   onMounted,
+  set,
+  del,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -894,6 +896,42 @@ describe('setup', () => {
     await sleep(10)
     await nextTick()
     expect(vm.$el.textContent).toBe('2')
+  })
+
+  // #683 #603 #580
+  it('should update directly when adding attributes to a reactive object', async () => {
+    const vm = new Vue({
+      template: '<div><button @click="add"/>{{ obj.a }}</div>',
+      setup() {
+        const obj = reactive({})
+        const add = () => {
+          set(obj, 'a', 'new property')
+        }
+        return { obj, add }
+      },
+    }).$mount()
+
+    expect(vm.$el.textContent).toBe('')
+    await vm.$el.querySelector('button').click()
+    expect(vm.$el.textContent).toBe('new property')
+  })
+
+  // #683 #603 #580
+  it('should update directly when deleting attributes from a reactive object', async () => {
+    const vm = new Vue({
+      template: '<div><button @click="deleting"/>{{ obj.a }}</div>',
+      setup() {
+        const obj = reactive({ a: 'hello' })
+        const deleting = () => {
+          del(obj, 'a')
+        }
+        return { obj, deleting }
+      },
+    }).$mount()
+
+    expect(vm.$el.textContent).toBe('hello')
+    await vm.$el.querySelector('button').click()
+    expect(vm.$el.textContent).toBe('')
   })
 
   // #524
