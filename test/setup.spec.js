@@ -896,6 +896,94 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('2')
   })
 
+  //#679
+  it('should work merge with object in development', async () => {
+    global.__DEV__ = true
+    const vm = new Vue({
+      template: '<div>{{ data.id }}</div>',
+      setup() {
+        const data = reactive({
+          id: 42,
+        });
+        return { data }
+      },
+      data() {
+        return {
+          data: { id: 1 },
+        }
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  //#679
+  it('should work merge with object in production', async () => {
+    global.__DEV__ = false
+    const vm = new Vue({
+      template: '<div>{{ data.id }}</div>',
+      setup() {
+        const data = reactive({
+          id: 42,
+        });
+        return { data }
+      },
+      data() {
+        return {
+          data: { id: 1 },
+        }
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  //#679
+  it('should work merge with data in development', async () => {
+    global.__DEV__ = true
+    const vm = new Vue({
+      template: '<div>{{ id }}</div>',
+      setup() {
+        const data = reactive({
+          id: 42,
+        });
+        return data
+      },
+      data() {
+        return {
+          id: 1,
+        }
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  //#679
+  it('should work merge with data in production', async () => {
+    global.__DEV__ = false
+    const vm = new Vue({
+      template: '<div>{{ id }}</div>',
+      setup() {
+        const data = reactive({
+          id: 42,
+        });
+        return data
+      },
+      data() {
+        return {
+          id: 1,
+        }
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
   // #524
   it('should work with reactive arrays.', async () => {
     const opts = {
