@@ -36,7 +36,12 @@ export function asVmProperty(
             },
           })
         } else {
-          vm._data[propName] = propValue
+          proxy(vm._data, propName, {
+            get: () => propValue,
+            set: (val: any) => {
+              propValue = val
+            },
+          })
         }
       })
     }
