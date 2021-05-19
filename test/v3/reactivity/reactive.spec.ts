@@ -207,4 +207,34 @@ describe('reactivity/reactive', () => {
       expect(isReactive(props.n)).toBe(true)
     })
   })
+
+  test('should shallowReactive non-observable values', () => {
+    const assertValue = (value: any) => {
+      expect(shallowReactive(value)).toBe(value)
+    }
+
+    // number
+    assertValue(1)
+    // string
+    assertValue('foo')
+    // boolean
+    assertValue(false)
+    // null
+    assertValue(null)
+    // undefined
+    assertValue(undefined)
+    // symbol
+    const s = Symbol()
+    assertValue(s)
+
+    expect(warn).toBeCalledTimes(6)
+    expect(
+      warn.mock.calls.map((call) => {
+        expect(call[0]).toBe(
+          '[Vue warn]: "shallowReactive()" is called without provide an "object".'
+        )
+      })
+    )
+    warn.mockReset()
+  })
 })
