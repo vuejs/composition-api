@@ -1,3 +1,19 @@
+<a name="1.0.0-rc.9"></a>
+# [1.0.0-rc.9](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.8...v1.0.0-rc.9) (2021-05-19)
+
+
+### Bug Fixes
+
+* The behavior of development and production merge should be consistent. ([#694](https://github.com/vuejs/composition-api/issues/694)) ([7ca7010](https://github.com/vuejs/composition-api/commit/7ca7010))
+* **shallowReactive:** align behavior with vue-next ([#696](https://github.com/vuejs/composition-api/issues/696)) ([3485ecb](https://github.com/vuejs/composition-api/commit/3485ecb))
+
+
+### Features
+
+* add and delete object attributes would trigger update. ([#692](https://github.com/vuejs/composition-api/issues/692)) ([8c27d80](https://github.com/vuejs/composition-api/commit/8c27d80))
+
+
+
 <a name="1.0.0-rc.8"></a>
 # [1.0.0-rc.8](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.7...v1.0.0-rc.8) (2021-04-29)
 
