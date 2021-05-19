@@ -141,9 +141,11 @@ function mockObserver(value: any = {}): any {
 
 export function shallowReactive<T extends object = any>(obj: T): T
 export function shallowReactive(obj: any): any {
-  if (__DEV__ && !obj) {
-    warn('"shallowReactive()" is called without provide an "object".')
-    return
+  if (!isObject(obj)) {
+    if (__DEV__) {
+      warn('"shallowReactive()" is called without provide an "object".')
+    }
+    return obj as any
   }
 
   if (
