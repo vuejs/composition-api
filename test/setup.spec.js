@@ -898,7 +898,7 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('2')
   })
 
-  //#679
+  // #679
   it('should work merge with object in development', async () => {
     global.__DEV__ = true
     const vm = new Vue({
@@ -906,7 +906,7 @@ describe('setup', () => {
       setup() {
         const data = reactive({
           id: 42,
-        });
+        })
         return { data }
       },
       data() {
@@ -920,7 +920,7 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('1')
   })
 
-  //#679
+  // #679
   it('should work merge with object in production', async () => {
     global.__DEV__ = false
     const vm = new Vue({
@@ -928,7 +928,7 @@ describe('setup', () => {
       setup() {
         const data = reactive({
           id: 42,
-        });
+        })
         return { data }
       },
       data() {
@@ -942,48 +942,6 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('1')
   })
 
-  //#679
-  it('should work merge with data in development', async () => {
-    global.__DEV__ = true
-    const vm = new Vue({
-      template: '<div>{{ id }}</div>',
-      setup() {
-        const data = reactive({
-          id: 42,
-        });
-        return data
-      },
-      data() {
-        return {
-          id: 1,
-        }
-      },
-    }).$mount()
-
-    await nextTick()
-    expect(vm.$el.textContent).toBe('1')
-  })
-
-  //#679
-  it('should work merge with data in production', async () => {
-    global.__DEV__ = false
-    const vm = new Vue({
-      template: '<div>{{ id }}</div>',
-      setup() {
-        const data = reactive({
-          id: 42,
-        });
-        return data
-      },
-      data() {
-        return {
-          id: 1,
-        }
-      },
-    }).$mount()
-
-    await nextTick()
-    expect(vm.$el.textContent).toBe('1')
   // #683 #603 #580
   it('should update directly when adding attributes to a reactive object', async () => {
     const vm = new Vue({
