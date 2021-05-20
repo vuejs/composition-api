@@ -39,6 +39,9 @@ export function asVmProperty(
       // expose binding to Vue Devtool as a data property
       // delay this until state has been resolved to prevent repeated works
       vm.$nextTick(() => {
+        if (Object.keys(vm._data).indexOf(propName) !== -1) {
+          return
+        }
         if (isRef(propValue)) {
           proxy(vm._data, propName, {
             get: () => propValue.value,
