@@ -122,27 +122,6 @@ export default {
 
 ### `Ref` Unwrap
 
-`Unwrap` is not working with Array index.
-
-<details>
-<summary>
-❌ <b>Should NOT</b> store <code>ref</code> as a <b>direct</b> child of <code>Array</code>
-</summary>
-
-```js
-const state = reactive({
-  list: [ref(0)],
-})
-// no unwrap, `.value` is required
-state.list[0].value === 0 // true
-
-state.list.push(ref(1))
-// no unwrap, `.value` is required
-state.list[1].value === 1 // true
-```
-
-</details>
-
 <details>
 <summary>
 ❌ <b>Should NOT</b> use <code>ref</code> in a plain object when working with <code>Array</code>

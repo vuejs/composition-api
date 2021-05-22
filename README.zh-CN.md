@@ -117,27 +117,6 @@ export default {
 
 ### `Ref` 自动展开 (unwrap)
 
-数组索引属性无法进行自动展开:
-
-<details>
-<summary>
-❌ <b>不要</b> 使用数组直接存取 <code>ref</code> 对象
-</summary>
-
-```js
-const state = reactive({
-  list: [ref(0)],
-})
-// 不会自动展开, 须使用 `.value`
-state.list[0].value === 0 // true
-
-state.list.push(ref(1))
-// 不会自动展开, 须使用 `.value`
-state.list[1].value === 1 // true
-```
-
-</details>
-
 <details>
 <summary>
 ❌ <b>不要</b> 在数组中使用含有 <code>ref</code> 的普通对象
