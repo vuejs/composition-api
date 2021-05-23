@@ -427,8 +427,8 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 <details>
 <summary>
-⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
-⚠️ <code>isReactive(props.foo.bar)</code> will return false.
+⚠️ <code>toRefs(props.foo)</code> will incorrectly warn when accessing nested levels of props. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⚠️ <code>isReactive(props.foo)</code> will return false.
 </summary>
 
 ```ts
