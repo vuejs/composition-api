@@ -410,8 +410,8 @@ watch(
 
 <details>
 <summary>
-⚠️ 当使用 <code>toRefs</code> 访问深层属性对象 （如 <code>toRefs(props.foo.bar)</code> 时将会得到不正确的警告。
-⚠️ <code>isReactive(props.foo.bar)</code> 将会返回 false。
+⚠️ 当使用 <code>toRefs</code> 访问深层属性对象 （如 <code>toRefs(props.foo)</code> 时将会得到不正确的警告。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⚠️ <code>isReactive(props.foo)</code> 将会返回 false。
 </summary>
   
 ```ts
