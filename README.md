@@ -416,7 +416,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 <details>
 <summary>
-⚠️ <code>readonly()</code> provides **only type-level** readonly check. 
+⚠️ <code>readonly()</code> provides <b>only type-level</b> readonly check. 
 </summary>
 
 `readonly()` is provided as API alignment with Vue 3 on type-level only. Use <code>isReadonly()</code> on it or it's properties can not be guaranteed.
