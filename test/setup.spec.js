@@ -942,6 +942,34 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('1')
   })
 
+  // #679 html text change
+  it('should id not change when msg changed in development', async () => {
+    global.__DEV__ = true
+    const vm = new Vue({
+      template: '<div>{{ id }} {{ msg }}<button @click="change"/></div>',
+      setup() {
+        return { id: 42 }
+      },
+      data() {
+        return {
+          id: 1,
+          msg: 'abc',
+        }
+      },
+      methods: {
+        change() {
+          this.msg = this.msg + this.id
+        },
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1 abc')
+    await vm.$el.querySelector('button').click()
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1 abc1')
+  })
+
   // #683 #603 #580
   it('should update directly when adding attributes to a reactive object', async () => {
     const vm = new Vue({
