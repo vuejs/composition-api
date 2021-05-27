@@ -60,6 +60,17 @@ export function isArray<T>(x: unknown): x is T[] {
   return Array.isArray(x)
 }
 
+export const objectToString = Object.prototype.toString
+
+export const toTypeString = (value: unknown): string =>
+  objectToString.call(value)
+
+export const isMap = (val: unknown): val is Map<any, any> =>
+  toTypeString(val) === '[object Map]'
+
+export const isSet = (val: unknown): val is Set<any> =>
+  toTypeString(val) === '[object Set]'
+
 export function isValidArrayIndex(val: any): boolean {
   const n = parseFloat(String(val))
   return n >= 0 && Math.floor(n) === n && isFinite(val)
