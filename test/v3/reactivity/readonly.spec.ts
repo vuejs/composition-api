@@ -387,9 +387,9 @@ describe('reactivity/readonly', () => {
           const countRefReadonly = shallowReadonly(countRef)
 
           setTimeout(() => {
-            // @ts-ignore
+            // @ts-expect-error
             countReadonly.number++
-            // @ts-ignore
+            // @ts-expect-error
             countRefReadonly.value++
           }, 2000)
           return {
