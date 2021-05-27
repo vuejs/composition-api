@@ -1,6 +1,17 @@
 import { ComponentInstance } from '../component'
 import { Ref, isRef, isReactive } from '../reactivity'
-import { assert, logError, noopFn, warn, isFunction } from '../utils'
+import {
+  assert,
+  logError,
+  noopFn,
+  warn,
+  isFunction,
+  isObject,
+  isArray,
+  isPlainObject,
+  isSet,
+  isMap,
+} from '../utils'
 import { defineComponentInstance } from '../utils/helper'
 import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
 import {
@@ -272,13 +283,29 @@ function createWatcher(
   let deep = options.deep
 
   let getter: () => any
-  if (Array.isArray(source)) {
-    getter = () => source.map((s) => (isRef(s) ? s.value : s()))
-  } else if (isRef(source)) {
+  if (isRef(source)) {
     getter = () => source.value
   } else if (isReactive(source)) {
     getter = () => source
     deep = true
+  } else if (isArray(source)) {
+    getter = () =>
+      source.map((s) => {
+        if (isRef(s)) {
+          return s.value
+        } else if (isReactive(s)) {
+          return traverse(s)
+        } else if (isFunction(s)) {
+          return s()
+        } else {
+          warn(
+            `Invalid watch source: ${JSON.stringify(s)}.
+          A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
+            vm
+          )
+          return noopFn
+        }
+      })
   } else if (isFunction(source)) {
     getter = source as () => any
   } else {
@@ -404,4 +431,27 @@ export function watch<T = any>(
   const vm = getWatcherVM()
 
   return createWatcher(vm, source, callback, opts)
+}
+
+function traverse(value: unknown, seen: Set<unknown> = new Set()) {
+  if (!isObject(value) || seen.has(value)) {
+    return value
+  }
+  seen.add(value)
+  if (isRef(value)) {
+    traverse(value.value, seen)
+  } else if (isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      traverse(value[i], seen)
+    }
+  } else if (isSet(value) || isMap(value)) {
+    value.forEach((v: any) => {
+      traverse(v, seen)
+    })
+  } else if (isPlainObject(value)) {
+    for (const key in value) {
+      traverse((value as any)[key], seen)
+    }
+  }
+  return value
 }
