@@ -1,6 +1,7 @@
 import { reactive, Ref, UnwrapRef } from '.'
 import { isArray, isPlainObject, warn } from '../utils'
 import { readonlySet } from '../utils/sets'
+import { isRef } from './ref'
 
 export function isReadonly(obj: any): boolean {
   return readonlySet.has(obj)
@@ -47,7 +48,10 @@ export function readonly<T extends object>(
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T>
 export function shallowReadonly(obj: any): any {
-  if (!(isPlainObject(obj) || isArray(obj)) || !Object.isExtensible(obj)) {
+  if (
+    !(isPlainObject(obj) || isArray(obj)) ||
+    (!Object.isExtensible(obj) && !isRef(obj))
+  ) {
     return obj
   }
 
@@ -60,7 +64,7 @@ export function shallowReadonly(obj: any): any {
     let val = obj[key]
     let getter: (() => any) | undefined
     const property = Object.getOwnPropertyDescriptor(obj, key)
-    if (property) {
+    if (property && !isRef(obj)) {
       if (property.configurable === false) {
         continue
       }

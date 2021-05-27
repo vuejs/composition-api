@@ -1,5 +1,7 @@
 import { mockWarn } from '../../helpers/mockWarn'
-import { shallowReadonly, isReactive } from '../../../src'
+import { shallowReadonly, isReactive, ref, reactive } from '../../../src'
+
+const Vue = require('vue/dist/vue.common.js')
 
 // /**
 //  * @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html
@@ -371,6 +373,33 @@ describe('reactivity/readonly', () => {
       expect(
         `Set operation on key "foo" failed: target is readonly.`
       ).not.toHaveBeenWarned()
+    })
+
+    // #669
+    test('shallowReadonly should work for refs', () => {
+      const vm = new Vue({
+        template: '<div>{{ count }} {{ countRef }}</div>',
+        setup() {
+          const count = reactive({ number: 0 })
+          const countRef = ref(0)
+
+          const countReadonly = shallowReadonly(count)
+          const countRefReadonly = shallowReadonly(countRef)
+
+          setTimeout(() => {
+            // @ts-expect-error
+            countReadonly.number++
+            // @ts-expect-error
+            countRefReadonly.value++
+          }, 2000)
+          return {
+            count,
+            countRef,
+          }
+        },
+      }).$mount()
+
+      expect(vm.$el.textContent).toBe(`{\n  "number": 0\n} 0`)
     })
   })
 })
