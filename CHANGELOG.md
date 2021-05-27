@@ -1,3 +1,14 @@
+<a name="1.0.0-rc.10"></a>
+# [1.0.0-rc.10](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.9...v1.0.0-rc.10) (2021-05-27)
+
+
+### Bug Fixes
+
+* **dev:** setup data in nextTick is proxied to vm._data. ([#697](https://github.com/vuejs/composition-api/issues/697)) ([e231837](https://github.com/vuejs/composition-api/commit/e231837))
+* **watch:** align behavior with vue-next(doWatch). ([#710](https://github.com/vuejs/composition-api/issues/710)) ([fcf8bc3](https://github.com/vuejs/composition-api/commit/fcf8bc3))
+
+
+
 <a name="1.0.0-rc.9"></a>
 # [1.0.0-rc.9](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.8...v1.0.0-rc.9) (2021-05-19)
 
