@@ -101,7 +101,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
   })
 }
 
-function observe<T>(obj: T): T {
+export function observe<T>(obj: T): T {
   const Vue = getRegisteredVueOrDefault()
   let observed: T
   if (Vue.observable) {
