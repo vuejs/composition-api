@@ -206,6 +206,24 @@ describe('reactivity/reactive', () => {
       props.n = reactive({ foo: 2 })
       expect(isReactive(props.n)).toBe(true)
     })
+
+    test('should keep array as array', () => {
+      const arr = [1, 2, 3]
+      const shallowReactiveArr = shallowReactive(arr)
+      expect(Array.isArray(shallowReactiveArr)).toBe(true)
+      expect(shallowReactiveArr.join(' ')).toBe(arr.join(' '))
+    })
+
+    test('should trigger computed when changed', () => {
+      const arr = Array(10).fill(0)
+      const shallowReactiveArr = shallowReactive(arr)
+      const sum = computed(() =>
+        shallowReactiveArr.reduce((acc, cur) => acc + cur, 0)
+      )
+      expect(sum.value).toBe(0)
+      shallowReactiveArr[0] = 1
+      expect(sum.value).toBe(1)
+    })
   })
 
   test('should shallowReactive non-observable values', () => {
