@@ -71,9 +71,15 @@ export const isMap = (val: unknown): val is Map<any, any> =>
 export const isSet = (val: unknown): val is Set<any> =>
   toTypeString(val) === '[object Set]'
 
+const MAX_VALID_ARRAY_LENGTH = 4294967295 // Math.pow(2, 32) - 1
 export function isValidArrayIndex(val: any): boolean {
   const n = parseFloat(String(val))
-  return n >= 0 && Math.floor(n) === n && isFinite(val)
+  return (
+    n >= 0 &&
+    Math.floor(n) === n &&
+    isFinite(val) &&
+    n <= MAX_VALID_ARRAY_LENGTH
+  )
 }
 
 export function isObject(val: unknown): val is Record<any, any> {
