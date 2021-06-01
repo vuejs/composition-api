@@ -15,10 +15,16 @@ export function set<T>(target: any, key: any, val: T): T {
       `Cannot set reactive property on undefined, null, or primitive value: ${target}`
     )
   }
-  if (isArray(target) && isValidArrayIndex(key)) {
-    target.length = Math.max(target.length, key)
-    target.splice(key, 1, val)
-    return val
+  if (isArray(target)) {
+    if (isValidArrayIndex(key)) {
+      target.length = Math.max(target.length, key)
+      target.splice(key, 1, val)
+      return val
+    } else if (key === 'length' && (val as any) !== target.length) {
+      target.length = val as any
+      ;(target as any).__ob__?.dep.notify()
+      return val
+    }
   }
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
