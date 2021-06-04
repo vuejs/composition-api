@@ -156,7 +156,7 @@ export function shallowReactive(obj: any): any {
     return obj as any
   }
 
-  const observed = observe({})
+  const observed = observe(isArray(obj) ? [] : {})
   setupAccessControl(observed)
 
   const ob = (observed as any).__ob__
