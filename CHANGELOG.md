@@ -1,3 +1,21 @@
+<a name="1.0.0-rc.11"></a>
+# [1.0.0-rc.11](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.10...v1.0.0-rc.11) (2021-06-04)
+
+
+### Bug Fixes
+
+* **reactivity:** should trigger watchEffect when using set to change value of array length ([#720](https://github.com/vuejs/composition-api/issues/720)) ([9c03a45](https://github.com/vuejs/composition-api/commit/9c03a45))
+* **reactivity:** unexpected behaviors for array index out of valid array length when set and del ([#719](https://github.com/vuejs/composition-api/issues/719)) ([f08a1d6](https://github.com/vuejs/composition-api/commit/f08a1d6))
+* **shallowReactive:** should keep array as array ([#717](https://github.com/vuejs/composition-api/issues/717)) ([620d09b](https://github.com/vuejs/composition-api/commit/620d09b))
+* **shallowReadonly:** watch should work for ref/reactive with shallowReadonly ([#714](https://github.com/vuejs/composition-api/issues/714)) ([b6fc1f7](https://github.com/vuejs/composition-api/commit/b6fc1f7))
+
+
+### Features
+
+* **reactivity:** unwrap value when using `set` ([#722](https://github.com/vuejs/composition-api/issues/722)) ([bd198e7](https://github.com/vuejs/composition-api/commit/bd198e7))
+
+
+
 <a name="1.0.0-rc.10"></a>
 # [1.0.0-rc.10](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.9...v1.0.0-rc.10) (2021-05-27)
 
