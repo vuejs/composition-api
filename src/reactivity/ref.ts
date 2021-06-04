@@ -71,7 +71,7 @@ interface RefOption<T> {
   get(): T
   set?(x: T): void
 }
-class RefImpl<T> implements Ref<T> {
+export class RefImpl<T> implements Ref<T> {
   readonly [_refBrand]!: true
   public value!: T
   constructor({ get, set }: RefOption<T>) {

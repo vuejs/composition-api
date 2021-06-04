@@ -1,7 +1,8 @@
 import { reactive, Ref, UnwrapRef } from '.'
 import { isArray, isPlainObject, warn } from '../utils'
 import { readonlySet } from '../utils/sets'
-import { isRef } from './ref'
+import { isReactive, observe } from './reactive'
+import { isRef, RefImpl } from './ref'
 
 export function isReadonly(obj: any): boolean {
   return readonlySet.has(obj)
@@ -55,8 +56,11 @@ export function shallowReadonly(obj: any): any {
     return obj
   }
 
-  const readonlyObj = {}
-
+  const readonlyObj = isRef(obj)
+    ? new RefImpl({} as any)
+    : isReactive(obj)
+    ? observe({})
+    : {}
   const source = reactive({})
   const ob = (source as any).__ob__
 
@@ -64,8 +68,8 @@ export function shallowReadonly(obj: any): any {
     let val = obj[key]
     let getter: (() => any) | undefined
     const property = Object.getOwnPropertyDescriptor(obj, key)
-    if (property && !isRef(obj)) {
-      if (property.configurable === false) {
+    if (property) {
+      if (property.configurable === false && !isRef(obj)) {
         continue
       }
       getter = property.get

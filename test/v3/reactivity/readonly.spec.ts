@@ -1,5 +1,12 @@
 import { mockWarn } from '../../helpers/mockWarn'
-import { shallowReadonly, isReactive, ref, reactive } from '../../../src'
+import {
+  shallowReadonly,
+  isReactive,
+  ref,
+  reactive,
+  watch,
+  nextTick,
+} from '../../../src'
 
 const Vue = require('vue/dist/vue.common.js')
 
@@ -391,7 +398,7 @@ describe('reactivity/readonly', () => {
             countReadonly.number++
             // @ts-expect-error
             countRefReadonly.value++
-          }, 2000)
+          }, 1000)
           return {
             count,
             countRef,
@@ -400,6 +407,62 @@ describe('reactivity/readonly', () => {
       }).$mount()
 
       expect(vm.$el.textContent).toBe(`{\n  "number": 0\n} 0`)
+    })
+
+    // #712
+    test('watch should work for ref with shallowReadonly', async () => {
+      const cb = jest.fn()
+      const vm = new Vue({
+        template: '<div>{{ countRef }}</div>',
+        setup() {
+          const countRef = ref(0)
+          const countRefReadonly = shallowReadonly(countRef)
+          watch(countRefReadonly, cb, { deep: true })
+          return {
+            countRef,
+            countRefReadonly,
+          }
+        },
+      }).$mount()
+
+      vm.countRef++
+      await nextTick()
+      expect(cb).toHaveBeenCalled()
+
+      vm.countRefReadonly++
+      await nextTick()
+      expect(
+        `Set operation on key "value" failed: target is readonly.`
+      ).toHaveBeenWarned()
+      expect(vm.$el.textContent).toBe(`1`)
+    })
+
+    // #712
+    test('watch should work for reactive with shallowReadonly', async () => {
+      const cb = jest.fn()
+      const vm = new Vue({
+        template: '<div>{{ count.number }}</div>',
+        setup() {
+          const count = reactive({ number: 0 })
+          const countReadonly = shallowReadonly(count)
+          watch(countReadonly, cb, { deep: true })
+          return {
+            count,
+            countReadonly,
+          }
+        },
+      }).$mount()
+
+      vm.count.number++
+      await nextTick()
+      expect(cb).toHaveBeenCalled()
+
+      vm.countReadonly.number++
+      await nextTick()
+      expect(
+        `Set operation on key "number" failed: target is readonly.`
+      ).toHaveBeenWarned()
+      expect(vm.$el.textContent).toBe(`1`)
     })
   })
 })
