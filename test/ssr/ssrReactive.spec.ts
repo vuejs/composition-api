@@ -90,4 +90,16 @@ describe('SSR Reactive', () => {
 
     done()
   })
+
+  // #721
+  it('should behave correctly', () => {
+    const state = ref({ old: ref(false) })
+    set(state.value, 'new', ref(true))
+    // console.log(process.server, 'state.value', JSON.stringify(state.value))
+
+    expect(state.value).toMatchObject({
+      old: false,
+      new: true,
+    })
+  })
 })
