@@ -1,4 +1,4 @@
-import { del, reactive, ref, watch } from '../../../src'
+import { del, reactive, ref, watch, set, watchEffect } from '../../../src'
 
 // Vue.delete workaround for triggering view updates on object property/array index deletion
 describe('reactivity/del', () => {
@@ -40,5 +40,22 @@ describe('reactivity/del', () => {
     del(arr.value, 1)
     expect(spy).toBeCalledTimes(1)
     expect(arr.value).toEqual([1, 3])
+  })
+
+  it('should trigger reactivity when using del on array to delete index out of valid array length', () => {
+    const arr = ref<number[]>([])
+    const MAX_VALID_ARRAY_LENGTH = Math.pow(2, 32) - 1
+    const NON_VALIDD_INDEX = MAX_VALID_ARRAY_LENGTH + 1
+    set(arr.value, NON_VALIDD_INDEX, 0)
+    const spy = jest.fn()
+    watchEffect(
+      () => {
+        spy(arr.value)
+      },
+      { flush: 'sync' }
+    )
+    expect(spy).toBeCalledTimes(1)
+    del(arr.value, NON_VALIDD_INDEX)
+    expect(spy).toBeCalledTimes(2)
   })
 })
