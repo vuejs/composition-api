@@ -118,9 +118,28 @@ export function observe<T>(obj: T): T {
   // in SSR, there is no __ob__. Mock for reactivity check
   if (!hasOwn(observed, '__ob__')) {
     def(observed, '__ob__', mockObserver(observed))
+    walk(observed)
   }
 
   return observed
+}
+
+/**
+ * Recursive obj, add __ob__
+ */
+function walk(obj: any) {
+  var keys = Object.keys(obj)
+  for (let i = 0; i < keys.length; i++) {
+    if (
+      !(isPlainObject(obj[keys[i]]) || isArray(obj[keys[i]])) ||
+      isRaw(obj[keys[i]]) ||
+      !Object.isExtensible(obj[keys[i]])
+    ) {
+      continue
+    }
+    def(obj[keys[i]], '__ob__', mockObserver(obj[keys[i]]))
+    walk(obj[keys[i]])
+  }
 }
 
 export function createObserver() {
