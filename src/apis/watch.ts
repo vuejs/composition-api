@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { ComponentInstance } from '../component'
 import { Ref, isRef, isReactive } from '../reactivity'
 import {
@@ -11,6 +12,7 @@ import {
   isPlainObject,
   isSet,
   isMap,
+  getVueInternalClasses,
 } from '../utils'
 import { defineComponentInstance } from '../utils/helper'
 import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
@@ -248,6 +250,21 @@ function createWatcher(
   // effect watch
   if (cb === null) {
     let running = false
+    const { Dep } = getVueInternalClasses()
+    Dep.prototype.notify = function notify() {
+      const subs = this.subs.slice()
+      if (__DEV__ && !Vue.config.async) {
+        // subs aren't sorted in scheduler if not running async
+        // we need to sort them now to make sure they fire in correct
+        // order
+        subs.sort(function (a: any, b: any) {
+          return a.id - b.id
+        })
+      }
+      for (var i = 0, l = subs.length; i < l; i++) {
+        !running && subs[i].update()
+      }
+    }
     const getter = () => {
       // preventing the watch callback being call in the same execution
       if (running) {

@@ -7,6 +7,7 @@ import {
   set,
   shallowReactive,
   nextTick,
+  createApp,
 } from '../../../src'
 import Vue from 'vue'
 
@@ -247,6 +248,23 @@ describe('api: watch', () => {
     expect(cleanup).toHaveBeenCalledTimes(2)
   })
 
+  it('No notification within effect', async () => {
+    const root = document.createElement('div')
+    const fn = jest.fn()
+    const Comp = {
+      setup() {
+        const count = ref(0)
+        watchEffect(() => {
+          fn()
+          count.value = 1
+        })
+      },
+    }
+    createApp(Comp).mount(root)
+
+    await nextTick()
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
   // it('flush timing: post (default)', async () => {
   //   const count = ref(0);
   //   let callCount = 0;
