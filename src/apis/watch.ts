@@ -329,6 +329,7 @@ function createWatcher(
     // The subsequent callbacks will redirect to `callback`.
     let shiftCallback = (n: any, o: any) => {
       shiftCallback = originalCallback
+      o = isArray(n) ? [] : undefined
       applyCb(n, o)
     }
     callback = (n: any, o: any) => {

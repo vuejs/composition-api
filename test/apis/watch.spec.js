@@ -457,7 +457,7 @@ describe('api/watch', () => {
         template: `<div>{{obj1.a}} {{obj2.a}}</div>`,
       }).$mount()
       expect(spy).toBeCalledTimes(1)
-      expect(spy).toHaveBeenLastCalledWith([1, 2], undefined)
+      expect(spy).toHaveBeenLastCalledWith([1, 2], [])
       obj1.a = 2
       obj2.a = 3
 
@@ -491,7 +491,7 @@ describe('api/watch', () => {
         template: `<div>{{a}} {{b}}</div>`,
       }).$mount()
       expect(spy).toBeCalledTimes(1)
-      expect(spy).toHaveBeenLastCalledWith([1, 1], undefined)
+      expect(spy).toHaveBeenLastCalledWith([1, 1], [])
       vm.a = 2
       expect(spy).toBeCalledTimes(1)
       waitForUpdate(() => {
@@ -553,7 +553,7 @@ describe('api/watch', () => {
         },
       })
       expect(spy).toBeCalledTimes(1)
-      expect(spy).toHaveBeenLastCalledWith([1, 1], undefined)
+      expect(spy).toHaveBeenLastCalledWith([1, 1], [])
       vm.a = 2
       expect(spy).toBeCalledTimes(2)
       expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1])
