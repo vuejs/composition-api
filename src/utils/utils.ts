@@ -98,7 +98,7 @@ export function isUndef(v: any): boolean {
   return v === undefined || v === null
 }
 
-export function warn(msg: string, vm?: Vue | null) {
+export function warn(msg: string, vm?: Vue) {
   Vue.util.warn(msg, vm)
 }
 

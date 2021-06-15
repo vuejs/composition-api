@@ -15,18 +15,4 @@ declare module 'vue/types/vue' {
     _watchers: VueWatcher[]
     __composition_api_state__?: VfaState
   }
-
-  interface VueConstructor {
-    observable<T>(x: any): T
-    util: {
-      warn(msg: string, vm?: Vue | null)
-      defineReactive(
-        obj: Object,
-        key: string,
-        val: any,
-        customSetter?: Function,
-        shallow?: boolean
-      )
-    }
-  }
 }
