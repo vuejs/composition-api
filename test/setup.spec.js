@@ -1169,4 +1169,28 @@ describe('setup', () => {
 
     expect(warn).not.toBeCalled()
   })
+
+  it('should work with mock objects', async () => {
+    const originalProxy = new Proxy(
+      {},
+      {
+        get() {
+          return jest.fn()
+        },
+      }
+    )
+
+    const opts = {
+      template: `<div/>`,
+      setup() {
+        return {
+          proxy: originalProxy,
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.proxy).toBe(originalProxy)
+  })
 })
