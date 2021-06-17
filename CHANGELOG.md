@@ -1,3 +1,15 @@
+<a name="1.0.0-rc.12"></a>
+# [1.0.0-rc.12](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.11...v1.0.0-rc.12) (2021-06-17)
+
+
+### Bug Fixes
+
+* **proxyRefs:** infinite loop when using proxyRefs. ([#730](https://github.com/vuejs/composition-api/issues/730)) ([0b6ab25](https://github.com/vuejs/composition-api/commit/0b6ab25))
+* **reactivity:** check type of __ob__ in isRaw and isReactive ([#732](https://github.com/vuejs/composition-api/issues/732)) ([97dd671](https://github.com/vuejs/composition-api/commit/97dd671))
+* **watch:** watched previous values can't be destructure on first fire. ([#727](https://github.com/vuejs/composition-api/issues/727)) ([b3ab6f9](https://github.com/vuejs/composition-api/commit/b3ab6f9))
+
+
+
 <a name="1.0.0-rc.11"></a>
 # [1.0.0-rc.11](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.10...v1.0.0-rc.11) (2021-06-04)
 
