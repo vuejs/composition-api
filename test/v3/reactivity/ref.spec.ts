@@ -12,6 +12,7 @@ import {
   unref,
   isReactive,
   shallowRef,
+  proxyRefs,
 } from '../../../src'
 
 describe('reactivity/ref', () => {
@@ -341,5 +342,30 @@ describe('reactivity/ref', () => {
 
     _trigger!()
     expect(dummy).toBe(2)
+  })
+
+  test('proxyRefs', () => {
+    const a = {
+      x: ref(1),
+      obj: {
+        y: ref('foo'),
+      },
+    }
+    const p = proxyRefs(a)
+    expect(p.x).toBe(1)
+    expect(p.obj.y).toBe('foo')
+
+    // @ts-expect-error
+    p.obj.y = 'bar'
+    p.x = 2
+    expect(a.x).toBe(2)
+    expect(a.obj.y).toBe('bar')
+
+    const r = reactive({ k: 'v' })
+    const s = proxyRefs(r)
+    expect(s.k).toBe('v')
+
+    r.k = 'k'
+    expect(s.k).toBe('k')
   })
 })
