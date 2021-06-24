@@ -9,7 +9,6 @@ import { defineAccessControl } from './reactive'
  */
 export function set<T>(target: any, key: any, val: T): T {
   const Vue = getVueConstructor()
-  // @ts-ignore
   const { warn, defineReactive } = Vue.util
   if (__DEV__ && (isUndef(target) || isPrimitive(target))) {
     warn(

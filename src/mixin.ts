@@ -159,7 +159,6 @@ export function mixin(Vue: VueConstructor) {
     )
       return
     const Vue = getVueConstructor()
-    // @ts-ignore
     const defineReactive = Vue.util.defineReactive
 
     Object.keys(target).forEach((k) => {
