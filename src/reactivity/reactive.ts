@@ -143,7 +143,7 @@ export function shallowReactive<T extends object = any>(obj: T): T
 export function shallowReactive(obj: any): any {
   if (!isObject(obj)) {
     if (__DEV__) {
-      warn('"shallowReactive()" is called without providing an "object".')
+      warn('"shallowReactive()" must be called on an object.')
     }
     return obj as any
   }
