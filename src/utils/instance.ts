@@ -20,16 +20,14 @@ export function asVmProperty(
         },
       })
     } else {
-      Object.defineProperty(vm, propName, {
-        enumerable: true,
-        configurable: true,
+      proxy(vm, propName, {
         get: () => {
           if (isReactive(propValue)) {
             ;(propValue as any).__ob__.dep.depend()
           }
           return propValue
         },
-        set: (val) => {
+        set: (val: any) => {
           propValue = val
         },
       })
