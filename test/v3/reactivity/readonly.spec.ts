@@ -382,6 +382,12 @@ describe('reactivity/readonly', () => {
       ).not.toHaveBeenWarned()
     })
 
+    test('should not process non-object data', () => {
+      // @ts-ignore
+      shallowReadonly(25)
+      expect(`value cannot be made reactive: 25`).toHaveBeenWarned()
+    })
+
     // #669
     test('shallowReadonly should work for refs', () => {
       const vm = new Vue({

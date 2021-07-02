@@ -40,7 +40,7 @@ import { ref, reactive } from '@vue/composition-api'
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-rc.11"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-rc.12"></script>
 ```
 <!--cdn-links-end-->
 
@@ -399,7 +399,7 @@ watch(
 
 <details>
 <summary>
-⚠️ <code>readonly()</code> **只提供类型层面**的只读。
+⚠️ <code>readonly()</code> <b>只提供类型层面</b>的只读。
 </summary>
 
 `readonly()` 只在类型层面提供和 Vue 3 的对齐。在其返回值或其属性上使用 <code>isReadonly()</code> 检查的结果将无法保证。

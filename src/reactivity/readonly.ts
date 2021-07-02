@@ -1,5 +1,5 @@
 import { reactive, Ref, UnwrapRef } from '.'
-import { isArray, isPlainObject, warn } from '../utils'
+import { isArray, isPlainObject, isObject, warn } from '../utils'
 import { readonlySet } from '../utils/sets'
 import { isReactive, observe } from './reactive'
 import { isRef, RefImpl } from './ref'
@@ -49,6 +49,13 @@ export function readonly<T extends object>(
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T>
 export function shallowReadonly(obj: any): any {
+  if (!isObject(obj)) {
+    if (__DEV__) {
+      warn(`value cannot be made reactive: ${String(obj)}`)
+    }
+    return obj
+  }
+
   if (
     !(isPlainObject(obj) || isArray(obj)) ||
     (!Object.isExtensible(obj) && !isRef(obj))

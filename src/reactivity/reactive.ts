@@ -15,11 +15,21 @@ import { isRef, UnwrapRef } from './ref'
 import { rawSet, accessModifiedSet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
-  return Boolean(obj?.__ob__ && obj.__ob__?.__raw__)
+  return Boolean(
+    obj &&
+      hasOwn(obj, '__ob__') &&
+      typeof obj.__ob__ === 'object' &&
+      obj.__ob__?.__raw__
+  )
 }
 
 export function isReactive(obj: any): boolean {
-  return Boolean(obj?.__ob__ && !obj.__ob__?.__raw__)
+  return Boolean(
+    obj &&
+      hasOwn(obj, '__ob__') &&
+      typeof obj.__ob__ === 'object' &&
+      !obj.__ob__?.__raw__
+  )
 }
 
 /**
@@ -165,7 +175,7 @@ export function shallowReactive<T extends object = any>(obj: T): T
 export function shallowReactive(obj: any): any {
   if (!isObject(obj)) {
     if (__DEV__) {
-      warn('"shallowReactive()" is called without provide an "object".')
+      warn('"shallowReactive()" must be called on an object.')
     }
     return obj as any
   }
@@ -224,7 +234,7 @@ export function shallowReactive(obj: any): any {
 export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   if (!isObject(obj)) {
     if (__DEV__) {
-      warn('"reactive()" is called without provide an "object".')
+      warn('"reactive()" must be called on an object.')
     }
     return obj as any
   }

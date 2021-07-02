@@ -198,16 +198,16 @@ export function proxyRefs<T extends object>(
   for (const key of Object.keys(objectWithRefs)) {
     proxy(value, key, {
       get() {
-        if (isRef(value[key])) {
-          return value[key].value
+        if (isRef(value[RefKey][key])) {
+          return value[RefKey][key].value
         }
-        return value[key]
+        return value[RefKey][key]
       },
       set(v: unknown) {
-        if (isRef(value[key])) {
-          return (value[key].value = unref(v))
+        if (isRef(value[RefKey][key])) {
+          return (value[RefKey][key].value = unref(v))
         }
-        value[key] = unref(v)
+        value[RefKey][key] = unref(v)
       },
     })
   }
