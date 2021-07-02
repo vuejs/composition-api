@@ -8,6 +8,7 @@ import {
   shallowReactive,
   set,
   markRaw,
+  isRaw,
 } from '../../../src'
 
 describe('reactivity/reactive', () => {
@@ -33,6 +34,22 @@ describe('reactivity/reactive', () => {
     expect('foo' in observed).toBe(true)
     // ownKeys
     expect(Object.keys(observed)).toEqual(['foo'])
+  })
+
+  //#693
+  test('the hasOwn should be used to determine whether an attribute exists.', () => {
+    const obj = {}
+    expect(isReactive(obj)).toBe(false)
+    expect(isRaw(obj)).toBe(false)
+    const mockObj = new Proxy(obj, {
+      get: (target, key) => {
+        if (!(key in Object.keys(target))) {
+          throw new Error(`the ${key.toString()} is not found in the target.`)
+        }
+      },
+    })
+    expect(isReactive(mockObj)).toBe(false)
+    expect(isRaw(obj)).toBe(false)
   })
 
   test('proto', () => {
@@ -172,7 +189,7 @@ describe('reactivity/reactive', () => {
     expect(
       warn.mock.calls.map((call) => {
         expect(call[0]).toBe(
-          '[Vue warn]: "reactive()" is called without provide an "object".'
+          '[Vue warn]: "reactive()" must be called on an object.'
         )
       })
     )
@@ -249,7 +266,7 @@ describe('reactivity/reactive', () => {
     expect(
       warn.mock.calls.map((call) => {
         expect(call[0]).toBe(
-          '[Vue warn]: "shallowReactive()" is called without provide an "object".'
+          '[Vue warn]: "shallowReactive()" must be called on an object.'
         )
       })
     )

@@ -17,13 +17,19 @@ import { rawSet, accessModifiedSet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
   return Boolean(
-    obj?.__ob__ && typeof obj.__ob__ === 'object' && obj.__ob__?.__raw__
+    obj &&
+      hasOwn(obj, '__ob__') &&
+      typeof obj.__ob__ === 'object' &&
+      obj.__ob__?.__raw__
   )
 }
 
 export function isReactive(obj: any): boolean {
   return Boolean(
-    obj?.__ob__ && typeof obj.__ob__ === 'object' && !obj.__ob__?.__raw__
+    obj &&
+      hasOwn(obj, '__ob__') &&
+      typeof obj.__ob__ === 'object' &&
+      !obj.__ob__?.__raw__
   )
 }
 
@@ -120,14 +126,32 @@ export function observe<T>(obj: T): T {
 
   // in SSR, there is no __ob__. Mock for reactivity check
   if (!hasOwn(observed, '__ob__')) {
-    def(observed, '__ob__', mockObserver(observed))
+    mockReactivityDeep(observed)
   }
 
   return observed
 }
 
-export function createObserver() {
-  return observe<any>({}).__ob__
+/**
+ * Mock __ob__ for object recursively
+ */
+function mockReactivityDeep(obj: any, seen = new WeakMap<any, boolean>()) {
+  if (seen.has(obj)) return
+
+  def(obj, '__ob__', mockObserver(obj))
+  seen.set(obj, true)
+
+  for (const key of Object.keys(obj)) {
+    const value = obj[key]
+    if (
+      !(isPlainObject(value) || isArray(value)) ||
+      isRaw(value) ||
+      !Object.isExtensible(value)
+    ) {
+      continue
+    }
+    mockReactivityDeep(value)
+  }
 }
 
 function mockObserver(value: any = {}): any {
@@ -142,11 +166,15 @@ function mockObserver(value: any = {}): any {
   }
 }
 
+export function createObserver() {
+  return observe<any>({}).__ob__
+}
+
 export function shallowReactive<T extends object = any>(obj: T): T
 export function shallowReactive(obj: any): any {
   if (!isObject(obj)) {
     if (__DEV__) {
-      warn('"shallowReactive()" is called without provide an "object".')
+      warn('"shallowReactive()" must be called on an object.')
     }
     return obj as any
   }
@@ -203,7 +231,7 @@ export function shallowReactive(obj: any): any {
 export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   if (!isObject(obj)) {
     if (__DEV__) {
-      warn('"reactive()" is called without provide an "object".')
+      warn('"reactive()" must be called on an object.')
     }
     return obj as any
   }

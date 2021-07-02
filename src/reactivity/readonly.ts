@@ -49,6 +49,13 @@ export function readonly<T extends object>(
 
 export function shallowReadonly<T extends object>(obj: T): Readonly<T>
 export function shallowReadonly(obj: any): any {
+  if (!isObject(obj)) {
+    if (__DEV__) {
+      warn(`value cannot be made reactive: ${String(obj)}`)
+    }
+    return obj
+  }
+
   if (
     !(isPlainObject(obj) || isArray(obj)) ||
     (!Object.isExtensible(obj) && !isRef(obj))
