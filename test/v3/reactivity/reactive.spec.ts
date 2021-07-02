@@ -189,7 +189,7 @@ describe('reactivity/reactive', () => {
     expect(
       warn.mock.calls.map((call) => {
         expect(call[0]).toBe(
-          '[Vue warn]: "reactive()" is called without provide an "object".'
+          '[Vue warn]: "reactive()" must be called on an object.'
         )
       })
     )
@@ -266,7 +266,7 @@ describe('reactivity/reactive', () => {
     expect(
       warn.mock.calls.map((call) => {
         expect(call[0]).toBe(
-          '[Vue warn]: "shallowReactive()" is called without provide an "object".'
+          '[Vue warn]: "shallowReactive()" must be called on an object.'
         )
       })
     )

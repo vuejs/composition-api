@@ -212,7 +212,7 @@ export function shallowReactive(obj: any): any {
 export function reactive<T extends object>(obj: T): UnwrapRef<T> {
   if (!isObject(obj)) {
     if (__DEV__) {
-      warn('"reactive()" is called without provide an "object".')
+      warn('"reactive()" must be called on an object.')
     }
     return obj as any
   }
