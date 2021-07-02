@@ -102,4 +102,20 @@ describe('SSR Reactive', () => {
       new: true,
     })
   })
+
+  // #721
+  it('should behave correctly for the nested ref in the object', () => {
+    const state = { old: ref(false) }
+    set(state, 'new', ref(true))
+    expect(JSON.stringify(state)).toBe(
+      '{"old":{"value":false},"new":{"value":true}}'
+    )
+  })
+
+  // #721
+  it('should behave correctly for ref of object', () => {
+    const state = ref({ old: ref(false) })
+    set(state.value, 'new', ref(true))
+    expect(JSON.stringify(state.value)).toBe('{"old":false,"new":true}')
+  })
 })

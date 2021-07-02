@@ -41,8 +41,7 @@ export function set<T>(target: AnyObject, key: any, val: T): T {
     return val
   }
   if (!ob) {
-    // If we are using `set` we can assume that the unwrapping is intended
-    defineAccessControl(target, key, val)
+    target[key] = val
     return val
   }
   defineReactive(ob.value, key, val)

@@ -127,14 +127,32 @@ export function observe<T>(obj: T): T {
 
   // in SSR, there is no __ob__. Mock for reactivity check
   if (!hasOwn(observed, '__ob__')) {
-    def(observed, '__ob__', mockObserver(observed))
+    mockReactivityDeep(observed)
   }
 
   return observed
 }
 
-export function createObserver() {
-  return observe<any>({}).__ob__
+/**
+ * Mock __ob__ for object recursively
+ */
+function mockReactivityDeep(obj: any, seen = new WeakMap<any, boolean>()) {
+  if (seen.has(obj)) return
+
+  def(obj, '__ob__', mockObserver(obj))
+  seen.set(obj, true)
+
+  for (const key of Object.keys(obj)) {
+    const value = obj[key]
+    if (
+      !(isPlainObject(value) || isArray(value)) ||
+      isRaw(value) ||
+      !Object.isExtensible(value)
+    ) {
+      continue
+    }
+    mockReactivityDeep(value)
+  }
 }
 
 function mockObserver(value: any = {}): any {
@@ -147,6 +165,10 @@ function mockObserver(value: any = {}): any {
       removeSub: noopFn,
     },
   }
+}
+
+export function createObserver() {
+  return observe<any>({}).__ob__
 }
 
 export function shallowReactive<T extends object = any>(obj: T): T
