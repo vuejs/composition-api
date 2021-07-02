@@ -8,6 +8,7 @@ import {
   hasOwn,
   noopFn,
   isObject,
+  proxy,
 } from '../utils'
 import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
@@ -74,9 +75,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
   }
 
   setupAccessControl(val)
-  Object.defineProperty(target, key, {
-    enumerable: true,
-    configurable: true,
+  proxy(target, key, {
     get: function getterHandler() {
       const value = getter ? getter.call(target) : val
       // if the key is equal to RefKey, skip the unwrap logic
@@ -86,7 +85,7 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
         return value
       }
     },
-    set: function setterHandler(newVal) {
+    set: function setterHandler(newVal: any) {
       if (getter && !setter) return
 
       const value = getter ? getter.call(target) : val
@@ -178,15 +177,13 @@ export function shallowReactive(obj: any): any {
       setter = property.set
     }
 
-    Object.defineProperty(observed, key, {
-      enumerable: true,
-      configurable: true,
+    proxy(observed, key, {
       get: function getterHandler() {
         const value = getter ? getter.call(obj) : val
         ob.dep?.depend()
         return value
       },
-      set: function setterHandler(newVal) {
+      set: function setterHandler(newVal: any) {
         if (getter && !setter) return
         if (setter) {
           setter.call(obj, newVal)
