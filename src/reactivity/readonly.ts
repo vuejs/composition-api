@@ -1,5 +1,5 @@
 import { reactive, Ref, UnwrapRef } from '.'
-import { isArray, isPlainObject, warn, proxy } from '../utils'
+import { isArray, isPlainObject, isObject, warn, proxy } from '../utils'
 import { readonlySet } from '../utils/sets'
 import { isReactive, observe } from './reactive'
 import { isRef, RefImpl } from './ref'
