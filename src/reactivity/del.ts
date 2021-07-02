@@ -1,10 +1,11 @@
+import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
 import { hasOwn, isPrimitive, isUndef, isValidArrayIndex } from '../utils'
 
 /**
  * Delete a property and trigger change if necessary.
  */
-export function del(target: any, key: any) {
+export function del(target: AnyObject, key: any) {
   const Vue = getVueConstructor()
   const { warn } = Vue.util
 
