@@ -16,13 +16,19 @@ import { rawSet, accessModifiedSet } from '../utils/sets'
 
 export function isRaw(obj: any): boolean {
   return Boolean(
-    obj?.__ob__ && typeof obj.__ob__ === 'object' && obj.__ob__?.__raw__
+    obj &&
+      hasOwn(obj, '__ob__') &&
+      typeof obj.__ob__ === 'object' &&
+      obj.__ob__?.__raw__
   )
 }
 
 export function isReactive(obj: any): boolean {
   return Boolean(
-    obj?.__ob__ && typeof obj.__ob__ === 'object' && !obj.__ob__?.__raw__
+    obj &&
+      hasOwn(obj, '__ob__') &&
+      typeof obj.__ob__ === 'object' &&
+      !obj.__ob__?.__raw__
   )
 }
 
