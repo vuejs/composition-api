@@ -1,3 +1,16 @@
+<a name="1.0.0-rc.13"></a>
+# [1.0.0-rc.13](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.12...v1.0.0-rc.13) (2021-07-02)
+
+
+### Bug Fixes
+
+* **observe:** solve the Ref not unwrapping on the ssr side issue with recursive way. ([#723](https://github.com/vuejs/composition-api/issues/723)) ([debd37d](https://github.com/vuejs/composition-api/commit/debd37d))
+* the hasOwn should be used to determine whether an attribute exists. ([#737](https://github.com/vuejs/composition-api/issues/737)) ([65abcb4](https://github.com/vuejs/composition-api/commit/65abcb4))
+* **shallowReadonly:** align behavior with vue-next ([#741](https://github.com/vuejs/composition-api/issues/741)) ([14d1c7b](https://github.com/vuejs/composition-api/commit/14d1c7b))
+* **types:** use AnyObject insteads of any ([#742](https://github.com/vuejs/composition-api/issues/742)) ([efb4195](https://github.com/vuejs/composition-api/commit/efb4195))
+
+
+
 <a name="1.0.0-rc.12"></a>
 # [1.0.0-rc.12](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.11...v1.0.0-rc.12) (2021-06-17)
 
