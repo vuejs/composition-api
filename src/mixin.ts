@@ -72,10 +72,9 @@ export function mixin(Vue: VueConstructor) {
     $options.data = function wrappedData() {
       initSetup(vm, vm.$props)
       return typeof data === 'function'
-        ? (data as (
-            this: ComponentInstance,
-            x: ComponentInstance
-          ) => object).call(vm, vm)
+        ? (
+            data as (this: ComponentInstance, x: ComponentInstance) => object
+          ).call(vm, vm)
         : data || {}
     }
   }
@@ -159,6 +158,7 @@ export function mixin(Vue: VueConstructor) {
     )
       return
     const Vue = getVueConstructor()
+    // @ts-expect-error https://github.com/vuejs/vue/pull/12132
     const defineReactive = Vue.util.defineReactive
 
     Object.keys(target).forEach((k) => {
