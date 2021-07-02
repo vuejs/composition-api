@@ -1,5 +1,5 @@
 import { reactive, Ref, UnwrapRef } from '.'
-import { isArray, isPlainObject, isObject, warn } from '../utils'
+import { isArray, isPlainObject, isObject, warn, proxy } from '../utils'
 import { readonlySet } from '../utils/sets'
 import { isReactive, observe } from './reactive'
 import { isRef, RefImpl } from './ref'
@@ -82,15 +82,13 @@ export function shallowReadonly(obj: any): any {
       getter = property.get
     }
 
-    Object.defineProperty(readonlyObj, key, {
-      enumerable: true,
-      configurable: true,
+    proxy(readonlyObj, key, {
       get: function getterHandler() {
         const value = getter ? getter.call(obj) : val
         ob.dep.depend()
         return value
       },
-      set(v) {
+      set(v: any) {
         if (__DEV__) {
           warn(`Set operation on key "${key}" failed: target is readonly.`)
         }

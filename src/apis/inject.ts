@@ -1,5 +1,5 @@
 import { ComponentInstance } from '../component'
-import { hasOwn, warn, currentVMInFn, isFunction } from '../utils'
+import { hasOwn, warn, currentVMInFn, isFunction, proxy } from '../utils'
 import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}
@@ -28,9 +28,9 @@ export function provide<T>(key: InjectionKey<T> | string, value: T): void {
 
   if (!vm._provided) {
     const provideCache = {}
-    Object.defineProperty(vm, '_provided', {
+    proxy(vm, '_provided', {
       get: () => provideCache,
-      set: (v) => Object.assign(provideCache, v),
+      set: (v: any) => Object.assign(provideCache, v),
     })
   }
 
