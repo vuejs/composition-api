@@ -1,4 +1,4 @@
-import { h, createApp } from '../../../src/apis'
+import { h, createApp } from '../../../src'
 import { mockWarn } from '../../helpers'
 
 describe('renderer: h', () => {
