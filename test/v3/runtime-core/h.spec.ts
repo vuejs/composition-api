@@ -3,14 +3,14 @@ import { mockWarn } from '../../helpers'
 
 describe('renderer: h', () => {
   mockWarn(true)
-  it('should warn called outside', () => {
+  it('should warn called outside of render function', () => {
     h('p', {})
     expect(
       '[Vue warn]: `createElement()` has been called outside of render function.'
     ).toHaveBeenWarned()
   })
 
-  it('called outside also can work', () => {
+  it('called outside of render function also can work', () => {
     const msg = 'hello world'
     const vnode = h('hello-world', {
       props: {
