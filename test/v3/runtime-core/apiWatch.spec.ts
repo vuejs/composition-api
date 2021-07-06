@@ -7,6 +7,9 @@ import {
   set,
   shallowReactive,
   nextTick,
+  h,
+  createApp,
+  defineComponent,
 } from '../../../src'
 import Vue from 'vue'
 
@@ -579,6 +582,46 @@ describe('api: watch', () => {
   //   expect(spy).toHaveBeenCalledTimes(1);
   //   expect(warnSpy).toHaveBeenCalledWith(`"deep" option is only respected`);
   // });
+
+  // #2728
+  it('pre watcher callbacks should not track dependencies', async () => {
+    const a = ref(0)
+    const b = ref(0)
+    const updated = jest.fn()
+
+    const Child = defineComponent({
+      props: ['a'],
+      updated,
+      watch: {
+        a() {
+          b.value
+        },
+      },
+      render() {
+        return h('div', this.a)
+      },
+    })
+
+    const Parent = defineComponent({
+      render() {
+        return h(Child, {
+          props: { a: a.value },
+        })
+      },
+    })
+
+    const root = document.createElement('div')
+    createApp(Parent).mount(root)
+
+    a.value++
+    await nextTick()
+    expect(updated).toHaveBeenCalledTimes(1)
+
+    b.value++
+    await nextTick()
+    // should not track b as dependency of Child
+    expect(updated).toHaveBeenCalledTimes(1)
+  })
 
   // #388
   it('should not call the callback multiple times', () => {
