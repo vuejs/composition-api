@@ -325,6 +325,7 @@ function createWatcher(
     __DEV__ && warnInvalidSource(source)
   }
 
+  // traverse refs in deep watch
   if (deep) {
     const baseGetter = getter
     getter = () => traverse(baseGetter())
