@@ -68,6 +68,31 @@ describe('api: watch', () => {
     expect(dummy).toMatchObject([1, 0])
   })
 
+  it('watching single source: array', async () => {
+    const array = reactive([] as number[])
+    const spy = jest.fn()
+    watch(array, spy)
+    array.push(1)
+    await nextTick()
+    expect(spy).toBeCalledTimes(1)
+    expect(spy).toBeCalledWith([1], expect.anything(), expect.anything())
+  })
+
+  it('should not fire if watched getter result did not change', async () => {
+    const spy = jest.fn()
+    const n = ref(0)
+    watch(() => n.value % 2, spy)
+
+    n.value++
+    await nextTick()
+    expect(spy).toBeCalledTimes(1)
+
+    n.value += 2
+    await nextTick()
+    // should not be called again because getter result did not change
+    expect(spy).toBeCalledTimes(1)
+  })
+
   it('watching single source: computed ref', async () => {
     const count = ref(0)
     const plus = computed(() => count.value + 1)
@@ -570,5 +595,16 @@ describe('api: watch', () => {
     )
 
     expect(data2.value).toMatchObject([1])
+  })
+
+  it('watching sources: ref<any[]>', async () => {
+    const foo = ref([1])
+    const spy = jest.fn()
+    watch(foo, () => {
+      spy()
+    })
+    foo.value = foo.value.slice()
+    await nextTick()
+    expect(spy).toBeCalledTimes(1)
   })
 })
