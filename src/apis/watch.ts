@@ -325,6 +325,11 @@ function createWatcher(
     __DEV__ && warnInvalidSource(source)
   }
 
+  if (deep) {
+    const baseGetter = getter
+    getter = () => traverse(baseGetter())
+  }
+
   const applyCb = (n: any, o: any) => {
     // cleanup before running cb again
     runCleanup()
