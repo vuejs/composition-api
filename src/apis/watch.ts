@@ -31,7 +31,11 @@ export type WatchCallback<V = any, OV = any> = (
 ) => any
 
 type MapSources<T> = {
-  [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never
+  [K in keyof T]: T[K] extends WatchSource<infer V>
+    ? V
+    : T[K] extends object
+    ? T[K]
+    : never
 }
 
 type MapOldSources<T, Immediate> = {
@@ -39,6 +43,10 @@ type MapOldSources<T, Immediate> = {
     ? Immediate extends true
       ? V | undefined
       : V
+    : T[K] extends object
+    ? Immediate extends true
+      ? T[K] | undefined
+      : T[K]
     : never
 }
 
@@ -235,14 +243,14 @@ function createWatcher(
     ) {
       return fn
     }
-    return (((...args: any[]) =>
+    return ((...args: any[]) =>
       queueFlushJob(
         vm,
         () => {
           fn(...args)
         },
         flushMode as 'pre' | 'post'
-      )) as any) as T
+      )) as any as T
   }
 
   // effect watch
@@ -280,6 +288,14 @@ function createWatcher(
     }
   }
 
+  const warnInvalidSource = (s: unknown) => {
+    warn(
+      `Invalid watch source: ${JSON.stringify(s)}.
+          A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
+      vm
+    )
+  }
+
   let deep = options.deep
 
   let getter: () => any
@@ -298,11 +314,7 @@ function createWatcher(
         } else if (isFunction(s)) {
           return s()
         } else {
-          warn(
-            `Invalid watch source: ${JSON.stringify(s)}.
-          A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
-            vm
-          )
+          __DEV__ && warnInvalidSource(s)
           return noopFn
         }
       })
@@ -310,11 +322,7 @@ function createWatcher(
     getter = source as () => any
   } else {
     getter = noopFn
-    warn(
-      `Invalid watch source: ${JSON.stringify(source)}.
-      A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
-      vm
-    )
+    __DEV__ && warnInvalidSource(source)
   }
 
   const applyCb = (n: any, o: any) => {
@@ -380,7 +388,7 @@ export function watchEffect(
 // on position in the source array. Otherwise the values will get a union type
 // of all possible value types.
 export function watch<
-  T extends Readonly<WatchSource<unknown>[]>,
+  T extends Readonly<Array<WatchSource<unknown> | object>>,
   Immediate extends Readonly<boolean> = false
 >(
   sources: T,
