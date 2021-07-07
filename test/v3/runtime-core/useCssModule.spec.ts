@@ -37,7 +37,7 @@ describe('api: useCssModule', () => {
     expect(mountWithModule(modules.$style)).toMatchObject(modules.$style)
   })
 
-  test('warn out of setup usage', () => {
+  it('warn out of setup usage', () => {
     useCssModule()
     expect(
       '[Vue warn]: useCssModule must be called inside setup()'
