@@ -1,7 +1,16 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, reactive, watch, watchEffect, set } = require('../../src')
+const {
+  ref,
+  reactive,
+  watch,
+  watchEffect,
+  set,
+  nextTick,
+} = require('../../src')
+const { mockWarn } = require('../helpers')
 
 describe('api/watch', () => {
+  mockWarn(true)
   const anyFn = expect.any(Function)
   let spy
   beforeEach(() => {
@@ -586,6 +595,27 @@ describe('api/watch', () => {
       expect(spy).toBeCalledTimes(3)
       expect(spy).toHaveBeenNthCalledWith(2, [3, 1], [2, 1])
       expect(spy).toHaveBeenNthCalledWith(3, [3, 3], [3, 1])
+    })
+
+    it('config.errorHandler should capture render errors', async () => {
+      new Vue({
+        setup() {
+          const a = ref(1)
+          watch(
+            a,
+            async () => {
+              throw new Error('userWatcherCallback error')
+            },
+            { immediate: true }
+          )
+          return {
+            a,
+          }
+        },
+        template: `<div>{{a}}</div>`,
+      }).$mount()
+      await nextTick()
+      expect(`userWatcherCallback error`).toHaveBeenWarned()
     })
   })
 

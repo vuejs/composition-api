@@ -235,14 +235,14 @@ function createWatcher(
     ) {
       return fn
     }
-    return (((...args: any[]) =>
+    return ((...args: any[]) =>
       queueFlushJob(
         vm,
         () => {
           fn(...args)
         },
         flushMode as 'pre' | 'post'
-      )) as any) as T
+      )) as any as T
   }
 
   // effect watch
@@ -320,7 +320,7 @@ function createWatcher(
   const applyCb = (n: any, o: any) => {
     // cleanup before running cb again
     runCleanup()
-    cb(n, o, registerCleanup)
+    return cb(n, o, registerCleanup)
   }
   let callback = createScheduler(applyCb)
   if (options.immediate) {
@@ -330,10 +330,10 @@ function createWatcher(
     let shiftCallback = (n: any, o: any) => {
       shiftCallback = originalCallback
       // o is undefined on the first call
-      applyCb(n, isArray(n) ? [] : o)
+      return applyCb(n, isArray(n) ? [] : o)
     }
     callback = (n: any, o: any) => {
-      shiftCallback(n, o)
+      return shiftCallback(n, o)
     }
   }
 
