@@ -41,7 +41,7 @@ function setupAccessControl(target: AnyObject): void {
   if (
     !isPlainObject(target) ||
     isRaw(target) ||
-    Array.isArray(target) ||
+    isArray(target) ||
     isRef(target) ||
     isComponentInstance(target) ||
     accessModifiedSet.has(target)
