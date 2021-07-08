@@ -298,11 +298,12 @@ function createWatcher(
         } else if (isFunction(s)) {
           return s()
         } else {
-          warn(
-            `Invalid watch source: ${JSON.stringify(s)}.
+          __DEV__ &&
+            warn(
+              `Invalid watch source: ${JSON.stringify(s)}.
           A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
-            vm
-          )
+              vm
+            )
           return noopFn
         }
       })
@@ -310,11 +311,12 @@ function createWatcher(
     getter = source as () => any
   } else {
     getter = noopFn
-    warn(
-      `Invalid watch source: ${JSON.stringify(source)}.
+    __DEV__ &&
+      warn(
+        `Invalid watch source: ${JSON.stringify(source)}.
       A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
-      vm
-    )
+        vm
+      )
   }
 
   const applyCb = (n: any, o: any) => {
