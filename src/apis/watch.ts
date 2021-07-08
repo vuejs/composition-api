@@ -103,8 +103,6 @@ function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
 function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
   return {
     ...{
-      immediate: true,
-      deep: false,
       flush: 'pre',
     },
     ...options,
@@ -208,6 +206,21 @@ function createWatcher(
   cb: WatchCallback<any> | null,
   options: WatchOptions
 ): () => void {
+  if (__DEV__ && !cb) {
+    if (options.immediate !== undefined) {
+      warn(
+        `watch() "immediate" option is only respected when using the ` +
+          `watch(source, callback, options?) signature.`
+      )
+    }
+    if (options.deep !== undefined) {
+      warn(
+        `watch() "deep" option is only respected when using the ` +
+          `watch(source, callback, options?) signature.`
+      )
+    }
+  }
+
   const flushMode = options.flush
   const isSync = flushMode === 'sync'
   let cleanup: (() => void) | null
