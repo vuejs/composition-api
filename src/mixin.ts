@@ -210,10 +210,11 @@ export function mixin(Vue: VueConstructor) {
       proxy(ctx, key, {
         get: () => vm[srcKey],
         set() {
-          warn(
-            `Cannot assign to '${key}' because it is a read-only property`,
-            vm
-          )
+          __DEV__ &&
+            warn(
+              `Cannot assign to '${key}' because it is a read-only property`,
+              vm
+            )
         },
       })
     })
@@ -237,10 +238,11 @@ export function mixin(Vue: VueConstructor) {
           return data
         },
         set() {
-          warn(
-            `Cannot assign to '${key}' because it is a read-only property`,
-            vm
-          )
+          __DEV__ &&
+            warn(
+              `Cannot assign to '${key}' because it is a read-only property`,
+              vm
+            )
         },
       })
     })
