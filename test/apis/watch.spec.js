@@ -446,6 +446,40 @@ describe('api/watch', () => {
       vm.count++
       expect(spy).toHaveBeenLastCalledWith(1)
     })
+
+    it('warn immediate option when using effect', async () => {
+      const count = ref(0)
+      let dummy
+      watchEffect(
+        () => {
+          dummy = count.value
+        },
+        { immediate: false }
+      )
+      expect(dummy).toBe(0)
+      expect(`"immediate" option is only respected`).toHaveBeenWarned()
+
+      count.value++
+      await nextTick()
+      expect(dummy).toBe(1)
+    })
+
+    it('warn and not respect deep option when using effect', async () => {
+      const arr = ref([1, [2]])
+      const spy = jest.fn()
+      watchEffect(
+        () => {
+          spy()
+          return arr
+        },
+        { deep: true }
+      )
+      expect(spy).toHaveBeenCalledTimes(1)
+      arr.value[1][0] = 3
+      await nextTick()
+      expect(spy).toHaveBeenCalledTimes(1),
+        expect(`"deep" option is only respected`).toHaveBeenWarned()
+    })
   })
 
   describe('Multiple sources', () => {
