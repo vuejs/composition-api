@@ -531,4 +531,30 @@ describe('api: watch', () => {
 
     expect(data2.value).toMatchObject([1])
   })
+
+  // #498
+  it('watchEffect should not lead to infinite loop when accessing', async () => {
+    let dummy = 0
+
+    const state = reactive({
+      data: [],
+      watchVar: 123,
+    })
+
+    watchEffect(() => {
+      // accessing
+      state.watchVar
+      // setting
+      state.data = []
+      dummy += 1
+    })
+
+    expect(dummy).toBe(1)
+
+    state.data = []
+
+    await nextTick()
+
+    expect(dummy).toBe(2)
+  })
 })
