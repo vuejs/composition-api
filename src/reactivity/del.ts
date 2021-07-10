@@ -1,6 +1,12 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { hasOwn, isPrimitive, isUndef, isValidArrayIndex } from '../utils'
+import {
+  hasOwn,
+  isPrimitive,
+  isUndef,
+  isArray,
+  isValidArrayIndex,
+} from '../utils'
 
 /**
  * Delete a property and trigger change if necessary.
@@ -14,7 +20,7 @@ export function del(target: AnyObject, key: any) {
       `Cannot delete reactive property on undefined, null, or primitive value: ${target}`
     )
   }
-  if (Array.isArray(target) && isValidArrayIndex(key)) {
+  if (isArray(target) && isValidArrayIndex(key)) {
     target.splice(key, 1)
     return
   }

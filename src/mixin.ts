@@ -176,7 +176,7 @@ export function mixin(Vue: VueConstructor) {
       return visited.get(target)
     }
     visited.set(target, false)
-    if (Array.isArray(target) && isReactive(target)) {
+    if (isArray(target) && isReactive(target)) {
       visited.set(target, true)
       return true
     }
