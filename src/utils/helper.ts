@@ -33,11 +33,13 @@ export function isComponentInstance(obj: any) {
 
 export function createSlotProxy(vm: ComponentInstance, slotName: string) {
   return (...args: any) => {
-    if (__DEV__ && !vm.$scopedSlots[slotName]) {
-      return warn(
-        `slots.${slotName}() got called outside of the "render()" scope`,
-        vm
-      )
+    if (!vm.$scopedSlots[slotName]) {
+      return __DEV__
+        ? warn(
+            `slots.${slotName}() got called outside of the "render()" scope`,
+            vm
+          )
+        : ''
     }
 
     return vm.$scopedSlots[slotName]!.apply(vm, args)
