@@ -54,7 +54,8 @@ export function inject(
 
   const vm = getCurrentInstance()?.proxy
   if (!vm) {
-    warn(`inject() can only be used inside setup() or functional components.`)
+    __DEV__ &&
+      warn(`inject() can only be used inside setup() or functional components.`)
     return
   }
 
