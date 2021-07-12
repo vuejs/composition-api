@@ -149,8 +149,8 @@ export function mixin(Vue: VueConstructor) {
     }
   }
 
-  function customReactive(target: object, visited = new Set()) {
-    if (visited.has(target)) return
+  function customReactive(target: object, seen = new Set()) {
+    if (seen.has(target)) return
     if (
       !isPlainObject(target) ||
       isRef(target) ||
@@ -166,8 +166,8 @@ export function mixin(Vue: VueConstructor) {
       const val = target[k]
       defineReactive(target, k, val)
       if (val) {
-        visited.add(val)
-        customReactive(val, visited)
+        seen.add(val)
+        customReactive(val, seen)
       }
       return
     })

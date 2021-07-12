@@ -135,11 +135,11 @@ export function observe<T>(obj: T): T {
 /**
  * Mock __ob__ for object recursively
  */
-function mockReactivityDeep(obj: any, seen = new WeakMap<any, boolean>()) {
+function mockReactivityDeep(obj: any, seen = new Set()) {
   if (seen.has(obj)) return
 
   def(obj, '__ob__', mockObserver(obj))
-  seen.set(obj, true)
+  seen.add(obj)
 
   for (const key of Object.keys(obj)) {
     const value = obj[key]
