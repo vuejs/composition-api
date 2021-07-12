@@ -1,3 +1,17 @@
+<a name="1.0.0-rc.14"></a>
+# [1.0.0-rc.14](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.13...v1.0.0-rc.14) (2021-07-12)
+
+
+### Bug Fixes
+
+* **customReactive:** avoid circular reference. ([#758](https://github.com/vuejs/composition-api/issues/758)) ([2bd6ea5](https://github.com/vuejs/composition-api/commit/2bd6ea5))
+* **watch:** traverse refs in deep watch ([#753](https://github.com/vuejs/composition-api/issues/753)) ([55a0a20](https://github.com/vuejs/composition-api/commit/55a0a20))
+* only trigger warning in the dev environment ([#755](https://github.com/vuejs/composition-api/issues/755)) ([bc7c2af](https://github.com/vuejs/composition-api/commit/bc7c2af))
+* **watch:** errors thrown in the asynchronous callback function in watch will not be caught. ([#751](https://github.com/vuejs/composition-api/issues/751)) ([f0e423f](https://github.com/vuejs/composition-api/commit/f0e423f))
+* **watch:** only trigger warning in the dev environment ([#754](https://github.com/vuejs/composition-api/issues/754)) ([0fe0088](https://github.com/vuejs/composition-api/commit/0fe0088))
+
+
+
 <a name="1.0.0-rc.13"></a>
 # [1.0.0-rc.13](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.12...v1.0.0-rc.13) (2021-07-02)
 
