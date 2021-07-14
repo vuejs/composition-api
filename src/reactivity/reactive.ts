@@ -150,7 +150,7 @@ function mockReactivityDeep(obj: any, seen = new Set()) {
     ) {
       continue
     }
-    mockReactivityDeep(value)
+    mockReactivityDeep(value, seen)
   }
 }
 
