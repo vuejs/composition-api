@@ -251,7 +251,7 @@ describe('api: provide/inject', () => {
 
     const Consumer = {
       setup() {
-        // Not using TypeScript
+        // The emulation does not use TypeScript
         const foo = inject(undefined as unknown as string)
         expect(foo).toBeUndefined()
         return () => h('div', foo as unknown as string)
