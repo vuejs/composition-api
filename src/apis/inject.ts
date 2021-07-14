@@ -55,14 +55,14 @@ export function inject(
     return
   }
 
+  if (!key) {
+    __DEV__ && warn(`Injection "${String(key)}" not found`, vm)
+    return defaultValue
+  }
+
   const val = resolveInject(key, vm)
   if (val !== NOT_FOUND) {
     return val
-  }
-
-  if (key === undefined) {
-    __DEV__ && warn(`Injection "${String(key)}" not found`, vm)
-    return
   }
 
   if (defaultValue === undefined && __DEV__) {
