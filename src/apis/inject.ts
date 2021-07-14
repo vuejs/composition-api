@@ -48,10 +48,6 @@ export function inject(
   defaultValue?: unknown,
   treatDefaultAsFactory = false
 ) {
-  if (!key) {
-    return defaultValue
-  }
-
   const vm = getCurrentInstance()?.proxy
   if (!vm) {
     __DEV__ &&
@@ -62,6 +58,11 @@ export function inject(
   const val = resolveInject(key, vm)
   if (val !== NOT_FOUND) {
     return val
+  }
+
+  if (key === undefined) {
+    __DEV__ && warn(`Injection "${String(key)}" not found`, vm)
+    return
   }
 
   if (defaultValue === undefined && __DEV__) {
