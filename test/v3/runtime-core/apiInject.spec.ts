@@ -261,7 +261,7 @@ describe('api: provide/inject', () => {
     const root = document.createElement('div')
     const vm = createApp(Provider).mount(root)
     expect(vm.$el.outerHTML).toBe(`<div></div>`)
-    expect(`[Vue warn]: Injection "undefined" not found`).toHaveBeenWarned()
+    expect(`[Vue warn]: injection "undefined" not found,`).toHaveBeenWarned()
   })
 
   it('should not self-inject', () => {
