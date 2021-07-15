@@ -242,6 +242,28 @@ describe('api: provide/inject', () => {
     expect(`[Vue warn]: Injection "foo" not found`).toHaveBeenWarned()
   })
 
+  it('should warn unfound w/ injectionKey is undefined', () => {
+    const Provider = {
+      setup() {
+        return () => h(Consumer)
+      },
+    }
+
+    const Consumer = {
+      setup() {
+        // The emulation does not use TypeScript
+        const foo = inject(undefined as unknown as string)
+        expect(foo).toBeUndefined()
+        return () => h('div', foo as unknown as string)
+      },
+    }
+
+    const root = document.createElement('div')
+    const vm = createApp(Provider).mount(root)
+    expect(vm.$el.outerHTML).toBe(`<div></div>`)
+    expect(`[Vue warn]: injection "undefined" not found.`).toHaveBeenWarned()
+  })
+
   it('should not self-inject', () => {
     const Comp = {
       setup() {

@@ -48,15 +48,16 @@ export function inject(
   defaultValue?: unknown,
   treatDefaultAsFactory = false
 ) {
-  if (!key) {
-    return defaultValue
-  }
-
   const vm = getCurrentInstance()?.proxy
   if (!vm) {
     __DEV__ &&
       warn(`inject() can only be used inside setup() or functional components.`)
     return
+  }
+
+  if (!key) {
+    __DEV__ && warn(`injection "${String(key)}" not found.`, vm)
+    return defaultValue
   }
 
   const val = resolveInject(key, vm)
