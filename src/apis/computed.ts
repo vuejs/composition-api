@@ -1,4 +1,4 @@
-import { getVueConstructor, getCurrentInstance } from '../runtimeContext'
+import { getVueConstructor } from '../runtimeContext'
 import { createRef, Ref } from '../reactivity'
 import {
   warn,
@@ -6,6 +6,7 @@ import {
   defineComponentInstance,
   getVueInternalClasses,
 } from '../utils'
+import { getCurrentScopeVM } from './effectScope'
 
 export interface ComputedRef<T = any> extends WritableComputedRef<T> {
   readonly value: T
@@ -31,7 +32,7 @@ export function computed<T>(
 export function computed<T>(
   getterOrOptions: ComputedGetter<T> | WritableComputedOptions<T>
 ): ComputedRef<T> | WritableComputedRef<T> {
-  const vm = getCurrentInstance()?.proxy
+  const vm = getCurrentScopeVM()
   let getter: ComputedGetter<T>
   let setter: ComputedSetter<T> | undefined
 
