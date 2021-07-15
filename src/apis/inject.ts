@@ -56,7 +56,7 @@ export function inject(
   }
 
   if (!key) {
-    __DEV__ && warn(`Injection "${String(key)}" not found`, vm)
+    __DEV__ && warn(`injection "${String(key)}" not found.`, vm)
     return defaultValue
   }
 
