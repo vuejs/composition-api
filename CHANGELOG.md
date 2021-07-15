@@ -1,3 +1,14 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.14...v1.0.0) (2021-07-15)
+
+
+### Bug Fixes
+
+* **mockReactivityDeep:** add parameter seen for mockReactivityDeep. ([#759](https://github.com/vuejs/composition-api/issues/759)) ([40cb14a](https://github.com/vuejs/composition-api/commit/40cb14a))
+* **runtime-core:**  trigger warning when the injectionKey is undefined ([#760](https://github.com/vuejs/composition-api/issues/760)) ([2ccad9b](https://github.com/vuejs/composition-api/commit/2ccad9b))
+
+
+
 <a name="1.0.0-rc.14"></a>
 # [1.0.0-rc.14](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.13...v1.0.0-rc.14) (2021-07-12)
 
