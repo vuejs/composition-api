@@ -13,12 +13,13 @@ import {
   isMap,
 } from '../utils'
 import { defineComponentInstance } from '../utils/helper'
-import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
+import { getVueConstructor } from '../runtimeContext'
 import {
   WatcherPreFlushQueueKey,
   WatcherPostFlushQueueKey,
 } from '../utils/symbols'
 import { ComputedRef } from './computed'
+import { getCurrentScopeVM } from './effectScope'
 
 export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
 
@@ -110,7 +111,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
 }
 
 function getWatcherVM() {
-  let vm = getCurrentInstance()?.proxy
+  let vm = getCurrentScopeVM()
   if (!vm) {
     if (!fallbackVM) {
       fallbackVM = defineComponentInstance(getVueConstructor())

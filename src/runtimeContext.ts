@@ -21,6 +21,7 @@ try {
 
 let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInstance | null = null
+let currentInstanceTracking = true
 
 const PluginInstalledFlag = '__composition_api_installed__'
 
@@ -71,7 +72,22 @@ export function setVueConstructor(Vue: VueConstructor) {
   })
 }
 
+/**
+ * For `effectScope` to create instance without populate the current instance
+ * @internal
+ **/
+export function withCurrentInstanceTrackingDisabled(fn: () => void) {
+  const prev = currentInstanceTracking
+  currentInstanceTracking = false
+  try {
+    fn()
+  } finally {
+    currentInstanceTracking = prev
+  }
+}
+
 export function setCurrentInstance(vm: ComponentInstance | null) {
+  if (!currentInstanceTracking) return
   // currentInstance?.$scopedSlots
   currentInstance = vm
 }
