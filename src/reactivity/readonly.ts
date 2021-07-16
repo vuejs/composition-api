@@ -44,10 +44,8 @@ type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRef<T>
 export function readonly<T extends object>(
   target: T
 ): DeepReadonly<UnwrapNestedRefs<T>> {
-  if (!isObject(target)) {
-    if (__DEV__) {
-      warn(`value cannot be made reactive: ${String(target)}`)
-    }
+  if (__DEV__ && !isObject(target)) {
+    warn(`value cannot be made reactive: ${String(target)}`)
   }
   return target as any
 }
