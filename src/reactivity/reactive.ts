@@ -171,12 +171,12 @@ export function createObserver() {
 }
 
 export function shallowReactive<T extends object = any>(obj: T): T
-export function shallowReactive(obj: any): any {
+export function shallowReactive(obj: any) {
   if (!isObject(obj)) {
     if (__DEV__) {
       warn('"shallowReactive()" must be called on an object.')
     }
-    return obj as any
+    return obj
   }
 
   if (
@@ -184,7 +184,7 @@ export function shallowReactive(obj: any): any {
     isRaw(obj) ||
     !Object.isExtensible(obj)
   ) {
-    return obj as any
+    return obj
   }
 
   const observed = observe(isArray(obj) ? [] : {})
@@ -233,7 +233,7 @@ export function reactive<T extends object>(obj: T): UnwrapRef<T> {
     if (__DEV__) {
       warn('"reactive()" must be called on an object.')
     }
-    return obj as any
+    return obj
   }
 
   if (

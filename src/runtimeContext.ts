@@ -193,7 +193,7 @@ function toVue3ComponentInstance(
     emit: vue2Instance.$emit.bind(vue2Instance),
 
     parent: null,
-    root: null as any,
+    root: null!, // to be immediately set
   } as unknown as ComponentInternalInstance
 
   // map vm.$props =

@@ -8,4 +8,4 @@ export const nextTick: NextTick = function nextTick(
   ...args: Parameters<NextTick>
 ) {
   return getVueConstructor()?.nextTick.apply(this, args)
-} as any
+}

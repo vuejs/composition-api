@@ -35,6 +35,9 @@ export function mixin(Vue: VueConstructor) {
     },
     updated(this: ComponentInstance) {
       updateTemplateRef(this)
+      if (this.$vnode?.context) {
+        updateTemplateRef(this.$vnode.context)
+      }
     },
   })
 
