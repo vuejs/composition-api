@@ -1,3 +1,15 @@
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/vuejs/composition-api/compare/v1.0.1...v1.0.2) (2021-07-16)
+
+
+### Bug Fixes
+
+* **readonly:** align behavior with vue-next. ([#765](https://github.com/vuejs/composition-api/issues/765)) ([42104aa](https://github.com/vuejs/composition-api/commit/42104aa))
+* **type:** remove unnecessary type assertion ([#766](https://github.com/vuejs/composition-api/issues/766)) ([ebb7975](https://github.com/vuejs/composition-api/commit/ebb7975))
+* should dynamically update refs in context ([#764](https://github.com/vuejs/composition-api/issues/764)) ([d7de23e](https://github.com/vuejs/composition-api/commit/d7de23e))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/vuejs/composition-api/compare/v1.0.0...v1.0.1) (2021-07-16)
 
