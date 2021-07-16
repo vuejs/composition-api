@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, watchEffect } = require('../src')
+const { ref, watchEffect, nextTick } = require('../src')
 
 describe('ref', () => {
   it('should work', (done) => {
@@ -69,6 +69,50 @@ describe('ref', () => {
       .then(done)
   })
 
+  // #296
+  it('should dynamically update refs in context', async () => {
+    const vm = new Vue({
+      setup() {
+        const barRef = ref(null)
+        return {
+          barRef,
+        }
+      },
+      template: `<div>
+        <foo><bar ref="barRef"/></foo>
+      </div>`,
+      components: {
+        bar: {
+          setup() {
+            const name = ref('bar')
+            return {
+              name,
+            }
+          },
+          template: '<div> {{name}} </div>',
+        },
+        foo: {
+          setup() {
+            const showSlot = ref(false)
+            const setShow = () => {
+              showSlot.value = true
+            }
+            return {
+              setShow,
+              showSlot,
+            }
+          },
+          template: `<div> <slot v-if="showSlot"></slot> </div>`,
+        },
+      },
+    }).$mount()
+    await nextTick()
+    //@ts-ignore
+    vm.$children[0].setShow()
+    await nextTick()
+    //@ts-ignore
+    expect(vm.$refs.barRef).toBe(vm.barRef)
+  })
   // TODO: how ?
   // it('work with createElement', () => {
   //   let root;
