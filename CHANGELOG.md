@@ -1,3 +1,13 @@
+<a name="1.1.0-beta.1"></a>
+# [1.1.0-beta.1](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.1.0-beta.1) (2021-07-16)
+
+
+### Features
+
+* implement `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/vuejs/composition-api/compare/v1.0.1...v1.0.2) (2021-07-16)
 
