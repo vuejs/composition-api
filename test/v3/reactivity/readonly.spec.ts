@@ -6,6 +6,7 @@ import {
   reactive,
   watch,
   nextTick,
+  readonly,
 } from '../../../src'
 
 const Vue = require('vue/dist/vue.common.js')
@@ -385,6 +386,9 @@ describe('reactivity/readonly', () => {
     test('should not process non-object data', () => {
       // @ts-ignore
       shallowReadonly(25)
+      expect(`value cannot be made reactive: 25`).toHaveBeenWarned()
+      // @ts-ignore
+      readonly(25)
       expect(`value cannot be made reactive: 25`).toHaveBeenWarned()
     })
 
