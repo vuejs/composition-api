@@ -22,4 +22,4 @@ export const createElement = function createElement(...args: any) {
   }
 
   return instance.$createElement.apply(instance, args)
-} as any as CreateElement
+} as CreateElement
