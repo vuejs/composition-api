@@ -8,6 +8,7 @@ import {
   computed,
   ref,
   ComputedRef,
+  createApp,
 } from '../../../src'
 import { mockWarn } from '../../helpers'
 
@@ -250,5 +251,35 @@ describe('reactivity/effect/scope', () => {
     expect(computedSpy).toHaveBeenCalledTimes(2)
     expect(watchSpy).toHaveBeenCalledTimes(1)
     expect(watchEffectSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('should stop along with parent component', async () => {
+    let dummy, doubled
+    const counter = reactive({ num: 0 })
+
+    const root = document.createElement('div')
+    const vm = createApp({
+      setup() {
+        const scope = new EffectScope()
+        scope.run(() => {
+          watchEffect(() => (dummy = counter.num))
+          watchEffect(() => (doubled = counter.num * 2))
+        })
+      },
+    })
+    vm.mount(root)
+
+    expect(dummy).toBe(0)
+    counter.num = 7
+    await nextTick()
+    expect(dummy).toBe(7)
+    expect(doubled).toBe(14)
+
+    vm.unmount()
+
+    counter.num = 6
+    await nextTick()
+    expect(dummy).toBe(7)
+    expect(doubled).toBe(14)
   })
 })

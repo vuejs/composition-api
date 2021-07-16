@@ -75,7 +75,11 @@ export function recordEffectScope(
   scope = scope || activeEffectScope
   if (scope && scope.active) {
     scope.effects.push(effect)
+    return
   }
+  // destory on parent component unmounted
+  const vm = getCurrentInstance()?.proxy
+  vm && vm.$on('hook:destroyed', () => effect.stop())
 }
 
 export function effectScope(detached?: boolean) {
