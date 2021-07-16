@@ -168,7 +168,7 @@ function toVue3ComponentInstance(
     return instanceMapCache.get(vue2Instance)!
   }
 
-  const instance: ComponentInternalInstance = ({
+  const instance: ComponentInternalInstance = {
     proxy: vue2Instance,
     update: vue2Instance.$forceUpdate,
     uid: vue2Instance._uid,
@@ -177,8 +177,8 @@ function toVue3ComponentInstance(
     emit: vue2Instance.$emit.bind(vue2Instance),
 
     parent: null,
-    root: null as any,
-  } as unknown) as ComponentInternalInstance
+    root: null!, // to be immediately set
+  } as unknown as ComponentInternalInstance
 
   // map vm.$props =
   const instanceProps = [

@@ -122,7 +122,7 @@ export function toRefs<T extends object>(obj: T): ToRefs<T> {
   if (__DEV__ && !isReactive(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
-  if (!isPlainObject(obj)) return obj as any
+  if (!isPlainObject(obj)) return obj
 
   const ret: any = {}
   for (const key in obj) {

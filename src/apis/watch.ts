@@ -255,7 +255,7 @@ function createWatcher(
           fn(...args)
         },
         flushMode as 'pre' | 'post'
-      )) as any as T
+      )) as unknown as T
   }
 
   // effect watch
@@ -471,7 +471,7 @@ function traverse(value: unknown, seen: Set<unknown> = new Set()) {
     })
   } else if (isPlainObject(value)) {
     for (const key in value) {
-      traverse((value as any)[key], seen)
+      traverse(value[key], seen)
     }
   }
   return value

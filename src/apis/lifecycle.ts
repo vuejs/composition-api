@@ -23,7 +23,7 @@ function injectHookOption(
   hook: string,
   val: Function
 ) {
-  const options = vm.$options as any
+  const options = vm.$options as Record<string, unknown>
   const mergeFn = Vue.config.optionMergeStrategies[hook]
   options[hook] = mergeFn(options[hook], wrapHookCall(vm, val))
 }
