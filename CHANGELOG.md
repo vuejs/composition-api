@@ -1,3 +1,13 @@
+<a name="1.1.0-beta.2"></a>
+# [1.1.0-beta.2](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.1...v1.1.0-beta.2) (2021-07-16)
+
+
+### Bug Fixes
+
+* **effectScope:** should stop along with parent component ([784d96c](https://github.com/vuejs/composition-api/commit/784d96c))
+
+
+
 <a name="1.1.0-beta.1"></a>
 # [1.1.0-beta.1](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.1.0-beta.1) (2021-07-16)
 
