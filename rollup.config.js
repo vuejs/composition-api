@@ -32,6 +32,11 @@ const builds = {
     format: 'es',
     mode: 'development',
   },
+  mjs: {
+    outFile: 'vue-composition-api.mjs',
+    format: 'es',
+    mode: 'development',
+  },
 }
 
 function onwarn(msg, warn) {
