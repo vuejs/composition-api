@@ -1,3 +1,13 @@
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.0.3) (2021-07-18)
+
+
+### Bug Fixes
+
+* build for mjs and exports all submodules ([69538ee](https://github.com/vuejs/composition-api/commit/69538ee))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/vuejs/composition-api/compare/v1.0.1...v1.0.2) (2021-07-16)
 
