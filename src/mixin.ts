@@ -60,7 +60,7 @@ export function mixin(Vue: VueConstructor) {
     if (!setup) {
       return
     }
-    if (typeof setup !== 'function') {
+    if (!isFunction(setup)) {
       if (__DEV__) {
         warn(
           'The "setup" option should be a function that returns a object in component definitions.',
@@ -74,7 +74,7 @@ export function mixin(Vue: VueConstructor) {
     // wrapper the data option, so we can invoke setup before data get resolved
     $options.data = function wrappedData() {
       initSetup(vm, vm.$props)
-      return typeof data === 'function'
+      return isFunction(data)
         ? (
             data as (this: ComponentInstance, x: ComponentInstance) => object
           ).call(vm, vm)

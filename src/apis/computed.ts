@@ -5,6 +5,7 @@ import {
   noopFn,
   defineComponentInstance,
   getVueInternalClasses,
+  isFunction,
 } from '../utils'
 
 export interface ComputedRef<T = any> extends WritableComputedRef<T> {
@@ -35,7 +36,7 @@ export function computed<T>(
   let getter: ComputedGetter<T>
   let setter: ComputedSetter<T> | undefined
 
-  if (typeof getterOrOptions === 'function') {
+  if (isFunction(getterOrOptions)) {
     getter = getterOrOptions
   } else {
     getter = getterOrOptions.get
