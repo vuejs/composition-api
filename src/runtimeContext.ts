@@ -1,6 +1,13 @@
 import type { VueConstructor, VNode } from 'vue'
 import { ComponentInstance, Data } from './component'
-import { assert, hasOwn, warn, proxy, UnionToIntersection } from './utils'
+import {
+  assert,
+  hasOwn,
+  warn,
+  proxy,
+  UnionToIntersection,
+  isFunction,
+} from './utils'
 
 let vueDependency: VueConstructor | undefined = undefined
 
@@ -25,7 +32,7 @@ let currentInstance: ComponentInstance | null = null
 const PluginInstalledFlag = '__composition_api_installed__'
 
 function isVue(obj: any): obj is VueConstructor {
-  return obj && typeof obj === 'function' && obj.name === 'Vue'
+  return obj && isFunction(obj) && obj.name === 'Vue'
 }
 
 export function isPluginInstalled() {
