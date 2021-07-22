@@ -1,3 +1,13 @@
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/vuejs/composition-api/compare/v1.0.3...v1.0.4) (2021-07-22)
+
+
+### Bug Fixes
+
+* revert module field to `esm.js` version, close [#769](https://github.com/vuejs/composition-api/issues/769) ([4ac545c](https://github.com/vuejs/composition-api/commit/4ac545c))
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.0.3) (2021-07-18)
 
