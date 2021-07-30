@@ -29,7 +29,11 @@ export type UnwrapRef<T> = T extends Ref<infer V>
   ? UnwrapRefSimple<V>
   : UnwrapRefSimple<T>
 
-type UnwrapRefSimple<T> = T extends Function | CollectionTypes | BaseTypes | Ref
+export type UnwrapRefSimple<T> = T extends
+  | Function
+  | CollectionTypes
+  | BaseTypes
+  | Ref
   ? T
   : T extends Array<any>
   ? { [K in keyof T]: UnwrapRefSimple<T[K]> }
