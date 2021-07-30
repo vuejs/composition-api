@@ -11,9 +11,9 @@ const genName = (name: string) => `on${name[0].toUpperCase() + name.slice(1)}`
 function createLifeCycle(lifeCyclehook: string) {
   return (callback: Function) => {
     const vm = currentVMInFn(genName(lifeCyclehook))
-    if (vm) {
-      injectHookOption(getVueConstructor(), vm, lifeCyclehook, callback)
-    }
+    return (
+      vm && injectHookOption(getVueConstructor(), vm, lifeCyclehook, callback)
+    )
   }
 }
 
@@ -25,10 +25,12 @@ function injectHookOption(
 ) {
   const options = vm.$options as Record<string, unknown>
   const mergeFn = Vue.config.optionMergeStrategies[hook]
-  options[hook] = mergeFn(options[hook], wrapHookCall(vm, val))
+  const wrappedHook = wrapHookCall(vm, val)
+  options[hook] = mergeFn(options[hook], wrappedHook)
+  return wrappedHook
 }
 
-function wrapHookCall(vm: ComponentInstance, fn: Function) {
+function wrapHookCall(vm: ComponentInstance, fn: Function): Function {
   return (...args: any) => {
     let preVm = getCurrentInstance()?.proxy
     setCurrentInstance(vm)
