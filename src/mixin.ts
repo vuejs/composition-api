@@ -124,7 +124,11 @@ export function mixin(Vue: VueConstructor) {
         if (!isRef(bindingValue)) {
           if (!isReactive(bindingValue)) {
             if (isFunction(bindingValue)) {
+              const copy = bindingValue
               bindingValue = bindingValue.bind(vm)
+              Object.keys(copy).forEach(function (ele) {
+                bindingValue[ele] = copy[ele]
+              })
             } else if (!isObject(bindingValue)) {
               bindingValue = ref(bindingValue)
             } else if (hasReactiveArrayChild(bindingValue)) {

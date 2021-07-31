@@ -1193,4 +1193,30 @@ describe('setup', () => {
     const vm = new Vue(Constructor).$mount()
     expect(vm.proxy).toBe(originalProxy)
   })
+
+  // test #687
+  it('properties of function should not disappear', () => {
+    Vue.component('todo', {
+      template: '<div/>',
+      props: ['testFn'],
+      setup(props) {
+        expect(props.testFn.a).toBe(2)
+      },
+    })
+
+    const vm = new Vue({
+      template: `
+        <div>
+          <todo :testFn="testFn"></todo>
+        </div>
+      `,
+      setup() {
+        const testFn = () => {
+          console.log(1)
+        }
+        testFn.a = 2
+        return { testFn }
+      },
+    }).$mount()
+  })
 })
