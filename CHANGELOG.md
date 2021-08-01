@@ -1,3 +1,13 @@
+<a name="1.0.5"></a>
+## [1.0.5](https://github.com/vuejs/composition-api/compare/v1.0.4...v1.0.5) (2021-08-01)
+
+
+### Bug Fixes
+
+* **function:** properties of function should not disappear. ([#778](https://github.com/vuejs/composition-api/issues/778)) ([68c1a35](https://github.com/vuejs/composition-api/commit/68c1a35))
+
+
+
 <a name="1.0.4"></a>
 ## [1.0.4](https://github.com/vuejs/composition-api/compare/v1.0.3...v1.0.4) (2021-07-22)
 
