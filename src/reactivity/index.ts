@@ -29,4 +29,4 @@ export type {
   UnwrapRefSimple,
   ShallowUnwrapRef,
 } from './ref'
-export type { DeepReadonly } from './readonly'
+export type { DeepReadonly, UnwrapNestedRefs } from './readonly'
