@@ -33,7 +33,7 @@ export type DeepReadonly<T> = T extends Builtin
                   : Readonly<T>
 
 // only unwrap nested ref
-type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRefSimple<T>
+export type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRefSimple<T>
 
 /**
  * **In @vue/composition-api, `reactive` only provides type-level readonly check**
