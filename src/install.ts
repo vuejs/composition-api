@@ -1,6 +1,6 @@
 import type { VueConstructor } from 'vue'
 import { AnyObject } from './types/basic'
-import { hasSymbol, hasOwn, isPlainObject, warn } from './utils'
+import { isFunction, hasSymbol, hasOwn, isPlainObject, warn } from './utils'
 import { isRef } from './reactivity'
 import { setVueConstructor, isVueRegistered } from './runtimeContext'
 import { mixin } from './mixin'
@@ -67,8 +67,8 @@ export function install(Vue: VueConstructor) {
   ) {
     return function mergedSetupFn(props: any, context: any) {
       return mergeData(
-        typeof parent === 'function' ? parent(props, context) || {} : undefined,
-        typeof child === 'function' ? child(props, context) || {} : undefined
+        isFunction(parent) ? parent(props, context) || {} : undefined,
+        isFunction(child) ? child(props, context) || {} : undefined
       )
     }
   }

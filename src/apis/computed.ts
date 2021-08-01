@@ -5,6 +5,7 @@ import {
   noopFn,
   defineComponentInstance,
   getVueInternalClasses,
+  isFunction,
 } from '../utils'
 import { getCurrentScopeVM } from './effectScope'
 
@@ -36,7 +37,7 @@ export function computed<T>(
   let getter: ComputedGetter<T>
   let setter: ComputedSetter<T> | undefined
 
-  if (typeof getterOrOptions === 'function') {
+  if (isFunction(getterOrOptions)) {
     getter = getterOrOptions
   } else {
     getter = getterOrOptions.get

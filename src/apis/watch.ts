@@ -433,7 +433,7 @@ export function watch<T = any>(
   options?: WatchOptions
 ): WatchStopHandle {
   let callback: WatchCallback<unknown> | null = null
-  if (typeof cb === 'function') {
+  if (isFunction(cb)) {
     // source watch
     callback = cb as WatchCallback<unknown>
   } else {

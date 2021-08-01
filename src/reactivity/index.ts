@@ -22,5 +22,11 @@ export { readonly, isReadonly, shallowReadonly } from './readonly'
 export { set } from './set'
 export { del } from './del'
 
-export type { Ref, ToRefs, UnwrapRef, ShallowUnwrapRef } from './ref'
-export type { DeepReadonly } from './readonly'
+export type {
+  Ref,
+  ToRefs,
+  UnwrapRef,
+  UnwrapRefSimple,
+  ShallowUnwrapRef,
+} from './ref'
+export type { DeepReadonly, UnwrapNestedRefs } from './readonly'

@@ -36,6 +36,34 @@
 
 * implement `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
 
+<a name="1.0.5"></a>
+## [1.0.5](https://github.com/vuejs/composition-api/compare/v1.0.4...v1.0.5) (2021-08-01)
+
+
+### Bug Fixes
+
+* **function:** properties of function should not disappear. ([#778](https://github.com/vuejs/composition-api/issues/778)) ([68c1a35](https://github.com/vuejs/composition-api/commit/68c1a35))
+
+
+
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/vuejs/composition-api/compare/v1.0.3...v1.0.4) (2021-07-22)
+
+
+### Bug Fixes
+
+* revert module field to `esm.js` version, close [#769](https://github.com/vuejs/composition-api/issues/769) ([4ac545c](https://github.com/vuejs/composition-api/commit/4ac545c))
+
+
+
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.0.3) (2021-07-18)
+
+
+### Bug Fixes
+
+* build for mjs and exports all submodules ([69538ee](https://github.com/vuejs/composition-api/commit/69538ee))
+
 
 
 <a name="1.0.2"></a>
