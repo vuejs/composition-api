@@ -1,3 +1,14 @@
+<a name="1.1.0-beta.6"></a>
+# [1.1.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.1.0-beta.6) (2021-08-09)
+
+
+### Features
+
+* new watchPostEffect api ([92fe90c](https://github.com/vuejs/composition-api/commit/92fe90c))
+* support second target argument for lifecycle functions ([0133c1e](https://github.com/vuejs/composition-api/commit/0133c1e))
+
+
+
 <a name="1.1.0-beta.5"></a>
 # [1.1.0-beta.5](https://github.com/vuejs/composition-api/compare/v1.0.5...v1.1.0-beta.5) (2021-08-01)
 
