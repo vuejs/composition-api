@@ -1,3 +1,23 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.7...v1.1.0) (2021-08-09)
+
+
+### Features
+
+* new `watchSyncEffect` api ([e12c23d](https://github.com/vuejs/composition-api/commit/e12c23d))
+
+
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.0.6) (2021-08-09)
+
+
+### Features
+
+* support second target argument for lifecycle functions ([3f3b9c6](https://github.com/vuejs/composition-api/commit/3f3b9c6))
+
+
+
 <a name="1.1.0-beta.7"></a>
 # [1.1.0-beta.7](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.6...v1.1.0-beta.7) (2021-08-09)
 
