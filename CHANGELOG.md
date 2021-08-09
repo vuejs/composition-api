@@ -4,9 +4,10 @@
 
 ### Features
 
+* align with Vue [v3.2](https://blog.vuejs.org/posts/vue-3.2.html)
+* new `watchPostEffect` api ([92fe90c](https://github.com/vuejs/composition-api/commit/92fe90c))
 * new `watchSyncEffect` api ([e12c23d](https://github.com/vuejs/composition-api/commit/e12c23d))
-
-
+* new `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
 
 <a name="1.0.6"></a>
 ## [1.0.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.0.6) (2021-08-09)
