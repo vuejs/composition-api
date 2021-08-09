@@ -1,27 +1,16 @@
 <a name="1.1.0-beta.7"></a>
 # [1.1.0-beta.7](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.6...v1.1.0-beta.7) (2021-08-09)
 
-
 ### Bug Fixes
 
 * **effectScope:** should have a vaild scope with component ([da21873](https://github.com/vuejs/composition-api/commit/da21873))
 
 
-
 <a name="1.1.0-beta.6"></a>
 # [1.1.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.1.0-beta.6) (2021-08-09)
 
-
-### Features
-
 * new watchPostEffect api ([92fe90c](https://github.com/vuejs/composition-api/commit/92fe90c))
 * support second target argument for lifecycle functions ([0133c1e](https://github.com/vuejs/composition-api/commit/0133c1e))
-
-
-
-<a name="1.1.0-beta.5"></a>
-# [1.1.0-beta.5](https://github.com/vuejs/composition-api/compare/v1.0.5...v1.1.0-beta.5) (2021-08-01)
-
 
 
 <a name="1.1.0-beta.4"></a>
@@ -63,44 +52,17 @@
 * implement `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
 
 
-
-<a name="1.1.0-beta.4"></a>
-# [1.1.0-beta.4](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.3...v1.1.0-beta.4) (2021-07-22)
-
-
-### Bug Fixes
-
-* revert module field to `esm.js` version, close [#769](https://github.com/vuejs/composition-api/issues/769) ([92afa6f](https://github.com/vuejs/composition-api/commit/92afa6f))
-
-
-
-<a name="1.1.0-beta.3"></a>
-# [1.1.0-beta.3](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.2...v1.1.0-beta.3) (2021-07-18)
-
-
-### Bug Fixes
-
-* build for mjs and exports all submodules ([c116714](https://github.com/vuejs/composition-api/commit/c116714))
-
-
-
-<a name="1.1.0-beta.2"></a>
-# [1.1.0-beta.2](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.1...v1.1.0-beta.2) (2021-07-16)
-
-
-### Bug Fixes
-
-* **effectScope:** should stop along with parent component ([784d96c](https://github.com/vuejs/composition-api/commit/784d96c))
-
-
-
-<a name="1.1.0-beta.1"></a>
-# [1.1.0-beta.1](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.1.0-beta.1) (2021-07-16)
-
-
 ### Features
 
 * implement `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
+* support second target argument for lifecycle functions ([3f3b9c6](https://github.com/vuejs/composition-api/commit/3f3b9c6))
+
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/vuejs/composition-api/compare/v1.0.5...v1.0.6) (2021-08-09)
+
+
+### Features
 
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/vuejs/composition-api/compare/v1.0.4...v1.0.5) (2021-08-01)
