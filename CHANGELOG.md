@@ -1,3 +1,13 @@
+<a name="1.1.0-beta.7"></a>
+# [1.1.0-beta.7](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.6...v1.1.0-beta.7) (2021-08-09)
+
+
+### Bug Fixes
+
+* **effectScope:** should have a vaild scope with component ([da21873](https://github.com/vuejs/composition-api/commit/da21873))
+
+
+
 <a name="1.1.0-beta.6"></a>
 # [1.1.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.1.0-beta.6) (2021-08-09)
 
