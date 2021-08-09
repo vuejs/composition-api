@@ -1,4 +1,5 @@
 import type { VueConstructor, VNode } from 'vue'
+import { bindCurrentScopeToVM, EffectScope } from './apis/effectScope'
 import { ComponentInstance, Data } from './component'
 import {
   assert,
@@ -27,7 +28,7 @@ try {
 }
 
 let vueConstructor: VueConstructor | null = null
-let currentInstance: ComponentInstance | null = null
+let currentInstance: ComponentInternalInstance | null = null
 let currentInstanceTracking = true
 
 const PluginInstalledFlag = '__composition_api_installed__'
@@ -93,10 +94,17 @@ export function withCurrentInstanceTrackingDisabled(fn: () => void) {
   }
 }
 
-export function setCurrentInstance(vm: ComponentInstance | null) {
+export function setCurrentVue2Instance(vm: ComponentInstance | null) {
   if (!currentInstanceTracking) return
-  // currentInstance?.$scopedSlots
+  setCurrentInstance(vm ? toVue3ComponentInstance(vm) : vm)
+}
+
+export function setCurrentInstance(vm: ComponentInternalInstance | null) {
+  if (!currentInstanceTracking) return
+  const prev = currentInstance
+  prev?.scope.off()
   currentInstance = vm
+  currentInstance?.scope.on()
 }
 
 export type Slot = (...args: any[]) => VNode[]
@@ -166,17 +174,15 @@ export declare interface ComponentInternalInstance {
   isMounted: boolean
   isUnmounted: boolean
   isDeactivated: boolean
-}
 
-export function getCurrentVue2Instance() {
-  return currentInstance
+  /**
+   * @internal
+   */
+  scope: EffectScope
 }
 
 export function getCurrentInstance() {
-  if (currentInstance) {
-    return toVue3ComponentInstance(currentInstance)
-  }
-  return null
+  return currentInstance
 }
 
 const instanceMapCache = new WeakMap<
@@ -202,6 +208,8 @@ function toVue3ComponentInstance(
     parent: null,
     root: null!, // to be immediately set
   } as unknown as ComponentInternalInstance
+
+  bindCurrentScopeToVM(instance)
 
   // map vm.$props =
   const instanceProps = [

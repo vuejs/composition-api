@@ -1,4 +1,5 @@
 import {
+  ComponentInternalInstance,
   getCurrentInstance,
   getVueConstructor,
   withCurrentInstanceTrackingDisabled,
@@ -9,7 +10,7 @@ import { warn } from './warn'
 let activeEffectScope: EffectScope | undefined
 const effectScopeStack: EffectScope[] = []
 
-export class EffectScope {
+class EffectScopeImpl {
   active = true
   effects: EffectScope[] = []
   cleanups: (() => void)[] = []
@@ -19,15 +20,8 @@ export class EffectScope {
    **/
   vm: Vue
 
-  constructor(detached = false) {
-    let vm: Vue = undefined!
-    withCurrentInstanceTrackingDisabled(() => {
-      vm = defineComponentInstance(getVueConstructor())
-    })
+  constructor(vm: Vue) {
     this.vm = vm
-    if (!detached) {
-      recordEffectScope(this)
-    }
   }
 
   run<T>(fn: () => T): T | undefined {
@@ -64,6 +58,19 @@ export class EffectScope {
       this.effects.forEach((e) => e.stop())
       this.cleanups.forEach((cleanup) => cleanup())
       this.active = false
+    }
+  }
+}
+
+export class EffectScope extends EffectScopeImpl {
+  constructor(detached = false) {
+    let vm: Vue = undefined!
+    withCurrentInstanceTrackingDisabled(() => {
+      vm = defineComponentInstance(getVueConstructor())
+    })
+    super(vm)
+    if (!detached) {
+      recordEffectScope(this)
     }
   }
 }
@@ -106,4 +113,18 @@ export function onScopeDispose(fn: () => void) {
  **/
 export function getCurrentScopeVM() {
   return getCurrentScope()?.vm || getCurrentInstance()?.proxy
+}
+
+/**
+ * @internal
+ **/
+export function bindCurrentScopeToVM(
+  vm: ComponentInternalInstance
+): EffectScope {
+  if (!vm.scope) {
+    const scope = new EffectScopeImpl(vm.proxy) as EffectScope
+    vm.scope = scope
+    vm.proxy.$on('hook:destroyed', () => scope.stop())
+  }
+  return vm.scope
 }

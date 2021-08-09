@@ -5,6 +5,7 @@ import {
   setCurrentInstance,
   getCurrentInstance,
   ComponentInternalInstance,
+  setCurrentVue2Instance,
 } from '../runtimeContext'
 import { currentVMInFn } from '../utils/helper'
 
@@ -33,12 +34,12 @@ function injectHookOption(
 
 function wrapHookCall(vm: ComponentInstance, fn: Function): Function {
   return (...args: any) => {
-    let preVm = getCurrentInstance()?.proxy
-    setCurrentInstance(vm)
+    let preVm = getCurrentInstance()
+    setCurrentVue2Instance(vm)
     try {
       return fn(...args)
     } finally {
-      setCurrentInstance(preVm!)
+      setCurrentInstance(preVm)
     }
   }
 }

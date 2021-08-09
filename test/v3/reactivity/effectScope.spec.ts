@@ -9,6 +9,7 @@ import {
   ref,
   ComputedRef,
   createApp,
+  getCurrentScope,
 } from '../../../src'
 import { mockWarn } from '../../helpers'
 
@@ -281,5 +282,27 @@ describe('reactivity/effect/scope', () => {
     await nextTick()
     expect(dummy).toBe(7)
     expect(doubled).toBe(14)
+  })
+
+  it('component should be a valid scope', async () => {
+    let dummy = 0
+    let scope
+
+    const root = document.createElement('div')
+    const vm = createApp({
+      setup() {
+        scope = getCurrentScope()
+        onScopeDispose(() => (dummy += 1))
+        scope?.cleanups.push(() => (dummy += 1))
+      },
+    })
+
+    vm.mount(root)
+    expect(dummy).toBe(0)
+    expect(scope).not.toBeFalsy()
+
+    vm.unmount()
+    await nextTick()
+    expect(dummy).toBe(2)
   })
 })
