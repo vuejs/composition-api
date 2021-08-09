@@ -99,11 +99,11 @@ export function setCurrentVue2Instance(vm: ComponentInstance | null) {
   setCurrentInstance(vm ? toVue3ComponentInstance(vm) : vm)
 }
 
-export function setCurrentInstance(vm: ComponentInternalInstance | null) {
+export function setCurrentInstance(instance: ComponentInternalInstance | null) {
   if (!currentInstanceTracking) return
   const prev = currentInstance
   prev?.scope.off()
-  currentInstance = vm
+  currentInstance = instance
   currentInstance?.scope.on()
 }
 
@@ -191,19 +191,19 @@ const instanceMapCache = new WeakMap<
 >()
 
 function toVue3ComponentInstance(
-  vue2Instance: ComponentInstance
+  vm: ComponentInstance
 ): ComponentInternalInstance {
-  if (instanceMapCache.has(vue2Instance)) {
-    return instanceMapCache.get(vue2Instance)!
+  if (instanceMapCache.has(vm)) {
+    return instanceMapCache.get(vm)!
   }
 
   const instance: ComponentInternalInstance = {
-    proxy: vue2Instance,
-    update: vue2Instance.$forceUpdate,
-    uid: vue2Instance._uid,
+    proxy: vm,
+    update: vm.$forceUpdate,
+    uid: vm._uid,
 
     // $emit is defined on prototype and it expected to be bound
-    emit: vue2Instance.$emit.bind(vue2Instance),
+    emit: vm.$emit.bind(vm),
 
     parent: null,
     root: null!, // to be immediately set
@@ -224,7 +224,7 @@ function toVue3ComponentInstance(
   instanceProps.forEach((prop) => {
     proxy(instance, prop, {
       get() {
-        return (vue2Instance as any)[`$${prop}`]
+        return (vm as any)[`$${prop}`]
       },
     })
   })
@@ -232,39 +232,39 @@ function toVue3ComponentInstance(
   proxy(instance, 'isMounted', {
     get() {
       // @ts-expect-error private api
-      return vue2Instance._isMounted
+      return vm._isMounted
     },
   })
 
   proxy(instance, 'isUnmounted', {
     get() {
       // @ts-expect-error private api
-      return vue2Instance._isDestroyed
+      return vm._isDestroyed
     },
   })
 
   proxy(instance, 'isDeactivated', {
     get() {
       // @ts-expect-error private api
-      return vue2Instance._inactive
+      return vm._inactive
     },
   })
 
   proxy(instance, 'emitted', {
     get() {
       // @ts-expect-error private api
-      return vue2Instance._events
+      return vm._events
     },
   })
 
-  instanceMapCache.set(vue2Instance, instance)
+  instanceMapCache.set(vm, instance)
 
-  if (vue2Instance.$parent) {
-    instance.parent = toVue3ComponentInstance(vue2Instance.$parent)
+  if (vm.$parent) {
+    instance.parent = toVue3ComponentInstance(vm.$parent)
   }
 
-  if (vue2Instance.$root) {
-    instance.root = toVue3ComponentInstance(vue2Instance.$root)
+  if (vm.$root) {
+    instance.root = toVue3ComponentInstance(vm.$root)
   }
 
   return instance

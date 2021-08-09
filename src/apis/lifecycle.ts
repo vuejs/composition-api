@@ -1,50 +1,51 @@
 import { VueConstructor } from 'vue'
-import { ComponentInstance } from '../component'
 import {
   getVueConstructor,
   setCurrentInstance,
   getCurrentInstance,
   ComponentInternalInstance,
-  setCurrentVue2Instance,
 } from '../runtimeContext'
-import { currentVMInFn } from '../utils/helper'
+import { getCurrentInstanceForFn } from '../utils/helper'
 
 const genName = (name: string) => `on${name[0].toUpperCase() + name.slice(1)}`
 function createLifeCycle(lifeCyclehook: string) {
   return (callback: Function, target?: ComponentInternalInstance | null) => {
-    const vm = currentVMInFn(genName(lifeCyclehook), target)
+    const instance = getCurrentInstanceForFn(genName(lifeCyclehook), target)
     return (
-      vm && injectHookOption(getVueConstructor(), vm, lifeCyclehook, callback)
+      instance &&
+      injectHookOption(getVueConstructor(), instance, lifeCyclehook, callback)
     )
   }
 }
 
 function injectHookOption(
   Vue: VueConstructor,
-  vm: ComponentInstance,
+  instance: ComponentInternalInstance,
   hook: string,
   val: Function
 ) {
-  const options = vm.$options as Record<string, unknown>
+  const options = instance.proxy.$options as Record<string, unknown>
   const mergeFn = Vue.config.optionMergeStrategies[hook]
-  const wrappedHook = wrapHookCall(vm, val)
+  const wrappedHook = wrapHookCall(instance, val)
   options[hook] = mergeFn(options[hook], wrappedHook)
   return wrappedHook
 }
 
-function wrapHookCall(vm: ComponentInstance, fn: Function): Function {
+function wrapHookCall(
+  instance: ComponentInternalInstance,
+  fn: Function
+): Function {
   return (...args: any) => {
-    let preVm = getCurrentInstance()
-    setCurrentVue2Instance(vm)
+    let prev = getCurrentInstance()
+    setCurrentInstance(instance)
     try {
       return fn(...args)
     } finally {
-      setCurrentInstance(preVm)
+      setCurrentInstance(prev)
     }
   }
 }
 
-// export const onCreated = createLifeCycle('created');
 export const onBeforeMount = createLifeCycle('beforeMount')
 export const onMounted = createLifeCycle('mounted')
 export const onBeforeUpdate = createLifeCycle('beforeUpdate')

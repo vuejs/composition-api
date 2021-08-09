@@ -1,5 +1,11 @@
 import { ComponentInstance } from '../component'
-import { hasOwn, warn, currentVMInFn, isFunction, proxy } from '../utils'
+import {
+  hasOwn,
+  warn,
+  getCurrentInstanceForFn,
+  isFunction,
+  proxy,
+} from '../utils'
 import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}
@@ -23,7 +29,7 @@ function resolveInject(
 }
 
 export function provide<T>(key: InjectionKey<T> | string, value: T): void {
-  const vm: any = currentVMInFn('provide')
+  const vm: any = getCurrentInstanceForFn('provide')?.proxy
   if (!vm) return
 
   if (!vm._provided) {
