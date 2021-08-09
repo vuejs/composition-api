@@ -13,12 +13,13 @@ import {
   isMap,
 } from '../utils'
 import { defineComponentInstance } from '../utils/helper'
-import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
+import { getVueConstructor } from '../runtimeContext'
 import {
   WatcherPreFlushQueueKey,
   WatcherPostFlushQueueKey,
 } from '../utils/symbols'
 import { ComputedRef } from './computed'
+import { getCurrentScopeVM } from './effectScope'
 
 export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
 
@@ -110,7 +111,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
 }
 
 function getWatcherVM() {
-  let vm = getCurrentInstance()?.proxy
+  let vm = getCurrentScopeVM()
   if (!vm) {
     if (!fallbackVM) {
       fallbackVM = defineComponentInstance(getVueConstructor())
@@ -393,6 +394,14 @@ export function watchEffect(
   const opts = getWatchEffectOption(options)
   const vm = getWatcherVM()
   return createWatcher(vm, effect, null, opts)
+}
+
+export function watchPostEffect(effect: WatchEffect) {
+  return watchEffect(effect, { flush: 'post' })
+}
+
+export function watchSyncEffect(effect: WatchEffect) {
+  return watchEffect(effect, { flush: 'sync' })
 }
 
 // overload #1: array of multiple sources + cb

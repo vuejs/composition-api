@@ -1,6 +1,6 @@
 {
   "name": "@vue/composition-api",
-  "version": "1.0.6",
+  "version": "1.1.0-beta.7",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
     "vue",
@@ -42,7 +42,7 @@
     "update-readme": "node ./scripts/update-readme.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "version": "yarn changelog && yarn update-readme && git add CHANGELOG.md README.*",
-    "release": "yarn version && yarn test && yarn publish --non-interactive && git push --follow-tags",
+    "release": "yarn version && yarn test && yarn publish --non-interactive --tag next && git push --follow-tags",
     "release-gh": "conventional-github-releaser -p angular"
   },
   "bugs": {

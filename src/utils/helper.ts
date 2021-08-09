@@ -7,10 +7,10 @@ import {
 } from '../runtimeContext'
 import { warn } from './utils'
 
-export function currentVMInFn(
+export function getCurrentInstanceForFn(
   hook: string,
   target?: ComponentInternalInstance | null
-): ComponentInstance | undefined {
+): ComponentInternalInstance | null {
   target = target || getCurrentInstance()
   if (__DEV__ && !target) {
     warn(
@@ -19,7 +19,7 @@ export function currentVMInFn(
         `Lifecycle injection APIs can only be used during execution of setup().`
     )
   }
-  return target?.proxy
+  return target
 }
 
 export function defineComponentInstance<V extends Vue = Vue>(

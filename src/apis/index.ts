@@ -1,5 +1,16 @@
 export * from '../reactivity'
-export * from './lifecycle'
+export {
+  onBeforeMount,
+  onMounted,
+  onBeforeUpdate,
+  onUpdated,
+  onBeforeUnmount,
+  onUnmounted,
+  onErrorCaptured,
+  onActivated,
+  onDeactivated,
+  onServerPrefetch,
+} from './lifecycle'
 export * from './watch'
 export * from './computed'
 export * from './inject'
@@ -8,3 +19,9 @@ export { App, createApp } from './createApp'
 export { nextTick } from './nextTick'
 export { createElement as h } from './createElement'
 export { warn } from './warn'
+export {
+  effectScope,
+  EffectScope,
+  getCurrentScope,
+  onScopeDispose,
+} from './effectScope'
