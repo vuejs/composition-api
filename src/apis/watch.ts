@@ -396,6 +396,10 @@ export function watchEffect(
   return createWatcher(vm, effect, null, opts)
 }
 
+export function watchPostEffect(effect: WatchEffect) {
+  return watchEffect(effect, { flush: 'post' })
+}
+
 // overload #1: array of multiple sources + cb
 // Readonly constraint helps the callback to correctly infer value types based
 // on position in the source array. Otherwise the values will get a union type
