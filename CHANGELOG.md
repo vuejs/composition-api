@@ -1,3 +1,13 @@
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/vuejs/composition-api/compare/v1.0.5...v1.0.6) (2021-08-09)
+
+
+### Features
+
+* support second target argument for lifecycle functions ([3f3b9c6](https://github.com/vuejs/composition-api/commit/3f3b9c6))
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/vuejs/composition-api/compare/v1.0.4...v1.0.5) (2021-08-01)
 
