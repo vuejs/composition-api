@@ -209,6 +209,25 @@ describe('reactivity/effect/scope', () => {
     expect(dummy).toBe(7)
   })
 
+  it('should warn onDispose() is called when there is no active effect scope', () => {
+    const spy = jest.fn()
+    const scope = new EffectScope()
+    scope.run(() => {
+      onScopeDispose(spy)
+    })
+
+    expect(spy).toHaveBeenCalledTimes(0)
+
+    onScopeDispose(spy)
+
+    expect(
+      '[Vue warn]: onDispose() is called when there is no active effect scope to be associated with.'
+    ).toHaveBeenWarned()
+
+    scope.stop()
+    expect(spy).toHaveBeenCalledTimes(1)
+  })
+
   it('test with higher level APIs', async () => {
     const r = ref(1)
 
