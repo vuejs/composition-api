@@ -94,14 +94,14 @@ export function defineAccessControl(target: AnyObject, key: any, val?: any) {
     set: function setterHandler(newVal: any) {
       if (getter && !setter) return
 
-      const value = getter ? getter.call(target) : val
       // If the key is equal to RefKey, skip the unwrap logic
       // If and only if "value" is ref and "newVal" is not a ref,
       // the assignment should be proxied to "value" ref.
-      if (key !== RefKey && isRef(value) && !isRef(newVal)) {
-        value.value = newVal
+      if (key !== RefKey && isRef(val) && !isRef(newVal)) {
+        val.value = newVal
       } else if (setter) {
         setter.call(target, newVal)
+        val = newVal
       } else {
         val = newVal
       }
