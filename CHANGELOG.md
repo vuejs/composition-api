@@ -1,3 +1,308 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.7...v1.1.0) (2021-08-09)
+
+
+### Features
+
+* align with Vue [v3.2](https://blog.vuejs.org/posts/vue-3.2.html)
+* new `watchPostEffect` api ([92fe90c](https://github.com/vuejs/composition-api/commit/92fe90c))
+* new `watchSyncEffect` api ([e12c23d](https://github.com/vuejs/composition-api/commit/e12c23d))
+* new `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.0.6) (2021-08-09)
+
+
+### Features
+
+* support second target argument for lifecycle functions ([3f3b9c6](https://github.com/vuejs/composition-api/commit/3f3b9c6))
+
+
+
+<a name="1.1.0-beta.7"></a>
+# [1.1.0-beta.7](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.6...v1.1.0-beta.7) (2021-08-09)
+
+### Bug Fixes
+
+* **effectScope:** should have a vaild scope with component ([da21873](https://github.com/vuejs/composition-api/commit/da21873))
+
+
+<a name="1.1.0-beta.6"></a>
+# [1.1.0-beta.6](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.5...v1.1.0-beta.6) (2021-08-09)
+
+* new watchPostEffect api ([92fe90c](https://github.com/vuejs/composition-api/commit/92fe90c))
+* support second target argument for lifecycle functions ([0133c1e](https://github.com/vuejs/composition-api/commit/0133c1e))
+
+
+<a name="1.1.0-beta.4"></a>
+# [1.1.0-beta.4](https://github.com/vuejs/composition-api/compare/v1.0.4...v1.1.0-beta.4) (2021-07-22)
+
+
+### Bug Fixes
+
+* revert module field to `esm.js` version, close [#769](https://github.com/vuejs/composition-api/issues/769) ([92afa6f](https://github.com/vuejs/composition-api/commit/92afa6f))
+
+
+
+<a name="1.1.0-beta.3"></a>
+# [1.1.0-beta.3](https://github.com/vuejs/composition-api/compare/v1.0.3...v1.1.0-beta.3) (2021-07-18)
+
+
+### Bug Fixes
+
+* build for mjs and exports all submodules ([c116714](https://github.com/vuejs/composition-api/commit/c116714))
+
+
+
+<a name="1.1.0-beta.2"></a>
+# [1.1.0-beta.2](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.1...v1.1.0-beta.2) (2021-07-16)
+
+
+### Bug Fixes
+
+* **effectScope:** should stop along with parent component ([784d96c](https://github.com/vuejs/composition-api/commit/784d96c))
+
+
+
+<a name="1.1.0-beta.1"></a>
+# [1.1.0-beta.1](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.1.0-beta.1) (2021-07-16)
+
+
+### Features
+
+* implement `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
+
+
+### Features
+
+* implement `effectScope` api ([#762](https://github.com/vuejs/composition-api/issues/762)) ([fcadec2](https://github.com/vuejs/composition-api/commit/fcadec2))
+* support second target argument for lifecycle functions ([3f3b9c6](https://github.com/vuejs/composition-api/commit/3f3b9c6))
+
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/vuejs/composition-api/compare/v1.0.5...v1.0.6) (2021-08-09)
+
+
+### Features
+
+<a name="1.0.5"></a>
+## [1.0.5](https://github.com/vuejs/composition-api/compare/v1.0.4...v1.0.5) (2021-08-01)
+
+
+### Bug Fixes
+
+* **function:** properties of function should not disappear. ([#778](https://github.com/vuejs/composition-api/issues/778)) ([68c1a35](https://github.com/vuejs/composition-api/commit/68c1a35))
+
+
+
+<a name="1.0.4"></a>
+## [1.0.4](https://github.com/vuejs/composition-api/compare/v1.0.3...v1.0.4) (2021-07-22)
+
+
+### Bug Fixes
+
+* revert module field to `esm.js` version, close [#769](https://github.com/vuejs/composition-api/issues/769) ([4ac545c](https://github.com/vuejs/composition-api/commit/4ac545c))
+
+
+
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/vuejs/composition-api/compare/v1.0.2...v1.0.3) (2021-07-18)
+
+
+### Bug Fixes
+
+* build for mjs and exports all submodules ([69538ee](https://github.com/vuejs/composition-api/commit/69538ee))
+
+
+
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/vuejs/composition-api/compare/v1.0.1...v1.0.2) (2021-07-16)
+
+
+### Bug Fixes
+
+* **readonly:** align behavior with vue-next. ([#765](https://github.com/vuejs/composition-api/issues/765)) ([42104aa](https://github.com/vuejs/composition-api/commit/42104aa))
+* **type:** remove unnecessary type assertion ([#766](https://github.com/vuejs/composition-api/issues/766)) ([ebb7975](https://github.com/vuejs/composition-api/commit/ebb7975))
+* should dynamically update refs in context ([#764](https://github.com/vuejs/composition-api/issues/764)) ([d7de23e](https://github.com/vuejs/composition-api/commit/d7de23e))
+
+
+
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/vuejs/composition-api/compare/v1.0.0...v1.0.1) (2021-07-16)
+
+
+
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.14...v1.0.0) (2021-07-15)
+
+
+### Bug Fixes
+
+* **mockReactivityDeep:** add parameter seen for mockReactivityDeep. ([#759](https://github.com/vuejs/composition-api/issues/759)) ([40cb14a](https://github.com/vuejs/composition-api/commit/40cb14a))
+* **runtime-core:**  trigger warning when the injectionKey is undefined ([#760](https://github.com/vuejs/composition-api/issues/760)) ([2ccad9b](https://github.com/vuejs/composition-api/commit/2ccad9b))
+
+
+
+<a name="1.0.0-rc.14"></a>
+# [1.0.0-rc.14](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.13...v1.0.0-rc.14) (2021-07-12)
+
+
+### Bug Fixes
+
+* **customReactive:** avoid circular reference. ([#758](https://github.com/vuejs/composition-api/issues/758)) ([2bd6ea5](https://github.com/vuejs/composition-api/commit/2bd6ea5))
+* **watch:** traverse refs in deep watch ([#753](https://github.com/vuejs/composition-api/issues/753)) ([55a0a20](https://github.com/vuejs/composition-api/commit/55a0a20))
+* only trigger warning in the dev environment ([#755](https://github.com/vuejs/composition-api/issues/755)) ([bc7c2af](https://github.com/vuejs/composition-api/commit/bc7c2af))
+* **watch:** errors thrown in the asynchronous callback function in watch will not be caught. ([#751](https://github.com/vuejs/composition-api/issues/751)) ([f0e423f](https://github.com/vuejs/composition-api/commit/f0e423f))
+* **watch:** only trigger warning in the dev environment ([#754](https://github.com/vuejs/composition-api/issues/754)) ([0fe0088](https://github.com/vuejs/composition-api/commit/0fe0088))
+
+
+
+<a name="1.0.0-rc.13"></a>
+# [1.0.0-rc.13](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.12...v1.0.0-rc.13) (2021-07-02)
+
+
+### Bug Fixes
+
+* **observe:** solve the Ref not unwrapping on the ssr side issue with recursive way. ([#723](https://github.com/vuejs/composition-api/issues/723)) ([debd37d](https://github.com/vuejs/composition-api/commit/debd37d))
+* the hasOwn should be used to determine whether an attribute exists. ([#737](https://github.com/vuejs/composition-api/issues/737)) ([65abcb4](https://github.com/vuejs/composition-api/commit/65abcb4))
+* **shallowReadonly:** align behavior with vue-next ([#741](https://github.com/vuejs/composition-api/issues/741)) ([14d1c7b](https://github.com/vuejs/composition-api/commit/14d1c7b))
+* **types:** use AnyObject insteads of any ([#742](https://github.com/vuejs/composition-api/issues/742)) ([efb4195](https://github.com/vuejs/composition-api/commit/efb4195))
+
+
+
+<a name="1.0.0-rc.12"></a>
+# [1.0.0-rc.12](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.11...v1.0.0-rc.12) (2021-06-17)
+
+
+### Bug Fixes
+
+* **proxyRefs:** infinite loop when using proxyRefs. ([#730](https://github.com/vuejs/composition-api/issues/730)) ([0b6ab25](https://github.com/vuejs/composition-api/commit/0b6ab25))
+* **reactivity:** check type of __ob__ in isRaw and isReactive ([#732](https://github.com/vuejs/composition-api/issues/732)) ([97dd671](https://github.com/vuejs/composition-api/commit/97dd671))
+* **watch:** watched previous values can't be destructure on first fire. ([#727](https://github.com/vuejs/composition-api/issues/727)) ([b3ab6f9](https://github.com/vuejs/composition-api/commit/b3ab6f9))
+
+
+
+<a name="1.0.0-rc.11"></a>
+# [1.0.0-rc.11](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.10...v1.0.0-rc.11) (2021-06-04)
+
+
+### Bug Fixes
+
+* **reactivity:** should trigger watchEffect when using set to change value of array length ([#720](https://github.com/vuejs/composition-api/issues/720)) ([9c03a45](https://github.com/vuejs/composition-api/commit/9c03a45))
+* **reactivity:** unexpected behaviors for array index out of valid array length when set and del ([#719](https://github.com/vuejs/composition-api/issues/719)) ([f08a1d6](https://github.com/vuejs/composition-api/commit/f08a1d6))
+* **shallowReactive:** should keep array as array ([#717](https://github.com/vuejs/composition-api/issues/717)) ([620d09b](https://github.com/vuejs/composition-api/commit/620d09b))
+* **shallowReadonly:** watch should work for ref/reactive with shallowReadonly ([#714](https://github.com/vuejs/composition-api/issues/714)) ([b6fc1f7](https://github.com/vuejs/composition-api/commit/b6fc1f7))
+
+
+### Features
+
+* **reactivity:** unwrap value when using `set` ([#722](https://github.com/vuejs/composition-api/issues/722)) ([bd198e7](https://github.com/vuejs/composition-api/commit/bd198e7))
+
+
+
+<a name="1.0.0-rc.10"></a>
+# [1.0.0-rc.10](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.9...v1.0.0-rc.10) (2021-05-27)
+
+
+### Bug Fixes
+
+* **dev:** setup data in nextTick is proxied to vm._data. ([#697](https://github.com/vuejs/composition-api/issues/697)) ([e231837](https://github.com/vuejs/composition-api/commit/e231837))
+* **watch:** align behavior with vue-next(doWatch). ([#710](https://github.com/vuejs/composition-api/issues/710)) ([fcf8bc3](https://github.com/vuejs/composition-api/commit/fcf8bc3))
+
+
+
+<a name="1.0.0-rc.9"></a>
+# [1.0.0-rc.9](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.8...v1.0.0-rc.9) (2021-05-19)
+
+
+### Bug Fixes
+
+* The behavior of development and production merge should be consistent. ([#694](https://github.com/vuejs/composition-api/issues/694)) ([7ca7010](https://github.com/vuejs/composition-api/commit/7ca7010))
+* **shallowReactive:** align behavior with vue-next ([#696](https://github.com/vuejs/composition-api/issues/696)) ([3485ecb](https://github.com/vuejs/composition-api/commit/3485ecb))
+
+
+### Features
+
+* add and delete object attributes would trigger update. ([#692](https://github.com/vuejs/composition-api/issues/692)) ([8c27d80](https://github.com/vuejs/composition-api/commit/8c27d80))
+
+
+
+<a name="1.0.0-rc.8"></a>
+# [1.0.0-rc.8](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.7...v1.0.0-rc.8) (2021-04-29)
+
+
+### Bug Fixes
+
+* **reactive:** align behavior with vue-next ([#689](https://github.com/vuejs/composition-api/issues/689)) ([37fcbaa](https://github.com/vuejs/composition-api/commit/37fcbaa))
+* Memory leak caused by global variables. ([#686](https://github.com/vuejs/composition-api/issues/686)) ([badff82](https://github.com/vuejs/composition-api/commit/badff82))
+
+
+
+<a name="1.0.0-rc.7"></a>
+# [1.0.0-rc.7](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.6...v1.0.0-rc.7) (2021-04-18)
+
+
+### Bug Fixes
+
+* **types:** optional Boolean prop types [#636](https://github.com/vuejs/composition-api/issues/636) ([#678](https://github.com/vuejs/composition-api/issues/678)) ([a081227](https://github.com/vuejs/composition-api/commit/a081227))
+
+
+### Features
+
+* **types:** export ComponentInternalInstance, close [#677](https://github.com/vuejs/composition-api/issues/677), close [#675](https://github.com/vuejs/composition-api/issues/675) ([ccae670](https://github.com/vuejs/composition-api/commit/ccae670))
+
+
+
+<a name="1.0.0-rc.6"></a>
+# [1.0.0-rc.6](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2021-03-29)
+
+
+### Bug Fixes
+
+* **types:** allow any object in toRefs ([#668](https://github.com/vuejs/composition-api/issues/668)) ([7284ad9](https://github.com/vuejs/composition-api/commit/7284ad9))
+
+
+
+<a name="1.0.0-rc.5"></a>
+# [1.0.0-rc.5](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2021-03-11)
+
+
+
+<a name="1.0.0-rc.4"></a>
+# [1.0.0-rc.4](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2021-03-11)
+
+
+### Bug Fixes
+
+* **types:** RequiredKeys type ([#655](https://github.com/vuejs/composition-api/issues/655)) ([0677a18](https://github.com/vuejs/composition-api/commit/0677a18))
+
+
+
+<a name="1.0.0-rc.3"></a>
+# [1.0.0-rc.3](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2021-03-03)
+
+
+### Bug Fixes
+
+* update types to algin with vue-next ([#653](https://github.com/vuejs/composition-api/issues/653)) ([24eaa56](https://github.com/vuejs/composition-api/commit/24eaa56))
+
+
+
+<a name="1.0.0-rc.2"></a>
+# [1.0.0-rc.2](https://github.com/vuejs/composition-api/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2021-02-18)
+
+
+### Bug Fixes
+
+* add missing App export ([#640](https://github.com/vuejs/composition-api/issues/640)) ([eda6b22](https://github.com/vuejs/composition-api/commit/eda6b22))
+
+
+### Features
+
+* add defineAsyncComponent API ([#644](https://github.com/vuejs/composition-api/issues/644)) ([8409f48](https://github.com/vuejs/composition-api/commit/8409f48))
+
+
+
 <a name="1.0.0-rc.1"></a>
 # [1.0.0-rc.1](https://github.com/vuejs/composition-api/compare/v1.0.0-beta.26...v1.0.0-rc.1) (2021-01-20)
 
@@ -507,7 +812,7 @@ Great thanks to @pikax for #311, making most of the APIs better aligned with the
 # 0.3.0
 
 - Improve TypeScript type definitions.
-- Fix `context.slots` not being avaliable before render [#84](https://github.com/vuejs/composition-api/issues/84).
+- Fix `context.slots` not being available before render [#84](https://github.com/vuejs/composition-api/issues/84).
 
 ## Changed
 

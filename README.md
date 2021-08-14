@@ -41,7 +41,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-rc.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.1.0"></script>
 ```
 <!--cdn-links-end-->
 
@@ -67,7 +67,7 @@ export default defineComponent({
 
 ### JSX/TSX
 
-JSX is now officially supported on [vuejs/jsx](https://github.com/vuejs/jsx). You can enabled it by following [this document](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage). A community maintained version can be found at [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
+JSX is now officially supported on [vuejs/jsx](https://github.com/vuejs/jsx). You can enable it by following [this document](https://github.com/vuejs/jsx/tree/dev/packages/babel-preset-jsx#usage). A community maintained version can be found at [babel-preset-vca-jsx](https://github.com/luwanquan/babel-preset-vca-jsx) by [@luwanquan](https://github.com/luwanquan).
 
 To support TSX, create a declaration file with the following content in your project.
 
@@ -121,27 +121,6 @@ export default {
 > :white_check_mark: Support &nbsp;&nbsp;&nbsp;&nbsp;:x: Not Supported
 
 ### `Ref` Unwrap
-
-`Unwrap` is not working with Array index.
-
-<details>
-<summary>
-❌ <b>Should NOT</b> store <code>ref</code> as a <b>direct</b> child of <code>Array</code>
-</summary>
-
-```js
-const state = reactive({
-  list: [ref(0)],
-})
-// no unwrap, `.value` is required
-state.list[0].value === 0 // true
-
-state.list.push(ref(1))
-// no unwrap, `.value` is required
-state.list[1].value === 1 // true
-```
-
-</details>
 
 <details>
 <summary>
@@ -437,7 +416,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 <details>
 <summary>
-⚠️ <code>readonly()</code> provides **only type-level** readonly check. 
+⚠️ <code>readonly()</code> provides <b>only type-level</b> readonly check. 
 </summary>
 
 `readonly()` is provided as API alignment with Vue 3 on type-level only. Use <code>isReadonly()</code> on it or it's properties can not be guaranteed.
@@ -448,8 +427,8 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 <details>
 <summary>
-⚠️ <code>toRefs(props.foo.bar)</code> will incorrectly warn when acessing nested levels of props.
-⚠️ <code>isReactive(props.foo.bar)</code> will return false.
+⚠️ <code>toRefs(props.foo)</code> will incorrectly warn when accessing nested levels of props. <br>
+&nbsp;&nbsp;&nbsp;&nbsp;⚠️ <code>isReactive(props.foo)</code> will return false.
 </summary>
 
 ```ts
@@ -470,7 +449,6 @@ defineComponent({
 
 The following APIs introduced in Vue 3 are not available in this plugin.
 
-- `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
 - `isProxy`

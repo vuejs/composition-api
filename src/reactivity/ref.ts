@@ -1,4 +1,3 @@
-import { Data } from '../component'
 import { RefKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
@@ -30,49 +29,25 @@ export type UnwrapRef<T> = T extends Ref<infer V>
   ? UnwrapRefSimple<V>
   : UnwrapRefSimple<T>
 
-type UnwrapRefSimple<T> = T extends Function | CollectionTypes | BaseTypes | Ref
+export type UnwrapRefSimple<T> = T extends
+  | Function
+  | CollectionTypes
+  | BaseTypes
+  | Ref
   ? T
   : T extends Array<any>
   ? { [K in keyof T]: UnwrapRefSimple<T[K]> }
   : T extends object
-  ? UnwrappedObject<T>
+  ? {
+      [P in keyof T]: P extends symbol ? T[P] : UnwrapRef<T[P]>
+    }
   : T
-
-// Extract all known symbols from an object
-// when unwrapping Object the symbols are not `in keyof`, this should cover all the
-// known symbols
-type SymbolExtract<T> = (T extends { [Symbol.asyncIterator]: infer V }
-  ? { [Symbol.asyncIterator]: V }
-  : {}) &
-  (T extends { [Symbol.hasInstance]: infer V }
-    ? { [Symbol.hasInstance]: V }
-    : {}) &
-  (T extends { [Symbol.isConcatSpreadable]: infer V }
-    ? { [Symbol.isConcatSpreadable]: V }
-    : {}) &
-  (T extends { [Symbol.iterator]: infer V } ? { [Symbol.iterator]: V } : {}) &
-  (T extends { [Symbol.match]: infer V } ? { [Symbol.match]: V } : {}) &
-  (T extends { [Symbol.replace]: infer V } ? { [Symbol.replace]: V } : {}) &
-  (T extends { [Symbol.search]: infer V } ? { [Symbol.search]: V } : {}) &
-  (T extends { [Symbol.species]: infer V } ? { [Symbol.species]: V } : {}) &
-  (T extends { [Symbol.split]: infer V } ? { [Symbol.split]: V } : {}) &
-  (T extends { [Symbol.toPrimitive]: infer V }
-    ? { [Symbol.toPrimitive]: V }
-    : {}) &
-  (T extends { [Symbol.toStringTag]: infer V }
-    ? { [Symbol.toStringTag]: V }
-    : {}) &
-  (T extends { [Symbol.unscopables]: infer V }
-    ? { [Symbol.unscopables]: V }
-    : {})
-
-type UnwrappedObject<T> = { [P in keyof T]: UnwrapRef<T[P]> } & SymbolExtract<T>
 
 interface RefOption<T> {
   get(): T
   set?(x: T): void
 }
-class RefImpl<T> implements Ref<T> {
+export class RefImpl<T> implements Ref<T> {
   readonly [_refBrand]!: true
   public value!: T
   constructor({ get, set }: RefOption<T>) {
@@ -119,11 +94,11 @@ export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
   return isRef(ref) ? (ref.value as any) : ref
 }
 
-export function toRefs<T extends Data = Data>(obj: T): ToRefs<T> {
+export function toRefs<T extends object>(obj: T): ToRefs<T> {
   if (__DEV__ && !isReactive(obj)) {
     warn(`toRefs() expects a reactive object but received a plain one.`)
   }
-  if (!isPlainObject(obj)) return obj as any
+  if (!isPlainObject(obj)) return obj
 
   const ret: any = {}
   for (const key in obj) {
@@ -199,16 +174,16 @@ export function proxyRefs<T extends object>(
   for (const key of Object.keys(objectWithRefs)) {
     proxy(value, key, {
       get() {
-        if (isRef(value[key])) {
-          return value[key].value
+        if (isRef(value[RefKey][key])) {
+          return value[RefKey][key].value
         }
-        return value[key]
+        return value[RefKey][key]
       },
       set(v: unknown) {
-        if (isRef(value[key])) {
-          return (value[key].value = unref(v))
+        if (isRef(value[RefKey][key])) {
+          return (value[RefKey][key].value = unref(v))
         }
-        value[key] = unref(v)
+        value[RefKey][key] = unref(v)
       },
     })
   }

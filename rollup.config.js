@@ -32,6 +32,11 @@ const builds = {
     format: 'es',
     mode: 'development',
   },
+  mjs: {
+    outFile: 'vue-composition-api.mjs',
+    format: 'es',
+    mode: 'development',
+  },
 }
 
 function onwarn(msg, warn) {
@@ -70,6 +75,7 @@ function genConfig({ outFile, format, mode }) {
       }),
       resolve(),
       replace({
+        preventAssignment: true,
         'process.env.NODE_ENV':
           format === 'es'
             ? // preserve to be handled by bundlers

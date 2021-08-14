@@ -1,7 +1,16 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, reactive, watch, watchEffect, set } = require('../../src')
+const {
+  ref,
+  reactive,
+  watch,
+  watchEffect,
+  set,
+  nextTick,
+} = require('../../src')
+const { mockWarn } = require('../helpers')
 
 describe('api/watch', () => {
+  mockWarn(true)
   const anyFn = expect.any(Function)
   let spy
   beforeEach(() => {
@@ -437,6 +446,40 @@ describe('api/watch', () => {
       vm.count++
       expect(spy).toHaveBeenLastCalledWith(1)
     })
+
+    it('warn immediate option when using effect', async () => {
+      const count = ref(0)
+      let dummy
+      watchEffect(
+        () => {
+          dummy = count.value
+        },
+        { immediate: false }
+      )
+      expect(dummy).toBe(0)
+      expect(`"immediate" option is only respected`).toHaveBeenWarned()
+
+      count.value++
+      await nextTick()
+      expect(dummy).toBe(1)
+    })
+
+    it('warn and not respect deep option when using effect', async () => {
+      const arr = ref([1, [2]])
+      const spy = jest.fn()
+      watchEffect(
+        () => {
+          spy()
+          return arr
+        },
+        { deep: true }
+      )
+      expect(spy).toHaveBeenCalledTimes(1)
+      arr.value[1][0] = 3
+      await nextTick()
+      expect(spy).toHaveBeenCalledTimes(1),
+        expect(`"deep" option is only respected`).toHaveBeenWarned()
+    })
   })
 
   describe('Multiple sources', () => {
@@ -457,7 +500,7 @@ describe('api/watch', () => {
         template: `<div>{{obj1.a}} {{obj2.a}}</div>`,
       }).$mount()
       expect(spy).toBeCalledTimes(1)
-      expect(spy).toHaveBeenLastCalledWith([1, 2], undefined)
+      expect(spy).toHaveBeenLastCalledWith([1, 2], [])
       obj1.a = 2
       obj2.a = 3
 
@@ -491,7 +534,7 @@ describe('api/watch', () => {
         template: `<div>{{a}} {{b}}</div>`,
       }).$mount()
       expect(spy).toBeCalledTimes(1)
-      expect(spy).toHaveBeenLastCalledWith([1, 1], undefined)
+      expect(spy).toHaveBeenLastCalledWith([1, 1], [])
       vm.a = 2
       expect(spy).toBeCalledTimes(1)
       waitForUpdate(() => {
@@ -553,7 +596,7 @@ describe('api/watch', () => {
         },
       })
       expect(spy).toBeCalledTimes(1)
-      expect(spy).toHaveBeenLastCalledWith([1, 1], undefined)
+      expect(spy).toHaveBeenLastCalledWith([1, 1], [])
       vm.a = 2
       expect(spy).toBeCalledTimes(2)
       expect(spy).toHaveBeenLastCalledWith([2, 1], [1, 1])
@@ -586,6 +629,27 @@ describe('api/watch', () => {
       expect(spy).toBeCalledTimes(3)
       expect(spy).toHaveBeenNthCalledWith(2, [3, 1], [2, 1])
       expect(spy).toHaveBeenNthCalledWith(3, [3, 3], [3, 1])
+    })
+
+    it('config.errorHandler should capture render errors', async () => {
+      new Vue({
+        setup() {
+          const a = ref(1)
+          watch(
+            a,
+            async () => {
+              throw new Error('userWatcherCallback error')
+            },
+            { immediate: true }
+          )
+          return {
+            a,
+          }
+        },
+        template: `<div>{{a}}</div>`,
+      }).$mount()
+      await nextTick()
+      expect(`userWatcherCallback error`).toHaveBeenWarned()
     })
   })
 

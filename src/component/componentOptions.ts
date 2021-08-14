@@ -2,28 +2,28 @@ import Vue, { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
 import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
-
+export { ComponentPropsOptions } from './componentProps'
 export interface SetupContext {
   readonly attrs: Data
   readonly slots: Readonly<{ [key in string]?: (...args: any[]) => VNode[] }>
 
   /**
-   * @deprecated not avaliable in Vue 3
+   * @deprecated not available in Vue 3
    */
   readonly parent: ComponentInstance | null
 
   /**
-   * @deprecated not avaliable in Vue 3
+   * @deprecated not available in Vue 3
    */
   readonly root: ComponentInstance
 
   /**
-   * @deprecated not avaliable in Vue 3
+   * @deprecated not available in Vue 3
    */
   readonly listeners: { [key in string]?: Function }
 
   /**
-   * @deprecated not avaliable in Vue 3
+   * @deprecated not available in Vue 3
    */
   readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
 

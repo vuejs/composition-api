@@ -1,5 +1,15 @@
 import { mockWarn } from '../../helpers/mockWarn'
-import { shallowReadonly, isReactive } from '../../../src'
+import {
+  shallowReadonly,
+  isReactive,
+  ref,
+  reactive,
+  watch,
+  nextTick,
+  readonly,
+} from '../../../src'
+
+const Vue = require('vue/dist/vue.common.js')
 
 // /**
 //  * @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html
@@ -371,6 +381,98 @@ describe('reactivity/readonly', () => {
       expect(
         `Set operation on key "foo" failed: target is readonly.`
       ).not.toHaveBeenWarned()
+    })
+
+    test('should not process non-object data', () => {
+      // @ts-ignore
+      shallowReadonly(25)
+      expect(`value cannot be made reactive: 25`).toHaveBeenWarned()
+      // @ts-ignore
+      readonly(25)
+      expect(`value cannot be made reactive: 25`).toHaveBeenWarned()
+    })
+
+    // #669
+    test('shallowReadonly should work for refs', () => {
+      const vm = new Vue({
+        template: '<div>{{ count }} {{ countRef }}</div>',
+        setup() {
+          const count = reactive({ number: 0 })
+          const countRef = ref(0)
+
+          const countReadonly = shallowReadonly(count)
+          const countRefReadonly = shallowReadonly(countRef)
+
+          setTimeout(() => {
+            // @ts-expect-error
+            countReadonly.number++
+            // @ts-expect-error
+            countRefReadonly.value++
+          }, 1000)
+          return {
+            count,
+            countRef,
+          }
+        },
+      }).$mount()
+
+      expect(vm.$el.textContent).toBe(`{\n  "number": 0\n} 0`)
+    })
+
+    // #712
+    test('watch should work for ref with shallowReadonly', async () => {
+      const cb = jest.fn()
+      const vm = new Vue({
+        template: '<div>{{ countRef }}</div>',
+        setup() {
+          const countRef = ref(0)
+          const countRefReadonly = shallowReadonly(countRef)
+          watch(countRefReadonly, cb, { deep: true })
+          return {
+            countRef,
+            countRefReadonly,
+          }
+        },
+      }).$mount()
+
+      vm.countRef++
+      await nextTick()
+      expect(cb).toHaveBeenCalled()
+
+      vm.countRefReadonly++
+      await nextTick()
+      expect(
+        `Set operation on key "value" failed: target is readonly.`
+      ).toHaveBeenWarned()
+      expect(vm.$el.textContent).toBe(`1`)
+    })
+
+    // #712
+    test('watch should work for reactive with shallowReadonly', async () => {
+      const cb = jest.fn()
+      const vm = new Vue({
+        template: '<div>{{ count.number }}</div>',
+        setup() {
+          const count = reactive({ number: 0 })
+          const countReadonly = shallowReadonly(count)
+          watch(countReadonly, cb, { deep: true })
+          return {
+            count,
+            countReadonly,
+          }
+        },
+      }).$mount()
+
+      vm.count.number++
+      await nextTick()
+      expect(cb).toHaveBeenCalled()
+
+      vm.countReadonly.number++
+      await nextTick()
+      expect(
+        `Set operation on key "number" failed: target is readonly.`
+      ).toHaveBeenWarned()
+      expect(vm.$el.textContent).toBe(`1`)
     })
   })
 })

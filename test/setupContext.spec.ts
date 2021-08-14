@@ -5,9 +5,12 @@ import {
   ref,
   nextTick,
   SetupContext,
+  getCurrentInstance,
 } from '../src'
+import { mockWarn } from './helpers'
 
 describe('setupContext', () => {
+  mockWarn(true)
   it('should have proper properties', () => {
     let context: SetupContext = undefined!
 
@@ -194,5 +197,32 @@ describe('setupContext', () => {
     await nextTick()
 
     expect(_attrs.foo).toBe('bar2')
+  })
+
+  // #563
+  it('should not RangeError: Maximum call stack size exceeded', async () => {
+    createApp(
+      defineComponent({
+        template: `<div/>`,
+        setup() {
+          // @ts-expect-error
+          const app = getCurrentInstance().proxy
+          let mockNT: any = []
+          mockNT.__ob__ = {}
+          const test = {
+            app,
+            mockNT,
+          }
+          return {
+            test,
+          }
+        },
+      })
+    ).mount()
+
+    await nextTick()
+    expect(
+      `"RangeError: Maximum call stack size exceeded"`
+    ).not.toHaveBeenWarned()
   })
 })

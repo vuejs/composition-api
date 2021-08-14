@@ -1,3 +1,4 @@
+import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
 import { isArray, isPrimitive, isUndef, isValidArrayIndex } from '../utils'
 import { defineAccessControl } from './reactive'
@@ -7,18 +8,25 @@ import { defineAccessControl } from './reactive'
  * notification and intercept it's subsequent access if the property doesn't
  * already exist.
  */
-export function set<T>(target: any, key: any, val: T): T {
+export function set<T>(target: AnyObject, key: any, val: T): T {
   const Vue = getVueConstructor()
+  // @ts-expect-error https://github.com/vuejs/vue/pull/12132
   const { warn, defineReactive } = Vue.util
   if (__DEV__ && (isUndef(target) || isPrimitive(target))) {
     warn(
       `Cannot set reactive property on undefined, null, or primitive value: ${target}`
     )
   }
-  if (isArray(target) && isValidArrayIndex(key)) {
-    target.length = Math.max(target.length, key)
-    target.splice(key, 1, val)
-    return val
+  if (isArray(target)) {
+    if (isValidArrayIndex(key)) {
+      target.length = Math.max(target.length, key)
+      target.splice(key, 1, val)
+      return val
+    } else if (key === 'length' && (val as any) !== target.length) {
+      target.length = val as any
+      ;(target as any).__ob__?.dep.notify()
+      return val
+    }
   }
   if (key in target && !(key in Object.prototype)) {
     target[key] = val

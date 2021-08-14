@@ -15,7 +15,7 @@ export function mockWarn(asError = false) {
     toHaveBeenWarned(received: string) {
       asserted.add(received)
       const passed = warn.mock.calls.some(
-        (args) => args[0].indexOf(received) > -1
+        (args) => args[0].toString().indexOf(received) > -1
       )
       if (passed) {
         return {
@@ -91,7 +91,7 @@ export function mockWarn(asError = false) {
       .map((args) => args[0])
       .filter((received) => {
         return !assertedArray.some((assertedMsg) => {
-          return received.indexOf(assertedMsg) > -1
+          return received.toString().indexOf(assertedMsg) > -1
         })
       })
     warn.mockRestore()

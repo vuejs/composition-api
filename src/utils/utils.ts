@@ -14,21 +14,17 @@ export const hasSymbol =
 
 export const noopFn: any = (_: any) => _
 
-const sharedPropertyDefinition = {
-  enumerable: true,
-  configurable: true,
-  get: noopFn,
-  set: noopFn,
-}
-
 export function proxy(
   target: any,
   key: string,
   { get, set }: { get?: Function; set?: Function }
 ) {
-  sharedPropertyDefinition.get = get || noopFn
-  sharedPropertyDefinition.set = set || noopFn
-  Object.defineProperty(target, key, sharedPropertyDefinition)
+  Object.defineProperty(target, key, {
+    enumerable: true,
+    configurable: true,
+    get: get || noopFn,
+    set: set || noopFn,
+  })
 }
 
 export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
@@ -64,9 +60,26 @@ export function isArray<T>(x: unknown): x is T[] {
   return Array.isArray(x)
 }
 
+export const objectToString = Object.prototype.toString
+
+export const toTypeString = (value: unknown): string =>
+  objectToString.call(value)
+
+export const isMap = (val: unknown): val is Map<any, any> =>
+  toTypeString(val) === '[object Map]'
+
+export const isSet = (val: unknown): val is Set<any> =>
+  toTypeString(val) === '[object Set]'
+
+const MAX_VALID_ARRAY_LENGTH = 4294967295 // Math.pow(2, 32) - 1
 export function isValidArrayIndex(val: any): boolean {
   const n = parseFloat(String(val))
-  return n >= 0 && Math.floor(n) === n && isFinite(val)
+  return (
+    n >= 0 &&
+    Math.floor(n) === n &&
+    isFinite(val) &&
+    n <= MAX_VALID_ARRAY_LENGTH
+  )
 }
 
 export function isObject(val: unknown): val is Record<any, any> {
@@ -85,7 +98,7 @@ export function isUndef(v: any): boolean {
   return v === undefined || v === null
 }
 
-export function warn(msg: string, vm?: Vue | null) {
+export function warn(msg: string, vm?: Vue) {
   Vue.util.warn(msg, vm)
 }
 

@@ -35,6 +35,9 @@ export function mixin(Vue: VueConstructor) {
     },
     updated(this: ComponentInstance) {
       updateTemplateRef(this)
+      if (this.$vnode?.context) {
+        updateTemplateRef(this.$vnode.context)
+      }
     },
   })
 
@@ -57,7 +60,7 @@ export function mixin(Vue: VueConstructor) {
     if (!setup) {
       return
     }
-    if (typeof setup !== 'function') {
+    if (!isFunction(setup)) {
       if (__DEV__) {
         warn(
           'The "setup" option should be a function that returns a object in component definitions.',
@@ -71,11 +74,10 @@ export function mixin(Vue: VueConstructor) {
     // wrapper the data option, so we can invoke setup before data get resolved
     $options.data = function wrappedData() {
       initSetup(vm, vm.$props)
-      return typeof data === 'function'
-        ? (data as (
-            this: ComponentInstance,
-            x: ComponentInstance
-          ) => object).call(vm, vm)
+      return isFunction(data)
+        ? (
+            data as (this: ComponentInstance, x: ComponentInstance) => object
+          ).call(vm, vm)
         : data || {}
     }
   }
@@ -122,7 +124,11 @@ export function mixin(Vue: VueConstructor) {
         if (!isRef(bindingValue)) {
           if (!isReactive(bindingValue)) {
             if (isFunction(bindingValue)) {
+              const copy = bindingValue
               bindingValue = bindingValue.bind(vm)
+              Object.keys(copy).forEach(function (ele) {
+                bindingValue[ele] = copy[ele]
+              })
             } else if (!isObject(bindingValue)) {
               bindingValue = ref(bindingValue)
             } else if (hasReactiveArrayChild(bindingValue)) {
@@ -150,7 +156,8 @@ export function mixin(Vue: VueConstructor) {
     }
   }
 
-  function customReactive(target: object) {
+  function customReactive(target: object, seen = new Set()) {
+    if (seen.has(target)) return
     if (
       !isPlainObject(target) ||
       isRef(target) ||
@@ -159,13 +166,15 @@ export function mixin(Vue: VueConstructor) {
     )
       return
     const Vue = getVueConstructor()
+    // @ts-expect-error https://github.com/vuejs/vue/pull/12132
     const defineReactive = Vue.util.defineReactive
 
     Object.keys(target).forEach((k) => {
       const val = target[k]
       defineReactive(target, k, val)
       if (val) {
-        customReactive(val)
+        seen.add(val)
+        customReactive(val, seen)
       }
       return
     })
@@ -176,7 +185,7 @@ export function mixin(Vue: VueConstructor) {
       return visited.get(target)
     }
     visited.set(target, false)
-    if (Array.isArray(target) && isReactive(target)) {
+    if (isArray(target) && isReactive(target)) {
       visited.set(target, true)
       return true
     }
@@ -210,10 +219,11 @@ export function mixin(Vue: VueConstructor) {
       proxy(ctx, key, {
         get: () => vm[srcKey],
         set() {
-          warn(
-            `Cannot assign to '${key}' because it is a read-only property`,
-            vm
-          )
+          __DEV__ &&
+            warn(
+              `Cannot assign to '${key}' because it is a read-only property`,
+              vm
+            )
         },
       })
     })
@@ -237,10 +247,11 @@ export function mixin(Vue: VueConstructor) {
           return data
         },
         set() {
-          warn(
-            `Cannot assign to '${key}' because it is a read-only property`,
-            vm
-          )
+          __DEV__ &&
+            warn(
+              `Cannot assign to '${key}' because it is a read-only property`,
+              vm
+            )
         },
       })
     })

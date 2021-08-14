@@ -12,6 +12,7 @@ import {
   unref,
   isReactive,
   shallowRef,
+  proxyRefs,
 } from '../../../src'
 
 describe('reactivity/ref', () => {
@@ -166,16 +167,44 @@ describe('reactivity/ref', () => {
   it('should keep symbols', () => {
     const customSymbol = Symbol()
     const obj = {
-      [Symbol.asyncIterator]: { a: 1 },
-      [Symbol.unscopables]: { b: '1' },
-      [customSymbol]: { c: [1, 2, 3] },
+      [Symbol.asyncIterator]: ref(1),
+      [Symbol.hasInstance]: { a: ref('a') },
+      [Symbol.isConcatSpreadable]: { b: ref(true) },
+      [Symbol.iterator]: [ref(1)],
+      [Symbol.match]: new Set<Ref<number>>(),
+      [Symbol.matchAll]: new Map<number, Ref<string>>(),
+      [Symbol.replace]: { arr: [ref('a')] },
+      [Symbol.search]: { set: new Set<Ref<number>>() },
+      [Symbol.species]: { map: new Map<number, Ref<string>>() },
+      [Symbol.split]: new WeakSet<Ref<boolean>>(),
+      [Symbol.toPrimitive]: new WeakMap<Ref<boolean>, string>(),
+      [Symbol.toStringTag]: { weakSet: new WeakSet<Ref<boolean>>() },
+      [Symbol.unscopables]: { weakMap: new WeakMap<Ref<boolean>, string>() },
+      [customSymbol]: { arr: [ref(1)] },
     }
 
     const objRef = ref(obj)
 
-    expect(objRef.value[Symbol.asyncIterator]).toBe(obj[Symbol.asyncIterator])
-    expect(objRef.value[Symbol.unscopables]).toBe(obj[Symbol.unscopables])
-    expect(objRef.value[customSymbol]).toStrictEqual(obj[customSymbol])
+    const keys: (keyof typeof obj)[] = [
+      Symbol.asyncIterator,
+      Symbol.hasInstance,
+      Symbol.isConcatSpreadable,
+      Symbol.iterator,
+      Symbol.match,
+      Symbol.matchAll,
+      Symbol.replace,
+      Symbol.search,
+      Symbol.species,
+      Symbol.split,
+      Symbol.toPrimitive,
+      Symbol.toStringTag,
+      Symbol.unscopables,
+      customSymbol,
+    ]
+
+    keys.forEach((key) => {
+      expect(objRef.value[key]).toStrictEqual(obj[key])
+    })
   })
 
   test('unref', () => {
@@ -341,5 +370,30 @@ describe('reactivity/ref', () => {
 
     _trigger!()
     expect(dummy).toBe(2)
+  })
+
+  test('proxyRefs', () => {
+    const a = {
+      x: ref(1),
+      obj: {
+        y: ref('foo'),
+      },
+    }
+    const p = proxyRefs(a)
+    expect(p.x).toBe(1)
+    expect(p.obj.y).toBe('foo')
+
+    // @ts-expect-error
+    p.obj.y = 'bar'
+    p.x = 2
+    expect(a.x).toBe(2)
+    expect(a.obj.y).toBe('bar')
+
+    const r = reactive({ k: 'v' })
+    const s = proxyRefs(r)
+    expect(s.k).toBe('v')
+
+    r.k = 'k'
+    expect(s.k).toBe('k')
   })
 })

@@ -40,7 +40,7 @@ import { ref, reactive } from '@vue/composition-api'
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.0.0-rc.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.1.0"></script>
 ```
 <!--cdn-links-end-->
 
@@ -116,27 +116,6 @@ export default {
 > :white_check_mark: 支持 &nbsp;&nbsp;&nbsp;&nbsp;:x: 不支持
 
 ### `Ref` 自动展开 (unwrap)
-
-数组索引属性无法进行自动展开:
-
-<details>
-<summary>
-❌ <b>不要</b> 使用数组直接存取 <code>ref</code> 对象
-</summary>
-
-```js
-const state = reactive({
-  list: [ref(0)],
-})
-// 不会自动展开, 须使用 `.value`
-state.list[0].value === 0 // true
-
-state.list.push(ref(1))
-// 不会自动展开, 须使用 `.value`
-state.list[1].value === 1 // true
-```
-
-</details>
 
 <details>
 <summary>
@@ -420,7 +399,7 @@ watch(
 
 <details>
 <summary>
-⚠️ <code>readonly()</code> **只提供类型层面**的只读。
+⚠️ <code>readonly()</code> <b>只提供类型层面</b>的只读。
 </summary>
 
 `readonly()` 只在类型层面提供和 Vue 3 的对齐。在其返回值或其属性上使用 <code>isReadonly()</code> 检查的结果将无法保证。
@@ -431,8 +410,8 @@ watch(
 
 <details>
 <summary>
-⚠️ 当使用 <code>toRefs</code> 访问深层属性对象 （如 <code>toRefs(props.foo.bar)</code> 时将会得到不正确的警告。
-⚠️ <code>isReactive(props.foo.bar)</code> 将会返回 false。
+⚠️ 当使用 <code>toRefs</code> 访问深层属性对象 （如 <code>toRefs(props.foo)</code> 时将会得到不正确的警告。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⚠️ <code>isReactive(props.foo)</code> 将会返回 false。
 </summary>
   
 ```ts
@@ -453,7 +432,6 @@ defineComponent({
 
 以下在 Vue 3 新引入的 API ，在本插件中暂不适用：
 
-- `defineAsyncComponent`
 - `onRenderTracked`
 - `onRenderTriggered`
 - `isProxy`

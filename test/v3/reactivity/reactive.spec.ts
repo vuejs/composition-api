@@ -8,6 +8,7 @@ import {
   shallowReactive,
   set,
   markRaw,
+  isRaw,
 } from '../../../src'
 
 describe('reactivity/reactive', () => {
@@ -33,6 +34,22 @@ describe('reactivity/reactive', () => {
     expect('foo' in observed).toBe(true)
     // ownKeys
     expect(Object.keys(observed)).toEqual(['foo'])
+  })
+
+  //#693
+  test('the hasOwn should be used to determine whether an attribute exists.', () => {
+    const obj = {}
+    expect(isReactive(obj)).toBe(false)
+    expect(isRaw(obj)).toBe(false)
+    const mockObj = new Proxy(obj, {
+      get: (target, key) => {
+        if (!(key in Object.keys(target))) {
+          throw new Error(`the ${key.toString()} is not found in the target.`)
+        }
+      },
+    })
+    expect(isReactive(mockObj)).toBe(false)
+    expect(isRaw(obj)).toBe(false)
   })
 
   test('proto', () => {
@@ -142,6 +159,7 @@ describe('reactivity/reactive', () => {
   test('non-observable values', () => {
     const assertValue = (value: any) => {
       expect(isReactive(reactive(value))).toBe(false)
+      expect(reactive(value)).toBe(value)
       // expect(warnSpy).toHaveBeenLastCalledWith(`value cannot be made reactive: ${String(value)}`);
     }
 
@@ -167,11 +185,11 @@ describe('reactivity/reactive', () => {
     const d = new Date()
     expect(reactive(d)).toBe(d)
 
-    expect(warn).toBeCalledTimes(3)
+    expect(warn).toBeCalledTimes(12)
     expect(
       warn.mock.calls.map((call) => {
         expect(call[0]).toBe(
-          '[Vue warn]: "reactive()" is called without provide an "object".'
+          '[Vue warn]: "reactive()" must be called on an object.'
         )
       })
     )
@@ -205,5 +223,53 @@ describe('reactivity/reactive', () => {
       props.n = reactive({ foo: 2 })
       expect(isReactive(props.n)).toBe(true)
     })
+
+    test('should keep array as array', () => {
+      const arr = [1, 2, 3]
+      const shallowReactiveArr = shallowReactive(arr)
+      expect(Array.isArray(shallowReactiveArr)).toBe(true)
+      expect(shallowReactiveArr.join(' ')).toBe(arr.join(' '))
+    })
+
+    test('should trigger computed when changed', () => {
+      const arr = Array(10).fill(0)
+      const shallowReactiveArr = shallowReactive(arr)
+      const sum = computed(() =>
+        shallowReactiveArr.reduce((acc, cur) => acc + cur, 0)
+      )
+      expect(sum.value).toBe(0)
+      shallowReactiveArr[0] = 1
+      expect(sum.value).toBe(1)
+    })
+  })
+
+  test('should shallowReactive non-observable values', () => {
+    const assertValue = (value: any) => {
+      expect(shallowReactive(value)).toBe(value)
+    }
+
+    // number
+    assertValue(1)
+    // string
+    assertValue('foo')
+    // boolean
+    assertValue(false)
+    // null
+    assertValue(null)
+    // undefined
+    assertValue(undefined)
+    // symbol
+    const s = Symbol()
+    assertValue(s)
+
+    expect(warn).toBeCalledTimes(6)
+    expect(
+      warn.mock.calls.map((call) => {
+        expect(call[0]).toBe(
+          '[Vue warn]: "shallowReactive()" must be called on an object.'
+        )
+      })
+    )
+    warn.mockReset()
   })
 })

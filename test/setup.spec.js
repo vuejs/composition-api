@@ -13,6 +13,8 @@ const {
   isReactive,
   defineComponent,
   onMounted,
+  set,
+  del,
 } = require('../src')
 const { sleep } = require('./helpers/utils')
 
@@ -896,6 +898,114 @@ describe('setup', () => {
     expect(vm.$el.textContent).toBe('2')
   })
 
+  // #679
+  it('should work merge with object in development', async () => {
+    global.__DEV__ = true
+    const vm = new Vue({
+      template: '<div>{{ data.id }}</div>',
+      setup() {
+        const data = reactive({
+          id: 42,
+        })
+        return { data }
+      },
+      data() {
+        return {
+          data: { id: 1 },
+        }
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  // #679
+  it('should work merge with object in production', async () => {
+    global.__DEV__ = false
+    const vm = new Vue({
+      template: '<div>{{ data.id }}</div>',
+      setup() {
+        const data = reactive({
+          id: 42,
+        })
+        return { data }
+      },
+      data() {
+        return {
+          data: { id: 1 },
+        }
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1')
+  })
+
+  // #679 html text change
+  it('should id not change when msg changed in development', async () => {
+    global.__DEV__ = true
+    const vm = new Vue({
+      template: '<div>{{ id }} {{ msg }}<button @click="change"/></div>',
+      setup() {
+        return { id: 42 }
+      },
+      data() {
+        return {
+          id: 1,
+          msg: 'abc',
+        }
+      },
+      methods: {
+        change() {
+          this.msg = this.msg + this.id
+        },
+      },
+    }).$mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1 abc')
+    await vm.$el.querySelector('button').click()
+    await nextTick()
+    expect(vm.$el.textContent).toBe('1 abc1')
+  })
+
+  // #683 #603 #580
+  it('should update directly when adding attributes to a reactive object', async () => {
+    const vm = new Vue({
+      template: '<div><button @click="add"/>{{ obj.a }}</div>',
+      setup() {
+        const obj = reactive({})
+        const add = () => {
+          set(obj, 'a', 'new property')
+        }
+        return { obj, add }
+      },
+    }).$mount()
+
+    expect(vm.$el.textContent).toBe('')
+    await vm.$el.querySelector('button').click()
+    expect(vm.$el.textContent).toBe('new property')
+  })
+
+  // #683 #603 #580
+  it('should update directly when deleting attributes from a reactive object', async () => {
+    const vm = new Vue({
+      template: '<div><button @click="deleting"/>{{ obj.a }}</div>',
+      setup() {
+        const obj = reactive({ a: 'hello' })
+        const deleting = () => {
+          del(obj, 'a')
+        }
+        return { obj, deleting }
+      },
+    }).$mount()
+
+    expect(vm.$el.textContent).toBe('hello')
+    await vm.$el.querySelector('button').click()
+    expect(vm.$el.textContent).toBe('')
+  })
+
   // #524
   it('should work with reactive arrays.', async () => {
     const opts = {
@@ -1058,5 +1168,55 @@ describe('setup', () => {
     await vm.$nextTick()
 
     expect(warn).not.toBeCalled()
+  })
+
+  it('should work with mock objects', async () => {
+    const originalProxy = new Proxy(
+      {},
+      {
+        get() {
+          return jest.fn()
+        },
+      }
+    )
+
+    const opts = {
+      template: `<div/>`,
+      setup() {
+        return {
+          proxy: originalProxy,
+        }
+      },
+    }
+    const Constructor = Vue.extend(opts).extend({})
+
+    const vm = new Vue(Constructor).$mount()
+    expect(vm.proxy).toBe(originalProxy)
+  })
+
+  // test #687
+  it('properties of function should not disappear', () => {
+    Vue.component('todo', {
+      template: '<div/>',
+      props: ['testFn'],
+      setup(props) {
+        expect(props.testFn.a).toBe(2)
+      },
+    })
+
+    const vm = new Vue({
+      template: `
+        <div>
+          <todo :testFn="testFn"></todo>
+        </div>
+      `,
+      setup() {
+        const testFn = () => {
+          console.log(1)
+        }
+        testFn.a = 2
+        return { testFn }
+      },
+    }).$mount()
   })
 })

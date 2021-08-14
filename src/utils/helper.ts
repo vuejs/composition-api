@@ -1,18 +1,25 @@
 import Vue, { VNode, ComponentOptions, VueConstructor } from 'vue'
 import { ComponentInstance } from '../component'
-import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
+import {
+  ComponentInternalInstance,
+  getCurrentInstance,
+  getVueConstructor,
+} from '../runtimeContext'
 import { warn } from './utils'
 
-export function currentVMInFn(hook: string): ComponentInstance | undefined {
-  const vm = getCurrentInstance()
-  if (__DEV__ && !vm) {
+export function getCurrentInstanceForFn(
+  hook: string,
+  target?: ComponentInternalInstance | null
+): ComponentInternalInstance | null {
+  target = target || getCurrentInstance()
+  if (__DEV__ && !target) {
     warn(
       `${hook} is called when there is no active component instance to be ` +
         `associated with. ` +
         `Lifecycle injection APIs can only be used during execution of setup().`
     )
   }
-  return vm?.proxy
+  return target
 }
 
 export function defineComponentInstance<V extends Vue = Vue>(
@@ -34,10 +41,12 @@ export function isComponentInstance(obj: any) {
 export function createSlotProxy(vm: ComponentInstance, slotName: string) {
   return (...args: any) => {
     if (!vm.$scopedSlots[slotName]) {
-      return warn(
-        `slots.${slotName}() got called outside of the "render()" scope`,
-        vm
-      )
+      if (__DEV__)
+        return warn(
+          `slots.${slotName}() got called outside of the "render()" scope`,
+          vm
+        )
+      return
     }
 
     return vm.$scopedSlots[slotName]!.apply(vm, args)

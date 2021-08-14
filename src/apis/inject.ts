@@ -1,5 +1,11 @@
 import { ComponentInstance } from '../component'
-import { hasOwn, warn, currentVMInFn, isFunction } from '../utils'
+import {
+  hasOwn,
+  warn,
+  getCurrentInstanceForFn,
+  isFunction,
+  proxy,
+} from '../utils'
 import { getCurrentInstance } from '../runtimeContext'
 
 const NOT_FOUND = {}
@@ -23,14 +29,14 @@ function resolveInject(
 }
 
 export function provide<T>(key: InjectionKey<T> | string, value: T): void {
-  const vm: any = currentVMInFn('provide')
+  const vm: any = getCurrentInstanceForFn('provide')?.proxy
   if (!vm) return
 
   if (!vm._provided) {
     const provideCache = {}
-    Object.defineProperty(vm, '_provided', {
+    proxy(vm, '_provided', {
       get: () => provideCache,
-      set: (v) => Object.assign(provideCache, v),
+      set: (v: any) => Object.assign(provideCache, v),
     })
   }
 
@@ -48,14 +54,16 @@ export function inject(
   defaultValue?: unknown,
   treatDefaultAsFactory = false
 ) {
-  if (!key) {
-    return defaultValue
-  }
-
   const vm = getCurrentInstance()?.proxy
   if (!vm) {
-    warn(`inject() can only be used inside setup() or functional components.`)
+    __DEV__ &&
+      warn(`inject() can only be used inside setup() or functional components.`)
     return
+  }
+
+  if (!key) {
+    __DEV__ && warn(`injection "${String(key)}" not found.`, vm)
+    return defaultValue
   }
 
   const val = resolveInject(key, vm)

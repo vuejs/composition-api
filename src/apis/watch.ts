@@ -1,13 +1,25 @@
 import { ComponentInstance } from '../component'
 import { Ref, isRef, isReactive } from '../reactivity'
-import { assert, logError, noopFn, warn, isFunction } from '../utils'
+import {
+  assert,
+  logError,
+  noopFn,
+  warn,
+  isFunction,
+  isObject,
+  isArray,
+  isPlainObject,
+  isSet,
+  isMap,
+} from '../utils'
 import { defineComponentInstance } from '../utils/helper'
-import { getCurrentInstance, getVueConstructor } from '../runtimeContext'
+import { getVueConstructor } from '../runtimeContext'
 import {
   WatcherPreFlushQueueKey,
   WatcherPostFlushQueueKey,
 } from '../utils/symbols'
 import { ComputedRef } from './computed'
+import { getCurrentScopeVM } from './effectScope'
 
 export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
 
@@ -92,8 +104,6 @@ function getWatcherOption(options?: Partial<WatchOptions>): WatchOptions {
 function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
   return {
     ...{
-      immediate: true,
-      deep: false,
       flush: 'pre',
     },
     ...options,
@@ -101,7 +111,7 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
 }
 
 function getWatcherVM() {
-  let vm = getCurrentInstance()?.proxy
+  let vm = getCurrentScopeVM()
   if (!vm) {
     if (!fallbackVM) {
       fallbackVM = defineComponentInstance(getVueConstructor())
@@ -197,6 +207,21 @@ function createWatcher(
   cb: WatchCallback<any> | null,
   options: WatchOptions
 ): () => void {
+  if (__DEV__ && !cb) {
+    if (options.immediate !== undefined) {
+      warn(
+        `watch() "immediate" option is only respected when using the ` +
+          `watch(source, callback, options?) signature.`
+      )
+    }
+    if (options.deep !== undefined) {
+      warn(
+        `watch() "deep" option is only respected when using the ` +
+          `watch(source, callback, options?) signature.`
+      )
+    }
+  }
+
   const flushMode = options.flush
   const isSync = flushMode === 'sync'
   let cleanup: (() => void) | null
@@ -224,14 +249,14 @@ function createWatcher(
     ) {
       return fn
     }
-    return (((...args: any[]) =>
+    return ((...args: any[]) =>
       queueFlushJob(
         vm,
         () => {
           fn(...args)
         },
         flushMode as 'pre' | 'post'
-      )) as any) as T
+      )) as unknown as T
   }
 
   // effect watch
@@ -272,28 +297,51 @@ function createWatcher(
   let deep = options.deep
 
   let getter: () => any
-  if (Array.isArray(source)) {
-    getter = () => source.map((s) => (isRef(s) ? s.value : s()))
-  } else if (isRef(source)) {
+  if (isRef(source)) {
     getter = () => source.value
   } else if (isReactive(source)) {
     getter = () => source
     deep = true
+  } else if (isArray(source)) {
+    getter = () =>
+      source.map((s) => {
+        if (isRef(s)) {
+          return s.value
+        } else if (isReactive(s)) {
+          return traverse(s)
+        } else if (isFunction(s)) {
+          return s()
+        } else {
+          __DEV__ &&
+            warn(
+              `Invalid watch source: ${JSON.stringify(s)}.
+          A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
+              vm
+            )
+          return noopFn
+        }
+      })
   } else if (isFunction(source)) {
     getter = source as () => any
   } else {
     getter = noopFn
-    warn(
-      `Invalid watch source: ${JSON.stringify(source)}.
+    __DEV__ &&
+      warn(
+        `Invalid watch source: ${JSON.stringify(source)}.
       A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`,
-      vm
-    )
+        vm
+      )
+  }
+
+  if (deep) {
+    const baseGetter = getter
+    getter = () => traverse(baseGetter())
   }
 
   const applyCb = (n: any, o: any) => {
     // cleanup before running cb again
     runCleanup()
-    cb(n, o, registerCleanup)
+    return cb(n, o, registerCleanup)
   }
   let callback = createScheduler(applyCb)
   if (options.immediate) {
@@ -302,10 +350,11 @@ function createWatcher(
     // The subsequent callbacks will redirect to `callback`.
     let shiftCallback = (n: any, o: any) => {
       shiftCallback = originalCallback
-      applyCb(n, o)
+      // o is undefined on the first call
+      return applyCb(n, isArray(n) ? [] : o)
     }
     callback = (n: any, o: any) => {
-      shiftCallback(n, o)
+      return shiftCallback(n, o)
     }
   }
 
@@ -347,6 +396,14 @@ export function watchEffect(
   return createWatcher(vm, effect, null, opts)
 }
 
+export function watchPostEffect(effect: WatchEffect) {
+  return watchEffect(effect, { flush: 'post' })
+}
+
+export function watchSyncEffect(effect: WatchEffect) {
+  return watchEffect(effect, { flush: 'sync' })
+}
+
 // overload #1: array of multiple sources + cb
 // Readonly constraint helps the callback to correctly infer value types based
 // on position in the source array. Otherwise the values will get a union type
@@ -384,7 +441,7 @@ export function watch<T = any>(
   options?: WatchOptions
 ): WatchStopHandle {
   let callback: WatchCallback<unknown> | null = null
-  if (typeof cb === 'function') {
+  if (isFunction(cb)) {
     // source watch
     callback = cb as WatchCallback<unknown>
   } else {
@@ -404,4 +461,27 @@ export function watch<T = any>(
   const vm = getWatcherVM()
 
   return createWatcher(vm, source, callback, opts)
+}
+
+function traverse(value: unknown, seen: Set<unknown> = new Set()) {
+  if (!isObject(value) || seen.has(value)) {
+    return value
+  }
+  seen.add(value)
+  if (isRef(value)) {
+    traverse(value.value, seen)
+  } else if (isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      traverse(value[i], seen)
+    }
+  } else if (isSet(value) || isMap(value)) {
+    value.forEach((v: any) => {
+      traverse(v, seen)
+    })
+  } else if (isPlainObject(value)) {
+    for (const key in value) {
+      traverse(value[key], seen)
+    }
+  }
+  return value
 }

@@ -27,7 +27,13 @@ type PropConstructor<T> =
   | { new (...args: string[]): Function }
 
 type RequiredKeys<T> = {
-  [K in keyof T]: T[K] extends { required: true } | { default: any } ? K : never
+  [K in keyof T]: T[K] extends
+    | { required: true }
+    | { default: any }
+    | BooleanConstructor
+    | { type: BooleanConstructor }
+    ? K
+    : never
 }[keyof T]
 
 type OptionalKeys<T> = Exclude<keyof T, RequiredKeys<T>>

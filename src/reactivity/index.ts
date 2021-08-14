@@ -10,17 +10,23 @@ export {
   ref,
   customRef,
   isRef,
-  Ref,
   createRef,
-  UnwrapRef,
   toRefs,
   toRef,
   unref,
   shallowRef,
   triggerRef,
   proxyRefs,
-  ShallowUnwrapRef,
 } from './ref'
-export { readonly, isReadonly, shallowReadonly, DeepReadonly } from './readonly'
+export { readonly, isReadonly, shallowReadonly } from './readonly'
 export { set } from './set'
 export { del } from './del'
+
+export type {
+  Ref,
+  ToRefs,
+  UnwrapRef,
+  UnwrapRefSimple,
+  ShallowUnwrapRef,
+} from './ref'
+export type { DeepReadonly, UnwrapNestedRefs } from './readonly'

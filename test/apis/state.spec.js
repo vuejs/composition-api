@@ -92,11 +92,11 @@ describe('api/reactive', () => {
     warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
     reactive()
     expect(warn.mock.calls[0][0]).toMatch(
-      '[Vue warn]: "reactive()" is called without provide an "object".'
+      '[Vue warn]: "reactive()" must be called on an object.'
     )
     reactive(false)
     expect(warn.mock.calls[1][0]).toMatch(
-      '[Vue warn]: "reactive()" is called without provide an "object".'
+      '[Vue warn]: "reactive()" must be called on an object.'
     )
     expect(warn).toBeCalledTimes(2)
     warn.mockRestore()
