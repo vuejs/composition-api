@@ -552,12 +552,6 @@ describe('api: watch', () => {
     expect(dummy).toBe(1)
     await nextTick()
     expect(dummy).toBe(1)
-
-    state.data = []
-
-    await nextTick()
-
-    expect(dummy).toBe(2)
   })
 
   it('watching deep ref', async () => {
