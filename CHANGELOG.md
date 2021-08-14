@@ -1,3 +1,13 @@
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/vuejs/composition-api/compare/v1.1.0...v1.1.1) (2021-08-14)
+
+
+### Bug Fixes
+
+* don't invoke Vue getters in setter ([#786](https://github.com/vuejs/composition-api/issues/786)) ([e67940f](https://github.com/vuejs/composition-api/commit/e67940f)), closes [#498](https://github.com/vuejs/composition-api/issues/498)
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/vuejs/composition-api/compare/v1.1.0-beta.7...v1.1.0) (2021-08-09)
 
