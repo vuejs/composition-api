@@ -3,7 +3,7 @@ import vmStateManager from './vmStateManager'
 import {
   setCurrentInstance,
   getCurrentInstance,
-  setCurrentVue2Instance,
+  setCurrentInstanceFromVue2,
 } from '../runtimeContext'
 import { Ref, isRef, isReactive } from '../apis'
 import { hasOwn, proxy, warn } from './utils'
@@ -134,7 +134,7 @@ export function activateCurrentInstance(
   onError?: (err: Error) => void
 ) {
   let preVm = getCurrentInstance()
-  setCurrentVue2Instance(vm)
+  setCurrentInstanceFromVue2(vm)
   try {
     return fn(vm)
   } catch (err) {

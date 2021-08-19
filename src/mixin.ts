@@ -24,12 +24,43 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
-import { getVueConstructor } from './runtimeContext'
+import {
+  getVueConstructor,
+  setCurrentVue2Instance,
+  getCurrentVue2Instance,
+} from './runtimeContext'
 import { createObserver, reactive } from './reactivity/reactive'
+
+type Hook =
+  | 'created'
+  | 'beforeMount'
+  | 'mounted'
+  | 'beforeUpdate'
+  | 'updated'
+  | 'beforeDestroy'
+  | 'destroyed'
+  | 'errorCaptured'
+  | 'activated'
+  | 'deactivated'
+  | 'serverPrefetch'
+
+const hooks: Hook[] = [
+  'created',
+  'beforeMount',
+  'mounted',
+  'beforeUpdate',
+  'updated',
+  'beforeDestroy',
+  'destroyed',
+  'errorCaptured',
+  'activated',
+  'deactivated',
+  'serverPrefetch',
+]
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
-    beforeCreate: functionApiInit,
+    beforeCreate: beforeCreate,
     mounted(this: ComponentInstance) {
       updateTemplateRef(this)
     },
@@ -45,7 +76,7 @@ export function mixin(Vue: VueConstructor) {
    * Vuex init hook, injected into each instances init hooks list.
    */
 
-  function functionApiInit(this: ComponentInstance) {
+  function beforeCreate(this: ComponentInstance) {
     const vm = this
     const $options = vm.$options
     const { setup, render } = $options
@@ -55,6 +86,17 @@ export function mixin(Vue: VueConstructor) {
       $options.render = function (...args: any): any {
         return activateCurrentInstance(vm, () => render.apply(this, args))
       }
+    }
+
+    for (const hook of hooks) {
+      if (!$options[hook]) continue
+      const fns = $options[hook] as unknown as (() => void)[]
+      let oldInstance: ComponentInstance | null
+      fns.unshift(() => {
+        oldInstance = getCurrentVue2Instance()
+        setCurrentVue2Instance(vm)
+      })
+      fns.push(() => setCurrentVue2Instance(oldInstance))
     }
 
     if (!setup) {

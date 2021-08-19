@@ -29,6 +29,7 @@ try {
 
 let vueConstructor: VueConstructor | null = null
 let currentInstance: ComponentInternalInstance | null = null
+let currentVue2Instance: ComponentInstance | null = null
 let currentInstanceTracking = true
 
 const PluginInstalledFlag = '__composition_api_installed__'
@@ -95,6 +96,14 @@ export function withCurrentInstanceTrackingDisabled(fn: () => void) {
 }
 
 export function setCurrentVue2Instance(vm: ComponentInstance | null) {
+  currentVue2Instance = vm
+}
+
+export function getCurrentVue2Instance() {
+  return currentVue2Instance
+}
+
+export function setCurrentInstanceFromVue2(vm: ComponentInstance | null) {
   if (!currentInstanceTracking) return
   setCurrentInstance(vm ? toVue3ComponentInstance(vm) : vm)
 }

@@ -13,7 +13,7 @@ import {
   isMap,
 } from '../utils'
 import { defineComponentInstance } from '../utils/helper'
-import { getVueConstructor } from '../runtimeContext'
+import { getVueConstructor, getCurrentVue2Instance } from '../runtimeContext'
 import {
   WatcherPreFlushQueueKey,
   WatcherPostFlushQueueKey,
@@ -113,10 +113,15 @@ function getWatchEffectOption(options?: Partial<WatchOptions>): WatchOptions {
 function getWatcherVM() {
   let vm = getCurrentScopeVM()
   if (!vm) {
-    if (!fallbackVM) {
-      fallbackVM = defineComponentInstance(getVueConstructor())
+    vm = getCurrentVue2Instance() || undefined
+    if (!vm) {
+      if (!fallbackVM) {
+        fallbackVM = defineComponentInstance(getVueConstructor())
+      }
+      vm = fallbackVM
+    } else if (!hasWatchEnv(vm)) {
+      installWatchEnv(vm)
     }
-    vm = fallbackVM
   } else if (!hasWatchEnv(vm)) {
     installWatchEnv(vm)
   }

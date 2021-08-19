@@ -684,6 +684,33 @@ describe('api/watch', () => {
         })
         .then(done)
     })
+
+    it('should get destroyed with the active vm', (done) => {
+      const vm = new Vue({
+        data: { a: 1 },
+        created() {
+          watch(
+            () => this.a,
+            (n, o) => spy(n, o)
+          )
+        },
+        template: '<div>{{a}}</div>',
+      }).$mount()
+
+      vm.a = 2
+
+      waitForUpdate(() => {
+        expect(spy).toBeCalledTimes(1)
+      })
+        .then(() => {
+          vm.$destroy()
+          vm.a = 3
+        })
+        .then(() => {
+          expect(spy).toBeCalledTimes(1)
+        })
+        .then(done)
+    })
   })
 
   describe('cleanup', () => {
