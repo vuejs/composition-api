@@ -181,33 +181,6 @@ a.list[1].count === 1 // true
 
 </details>
 
-<details>
-<summary>
-⚠️ <code>set</code> and <code>del</code> workaround for adding and deleting reactive properties
-</summary>
-
-> ⚠️ Warning: `set` and `del` do NOT exist in Vue 3. We provide them as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects).
->
-> In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
->
-> Similarly, in Vue 2 you will need to call `del` to [ensure a key deletion triggers view updates](https://vuejs.org/v2/api/#Vue-delete) in reactive objects (similar to `Vue.delete` but for `reactive objects` created by the Composition API). In Vue 3 you can just delete them by calling `delete foo.bar`.
-
-```ts
-import { reactive, set } from '@vue/composition-api'
-
-const a = reactive({
-  foo: 1
-})
-
-// add new reactive key
-set(a, 'bar', 1)
-
-// remove a key and trigger reactivity
-del(a, 'bar')
-```
-
-</details>
-
 ### Template Refs
 
 <details>
@@ -359,6 +332,33 @@ export default {
 `reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
 
 > :bulb: In Vue 3, it will return an new proxy object.
+
+</details>
+
+<details>
+<summary>
+⚠️ <code>set</code> and <code>del</code> workaround for adding and deleting reactive properties
+</summary>
+
+> ⚠️ Warning: `set` and `del` do NOT exist in Vue 3. We provide them as a workaround here, due to the limitation of [Vue 2.x reactivity system](https://vuejs.org/v2/guide/reactivity.html#For-Objects).
+>
+> In Vue 2, you will need to call `set` to track new keys on an `object`(similar to `Vue.set` but for `reactive objects` created by the Composition API). In Vue 3, you can just assign them like normal objects.
+>
+> Similarly, in Vue 2 you will need to call `del` to [ensure a key deletion triggers view updates](https://vuejs.org/v2/api/#Vue-delete) in reactive objects (similar to `Vue.delete` but for `reactive objects` created by the Composition API). In Vue 3 you can just delete them by calling `delete foo.bar`.
+
+```ts
+import { reactive, set } from '@vue/composition-api'
+
+const a = reactive({
+  foo: 1
+})
+
+// add new reactive key
+set(a, 'bar', 1)
+
+// remove a key and trigger reactivity
+del(a, 'bar')
+```
 
 </details>
 
