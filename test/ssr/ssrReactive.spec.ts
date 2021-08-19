@@ -145,4 +145,11 @@ describe('SSR Reactive', () => {
       `"RangeError: Maximum call stack size exceeded"`
     ).not.toHaveBeenWarned()
   })
+
+  it('should work on objects sets with set()', () => {
+    const state = ref<any>({})
+    set(state.value, 'a', {})
+
+    expect(isReactive(state.value.a)).toBe(true)
+  })
 })
