@@ -190,7 +190,7 @@ export function mixin(Vue: VueConstructor) {
       return true
     }
 
-    if (!isPlainObject(target) || isRaw(target)) {
+    if (!isPlainObject(target) || isRaw(target) || isRef(target)) {
       return false
     }
     return Object.keys(target).some((x) =>

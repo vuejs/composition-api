@@ -1219,4 +1219,27 @@ describe('setup', () => {
       },
     }).$mount()
   })
+
+  // #794
+  it('should not trigger getter w/ object computed nested', () => {
+    const spy = jest.fn()
+    new Vue({
+      setup() {
+        new Vue({
+          setup() {
+            const person = {
+              name: computed(() => {
+                spy()
+                return 1
+              }),
+            }
+            return {
+              person,
+            }
+          },
+        })
+      },
+    })
+    expect(spy).toHaveBeenCalledTimes(0)
+  })
 })
