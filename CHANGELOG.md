@@ -1,3 +1,21 @@
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/vuejs/composition-api/compare/v1.1.1...v1.1.2) (2021-08-21)
+
+
+### Bug Fixes
+
+* **set:** reactive in SSR w/ set ([#796](https://github.com/vuejs/composition-api/issues/796)) ([3a1837f](https://github.com/vuejs/composition-api/commit/3a1837f))
+* **setup:** should not trigger getter w/ object computed nested ([#799](https://github.com/vuejs/composition-api/issues/799)) ([72a878d](https://github.com/vuejs/composition-api/commit/72a878d))
+* **watch:** always triggers when watching multiple refs ([#791](https://github.com/vuejs/composition-api/issues/791)) ([8beffc3](https://github.com/vuejs/composition-api/commit/8beffc3))
+* typos ([#788](https://github.com/vuejs/composition-api/issues/788)) ([59653ac](https://github.com/vuejs/composition-api/commit/59653ac))
+
+
+### Features
+
+* implement api `useSlots` and `useAttrs` ([#800](https://github.com/vuejs/composition-api/issues/800)) ([1e6e3a9](https://github.com/vuejs/composition-api/commit/1e6e3a9))
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/vuejs/composition-api/compare/v1.1.0...v1.1.1) (2021-08-14)
 
