@@ -3,7 +3,8 @@ import vmStateManager from './vmStateManager'
 import {
   setCurrentInstance,
   getCurrentInstance,
-  setCurrentVue2Instance,
+  ComponentInternalInstance,
+  InternalSlots,
 } from '../runtimeContext'
 import { Ref, isRef, isReactive } from '../apis'
 import { hasOwn, proxy, warn } from './utils'
@@ -102,7 +103,7 @@ export function updateTemplateRef(vm: ComponentInstance) {
 
 export function resolveScopedSlots(
   vm: ComponentInstance,
-  slotsProxy: { [x: string]: Function }
+  slotsProxy: InternalSlots
 ): void {
   const parentVNode = (vm.$options as any)._parentVnode
   if (!parentVNode) return
@@ -129,14 +130,14 @@ export function resolveScopedSlots(
 }
 
 export function activateCurrentInstance(
-  vm: ComponentInstance,
-  fn: (vm_: ComponentInstance) => any,
+  instance: ComponentInternalInstance,
+  fn: (instance: ComponentInternalInstance) => any,
   onError?: (err: Error) => void
 ) {
   let preVm = getCurrentInstance()
-  setCurrentVue2Instance(vm)
+  setCurrentInstance(instance)
   try {
-    return fn(vm)
+    return fn(instance)
   } catch (err) {
     if (onError) {
       onError(err)

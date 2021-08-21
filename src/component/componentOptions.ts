@@ -1,34 +1,9 @@
 import Vue, { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
+import { SetupContext } from '../runtimeContext'
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
-import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
+import { ComponentRenderProxy } from './componentProxy'
 export { ComponentPropsOptions } from './componentProps'
-export interface SetupContext {
-  readonly attrs: Data
-  readonly slots: Readonly<{ [key in string]?: (...args: any[]) => VNode[] }>
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly parent: ComponentInstance | null
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly root: ComponentInstance
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly listeners: { [key in string]?: Function }
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
-
-  emit(event: string, ...args: any[]): void
-}
 
 export type ComputedGetter<T> = (ctx?: any) => T
 export type ComputedSetter<T> = (v: T) => void

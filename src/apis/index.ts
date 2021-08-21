@@ -25,3 +25,4 @@ export {
   getCurrentScope,
   onScopeDispose,
 } from './effectScope'
+export { useAttrs, useSlots } from './setupHelpers'

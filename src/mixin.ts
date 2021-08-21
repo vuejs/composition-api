@@ -1,10 +1,5 @@
 import type { VueConstructor } from 'vue'
-import {
-  ComponentInstance,
-  SetupContext,
-  SetupFunction,
-  Data,
-} from './component'
+import { ComponentInstance, SetupFunction, Data } from './component'
 import { isRef, isReactive, toRefs, isRaw } from './reactivity'
 import {
   isPlainObject,
@@ -24,7 +19,11 @@ import {
   resolveScopedSlots,
   asVmProperty,
 } from './utils/instance'
-import { getVueConstructor } from './runtimeContext'
+import {
+  getVueConstructor,
+  SetupContext,
+  toVue3ComponentInstance,
+} from './runtimeContext'
 import { createObserver, reactive } from './reactivity/reactive'
 
 export function mixin(Vue: VueConstructor) {
@@ -53,7 +52,9 @@ export function mixin(Vue: VueConstructor) {
     if (render) {
       // keep currentInstance accessible for createElement
       $options.render = function (...args: any): any {
-        return activateCurrentInstance(vm, () => render.apply(this, args))
+        return activateCurrentInstance(toVue3ComponentInstance(vm), () =>
+          render.apply(this, args)
+        )
       }
     }
 
@@ -85,16 +86,17 @@ export function mixin(Vue: VueConstructor) {
   function initSetup(vm: ComponentInstance, props: Record<any, any> = {}) {
     const setup = vm.$options.setup!
     const ctx = createSetupContext(vm)
+    const instance = toVue3ComponentInstance(vm)
+    instance.setupContext = ctx
 
     // fake reactive for `toRefs(props)`
     def(props, '__ob__', createObserver())
 
     // resolve scopedSlots and slots to functions
-    // @ts-expect-error
     resolveScopedSlots(vm, ctx.slots)
 
     let binding: ReturnType<SetupFunction<Data, Data>> | undefined | null
-    activateCurrentInstance(vm, () => {
+    activateCurrentInstance(instance, () => {
       // make props to be fake reactive, this is for `toRefs(props)`
       binding = setup(props, ctx)
     })
@@ -105,9 +107,8 @@ export function mixin(Vue: VueConstructor) {
       const bindingFunc = binding
       // keep currentInstance accessible for createElement
       vm.$options.render = () => {
-        // @ts-expect-error
         resolveScopedSlots(vm, ctx.slots)
-        return activateCurrentInstance(vm, () => bindingFunc())
+        return activateCurrentInstance(instance, () => bindingFunc())
       }
       return
     } else if (isPlainObject(binding)) {
@@ -228,15 +229,17 @@ export function mixin(Vue: VueConstructor) {
       })
     })
 
+    let propsProxy: any
     propsReactiveProxy.forEach((key) => {
       let srcKey = `$${key}`
       proxy(ctx, key, {
         get: () => {
-          const data = reactive({})
+          if (propsProxy) return propsProxy
+          propsProxy = reactive({})
           const source = vm[srcKey]
 
           for (const attr of Object.keys(source)) {
-            proxy(data, attr, {
+            proxy(propsProxy, attr, {
               get: () => {
                 // to ensure it always return the latest value
                 return vm[srcKey][attr]
@@ -244,7 +247,7 @@ export function mixin(Vue: VueConstructor) {
             })
           }
 
-          return data
+          return propsProxy
         },
         set() {
           __DEV__ &&

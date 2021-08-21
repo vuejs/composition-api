@@ -2,7 +2,6 @@ export { defineComponent } from './defineComponent'
 export { defineAsyncComponent } from './defineAsyncComponent'
 export {
   SetupFunction,
-  SetupContext,
   ComputedOptions,
   MethodOptions,
   ComponentPropsOptions,
