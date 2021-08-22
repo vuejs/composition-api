@@ -14,7 +14,7 @@
   "module": "./dist/vue-composition-api.esm.js",
   "unpkg": "./dist/vue-composition-api.prod.js",
   "jsdelivr": "./dist/vue-composition-api.prod.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/vue-composition-api.d.ts",
   "exports": {
     ".": {
       "import": "./dist/vue-composition-api.esm.js",
