@@ -1,3 +1,8 @@
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/vuejs/composition-api/compare/v1.1.2...v1.1.3) (2021-08-22)
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/vuejs/composition-api/compare/v1.1.1...v1.1.2) (2021-08-21)
 
