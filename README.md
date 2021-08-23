@@ -53,7 +53,7 @@ const { ref, reactive } = VueCompositionAPI
 
 ## TypeScript Support
 
-> TypeScript version **>3.7** is required
+> TypeScript version **>4.2** is required
 
 To let TypeScript properly infer types inside Vue component options, you need to define components with `defineComponent`
 
