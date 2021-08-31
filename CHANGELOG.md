@@ -1,3 +1,13 @@
+<a name="1.1.4"></a>
+## [1.1.4](https://github.com/vuejs/composition-api/compare/v1.1.3...v1.1.4) (2021-08-31)
+
+
+### Bug Fixes
+
+* **types:** align emits type with vue-next ([565cbd1](https://github.com/vuejs/composition-api/commit/565cbd1))
+
+
+
 <a name="1.1.3"></a>
 ## [1.1.3](https://github.com/vuejs/composition-api/compare/v1.1.2...v1.1.3) (2021-08-22)
 
