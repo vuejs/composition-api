@@ -1,3 +1,14 @@
+<a name="1.1.5"></a>
+## [1.1.5](https://github.com/vuejs/composition-api/compare/v1.1.4...v1.1.5) (2021-09-09)
+
+
+### Bug Fixes
+
+* improve `isReadonly` behaviour, close [#811](https://github.com/vuejs/composition-api/issues/811), close [#812](https://github.com/vuejs/composition-api/issues/812) ([d3c456a](https://github.com/vuejs/composition-api/commit/d3c456a))
+* **api-watch:** watching nested ref array w/ deep doesn't work ([#808](https://github.com/vuejs/composition-api/issues/808)) ([b625420](https://github.com/vuejs/composition-api/commit/b625420))
+
+
+
 <a name="1.1.4"></a>
 ## [1.1.4](https://github.com/vuejs/composition-api/compare/v1.1.3...v1.1.4) (2021-08-31)
 
