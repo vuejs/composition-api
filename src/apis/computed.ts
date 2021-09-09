@@ -97,11 +97,8 @@ export function computed<T>(
     }
   }
 
-  return createRef<T>(
-    {
-      get: computedGetter,
-      set: computedSetter,
-    },
-    !setter
-  )
+  return createRef<T>({
+    get: computedGetter,
+    set: computedSetter,
+  })
 }

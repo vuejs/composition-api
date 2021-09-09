@@ -58,7 +58,7 @@ export class RefImpl<T> implements Ref<T> {
   }
 }
 
-export function createRef<T>(options: RefOption<T>, readonly = false) {
+export function createRef<T>(options: RefOption<T>) {
   const r = new RefImpl<T>(options)
   // seal the ref, this could prevent ref from being observed
   // It's safe to seal the ref, since we really shouldn't extend it.
