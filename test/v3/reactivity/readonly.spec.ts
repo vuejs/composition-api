@@ -7,6 +7,9 @@ import {
   watch,
   nextTick,
   readonly,
+  isReadonly,
+  toRaw,
+  computed,
 } from '../../../src'
 
 const Vue = require('vue/dist/vue.common.js')
@@ -292,21 +295,21 @@ describe('reactivity/readonly', () => {
   //   })
   // })
 
-  // test('calling reactive on an readonly should return readonly', () => {
-  //   const a = readonly({})
-  //   const b = reactive(a)
-  //   expect(isReadonly(b)).toBe(true)
-  //   // should point to same original
-  //   expect(toRaw(a)).toBe(toRaw(b))
-  // })
+  test('calling reactive on an readonly should return readonly', () => {
+    const a = readonly({})
+    const b = reactive(a)
+    expect(isReadonly(b)).toBe(true)
+    // should point to same original
+    expect(toRaw(a)).toBe(toRaw(b))
+  })
 
-  // test('calling readonly on a reactive object should return readonly', () => {
-  //   const a = reactive({})
-  //   const b = readonly(a)
-  //   expect(isReadonly(b)).toBe(true)
-  //   // should point to same original
-  //   expect(toRaw(a)).toBe(toRaw(b))
-  // })
+  test('calling readonly on a reactive object should return readonly', () => {
+    const a = reactive({})
+    const b = readonly(a)
+    expect(isReadonly(b)).toBe(true)
+    // should point to same original
+    expect(toRaw(a)).toBe(toRaw(b))
+  })
 
   // test('readonly should track and trigger if wrapping reactive original', () => {
   //   const a = reactive({ n: 1 })
@@ -324,19 +327,19 @@ describe('reactivity/readonly', () => {
   //   expect(dummy).toBe(2)
   // })
 
-  // test('wrapping already wrapped value should return same Proxy', () => {
-  //   const original = { foo: 1 }
-  //   const wrapped = readonly(original)
-  //   const wrapped2 = readonly(wrapped)
-  //   expect(wrapped2).toBe(wrapped)
-  // })
+  test('wrapping already wrapped value should return same Proxy', () => {
+    const original = { foo: 1 }
+    const wrapped = readonly(original)
+    const wrapped2 = readonly(wrapped)
+    expect(wrapped2).toBe(wrapped)
+  })
 
-  // test('wrapping the same value multiple times should return same Proxy', () => {
-  //   const original = { foo: 1 }
-  //   const wrapped = readonly(original)
-  //   const wrapped2 = readonly(original)
-  //   expect(wrapped2).toBe(wrapped)
-  // })
+  test('wrapping the same value multiple times should return same Proxy', () => {
+    const original = { foo: 1 }
+    const wrapped = readonly(original)
+    const wrapped2 = readonly(original)
+    expect(wrapped2).toBe(wrapped)
+  })
 
   // test('markRaw', () => {
   //   const obj = readonly({
@@ -473,6 +476,23 @@ describe('reactivity/readonly', () => {
         `Set operation on key "number" failed: target is readonly.`
       ).toHaveBeenWarned()
       expect(vm.$el.textContent).toBe(`1`)
+    })
+
+    it('should mark computed as readonly', () => {
+      expect(isReadonly(computed(() => {}))).toBe(true)
+      expect(
+        isReadonly(
+          computed({
+            get: () => {},
+            set: () => {},
+          })
+        )
+      ).toBe(false)
+    })
+
+    // #811
+    it('should not mark ref as readonly', () => {
+      expect(isReadonly(ref([]))).toBe(false)
     })
   })
 })
