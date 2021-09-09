@@ -341,7 +341,11 @@ function createWatcher(
   }
 
   const applyCb = (n: any, o: any) => {
-    if (isMultiSource && n.every((v: any, i: number) => Object.is(v, o[i])))
+    if (
+      !deep &&
+      isMultiSource &&
+      n.every((v: any, i: number) => Object.is(v, o[i]))
+    )
       return
     // cleanup before running cb again
     runCleanup()
