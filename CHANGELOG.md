@@ -1,3 +1,14 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/vuejs/composition-api/compare/v1.1.5...v1.2.0) (2021-09-21)
+
+
+### Bug Fixes
+
+* importing from esm in node ([#814](https://github.com/vuejs/composition-api/issues/814)) ([8c61b07](https://github.com/vuejs/composition-api/commit/8c61b07))
+* use `.mjs` by default ([2699348](https://github.com/vuejs/composition-api/commit/2699348))
+
+
+
 <a name="1.1.5"></a>
 ## [1.1.5](https://github.com/vuejs/composition-api/compare/v1.1.4...v1.1.5) (2021-09-09)
 
