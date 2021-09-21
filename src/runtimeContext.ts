@@ -166,6 +166,8 @@ export interface SetupContext<E = EmitsOptions> {
   readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
 }
 
+export interface ComponentPublicInstance {}
+
 /**
  * We expose a subset of properties on the internal instance as they are
  * useful for advanced external libraries and tools.

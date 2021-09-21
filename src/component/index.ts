@@ -6,7 +6,11 @@ export {
   MethodOptions,
   ComponentPropsOptions,
 } from './componentOptions'
-export { ComponentInstance, ComponentRenderProxy } from './componentProxy'
+export {
+  ComponentInstance,
+  ComponentPublicInstance,
+  ComponentRenderProxy,
+} from './componentProxy'
 export { Data } from './common'
 export {
   PropType,
