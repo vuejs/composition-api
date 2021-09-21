@@ -11,7 +11,7 @@
     "url": "git+https://github.com/vuejs/composition-api.git"
   },
   "main": "./index.js",
-  "module": "./dist/vue-composition-api.esm.js",
+  "module": "./dist/vue-composition-api.mjs",
   "unpkg": "./dist/vue-composition-api.prod.js",
   "jsdelivr": "./dist/vue-composition-api.prod.js",
   "types": "./dist/vue-composition-api.d.ts",
