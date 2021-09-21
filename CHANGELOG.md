@@ -1,3 +1,13 @@
+<a name="1.2.1"></a>
+## [1.2.1](https://github.com/vuejs/composition-api/compare/v1.2.0...v1.2.1) (2021-09-21)
+
+
+### Features
+
+* **types:** align ComponentPublicInstance type ([2f9cfbf](https://github.com/vuejs/composition-api/commit/2f9cfbf))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/vuejs/composition-api/compare/v1.1.5...v1.2.0) (2021-09-21)
 
