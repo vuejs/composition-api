@@ -17,7 +17,7 @@
   "types": "./dist/vue-composition-api.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/vue-composition-api.esm.js",
+      "import": "./dist/vue-composition-api.mjs",
       "require": "./index.js"
     },
     "./*": "./*"
