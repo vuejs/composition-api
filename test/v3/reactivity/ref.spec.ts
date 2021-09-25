@@ -402,7 +402,6 @@ describe('reactivity/ref', () => {
     const r = reactive({ k: 'v' })
     const s = proxyRefs(r)
     expect(s.k).toBe('v')
-    expect(s[RefKey])
 
     r.k = 'k'
     expect(s.k).toBe('k')
