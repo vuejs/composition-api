@@ -445,6 +445,24 @@ defineComponent({
 
 </details>
 
+### `computed().effect`
+
+<details>
+<summary>
+⚠️ <code>computed()</code> has a property <code>effect</code> set to <code>true</code> instead of a <code>ReactiveEffect<T></code>.
+</summary>
+
+Due to the difference in implementation, there is no such concept as a `ReactiveEffect` in `@vue/composition-api`. Therefore, `effect` is merely `true` to enable differentiating computed from refs:
+
+```ts
+function isComputed<T>(o: ComputedRef<T> | unknown): o is ComputedRef<T>
+function isComputed(o: any): o is ComputedRef {
+  return !!(isRef(o) && o.effect)
+}
+```
+
+</details>
+
 ### Missing APIs
 
 The following APIs introduced in Vue 3 are not available in this plugin.
