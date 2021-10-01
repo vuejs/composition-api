@@ -134,6 +134,40 @@ export type EmitFn<
       }[Event]
     >
 
+export type Slots = Readonly<InternalSlots>
+
+export interface SetupContext<E = EmitsOptions> {
+  attrs: Data
+  slots: Slots
+  emit: EmitFn<E>
+  /**
+   * @deprecated not available in Vue 2
+   */
+  expose: (exposed?: Record<string, any>) => void
+
+  /**
+   * @deprecated not available in Vue 3
+   */
+  readonly parent: ComponentInstance | null
+
+  /**
+   * @deprecated not available in Vue 3
+   */
+  readonly root: ComponentInstance
+
+  /**
+   * @deprecated not available in Vue 3
+   */
+  readonly listeners: { [key in string]?: Function }
+
+  /**
+   * @deprecated not available in Vue 3
+   */
+  readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
+}
+
+export interface ComponentPublicInstance {}
+
 /**
  * We expose a subset of properties on the internal instance as they are
  * useful for advanced external libraries and tools.
@@ -179,6 +213,11 @@ export declare interface ComponentInternalInstance {
    * @internal
    */
   scope: EffectScope
+
+  /**
+   * @internal
+   */
+  setupContext: SetupContext | null
 }
 
 export function getCurrentInstance() {
@@ -190,7 +229,7 @@ const instanceMapCache = new WeakMap<
   ComponentInternalInstance
 >()
 
-function toVue3ComponentInstance(
+export function toVue3ComponentInstance(
   vm: ComponentInstance
 ): ComponentInternalInstance {
   if (instanceMapCache.has(vm)) {

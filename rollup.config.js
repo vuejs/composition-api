@@ -107,7 +107,7 @@ if (process.env.TARGET) {
 buildConfig.push({
   input: 'typings/index.d.ts',
   output: {
-    file: 'dist/index.d.ts',
+    file: 'dist/vue-composition-api.d.ts',
     format: 'es',
   },
   onwarn,

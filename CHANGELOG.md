@@ -1,3 +1,78 @@
+<a name="1.2.2"></a>
+## [1.2.2](https://github.com/vuejs/composition-api/compare/v1.2.1...v1.2.2) (2021-09-24)
+
+
+### Reverts
+
+* "fix: use `.mjs` by default", close [#815](https://github.com/vuejs/composition-api/issues/815) ([96899ce](https://github.com/vuejs/composition-api/commit/96899ce))
+
+
+
+<a name="1.2.1"></a>
+## [1.2.1](https://github.com/vuejs/composition-api/compare/v1.2.0...v1.2.1) (2021-09-21)
+
+
+### Features
+
+* **types:** align ComponentPublicInstance type ([2f9cfbf](https://github.com/vuejs/composition-api/commit/2f9cfbf))
+
+
+
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/vuejs/composition-api/compare/v1.1.5...v1.2.0) (2021-09-21)
+
+
+### Bug Fixes
+
+* importing from esm in node ([#814](https://github.com/vuejs/composition-api/issues/814)) ([8c61b07](https://github.com/vuejs/composition-api/commit/8c61b07))
+* use `.mjs` by default ([2699348](https://github.com/vuejs/composition-api/commit/2699348))
+
+
+
+<a name="1.1.5"></a>
+## [1.1.5](https://github.com/vuejs/composition-api/compare/v1.1.4...v1.1.5) (2021-09-09)
+
+
+### Bug Fixes
+
+* improve `isReadonly` behaviour, close [#811](https://github.com/vuejs/composition-api/issues/811), close [#812](https://github.com/vuejs/composition-api/issues/812) ([d3c456a](https://github.com/vuejs/composition-api/commit/d3c456a))
+* **api-watch:** watching nested ref array w/ deep doesn't work ([#808](https://github.com/vuejs/composition-api/issues/808)) ([b625420](https://github.com/vuejs/composition-api/commit/b625420))
+
+
+
+<a name="1.1.4"></a>
+## [1.1.4](https://github.com/vuejs/composition-api/compare/v1.1.3...v1.1.4) (2021-08-31)
+
+
+### Bug Fixes
+
+* **types:** align emits type with vue-next ([565cbd1](https://github.com/vuejs/composition-api/commit/565cbd1))
+
+
+
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/vuejs/composition-api/compare/v1.1.2...v1.1.3) (2021-08-22)
+
+
+
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/vuejs/composition-api/compare/v1.1.1...v1.1.2) (2021-08-21)
+
+
+### Bug Fixes
+
+* **set:** reactive in SSR w/ set ([#796](https://github.com/vuejs/composition-api/issues/796)) ([3a1837f](https://github.com/vuejs/composition-api/commit/3a1837f))
+* **setup:** should not trigger getter w/ object computed nested ([#799](https://github.com/vuejs/composition-api/issues/799)) ([72a878d](https://github.com/vuejs/composition-api/commit/72a878d))
+* **watch:** always triggers when watching multiple refs ([#791](https://github.com/vuejs/composition-api/issues/791)) ([8beffc3](https://github.com/vuejs/composition-api/commit/8beffc3))
+* typos ([#788](https://github.com/vuejs/composition-api/issues/788)) ([59653ac](https://github.com/vuejs/composition-api/commit/59653ac))
+
+
+### Features
+
+* implement api `useSlots` and `useAttrs` ([#800](https://github.com/vuejs/composition-api/issues/800)) ([1e6e3a9](https://github.com/vuejs/composition-api/commit/1e6e3a9))
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/vuejs/composition-api/compare/v1.1.0...v1.1.1) (2021-08-14)
 

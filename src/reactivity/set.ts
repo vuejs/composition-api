@@ -1,7 +1,14 @@
 import { AnyObject } from '../types/basic'
 import { getVueConstructor } from '../runtimeContext'
-import { isArray, isPrimitive, isUndef, isValidArrayIndex } from '../utils'
-import { defineAccessControl } from './reactive'
+import {
+  isArray,
+  isPrimitive,
+  isUndef,
+  isValidArrayIndex,
+  isObject,
+  hasOwn,
+} from '../utils'
+import { defineAccessControl, mockReactivityDeep } from './reactive'
 
 /**
  * Set a property on an object. Adds the new property, triggers change
@@ -48,6 +55,11 @@ export function set<T>(target: AnyObject, key: any, val: T): T {
   defineReactive(ob.value, key, val)
   // IMPORTANT: define access control before trigger watcher
   defineAccessControl(target, key, val)
+
+  // in SSR, there is no __ob__. Mock for reactivity check
+  if (isObject(target[key]) && !hasOwn(target[key], '__ob__')) {
+    mockReactivityDeep(target[key])
+  }
 
   ob.dep.notify()
   return val

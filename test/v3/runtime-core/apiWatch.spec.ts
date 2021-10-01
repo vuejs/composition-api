@@ -572,4 +572,14 @@ describe('api: watch', () => {
     await nextTick()
     expect(dummy).toEqual([1, 2])
   })
+
+  // #805 #807
+  it('watching sources: [ref<[]>] w/ deep', async () => {
+    const foo = ref([1])
+    const cb = jest.fn()
+    watch([foo], cb, { deep: true })
+    foo.value.push(2)
+    await nextTick()
+    expect(cb).toBeCalledTimes(1)
+  })
 })
