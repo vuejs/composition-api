@@ -60,6 +60,7 @@ describe('SSR Reactive', () => {
   it('should work on objects sets with set()', () => {
     const state = ref<any>({})
     set(state.value, 'a', {})
+    set(state.value, 'a', {})
 
     expect(isReactive(state.value.a)).toBe(true)
   })
