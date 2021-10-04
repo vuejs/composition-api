@@ -63,7 +63,9 @@ type InferPropType<T> = T extends null
                 ? Function
                 : T extends Prop<infer V, infer D>
                   ? unknown extends V
-                    ? D
+                    ? D extends null | undefined
+                      ? V
+                      : D
                     : ExtractCorrectPropType<V>
                   : T
 

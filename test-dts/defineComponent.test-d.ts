@@ -28,6 +28,7 @@ describe('with object props', () => {
     ffff: (a: number, b: string) => { a: boolean }
     validated?: string
     date: Date
+    unknown: unknown
   }
 
   type GT = string & { __brand: unknown }
@@ -100,6 +101,10 @@ describe('with object props', () => {
         type: Date,
         required: true,
       },
+      unknown: {
+        type: Object as PropType<unknown>,
+        default: null,
+      },
     },
     setup(props) {
       // type assertion. See https://github.com/SamVerschueren/tsd
@@ -121,6 +126,7 @@ describe('with object props', () => {
       expectType<ExpectedProps['ffff']>(props.ffff)
       expectType<ExpectedProps['validated']>(props.validated)
       expectType<ExpectedProps['date']>(props.date)
+      expectType<typeof props.unknown>({} as ExpectedProps['unknown'])
 
       isNotAnyOrUndefined(props.a)
       isNotAnyOrUndefined(props.b)
@@ -171,6 +177,7 @@ describe('with object props', () => {
       expectType<ExpectedProps['hhh']>(props.hhh)
       expectType<ExpectedProps['ffff']>(props.ffff)
       expectType<ExpectedProps['validated']>(props.validated)
+      expectType<typeof props.unknown>({} as ExpectedProps['unknown'])
 
       // @ts-expect-error props should be readonly
       expectError((props.a = 1))
