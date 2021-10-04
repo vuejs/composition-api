@@ -46,6 +46,8 @@ export function readonly<T extends object>(
 ): DeepReadonly<UnwrapNestedRefs<T>> {
   if (__DEV__ && !isObject(target)) {
     warn(`value cannot be made reactive: ${String(target)}`)
+  } else {
+    readonlySet.set(target, true)
   }
   return target as any
 }

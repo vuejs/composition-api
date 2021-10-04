@@ -5,6 +5,7 @@ const {
   watch,
   watchEffect,
   set,
+  computed,
   nextTick,
 } = require('../../src')
 const { mockWarn } = require('../helpers')
@@ -820,5 +821,29 @@ describe('api/watch', () => {
     set(r, 'a', 1)
 
     expect(cb).toHaveBeenCalled()
+  })
+
+  it('watching sources: ref<[]>', async () => {
+    const foo = ref([1])
+    const cb = jest.fn()
+    watch(foo, cb)
+    foo.value = foo.value.slice()
+    await nextTick()
+    expect(cb).toBeCalledTimes(1)
+  })
+
+  it('watching multiple sources: computed', async () => {
+    const number = ref(1)
+    const div2 = computed(() => {
+      return number.value > 2 ? '>2' : '<=2'
+    })
+    const div3 = computed(() => {
+      return number.value > 3 ? '>3' : '<=3'
+    })
+    const cb = jest.fn()
+    watch([div2, div3], cb)
+    number.value = 2
+    await nextTick()
+    expect(cb).toHaveBeenCalledTimes(0)
   })
 })

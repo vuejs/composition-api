@@ -3,6 +3,7 @@ import {
   defineComponent,
   createApp,
   ref,
+  computed,
   nextTick,
   SetupContext,
   getCurrentInstance,
@@ -224,5 +225,27 @@ describe('setupContext', () => {
     expect(
       `"RangeError: Maximum call stack size exceeded"`
     ).not.toHaveBeenWarned()
+  })
+
+  // #794
+  it('should not trigger getter w/ object computed nested', async () => {
+    const spy = jest.fn()
+    createApp(
+      defineComponent({
+        template: `<div/>`,
+        setup() {
+          const person = {
+            name: computed<number>(() => {
+              spy()
+              return 1
+            }),
+          }
+          return {
+            person,
+          }
+        },
+      })
+    ).mount()
+    expect(spy).toHaveBeenCalledTimes(0)
   })
 })

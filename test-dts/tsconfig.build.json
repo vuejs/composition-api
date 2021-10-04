@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@vue/composition-api": ["../dist"]
+      "@vue/composition-api": ["../dist/vue-composition-api.d.ts"]
     }
   }
 }

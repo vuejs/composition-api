@@ -1,5 +1,11 @@
 import { ExtractDefaultPropTypes, ExtractPropTypes } from './componentProps'
-import { ShallowUnwrapRef } from '..'
+import {
+  nextTick,
+  ShallowUnwrapRef,
+  UnwrapNestedRefs,
+  WatchOptions,
+  WatchStopHandle,
+} from '..'
 import { Data } from './common'
 
 import Vue, {
@@ -11,6 +17,12 @@ import {
   MethodOptions,
   ExtractComputedReturns,
 } from './componentOptions'
+import {
+  ComponentInternalInstance,
+  EmitFn,
+  EmitsOptions,
+  Slots,
+} from '../runtimeContext'
 
 export type ComponentInstance = InstanceType<VueConstructor>
 
@@ -79,3 +91,42 @@ export type VueProxy<
   ExtractPropTypes<PropsOptions>
 > &
   VueConstructorProxy<PropsOptions, RawBindings, Data, Computed, Methods>
+
+// public properties exposed on the proxy, which is used as the render context
+// in templates (as `this` in the render option)
+export type ComponentPublicInstance<
+  P = {}, // props type extracted from props option
+  B = {}, // raw bindings returned from setup()
+  D = {}, // return from data()
+  C extends ComputedOptions = {},
+  M extends MethodOptions = {},
+  E extends EmitsOptions = {},
+  PublicProps = P,
+  Defaults = {},
+  MakeDefaultsOptional extends boolean = false
+> = {
+  $: ComponentInternalInstance
+  $data: D
+  $props: MakeDefaultsOptional extends true
+    ? Partial<Defaults> & Omit<P & PublicProps, keyof Defaults>
+    : P & PublicProps
+  $attrs: Data
+  $refs: Data
+  $slots: Slots
+  $root: ComponentPublicInstance | null
+  $parent: ComponentPublicInstance | null
+  $emit: EmitFn<E>
+  $el: any
+  // $options: Options & MergedComponentOptionsOverride
+  $forceUpdate: () => void
+  $nextTick: typeof nextTick
+  $watch(
+    source: string | Function,
+    cb: Function,
+    options?: WatchOptions
+  ): WatchStopHandle
+} & P &
+  ShallowUnwrapRef<B> &
+  UnwrapNestedRefs<D> &
+  ExtractComputedReturns<C> &
+  M

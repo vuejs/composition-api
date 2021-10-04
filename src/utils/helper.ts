@@ -4,6 +4,7 @@ import {
   ComponentInternalInstance,
   getCurrentInstance,
   getVueConstructor,
+  Slot,
 } from '../runtimeContext'
 import { warn } from './utils'
 
@@ -38,8 +39,8 @@ export function isComponentInstance(obj: any) {
   return Vue && obj instanceof Vue
 }
 
-export function createSlotProxy(vm: ComponentInstance, slotName: string) {
-  return (...args: any) => {
+export function createSlotProxy(vm: ComponentInstance, slotName: string): Slot {
+  return ((...args: any) => {
     if (!vm.$scopedSlots[slotName]) {
       if (__DEV__)
         return warn(
@@ -50,7 +51,7 @@ export function createSlotProxy(vm: ComponentInstance, slotName: string) {
     }
 
     return vm.$scopedSlots[slotName]!.apply(vm, args)
-  }
+  }) as Slot
 }
 
 export function resolveSlots(

@@ -294,6 +294,7 @@ function createWatcher(
   }
 
   let deep = options.deep
+  let isMultiSource = false
 
   let getter: () => any
   if (isRef(source)) {
@@ -302,6 +303,7 @@ function createWatcher(
     getter = () => source
     deep = true
   } else if (isArray(source)) {
+    isMultiSource = true
     getter = () =>
       source.map((s) => {
         if (isRef(s)) {
@@ -338,6 +340,12 @@ function createWatcher(
   }
 
   const applyCb = (n: any, o: any) => {
+    if (
+      !deep &&
+      isMultiSource &&
+      n.every((v: any, i: number) => Object.is(v, o[i]))
+    )
+      return
     // cleanup before running cb again
     runCleanup()
     return cb(n, o, registerCleanup)

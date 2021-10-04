@@ -1,6 +1,6 @@
 {
   "name": "@vue/composition-api",
-  "version": "1.1.1",
+  "version": "1.2.2",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
     "vue",
@@ -14,10 +14,10 @@
   "module": "./dist/vue-composition-api.esm.js",
   "unpkg": "./dist/vue-composition-api.prod.js",
   "jsdelivr": "./dist/vue-composition-api.prod.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/vue-composition-api.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/vue-composition-api.esm.js",
+      "import": "./dist/vue-composition-api.mjs",
       "require": "./index.js"
     },
     "./*": "./*"

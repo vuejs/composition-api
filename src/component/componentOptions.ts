@@ -1,37 +1,19 @@
 import Vue, { VNode, ComponentOptions as Vue2ComponentOptions } from 'vue'
+import { SetupContext } from '../runtimeContext'
 import { Data } from './common'
 import { ComponentPropsOptions, ExtractPropTypes } from './componentProps'
-import { ComponentInstance, ComponentRenderProxy } from './componentProxy'
+import { ComponentRenderProxy } from './componentProxy'
 export { ComponentPropsOptions } from './componentProps'
-export interface SetupContext {
-  readonly attrs: Data
-  readonly slots: Readonly<{ [key in string]?: (...args: any[]) => VNode[] }>
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly parent: ComponentInstance | null
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly root: ComponentInstance
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly listeners: { [key in string]?: Function }
-
-  /**
-   * @deprecated not available in Vue 3
-   */
-  readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
-
-  emit(event: string, ...args: any[]): void
-}
 
 export type ComputedGetter<T> = (ctx?: any) => T
 export type ComputedSetter<T> = (v: T) => void
+
+export type ObjectEmitsOptions = Record<
+  string,
+  ((...args: any[]) => any) | null
+>
+
+export type EmitsOptions = ObjectEmitsOptions | string[]
 
 export interface WritableComputedOptions<T> {
   get: ComputedGetter<T>
@@ -88,7 +70,7 @@ export type ComponentOptionsWithProps<
   Props = ExtractPropTypes<PropsOptions>
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropsOptions
-  emits?: string[] | Record<string, null | ((emitData: any) => boolean)>
+  emits?: (EmitsOptions | string[]) & ThisType<void>
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
@@ -101,7 +83,7 @@ export type ComponentOptionsWithArrayProps<
   Props = Readonly<{ [key in PropNames]?: any }>
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropNames[]
-  emits?: string[] | Record<string, null | ((emitData: any) => boolean)>
+  emits?: (EmitsOptions | string[]) & ThisType<void>
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
@@ -113,7 +95,7 @@ export type ComponentOptionsWithoutProps<
   M extends MethodOptions = {}
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: undefined
-  emits?: string[] | Record<string, null | ((emitData: any) => boolean)>
+  emits?: (EmitsOptions | string[]) & ThisType<void>
   setup?: SetupFunction<Props, RawBindings>
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
