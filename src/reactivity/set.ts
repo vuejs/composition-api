@@ -24,22 +24,33 @@ export function set<T>(target: AnyObject, key: any, val: T): T {
       `Cannot set reactive property on undefined, null, or primitive value: ${target}`
     )
   }
+
+  const ob = target.__ob__
+
+  function ssrMockReactivity() {
+    // in SSR, there is no __ob__. Mock for reactivity check
+    if (ob && isObject(val) && !hasOwn(val, '__ob__')) {
+      mockReactivityDeep(val)
+    }
+  }
+
   if (isArray(target)) {
     if (isValidArrayIndex(key)) {
       target.length = Math.max(target.length, key)
       target.splice(key, 1, val)
+      ssrMockReactivity()
       return val
     } else if (key === 'length' && (val as any) !== target.length) {
       target.length = val as any
-      ;(target as any).__ob__?.dep.notify()
+      ob?.dep.notify()
       return val
     }
   }
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
+    ssrMockReactivity()
     return val
   }
-  const ob = target.__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     __DEV__ &&
       warn(
@@ -48,18 +59,16 @@ export function set<T>(target: AnyObject, key: any, val: T): T {
       )
     return val
   }
+
   if (!ob) {
     target[key] = val
     return val
   }
+
   defineReactive(ob.value, key, val)
   // IMPORTANT: define access control before trigger watcher
   defineAccessControl(target, key, val)
-
-  // in SSR, there is no __ob__. Mock for reactivity check
-  if (isObject(target[key]) && !hasOwn(target[key], '__ob__')) {
-    mockReactivityDeep(target[key])
-  }
+  ssrMockReactivity()
 
   ob.dep.notify()
   return val

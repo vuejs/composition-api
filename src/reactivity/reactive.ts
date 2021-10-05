@@ -136,7 +136,8 @@ export function observe<T>(obj: T): T {
  * Mock __ob__ for object recursively
  */
 export function mockReactivityDeep(obj: any, seen = new Set()) {
-  if (seen.has(obj)) return
+  if (seen.has(obj) || hasOwn(obj, '__ob__') || !Object.isExtensible(obj))
+    return
 
   def(obj, '__ob__', mockObserver(obj))
   seen.add(obj)

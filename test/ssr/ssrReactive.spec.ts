@@ -57,6 +57,26 @@ describe('SSR Reactive', () => {
     expect(isRaw(state)).toBe(false)
   })
 
+  it('should work on objects sets with set()', () => {
+    const state = ref<any>({})
+
+    set(state.value, 'a', {})
+    expect(isReactive(state.value.a)).toBe(true)
+
+    set(state.value, 'a', {})
+    expect(isReactive(state.value.a)).toBe(true)
+  })
+
+  it('should work on arrays sets with set()', () => {
+    const state = ref<any>([])
+
+    set(state.value, 1, {})
+    expect(isReactive(state.value[1])).toBe(true)
+
+    set(state.value, 1, {})
+    expect(isReactive(state.value[1])).toBe(true)
+  })
+
   // #550
   it('props should work with set', async (done) => {
     let props: any
