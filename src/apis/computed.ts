@@ -1,5 +1,5 @@
 import { getVueConstructor } from '../runtimeContext'
-import { createRef, Ref } from '../reactivity'
+import { createRef, ComputedRef, WritableComputedRef } from '../reactivity'
 import {
   warn,
   noopFn,
@@ -8,12 +8,6 @@ import {
   isFunction,
 } from '../utils'
 import { getCurrentScopeVM } from './effectScope'
-
-export interface ComputedRef<T = any> extends WritableComputedRef<T> {
-  readonly value: T
-}
-
-export interface WritableComputedRef<T> extends Ref<T> {}
 
 export type ComputedGetter<T> = (ctx?: any) => T
 export type ComputedSetter<T> = (v: T) => void
@@ -102,6 +96,7 @@ export function computed<T>(
       get: computedGetter,
       set: computedSetter,
     },
-    !setter
-  )
+    !setter,
+    true
+  ) as WritableComputedRef<T> | ComputedRef<T>
 }

@@ -24,6 +24,8 @@ export { del } from './del'
 
 export type {
   Ref,
+  ComputedRef,
+  WritableComputedRef,
   ToRefs,
   UnwrapRef,
   UnwrapRefSimple,

@@ -1,5 +1,5 @@
 import { ComponentInstance } from '../component'
-import { Ref, isRef, isReactive } from '../reactivity'
+import { Ref, isRef, isReactive, ComputedRef } from '../reactivity'
 import {
   assert,
   logError,
@@ -18,7 +18,6 @@ import {
   WatcherPreFlushQueueKey,
   WatcherPostFlushQueueKey,
 } from '../utils/symbols'
-import { ComputedRef } from './computed'
 import { getCurrentScopeVM } from './effectScope'
 
 export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void

@@ -1,5 +1,5 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, computed, isReadonly } = require('../../src')
+const { ref, computed, isReadonly, reactive, isRef } = require('../../src')
 
 describe('Hooks computed', () => {
   beforeEach(() => {
@@ -211,5 +211,31 @@ describe('Hooks computed', () => {
     })
     expect(isReadonly(z.value)).toBe(false)
     expect(isReadonly(z.value.a)).toBe(false)
+  })
+
+  it('passes isComputed', () => {
+    function isComputed(o) {
+      return !!(o && isRef(o) && o.effect)
+    }
+
+    expect(isComputed(computed(() => 2))).toBe(true)
+    expect(
+      isComputed(
+        computed({
+          get: () => 2,
+          set: () => {},
+        })
+      )
+    ).toBe(true)
+
+    expect(isComputed(ref({}))).toBe(false)
+    expect(isComputed(reactive({}))).toBe(false)
+    expect(isComputed({})).toBe(false)
+    expect(isComputed(undefined)).toBe(false)
+    expect(isComputed(null)).toBe(false)
+    expect(isComputed(true)).toBe(false)
+    expect(isComputed(20)).toBe(false)
+    expect(isComputed('hey')).toBe(false)
+    expect(isComputed('')).toBe(false)
   })
 })

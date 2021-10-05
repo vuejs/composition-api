@@ -9,6 +9,19 @@ export interface Ref<T = any> {
   value: T
 }
 
+export interface WritableComputedRef<T> extends Ref<T> {
+  /**
+   * `effect` is added to be able to differentiate refs from computed properties.
+   * **Differently from Vue 3, it's just `true`**. This is because there is no equivalent
+   * of `ReactiveEffect<T>` in `@vue/composition-api`.
+   */
+  effect: true
+}
+
+export interface ComputedRef<T = any> extends WritableComputedRef<T> {
+  readonly value: T
+}
+
 export type ToRefs<T = any> = { [K in keyof T]: Ref<T[K]> }
 
 export type CollectionTypes = IterableCollections | WeakCollections
@@ -58,14 +71,22 @@ export class RefImpl<T> implements Ref<T> {
   }
 }
 
-export function createRef<T>(options: RefOption<T>, readonly = false) {
+export function createRef<T>(
+  options: RefOption<T>,
+  isReadonly = false,
+  isComputed = false
+): RefImpl<T> {
   const r = new RefImpl<T>(options)
+
+  // add effect to differentiate refs from computed
+  if (isComputed) (r as ComputedRef<T>).effect = true
+
   // seal the ref, this could prevent ref from being observed
   // It's safe to seal the ref, since we really shouldn't extend it.
   // related issues: #79
   const sealed = Object.seal(r)
 
-  if (readonly) readonlySet.set(sealed, true)
+  if (isReadonly) readonlySet.set(sealed, true)
 
   return sealed
 }
