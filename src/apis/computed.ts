@@ -96,6 +96,7 @@ export function computed<T>(
       get: computedGetter,
       set: computedSetter,
     },
+    !setter,
     true
-  )
+  ) as WritableComputedRef<T> | ComputedRef<T>
 }

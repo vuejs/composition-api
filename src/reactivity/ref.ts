@@ -71,31 +71,22 @@ export class RefImpl<T> implements Ref<T> {
   }
 }
 
-export function createRef<T>(options: RefOption<T>): RefImpl<T>
 export function createRef<T>(
   options: RefOption<T>,
-  isComputed: true
-): ComputedRef<T> | WritableComputedRef<T>
-export function createRef<T>(
-  options: RefOption<T>,
-  isComputed: false
-): RefImpl<T>
-export function createRef<T>(
-  options: RefOption<T>,
+  isReadonly = false,
   isComputed = false
-): RefImpl<T> | ComputedRef<T> | WritableComputedRef<T> {
+): RefImpl<T> {
   const r = new RefImpl<T>(options)
 
   // add effect to differentiate refs from computed
-  if (isComputed) {
-    ;(r as WritableComputedRef<T> | ComputedRef<T>).effect = true
-  }
+  if (isComputed) (r as ComputedRef<T>).effect = true
+
   // seal the ref, this could prevent ref from being observed
   // It's safe to seal the ref, since we really shouldn't extend it.
   // related issues: #79
   const sealed = Object.seal(r)
 
-  if (readonly) readonlySet.set(sealed, true)
+  if (isReadonly) readonlySet.set(sealed, true)
 
   return sealed
 }
