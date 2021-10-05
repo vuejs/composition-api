@@ -1,5 +1,5 @@
 import { RefKey } from '../utils/symbols'
-import { proxy, isPlainObject, warn } from '../utils'
+import { proxy, isPlainObject, warn, def } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
 import { readonlySet } from '../utils/sets'
 
@@ -192,6 +192,8 @@ export function proxyRefs<T extends object>(
     return objectWithRefs as ShallowUnwrapRef<T>
   }
   const value: Record<string, any> = reactive({ [RefKey]: objectWithRefs })
+
+  def(value, RefKey, value[RefKey], false)
 
   for (const key of Object.keys(objectWithRefs)) {
     proxy(value, key, {

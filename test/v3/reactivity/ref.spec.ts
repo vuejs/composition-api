@@ -13,7 +13,9 @@ import {
   isReactive,
   shallowRef,
   proxyRefs,
+  ShallowUnwrapRef,
 } from '../../../src'
+import { RefKey } from '../../../src/utils/symbols'
 
 describe('reactivity/ref', () => {
   it('should hold a value', () => {
@@ -379,15 +381,23 @@ describe('reactivity/ref', () => {
         y: ref('foo'),
       },
     }
-    const p = proxyRefs(a)
+    const reactiveA = {
+      [RefKey]: a,
+      ...a,
+    }
+    const p = proxyRefs(a) as ShallowUnwrapRef<typeof reactiveA>
     expect(p.x).toBe(1)
     expect(p.obj.y).toBe('foo')
+    expect(p[RefKey]).toBe(a)
+    expect(Object.keys(p)).toStrictEqual(['x', 'obj'])
 
     // @ts-expect-error
     p.obj.y = 'bar'
     p.x = 2
     expect(a.x).toBe(2)
     expect(a.obj.y).toBe('bar')
+    expect(p[RefKey]).toBe(a)
+    expect(Object.keys(p)).toStrictEqual(['x', 'obj'])
 
     const r = reactive({ k: 'v' })
     const s = proxyRefs(r)
