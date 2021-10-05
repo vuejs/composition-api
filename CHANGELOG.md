@@ -1,3 +1,20 @@
+<a name="1.2.3"></a>
+## [1.2.3](https://github.com/vuejs/composition-api/compare/v1.2.2...v1.2.3) (2021-10-05)
+
+
+### Bug Fixes
+
+* **proxyRefs:** When using proxyRefs, the internal variable composition-api.refKey is exposed on the object itself [#817](https://github.com/vuejs/composition-api/issues/817) ([#818](https://github.com/vuejs/composition-api/issues/818)) ([92b7eb1](https://github.com/vuejs/composition-api/commit/92b7eb1))
+* **ssr:** `set()` twice lose reactivity ([#821](https://github.com/vuejs/composition-api/issues/821)) ([416845a](https://github.com/vuejs/composition-api/commit/416845a))
+* correct prop type inference when using PropType<unknown> ([#825](https://github.com/vuejs/composition-api/issues/825)) ([9c9f8e8](https://github.com/vuejs/composition-api/commit/9c9f8e8))
+
+
+### Features
+
+* **computed:** allow differentiating refs from computed ([#820](https://github.com/vuejs/composition-api/issues/820)) ([68b5d97](https://github.com/vuejs/composition-api/commit/68b5d97))
+
+
+
 <a name="1.2.2"></a>
 ## [1.2.2](https://github.com/vuejs/composition-api/compare/v1.2.1...v1.2.2) (2021-09-24)
 
