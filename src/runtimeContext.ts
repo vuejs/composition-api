@@ -239,6 +239,7 @@ export function toVue3ComponentInstance(
   const instance: ComponentInternalInstance = {
     proxy: vm,
     update: vm.$forceUpdate,
+    type: vm.$options,
     uid: vm._uid,
 
     // $emit is defined on prototype and it expected to be bound
