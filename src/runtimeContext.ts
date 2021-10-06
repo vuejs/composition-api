@@ -174,7 +174,7 @@ export interface ComponentPublicInstance {}
  */
 export declare interface ComponentInternalInstance {
   uid: number
-  // type: ConcreteComponent
+  type: Record<string, unknown> // ConcreteComponent
   parent: ComponentInternalInstance | null
   root: ComponentInternalInstance
 
@@ -236,7 +236,7 @@ export function toVue3ComponentInstance(
     return instanceMapCache.get(vm)!
   }
 
-  const instance: ComponentInternalInstance = {
+  const instance: ComponentInternalInstance = ({
     proxy: vm,
     update: vm.$forceUpdate,
     type: vm.$options,
@@ -247,7 +247,7 @@ export function toVue3ComponentInstance(
 
     parent: null,
     root: null!, // to be immediately set
-  } as unknown as ComponentInternalInstance
+  } as unknown) as ComponentInternalInstance
 
   bindCurrentScopeToVM(instance)
 
