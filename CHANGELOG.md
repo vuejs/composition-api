@@ -1,3 +1,13 @@
+<a name="1.2.4"></a>
+## [1.2.4](https://github.com/vuejs/composition-api/compare/v1.2.3...v1.2.4) (2021-10-07)
+
+
+### Bug Fixes
+
+* add `type` to component instance ([#828](https://github.com/vuejs/composition-api/issues/828)) ([b9b603f](https://github.com/vuejs/composition-api/commit/b9b603f))
+
+
+
 <a name="1.2.3"></a>
 ## [1.2.3](https://github.com/vuejs/composition-api/compare/v1.2.2...v1.2.3) (2021-10-05)
 
