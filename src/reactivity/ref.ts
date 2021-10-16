@@ -49,7 +49,7 @@ export type UnwrapRefSimple<T> = T extends
   | Ref
   ? T
   : T extends Array<any>
-  ? { [K in keyof T]: UnwrapRefSimple<T[K]> }
+  ? Array<UnwrapRefSimple<T[number]>>
   : T extends object
   ? {
       [P in keyof T]: P extends symbol ? T[P] : UnwrapRef<T[P]>
