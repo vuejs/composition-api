@@ -18,19 +18,23 @@ import {
   activateCurrentInstance,
   resolveScopedSlots,
   asVmProperty,
+  updateVmAttrs,
 } from './utils/instance'
 import {
   getVueConstructor,
   SetupContext,
   toVue3ComponentInstance,
 } from './runtimeContext'
-import { createObserver, reactive } from './reactivity/reactive'
+import { createObserver } from './reactivity/reactive'
 
 export function mixin(Vue: VueConstructor) {
   Vue.mixin({
     beforeCreate: functionApiInit,
     mounted(this: ComponentInstance) {
       updateTemplateRef(this)
+    },
+    beforeUpdate() {
+      updateVmAttrs(this as ComponentInstance, this as SetupContext)
     },
     updated(this: ComponentInstance) {
       updateTemplateRef(this)
@@ -212,7 +216,6 @@ export function mixin(Vue: VueConstructor) {
       'isServer',
       'ssrContext',
     ]
-    const propsReactiveProxy = ['attrs']
     const methodReturnVoid = ['emit']
 
     propsPlain.forEach((key) => {
@@ -229,35 +232,7 @@ export function mixin(Vue: VueConstructor) {
       })
     })
 
-    let propsProxy: any
-    propsReactiveProxy.forEach((key) => {
-      let srcKey = `$${key}`
-      proxy(ctx, key, {
-        get: () => {
-          if (propsProxy) return propsProxy
-          propsProxy = reactive({})
-          const source = vm[srcKey]
-
-          for (const attr of Object.keys(source)) {
-            proxy(propsProxy, attr, {
-              get: () => {
-                // to ensure it always return the latest value
-                return vm[srcKey][attr]
-              },
-            })
-          }
-
-          return propsProxy
-        },
-        set() {
-          __DEV__ &&
-            warn(
-              `Cannot assign to '${key}' because it is a read-only property`,
-              vm
-            )
-        },
-      })
-    })
+    updateVmAttrs(vm, ctx)
 
     methodReturnVoid.forEach((key) => {
       const srcKey = `$${key}`

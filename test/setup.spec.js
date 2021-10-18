@@ -11,6 +11,7 @@ const {
   toRaw,
   nextTick,
   isReactive,
+  watchEffect,
   defineComponent,
   onMounted,
   set,
@@ -1241,5 +1242,66 @@ describe('setup', () => {
       },
     })
     expect(spy).toHaveBeenCalledTimes(0)
+  })
+
+  // #833
+  it('attrs update not correctly mapped to props', async () => {
+    let propsFromAttrs = null
+    const Field = defineComponent({
+      props: ['firstName', 'lastName'],
+      setup(props, { attrs }) {
+        watchEffect(() => {
+          propsFromAttrs = props
+        })
+        return () => {
+          return h('div', [props.firstName, props.lastName])
+        }
+      },
+    })
+
+    const WrapperField = defineComponent({
+      setup(props, ctx) {
+        const { attrs } = ctx
+        return () => {
+          return h(Field, {
+            attrs: {
+              ...attrs,
+            },
+          })
+        }
+      },
+    })
+
+    const App = defineComponent({
+      setup() {
+        let person = ref({
+          firstName: 'wang',
+        })
+        onMounted(async () => {
+          person.value = {
+            firstName: 'wang',
+            lastName: 'xiao',
+          }
+        })
+        return () => {
+          return h('div', [
+            h(WrapperField, {
+              attrs: {
+                ...person.value,
+              },
+            }),
+          ])
+        }
+      },
+    })
+    const vm = new Vue(App).$mount()
+
+    await sleep(100)
+    await vm.$nextTick()
+    expect(vm.$el.outerText === 'wangxiao')
+    expect(propsFromAttrs).toStrictEqual({
+      firstName: 'wang',
+      lastName: 'xiao',
+    })
   })
 })
