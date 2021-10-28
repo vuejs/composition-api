@@ -3,6 +3,7 @@ import { ComponentInstance, Data } from '../component'
 export interface VfaState {
   refs?: string[]
   rawBindings?: Data
+  attrBindings?: Data
   slots?: string[]
 }
 

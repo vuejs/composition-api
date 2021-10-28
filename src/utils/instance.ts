@@ -5,10 +5,12 @@ import {
   getCurrentInstance,
   ComponentInternalInstance,
   InternalSlots,
+  SetupContext,
 } from '../runtimeContext'
 import { Ref, isRef, isReactive } from '../apis'
 import { hasOwn, proxy, warn } from './utils'
 import { createSlotProxy, resolveSlots } from './helper'
+import { reactive } from '../reactivity/reactive'
 
 export function asVmProperty(
   vm: ComponentInstance,
@@ -99,6 +101,42 @@ export function updateTemplateRef(vm: ComponentInstance) {
     }
   }
   vmStateManager.set(vm, 'refs', validNewKeys)
+}
+
+export function updateVmAttrs(vm: ComponentInstance, ctx: SetupContext) {
+  if (!vm || !ctx) {
+    return
+  }
+  let attrBindings = vmStateManager.get(vm, 'attrBindings')
+  if (!attrBindings) {
+    const observedData = reactive({})
+    vmStateManager.set(vm, 'attrBindings', observedData)
+    attrBindings = observedData
+    proxy(ctx, 'attrs', {
+      get: () => {
+        return attrBindings
+      },
+      set() {
+        __DEV__ &&
+          warn(
+            `Cannot assign to '$attrs' because it is a read-only property`,
+            vm
+          )
+      },
+    })
+  }
+
+  const source = vm.$attrs
+  for (const attr of Object.keys(source)) {
+    if (!hasOwn(attrBindings!, attr)) {
+      proxy(attrBindings, attr, {
+        get: () => {
+          // to ensure it always return the latest value
+          return vm.$attrs[attr]
+        },
+      })
+    }
+  }
 }
 
 export function resolveScopedSlots(
