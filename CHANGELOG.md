@@ -1,3 +1,13 @@
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/vuejs/composition-api/compare/v1.2.4...v1.3.0) (2021-10-28)
+
+
+### Bug Fixes
+
+* attrs update not correctly mapped to props [#833](https://github.com/vuejs/composition-api/issues/833) ([#835](https://github.com/vuejs/composition-api/issues/835)) ([90b086b](https://github.com/vuejs/composition-api/commit/90b086b))
+
+
+
 <a name="1.2.4"></a>
 ## [1.2.4](https://github.com/vuejs/composition-api/compare/v1.2.3...v1.2.4) (2021-10-07)
 

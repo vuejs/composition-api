@@ -40,7 +40,7 @@ import { ref, reactive } from '@vue/composition-api'
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.2.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.3.0"></script>
 ```
 <!--cdn-links-end-->
 
