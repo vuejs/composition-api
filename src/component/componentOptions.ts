@@ -88,7 +88,7 @@ export type ComponentOptionsWithArrayProps<
 } & ThisType<ComponentRenderProxy<Props, RawBindings, D, C, M>>
 
 export type ComponentOptionsWithoutProps<
-  Props = unknown,
+  Props = {},
   RawBindings = Data,
   D = Data,
   C extends ComputedOptions = {},
