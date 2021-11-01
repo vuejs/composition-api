@@ -17,8 +17,8 @@ export function defineComponent<
   C extends ComputedOptions = {},
   M extends MethodOptions = {}
 >(
-  options: ComponentOptionsWithoutProps<unknown, RawBindings, D, C, M>
-): VueProxy<unknown, RawBindings, D, C, M>
+  options: ComponentOptionsWithoutProps<{}, RawBindings, D, C, M>
+): VueProxy<{}, RawBindings, D, C, M>
 
 // overload 2: object format with array props declaration
 // props inferred as { [key in PropNames]?: any }

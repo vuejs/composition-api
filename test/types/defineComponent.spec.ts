@@ -137,7 +137,7 @@ describe('defineComponent', () => {
     const App = defineComponent({
       setup(props, ctx) {
         isTypeEqual<SetupContext, typeof ctx>(true)
-        isTypeEqual<unknown, typeof props>(true)
+        isTypeEqual<{}, typeof props>(true)
         return () => null
       },
     })
