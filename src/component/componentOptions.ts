@@ -31,7 +31,7 @@ export interface MethodOptions {
 
 export type SetupFunction<Props, RawBindings = {}> = (
   this: void,
-  props: Props,
+  props: Readonly<Props>,
   ctx: SetupContext
 ) => RawBindings | (() => VNode | null) | void
 

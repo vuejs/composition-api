@@ -117,7 +117,7 @@ export function defineAsyncComponent(
     const component = load()
 
     return {
-      component: component as any, // there is a type missmatch between vue2 type and the docs
+      component,
       delay,
       timeout,
       error: errorComponent,

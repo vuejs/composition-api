@@ -1,19 +1,8 @@
-import { AsyncComponent } from 'vue'
-import { defineAsyncComponent, defineComponent, expectType } from './index'
+import { defineAsyncComponent, defineComponent, expectType, h } from './index'
 
-function asyncComponent1() {
-  return Promise.resolve().then(() => {
-    return defineComponent({})
-  })
-}
+const asyncComponent1 = async () => defineComponent({})
 
-function asyncComponent2() {
-  return Promise.resolve().then(() => {
-    return {
-      template: 'ASYNC',
-    }
-  })
-}
+const asyncComponent2 = async () => ({ template: 'ASYNC' })
 
 const syncComponent1 = defineComponent({
   template: '',
@@ -42,19 +31,9 @@ defineAsyncComponent({
   loadingComponent: syncComponent2,
 })
 
-defineAsyncComponent(
-  () =>
-    new Promise((resolve, reject) => {
-      resolve(syncComponent1)
-    })
-)
+defineAsyncComponent(async () => syncComponent1)
 
-defineAsyncComponent(
-  () =>
-    new Promise((resolve, reject) => {
-      resolve(syncComponent2)
-    })
-)
+defineAsyncComponent(async () => syncComponent2)
 
 const component = defineAsyncComponent({
   loader: asyncComponent1,
@@ -71,4 +50,4 @@ const component = defineAsyncComponent({
   },
 })
 
-expectType<AsyncComponent>(component)
+h(component)
