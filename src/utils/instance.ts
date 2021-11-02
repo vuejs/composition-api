@@ -103,18 +103,22 @@ export function updateTemplateRef(vm: ComponentInstance) {
   vmStateManager.set(vm, 'refs', validNewKeys)
 }
 
-export function updateVmAttrs(vm: ComponentInstance, ctx: SetupContext) {
-  if (!vm || !ctx) {
+export function updateVmAttrs(vm: ComponentInstance, ctx?: SetupContext) {
+  if (!vm) {
     return
   }
   let attrBindings = vmStateManager.get(vm, 'attrBindings')
+  if (!attrBindings && !ctx) {
+    // fix 840
+    return
+  }
   if (!attrBindings) {
     const observedData = reactive({})
-    vmStateManager.set(vm, 'attrBindings', observedData)
-    attrBindings = observedData
+    attrBindings = { ctx: ctx!, data: observedData }
+    vmStateManager.set(vm, 'attrBindings', attrBindings)
     proxy(ctx, 'attrs', {
       get: () => {
-        return attrBindings
+        return attrBindings?.data
       },
       set() {
         __DEV__ &&
@@ -128,8 +132,8 @@ export function updateVmAttrs(vm: ComponentInstance, ctx: SetupContext) {
 
   const source = vm.$attrs
   for (const attr of Object.keys(source)) {
-    if (!hasOwn(attrBindings!, attr)) {
-      proxy(attrBindings, attr, {
+    if (!hasOwn(attrBindings.data, attr)) {
+      proxy(attrBindings.data, attr, {
         get: () => {
           // to ensure it always return the latest value
           return vm.$attrs[attr]
