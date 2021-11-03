@@ -3,7 +3,8 @@ import { VueConstructor } from 'vue/types/umd'
 import { getVueConstructor } from '../runtimeContext'
 import { warn } from '../utils'
 
-export interface App {
+// Has a generic to match Vue 3 API and be type compatible
+export interface App<T = any> {
   config: VueConstructor['config']
   use: VueConstructor['use']
   mixin: VueConstructor['mixin']
