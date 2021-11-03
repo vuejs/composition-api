@@ -1,3 +1,13 @@
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/vuejs/composition-api/compare/v1.3.1...v1.3.2) (2021-11-03)
+
+
+### Bug Fixes
+
+* changing prop causes rerender to lose attributes [#840](https://github.com/vuejs/composition-api/issues/840) ([#843](https://github.com/vuejs/composition-api/issues/843)) ([a43090d](https://github.com/vuejs/composition-api/commit/a43090d))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/vuejs/composition-api/compare/v1.3.0...v1.3.1) (2021-11-01)
 
