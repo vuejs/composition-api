@@ -1,3 +1,13 @@
+<a name="1.3.1"></a>
+## [1.3.1](https://github.com/vuejs/composition-api/compare/v1.3.0...v1.3.1) (2021-11-01)
+
+
+### Bug Fixes
+
+* **types:** defineComponent object format with no props type ([#839](https://github.com/vuejs/composition-api/issues/839)) ([8a31c78](https://github.com/vuejs/composition-api/commit/8a31c78))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/vuejs/composition-api/compare/v1.2.4...v1.3.0) (2021-10-28)
 

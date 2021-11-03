@@ -180,7 +180,10 @@ export function activateCurrentInstance(
   setCurrentInstance(instance)
   try {
     return fn(instance)
-  } catch (err) {
+  } catch (
+    // FIXME: remove any
+    err: any
+  ) {
     if (onError) {
       onError(err)
     } else {

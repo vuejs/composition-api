@@ -228,7 +228,10 @@ function createWatcher(
     cleanup = () => {
       try {
         fn()
-      } catch (error) {
+      } catch (
+        // FIXME: remove any
+        error: any
+      ) {
         logError(error, vm, 'onCleanup()')
       }
     }

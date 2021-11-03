@@ -5,4 +5,4 @@
 import _vue from 'vue/dist/vue.common'
 import { VueConstructor } from 'vue'
 
-export default (_vue as any) as VueConstructor
+export default _vue as any as VueConstructor
