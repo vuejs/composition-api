@@ -61,7 +61,7 @@ describe('api: lifecycle hooks', () => {
     const Comp = {
       setup() {
         onBeforeUpdate(fn)
-        return () => h('div', (count.value as unknown) as string)
+        return () => h('div', count.value as unknown as string)
       },
     }
     const vm = createApp(Comp).mount()
@@ -83,7 +83,7 @@ describe('api: lifecycle hooks', () => {
     const Comp = {
       setup() {
         onUpdated(fn)
-        return () => h('div', (count.value as unknown) as string)
+        return () => h('div', count.value as unknown as string)
       },
     }
     const vm = createApp(Comp).mount()

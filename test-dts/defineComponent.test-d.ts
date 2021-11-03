@@ -6,6 +6,7 @@ import {
   isNotAnyOrUndefined,
   defineComponent,
   PropType,
+  h,
 } from './index'
 
 describe('with object props', () => {
@@ -126,6 +127,8 @@ describe('with object props', () => {
       expectType<ExpectedProps['ffff']>(props.ffff)
       expectType<ExpectedProps['validated']>(props.validated)
       expectType<ExpectedProps['date']>(props.date)
+      // FIXME: vue 3 bug
+      // @ts-ignore
       expectType<typeof props.unknown>({} as ExpectedProps['unknown'])
 
       isNotAnyOrUndefined(props.a)
@@ -145,6 +148,7 @@ describe('with object props', () => {
       isNotAnyOrUndefined(props.hhh)
       isNotAnyOrUndefined(props.ffff)
 
+      // @ts-expect-error
       expectError((props.a = 1))
 
       // setup context
@@ -158,7 +162,7 @@ describe('with object props', () => {
         }),
       }
     },
-    render(h) {
+    render() {
       const props = this.$props
       expectType<ExpectedProps['a']>(props.a)
       expectType<ExpectedProps['b']>(props.b)
@@ -177,6 +181,8 @@ describe('with object props', () => {
       expectType<ExpectedProps['hhh']>(props.hhh)
       expectType<ExpectedProps['ffff']>(props.ffff)
       expectType<ExpectedProps['validated']>(props.validated)
+      // FIXME: vue 3 bug
+      // @ts-ignore
       expectType<typeof props.unknown>({} as ExpectedProps['unknown'])
 
       // @ts-expect-error props should be readonly
@@ -211,7 +217,7 @@ describe('with object props', () => {
       // setup context properties should be mutable
       this.c = 2
 
-      return h()
+      return h('div')
     },
   })
 })
@@ -228,7 +234,7 @@ describe('type inference w/ array props declaration', () => {
         c: 1,
       }
     },
-    render(h) {
+    render() {
       expectType<any>(this.$props.a)
       expectType<any>(this.$props.b)
       // @ts-expect-error
@@ -237,7 +243,7 @@ describe('type inference w/ array props declaration', () => {
       expectType<any>(this.b)
       expectType<number>(this.c)
 
-      return h()
+      return h('div')
     },
   })
 })
@@ -293,7 +299,7 @@ describe('type inference w/ options API', () => {
         expectType<number>(this.d)
       },
     },
-    render(h) {
+    render() {
       // props
       expectType<number | undefined>(this.a)
       // returned from setup()
@@ -303,7 +309,7 @@ describe('type inference w/ options API', () => {
       // computed
       expectType<number>(this.d)
 
-      return h()
+      return h('div')
     },
   })
 })
