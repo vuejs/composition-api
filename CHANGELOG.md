@@ -1,3 +1,13 @@
+<a name="1.3.3"></a>
+## [1.3.3](https://github.com/vuejs/composition-api/compare/v1.3.2...v1.3.3) (2021-11-03)
+
+
+### Features
+
+* **types:** allow a generic in App type ([#845](https://github.com/vuejs/composition-api/issues/845)) ([48729d9](https://github.com/vuejs/composition-api/commit/48729d9))
+
+
+
 <a name="1.3.2"></a>
 ## [1.3.2](https://github.com/vuejs/composition-api/compare/v1.3.1...v1.3.2) (2021-11-03)
 
