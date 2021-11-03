@@ -1,9 +1,13 @@
 import { ComponentInstance, Data } from '../component'
+import { SetupContext } from '../runtimeContext'
 
 export interface VfaState {
   refs?: string[]
   rawBindings?: Data
-  attrBindings?: Data
+  attrBindings?: {
+    ctx: SetupContext
+    data: Data
+  }
   slots?: string[]
 }
 

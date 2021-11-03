@@ -34,7 +34,7 @@ export function mixin(Vue: VueConstructor) {
       updateTemplateRef(this)
     },
     beforeUpdate() {
-      updateVmAttrs(this as ComponentInstance, this as SetupContext)
+      updateVmAttrs(this as ComponentInstance)
     },
     updated(this: ComponentInstance) {
       updateTemplateRef(this)

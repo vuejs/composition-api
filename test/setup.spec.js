@@ -1304,4 +1304,81 @@ describe('setup', () => {
       lastName: 'xiao',
     })
   })
+
+  // #840
+  it('changing prop causes rerender to lose attributes', async () => {
+    let childAttrs = []
+    const Parent = {
+      computed: {
+        attrs() {
+          return {
+            'data-type': this.type,
+          }
+        },
+      },
+      props: {
+        type: {
+          type: String,
+          required: true,
+        },
+      },
+      mounted() {
+        childAttrs.push(this.attrs)
+      },
+      updated() {
+        childAttrs.push(this.attrs)
+      },
+      template: '<div v-bind="attrs">Parent<slot /></div>',
+    }
+    const Child = {
+      props: {
+        type: {
+          type: String,
+          required: true,
+        },
+      },
+      computed: {
+        attrs() {
+          return {
+            'data-type': this.type,
+          }
+        },
+      },
+      data() {
+        return {
+          update: 0,
+        }
+      },
+      template: '  <div v-bind="attrs">Child</div>',
+    }
+
+    const App = {
+      name: 'App',
+      data() {
+        return { parentType: 'parent' }
+      },
+      async mounted() {
+        await sleep(300)
+        this.parentType = 'parent-click'
+      },
+
+      components: {
+        Parent,
+        Child,
+      },
+      template: ` <div id="app">
+        <Parent :type="parentType">
+          <Child type="child"/>
+        </Parent>
+      </div>`,
+    }
+    const vm = new Vue(App).$mount()
+
+    await sleep(1000)
+    await vm.$nextTick()
+    expect(childAttrs).toStrictEqual([
+      { 'data-type': 'parent' },
+      { 'data-type': 'parent-click' },
+    ])
+  })
 })
