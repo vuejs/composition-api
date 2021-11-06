@@ -7,6 +7,7 @@ import {
   defineComponent,
   PropType,
   h,
+  createApp,
 } from './index'
 
 describe('with object props', () => {
@@ -588,24 +589,22 @@ describe('extends with mixins', () => {
 })
 
 describe('compatibility w/ createApp', () => {
-  /*
   const comp = defineComponent({})
   createApp(comp).mount('#hello')
 
   const comp2 = defineComponent({
-    props: { foo: String }
+    props: { foo: String },
   })
   createApp(comp2).mount('#hello')
 
   const comp3 = defineComponent({
     setup() {
       return {
-        a: 1
+        a: 1,
       }
-    }
+    },
   })
   createApp(comp3).mount('#hello')
-  */
 })
 
 describe('defineComponent', () => {
@@ -618,8 +617,6 @@ describe('defineComponent', () => {
 })
 
 describe('emits', () => {
-  /*
-
   // Note: for TSX inference, ideally we want to map emits to onXXX props,
   // but that requires type-level string constant concatenation as suggested in
   // https://github.com/Microsoft/TypeScript/issues/12754
@@ -633,9 +630,10 @@ describe('emits', () => {
   defineComponent({
     emits: {
       click: (n: number) => typeof n === 'number',
-      input: (b: string) => null
+      input: (b: string) => null,
     },
     setup(props, { emit }) {
+      /*
       emit('click', 1)
       emit('input', 'foo')
       //  @ts-expect-error
@@ -648,6 +646,7 @@ describe('emits', () => {
       expectError(emit('input'))
       //  @ts-expect-error
       expectError(emit('input', 1))
+      */
     },
     created() {
       this.$emit('click', 1)
@@ -662,9 +661,10 @@ describe('emits', () => {
       expectError(this.$emit('input'))
       //  @ts-expect-error
       expectError(this.$emit('input', 1))
-    }
+    },
   })
 
+  /*
   // with array emits
   defineComponent({
     emits: ['foo', 'bar'],

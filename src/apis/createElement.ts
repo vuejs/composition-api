@@ -1,9 +1,7 @@
-import Vue from 'vue'
+import type { CreateElement } from 'vue'
 import { getVueConstructor, getCurrentInstance } from '../runtimeContext'
 import { defineComponentInstance } from '../utils/helper'
 import { warn } from '../utils'
-
-type CreateElement = Vue['$createElement']
 
 let fallbackCreateElement: CreateElement
 

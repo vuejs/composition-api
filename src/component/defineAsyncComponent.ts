@@ -8,14 +8,15 @@ import {
   ComponentOptionsWithProps,
 } from './componentOptions'
 
-type ComponentOptions =
+type Component = VueProxy<any, any, any, any, any>
+
+type ComponentOrComponentOptions =
+  // Component
+  | Component
+  // ComponentOptions
   | ComponentOptionsWithoutProps
   | ComponentOptionsWithArrayProps
   | ComponentOptionsWithProps
-
-type Component = VueProxy<any, any, any, any, any>
-
-type ComponentOrComponentOptions = ComponentOptions | Component
 
 export type AsyncComponentResolveResult<T = ComponentOrComponentOptions> =
   | T

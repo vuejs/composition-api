@@ -21,8 +21,28 @@ import {
   ComponentInternalInstance,
   EmitFn,
   EmitsOptions,
+  ObjectEmitsOptions,
   Slots,
 } from '../runtimeContext'
+
+type EmitsToProps<T extends EmitsOptions> = T extends string[]
+  ? {
+      [K in string & `on${Capitalize<T[number]>}`]?: (...args: any[]) => any
+    }
+  : T extends ObjectEmitsOptions
+  ? {
+      [K in string &
+        `on${Capitalize<string & keyof T>}`]?: K extends `on${infer C}`
+        ? T[Uncapitalize<C>] extends null
+          ? (...args: any[]) => any
+          : (
+              ...args: T[Uncapitalize<C>] extends (...args: infer P) => any
+                ? P
+                : never
+            ) => any
+        : never
+    }
+  : {}
 
 export type ComponentInstance = InstanceType<VueConstructor>
 
@@ -34,6 +54,9 @@ export type ComponentRenderProxy<
   D = {}, // return from data()
   C extends ComputedOptions = {},
   M extends MethodOptions = {},
+  Mixin = {},
+  Extends = {},
+  Emits extends EmitsOptions = {},
   PublicProps = P,
   Defaults = {},
   MakeDefaultsOptional extends boolean = false
@@ -45,12 +68,13 @@ export type ComponentRenderProxy<
       : P & PublicProps
   >
   $attrs: Data
+  $emit: EmitFn<Emits>
 } & Readonly<P> &
   ShallowUnwrapRef<B> &
   D &
   M &
   ExtractComputedReturns<C> &
-  Omit<Vue, '$data' | '$props' | '$attrs'>
+  Omit<Vue, '$data' | '$props' | '$attrs' | '$emit'>
 
 // for Vetur and TSX support
 type VueConstructorProxy<
@@ -58,15 +82,23 @@ type VueConstructorProxy<
   RawBindings,
   Data,
   Computed extends ComputedOptions,
-  Methods extends MethodOptions
-> = VueConstructor & {
+  Methods extends MethodOptions,
+  Mixin = {},
+  Extends = {},
+  Emits extends EmitsOptions = {},
+  Props = ExtractPropTypes<PropsOptions> &
+    ({} extends Emits ? {} : EmitsToProps<Emits>)
+> = Omit<VueConstructor, never> & {
   new (...args: any[]): ComponentRenderProxy<
-    ExtractPropTypes<PropsOptions>,
+    Props,
     ShallowUnwrapRef<RawBindings>,
     Data,
     Computed,
     Methods,
-    ExtractPropTypes<PropsOptions>,
+    Mixin,
+    Extends,
+    Emits,
+    Props,
     ExtractDefaultPropTypes<PropsOptions>,
     true
   >
@@ -81,7 +113,10 @@ export type VueProxy<
   RawBindings,
   Data = DefaultData<Vue>,
   Computed extends ComputedOptions = DefaultComputed,
-  Methods extends MethodOptions = DefaultMethods<Vue>
+  Methods extends MethodOptions = DefaultMethods<Vue>,
+  Mixin = {},
+  Extends = {},
+  Emits extends EmitsOptions = {}
 > = Vue2ComponentOptions<
   Vue,
   ShallowUnwrapRef<RawBindings> & Data,
@@ -90,7 +125,16 @@ export type VueProxy<
   PropsOptions,
   ExtractPropTypes<PropsOptions>
 > &
-  VueConstructorProxy<PropsOptions, RawBindings, Data, Computed, Methods>
+  VueConstructorProxy<
+    PropsOptions,
+    RawBindings,
+    Data,
+    Computed,
+    Methods,
+    Mixin,
+    Extends,
+    Emits
+  >
 
 // public properties exposed on the proxy, which is used as the render context
 // in templates (as `this` in the render option)
