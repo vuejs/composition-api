@@ -1,3 +1,4 @@
+import type {} from '@vue/runtime-dom'
 export * from '@vue/composition-api'
 // export * from 'vue3'
 
@@ -11,3 +12,9 @@ export function expectAssignable<T, T2 extends T = T>(value: T2): void
 type IfNotAny<T> = 0 extends 1 & T ? never : T
 type IfNotUndefined<T> = Exclude<T, undefined> extends never ? never : T
 export function isNotAnyOrUndefined<T>(value: IfNotAny<IfNotUndefined<T>>): void
+
+export type IsUnion<T, U extends T = T> = (
+  T extends any ? (U extends T ? false : true) : never
+) extends false
+  ? false
+  : true

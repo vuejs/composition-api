@@ -1,5 +1,5 @@
 import type Vue from 'vue'
-import { VueConstructor } from 'vue/types/umd'
+import { VueConstructor } from 'vue'
 import { getVueConstructor } from '../runtimeContext'
 import { warn } from '../utils'
 

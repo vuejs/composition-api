@@ -4,10 +4,11 @@
     "noEmit": true,
     "declaration": true,
     "baseUrl": ".",
+    "jsx": "preserve",
     "paths": {
       "@vue/composition-api": ["../src"]
     }
   },
   "exclude": ["../test"],
-  "include": ["../src", "./*.ts"]
+  "include": ["../src", "./*.ts", "./*.tsx"]
 }
