@@ -1,3 +1,13 @@
+<a name="1.4.0-beta.0"></a>
+# [1.4.0-beta.0](https://github.com/vuejs/composition-api/compare/v1.3.3...v1.4.0-beta.0) (2021-11-07)
+
+
+### Features
+
+* add component $emit typing support ([#846](https://github.com/vuejs/composition-api/issues/846)) ([b980175](https://github.com/vuejs/composition-api/commit/b980175))
+
+
+
 <a name="1.3.3"></a>
 ## [1.3.3](https://github.com/vuejs/composition-api/compare/v1.3.2...v1.3.3) (2021-11-03)
 
