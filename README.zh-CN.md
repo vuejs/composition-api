@@ -52,7 +52,7 @@ const { ref, reactive } = VueCompositionAPI
 
 ## TypeScript 支持
 
-> 本插件要求使用 TypeScript **3.5.1** 或以上版本
+> 本插件要求使用 TypeScript **4.2** 或以上版本
 
 为了让 TypeScript 在 Vue 组件选项中正确地进行类型推导，我们必须使用 `defineComponent` 来定义组件:
 
@@ -380,6 +380,26 @@ watch(
     onTrigger() {}, // 不可用
   }
 )
+```
+
+</details>
+
+### `createApp`
+
+<details>
+<summary>
+⚠️ <code>createApp()</code> 是全局的
+</summary>
+
+在 Vue3 中，引入了 `createApp()` 来隔离不同应用实例的上下文(plugin, components 等)。 由于 Vue2 的设计，在这个插件中，我们提供 `createApp()` 作为一个向前兼容的 API ，它只是全局的一个别名。
+
+```ts
+const app1 = createApp(RootComponent1)
+app1.component('Foo', Foo) // 相当于 Vue.component('Foo', Foo)
+app1.use(VueRouter) // 相当于 Vue.use(VueRouter)
+
+const app2 = createApp(RootComponent2)
+app2.component('Bar', Bar) // 相当于 Vue.use('Bar', Bar)
 ```
 
 </details>
