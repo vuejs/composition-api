@@ -2,6 +2,7 @@ import { RefKey } from '../utils/symbols'
 import { proxy, isPlainObject, warn, def } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
 import { readonlySet } from '../utils/sets'
+import { set } from './set'
 
 declare const _refBrand: unique symbol
 export interface Ref<T = any> {
@@ -154,6 +155,7 @@ export function toRef<T extends object, K extends keyof T>(
   object: T,
   key: K
 ): Ref<T[K]> {
+  if (!(key in object)) set(object, key, undefined)
   const v = object[key]
   if (isRef<T[K]>(v)) return v
 
