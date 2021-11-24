@@ -1,5 +1,12 @@
 const Vue = require('vue/dist/vue.common.js')
-const { ref, computed, isReadonly, reactive, isRef } = require('../../src')
+const {
+  ref,
+  computed,
+  isReadonly,
+  reactive,
+  isRef,
+  toRef,
+} = require('../../src')
 
 describe('Hooks computed', () => {
   beforeEach(() => {
@@ -193,6 +200,26 @@ describe('Hooks computed', () => {
 
     expect(app.$children[0].example).toBe('A')
     expect(app.$children[1].example).toBe('B')
+  })
+
+  it('should watch a reactive property created via toRef', (done) => {
+    const spy = jest.fn()
+    const vm = new Vue({
+      setup() {
+        const a = reactive({})
+        const b = toRef(a, 'b')
+
+        return {
+          a,
+          b,
+        }
+      },
+    })
+    vm.$watch('b', spy)
+    vm.b = 2
+    waitForUpdate(() => {
+      expect(spy).toHaveBeenCalledWith(2, undefined)
+    }).then(done)
   })
 
   it('should be readonly', () => {

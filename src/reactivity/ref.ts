@@ -155,10 +155,9 @@ export function toRef<T extends object, K extends keyof T>(
   object: T,
   key: K
 ): Ref<T[K]> {
+  if (!(key in object)) set(object, key, undefined)
   const v = object[key]
   if (isRef<T[K]>(v)) return v
-
-  if (!(key in object)) set(object, key, undefined)
 
   return createRef({
     get: () => object[key],
