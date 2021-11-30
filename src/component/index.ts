@@ -25,4 +25,5 @@ export {
   DirectiveHook,
   ObjectDirective,
   FunctionDirective,
+  Directive,
 } from './directives'
