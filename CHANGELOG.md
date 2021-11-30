@@ -1,3 +1,18 @@
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/vuejs/composition-api/compare/v1.4.0...v1.4.1) (2021-11-30)
+
+
+### Bug Fixes
+
+* **toRef:** issue [#855](https://github.com/vuejs/composition-api/issues/855) ([#859](https://github.com/vuejs/composition-api/issues/859)) ([b3e61a4](https://github.com/vuejs/composition-api/commit/b3e61a4))
+
+
+### Features
+
+* add directives type support ([#863](https://github.com/vuejs/composition-api/issues/863)) ([678a4b3](https://github.com/vuejs/composition-api/commit/678a4b3))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/vuejs/composition-api/compare/v1.4.0-beta.0...v1.4.0) (2021-11-14)
 
