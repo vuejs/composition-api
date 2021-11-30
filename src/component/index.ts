@@ -18,3 +18,11 @@ export {
   ExtractPropTypes,
   ExtractDefaultPropTypes,
 } from './componentProps'
+
+export {
+  DirectiveModifiers,
+  DirectiveBinding,
+  DirectiveHook,
+  ObjectDirective,
+  FunctionDirective,
+} from './directives'

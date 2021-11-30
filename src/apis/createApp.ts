@@ -1,5 +1,6 @@
 import type Vue from 'vue'
 import { VueConstructor } from 'vue'
+import { Directive } from '../component/directives'
 import { getVueConstructor } from '../runtimeContext'
 import { warn } from '../utils'
 
@@ -9,7 +10,8 @@ export interface App<T = any> {
   use: VueConstructor['use']
   mixin: VueConstructor['mixin']
   component: VueConstructor['component']
-  directive: VueConstructor['directive']
+  directive(name: string): Directive | undefined
+  directive(name: string, directive: Directive): this
   mount: Vue['$mount']
   unmount: Vue['$destroy']
 }
@@ -19,12 +21,19 @@ export function createApp(rootComponent: any, rootProps: any = undefined): App {
 
   let mountedVM: Vue | undefined = undefined
 
-  return {
+  const app: App = {
     config: V.config,
     use: V.use.bind(V),
     mixin: V.mixin.bind(V),
     component: V.component.bind(V),
-    directive: V.directive.bind(V),
+    directive(name: string, dir?: Directive | undefined): any {
+      if (dir) {
+        V.directive(name, dir as any)
+        return app
+      } else {
+        return V.directive(name)
+      }
+    },
     mount: (el, hydrating) => {
       if (!mountedVM) {
         mountedVM = new V({ propsData: rootProps, ...rootComponent })
@@ -51,4 +60,5 @@ export function createApp(rootComponent: any, rootProps: any = undefined): App {
       }
     },
   }
+  return app
 }
