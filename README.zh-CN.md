@@ -111,6 +111,10 @@ export default {
 }
 ```
 
+## 浏览器兼容性
+
+`@vue/composition-api` 支持所有现代浏览器以及IE11+。对于更低版本的IE浏览器你需要安装`WeakMap` polyfill (例如使用 `core-js`库)。
+
 ## 限制
 
 > :white_check_mark: 支持 &nbsp;&nbsp;&nbsp;&nbsp;:x: 不支持
@@ -444,6 +448,24 @@ defineComponent({
     const a = foo.value.bar
   }
 })
+```
+
+</details>
+
+### `computed().effect`
+
+<details>
+<summary>
+⚠️ <code>computed()</code> 拥有一个被设置为 <code>true</code> 的 <code>effect</code> 属性，用来代替 <code>ReactiveEffect<T></code>。
+</summary>
+
+由于实现上的不同, 在 `@vue/composition-api` 中没有 `ReactiveEffect` 这种概念。 因此, `effect` 为 `true` 只是为了能够区分 computed 和 refs: 
+
+```ts
+function isComputed<T>(o: ComputedRef<T> | unknown): o is ComputedRef<T>
+function isComputed(o: any): o is ComputedRef {
+  return !!(isRef(o) && o.effect)
+}
 ```
 
 </details>
