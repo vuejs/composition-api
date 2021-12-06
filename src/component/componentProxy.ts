@@ -19,6 +19,7 @@ import {
 } from './componentOptions'
 import {
   ComponentInternalInstance,
+  ComponentRenderEmitFn,
   EmitFn,
   EmitsOptions,
   ObjectEmitsOptions,
@@ -67,8 +68,8 @@ export type ComponentRenderProxy<
       ? Partial<Defaults> & Omit<P & PublicProps, keyof Defaults>
       : P & PublicProps
   >
-  $attrs: Data
-  $emit: EmitFn<Emits>
+  $attrs: Record<string, string>
+  $emit: ComponentRenderEmitFn<Emits>
 } & Readonly<P> &
   ShallowUnwrapRef<B> &
   D &
