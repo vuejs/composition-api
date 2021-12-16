@@ -1,4 +1,11 @@
-import { defineComponent, describe, expectError, Ref, ref } from './index'
+import {
+  defineComponent,
+  describe,
+  expectError,
+  expectType,
+  Ref,
+  ref,
+} from './index'
 import Vue from 'vue'
 
 describe('emits', () => {
@@ -12,6 +19,7 @@ describe('emits', () => {
       this.$emit('click', 1).$emit('click', 1)
       this.$emit('input', 'foo')
       this.$emit('input', 'foo').$emit('click', 1)
+      expectType<Record<string, string>>(this.$attrs)
       //  @ts-expect-error
       expectError(this.$emit('input', 1).$emit('nope'))
     },
