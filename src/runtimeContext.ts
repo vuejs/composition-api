@@ -1,5 +1,4 @@
 import type { VueConstructor, VNode } from 'vue'
-import Vue$1 from 'vue'
 import { bindCurrentScopeToVM, EffectScope } from './apis/effectScope'
 import { ComponentInstance, Data } from './component'
 import {
@@ -10,6 +9,7 @@ import {
   UnionToIntersection,
   isFunction,
 } from './utils'
+import Vue$1 from 'vue'
 
 let vueDependency: VueConstructor | undefined = undefined
 
@@ -139,8 +139,8 @@ export type EmitFn<
 export type ComponentRenderEmitFn<
   Options = ObjectEmitsOptions,
   Event extends keyof Options = keyof Options,
-  V extends Vue$1 = Vue$1
-> = EmitFn<Options, Event, V>
+  T extends Vue$1 | void = void
+> = EmitFn<Options, Event, T>
 
 export type Slots = Readonly<InternalSlots>
 

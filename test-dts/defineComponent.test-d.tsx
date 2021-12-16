@@ -14,6 +14,7 @@ import {
   IsUnion,
   h,
 } from './index'
+import { Component, Mixins } from 'vue-property-decorator'
 
 describe('with object props', () => {
   interface ExpectedProps {
@@ -905,7 +906,7 @@ describe('emits', () => {
   // with `v-on` listeners.
 
   // with object emits
-  defineComponent({
+  const testComponent = defineComponent({
     emits: {
       click: (n: number) => typeof n === 'number',
       input: (b: string) => b.length > 1,
@@ -928,6 +929,7 @@ describe('emits', () => {
     // },
     created() {
       this.$emit('click', 1)
+      this.$emit('click', 1).$emit('click', 1)
       this.$emit('input', 'foo')
       //  @ts-expect-error
       expectError(this.$emit('nope'))
@@ -939,6 +941,8 @@ describe('emits', () => {
       expectError(this.$emit('input'))
       //  @ts-expect-error
       expectError(this.$emit('input', 1))
+      //  @ts-expect-error
+      expectError(this.$emit('input', 1).$emit('nope'))
     },
     // mounted() {
     //   // #3599
@@ -960,6 +964,25 @@ describe('emits', () => {
     //   })
     // },
   })
+
+  // interface of vue2's $emit has no generics, untyped types will be event: string, ...args: any[]) => this
+  // but we can get correct type when we use correct params
+  // maybe we need vue 2.7 to fully support emit type
+  @Component({})
+  class MixinComponent extends Mixins(testComponent) {
+    created() {
+      this.$emit('click', 1)
+      this.$emit('input', 'foo')
+      this.$emit('blah')
+      this.$emit('blah').$emit('click', 1)
+      this.$emit('blah').$emit('click')
+      // limit of ts overload, can not get full type of function, but we can get enough hint by ComponentRenderProxy
+      //  @ts-expect-error
+      this.$emit()
+    }
+  }
+
+  Mixins(MixinComponent)
 
   // with array emits
   // defineComponent({

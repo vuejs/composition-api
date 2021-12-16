@@ -69,7 +69,23 @@ export type ComponentRenderProxy<
       : P & PublicProps
   >
   $attrs: Record<string, string>
-  $emit: ComponentRenderEmitFn<Emits>
+  $emit: ComponentRenderEmitFn<
+    Emits,
+    keyof Emits,
+    ComponentRenderProxy<
+      P,
+      B,
+      D,
+      C,
+      M,
+      Mixin,
+      Extends,
+      Emits,
+      PublicProps,
+      Defaults,
+      MakeDefaultsOptional
+    >
+  >
 } & Readonly<P> &
   ShallowUnwrapRef<B> &
   D &
