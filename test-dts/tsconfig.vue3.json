@@ -4,5 +4,6 @@
     "paths": {
       "@vue/composition-api": ["../node_modules/vue3/dist/vue.d.ts"]
     }
-  }
+  },
+  "exclude": ["./defineComponent-vue2.d.tsx"]
 }
