@@ -1,3 +1,14 @@
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/vuejs/composition-api/compare/v1.4.1...v1.4.2) (2021-12-17)
+
+
+### Bug Fixes
+
+* export Directives type ([#864](https://github.com/vuejs/composition-api/issues/864)) ([9276e30](https://github.com/vuejs/composition-api/commit/9276e30))
+* resolve conflicts with vue2 interface ([#869](https://github.com/vuejs/composition-api/issues/869)) ([e84b488](https://github.com/vuejs/composition-api/commit/e84b488))
+
+
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://github.com/vuejs/composition-api/compare/v1.4.0...v1.4.1) (2021-11-30)
 
