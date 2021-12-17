@@ -9,6 +9,7 @@ import {
   UnionToIntersection,
   isFunction,
 } from './utils'
+import Vue$1 from 'vue'
 
 let vueDependency: VueConstructor | undefined = undefined
 
@@ -121,18 +122,25 @@ export type EmitsOptions = ObjectEmitsOptions | string[]
 
 export type EmitFn<
   Options = ObjectEmitsOptions,
-  Event extends keyof Options = keyof Options
+  Event extends keyof Options = keyof Options,
+  ReturnType extends void | Vue$1 = void
 > = Options extends Array<infer V>
-  ? (event: V, ...args: any[]) => void
+  ? (event: V, ...args: any[]) => ReturnType
   : {} extends Options // if the emit is empty object (usually the default value for emit) should be converted to function
-  ? (event: string, ...args: any[]) => void
+  ? (event: string, ...args: any[]) => ReturnType
   : UnionToIntersection<
       {
         [key in Event]: Options[key] extends (...args: infer Args) => any
-          ? (event: key, ...args: Args) => void
-          : (event: key, ...args: any[]) => void
+          ? (event: key, ...args: Args) => ReturnType
+          : (event: key, ...args: any[]) => ReturnType
       }[Event]
     >
+
+export type ComponentRenderEmitFn<
+  Options = ObjectEmitsOptions,
+  Event extends keyof Options = keyof Options,
+  T extends Vue$1 | void = void
+> = EmitFn<Options, Event, T>
 
 export type Slots = Readonly<InternalSlots>
 
