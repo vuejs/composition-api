@@ -43,7 +43,8 @@ export function isPluginInstalled() {
 }
 
 export function isVueRegistered(Vue: VueConstructor) {
-  return hasOwn(Vue, PluginInstalledFlag)
+  // resolve issue: https://github.com/vuejs/composition-api/issues/876#issue-1087619365
+  return vueConstructor && hasOwn(Vue, PluginInstalledFlag)
 }
 
 export function getVueConstructor(): VueConstructor {
@@ -124,23 +125,23 @@ export type EmitFn<
   Options = ObjectEmitsOptions,
   Event extends keyof Options = keyof Options,
   ReturnType extends void | Vue$1 = void
-> = Options extends Array<infer V>
+  > = Options extends Array<infer V>
   ? (event: V, ...args: any[]) => ReturnType
   : {} extends Options // if the emit is empty object (usually the default value for emit) should be converted to function
   ? (event: string, ...args: any[]) => ReturnType
   : UnionToIntersection<
-      {
-        [key in Event]: Options[key] extends (...args: infer Args) => any
-          ? (event: key, ...args: Args) => ReturnType
-          : (event: key, ...args: any[]) => ReturnType
-      }[Event]
-    >
+    {
+      [key in Event]: Options[key] extends (...args: infer Args) => any
+      ? (event: key, ...args: Args) => ReturnType
+      : (event: key, ...args: any[]) => ReturnType
+    }[Event]
+  >
 
 export type ComponentRenderEmitFn<
   Options = ObjectEmitsOptions,
   Event extends keyof Options = keyof Options,
   T extends Vue$1 | void = void
-> = EmitFn<Options, Event, T>
+  > = EmitFn<Options, Event, T>
 
 export type Slots = Readonly<InternalSlots>
 
@@ -174,7 +175,7 @@ export interface SetupContext<E = EmitsOptions> {
   readonly refs: { [key: string]: Vue | Element | Vue[] | Element[] }
 }
 
-export interface ComponentPublicInstance {}
+export interface ComponentPublicInstance { }
 
 /**
  * We expose a subset of properties on the internal instance as they are
