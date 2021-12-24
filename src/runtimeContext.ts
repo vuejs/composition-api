@@ -43,7 +43,8 @@ export function isPluginInstalled() {
 }
 
 export function isVueRegistered(Vue: VueConstructor) {
-  return hasOwn(Vue, PluginInstalledFlag)
+  // resolve issue: https://github.com/vuejs/composition-api/issues/876#issue-1087619365
+  return vueConstructor && hasOwn(Vue, PluginInstalledFlag)
 }
 
 export function getVueConstructor(): VueConstructor {
