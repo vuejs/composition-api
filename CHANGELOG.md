@@ -1,3 +1,14 @@
+<a name="1.4.3"></a>
+## [1.4.3](https://github.com/vuejs/composition-api/compare/v1.4.2...v1.4.3) (2021-12-27)
+
+
+### Bug Fixes
+
+* [#874](https://github.com/vuejs/composition-api/issues/874) setup return object with type of Module ([#875](https://github.com/vuejs/composition-api/issues/875)) ([a1a3e11](https://github.com/vuejs/composition-api/commit/a1a3e11))
+* improve register check, close [#876](https://github.com/vuejs/composition-api/issues/876) ([#878](https://github.com/vuejs/composition-api/issues/878)) ([3c2ad93](https://github.com/vuejs/composition-api/commit/3c2ad93))
+
+
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/vuejs/composition-api/compare/v1.4.1...v1.4.2) (2021-12-17)
 
