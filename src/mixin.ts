@@ -115,7 +115,7 @@ export function mixin(Vue: VueConstructor) {
         return activateCurrentInstance(instance, () => bindingFunc())
       }
       return
-    } else if (isPlainObject(binding)) {
+    } else if (isObject(binding)) {
       if (isReactive(binding)) {
         binding = toRefs(binding) as Data
       }
