@@ -113,7 +113,7 @@ export function isRef<T>(value: any): value is Ref<T> {
   return value instanceof RefImpl
 }
 
-export function unref<T>(ref: T): T extends Ref<infer V> ? V : T {
+export function unref<T>(ref: T | Ref<T>): T {
   return isRef(ref) ? (ref.value as any) : ref
 }
 
