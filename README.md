@@ -41,7 +41,7 @@ Include `@vue/composition-api` after Vue and it will install itself automaticall
 <!--cdn-links-start-->
 ```html
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
-<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.4.3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.4.4"></script>
 ```
 <!--cdn-links-end-->
 

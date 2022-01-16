@@ -1,3 +1,14 @@
+<a name="1.4.4"></a>
+## [1.4.4](https://github.com/vuejs/composition-api/compare/v1.4.3...v1.4.4) (2022-01-16)
+
+
+### Bug Fixes
+
+* **types:** `emit` type in SetupContext ([#884](https://github.com/vuejs/composition-api/issues/884)) ([5c35403](https://github.com/vuejs/composition-api/commit/5c35403))
+* **types:** update inject and unref type ([#888](https://github.com/vuejs/composition-api/issues/888)) ([315f6ab](https://github.com/vuejs/composition-api/commit/315f6ab))
+
+
+
 <a name="1.4.3"></a>
 ## [1.4.3](https://github.com/vuejs/composition-api/compare/v1.4.2...v1.4.3) (2021-12-27)
 
