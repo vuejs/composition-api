@@ -145,7 +145,7 @@ export type ComponentRenderEmitFn<
 
 export type Slots = Readonly<InternalSlots>
 
-export interface SetupContext<E = EmitsOptions> {
+export interface SetupContext<E extends EmitsOptions = {}> {
   attrs: Data
   slots: Slots
   emit: EmitFn<E>

@@ -22,10 +22,14 @@ export interface MethodOptions {
   [key: string]: Function
 }
 
-export type SetupFunction<Props, RawBindings = {}> = (
+export type SetupFunction<
+  Props,
+  RawBindings = {},
+  Emits extends EmitsOptions = {}
+> = (
   this: void,
   props: Readonly<Props>,
-  ctx: SetupContext
+  ctx: SetupContext<Emits>
 ) => RawBindings | (() => VNode | null) | void
 
 interface ComponentOptionsBase<
@@ -70,7 +74,7 @@ export type ComponentOptionsWithProps<
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropsOptions
   emits?: Emits & ThisType<void>
-  setup?: SetupFunction<Props, RawBindings>
+  setup?: SetupFunction<Props, RawBindings, Emits>
 } & ThisType<
     ComponentRenderProxy<Props, RawBindings, D, C, M, Mixin, Extends, Emits>
   >
@@ -88,7 +92,7 @@ export type ComponentOptionsWithArrayProps<
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: PropNames[]
   emits?: Emits & ThisType<void>
-  setup?: SetupFunction<Props, RawBindings>
+  setup?: SetupFunction<Props, RawBindings, Emits>
 } & ThisType<
     ComponentRenderProxy<Props, RawBindings, D, C, M, Mixin, Extends, Emits>
   >
@@ -105,7 +109,7 @@ export type ComponentOptionsWithoutProps<
 > = ComponentOptionsBase<Props, D, C, M> & {
   props?: undefined
   emits?: Emits & ThisType<void>
-  setup?: SetupFunction<Props, RawBindings>
+  setup?: SetupFunction<Props, RawBindings, Emits>
 } & ThisType<
     ComponentRenderProxy<Props, RawBindings, D, C, M, Mixin, Extends, Emits>
   >

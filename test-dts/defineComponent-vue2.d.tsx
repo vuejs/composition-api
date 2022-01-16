@@ -14,6 +14,10 @@ describe('emits', () => {
       click: (n: number) => typeof n === 'number',
       input: (b: string) => b.length > 1,
     },
+    setup(props, { emit }) {
+      emit('click', 1)
+      emit('input', 'foo')
+    },
     created() {
       this.$emit('click', 1)
       this.$emit('click', 1).$emit('click', 1)
