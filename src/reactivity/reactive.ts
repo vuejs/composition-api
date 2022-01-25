@@ -213,7 +213,8 @@ export function shallowReactive(obj: any) {
         return value
       },
       set: function setterHandler(newVal: any) {
-        if (getter && !setter) return
+        const value = getter ? getter.call(obj) : val
+        if (newVal === value || (getter && !setter)) return
         if (setter) {
           setter.call(obj, newVal)
         } else {

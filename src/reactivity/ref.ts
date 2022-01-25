@@ -184,7 +184,9 @@ export function shallowRef(raw?: unknown) {
 export function triggerRef(value: any) {
   if (!isRef(value)) return
 
-  value.value = value.value
+  const v = value.value
+  value.value = !v
+  value.value = v
 }
 
 export function proxyRefs<T extends object>(
