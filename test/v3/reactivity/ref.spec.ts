@@ -250,9 +250,27 @@ describe('reactivity/ref', () => {
     expect(dummy).toBe(1) // should not trigger yet
 
     // force trigger
-    // sref.value = sref.value;
     triggerRef(sref)
     expect(dummy).toBe(2)
+  })
+
+  test('shallowRef noop when assignment is the same', () => {
+    const sref = shallowRef(1)
+    let calls = 0
+    watchEffect(
+      () => {
+        sref.value
+        calls++
+      },
+      { flush: 'sync' }
+    )
+    expect(calls).toBe(1)
+
+    sref.value = 2
+    expect(calls).toBe(2)
+
+    sref.value = 2
+    expect(calls).toBe(2)
   })
 
   test('isRef', () => {

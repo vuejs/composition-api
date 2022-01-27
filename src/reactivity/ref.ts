@@ -3,6 +3,7 @@ import { proxy, isPlainObject, warn, def } from '../utils'
 import { reactive, isReactive, shallowReactive } from './reactive'
 import { readonlySet } from '../utils/sets'
 import { set } from './set'
+import { setForceTrigger } from './force'
 
 declare const _refBrand: unique symbol
 export interface Ref<T = any> {
@@ -184,7 +185,9 @@ export function shallowRef(raw?: unknown) {
 export function triggerRef(value: any) {
   if (!isRef(value)) return
 
+  setForceTrigger(true)
   value.value = value.value
+  setForceTrigger(false)
 }
 
 export function proxyRefs<T extends object>(
