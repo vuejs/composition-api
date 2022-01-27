@@ -105,7 +105,7 @@ if (process.env.TARGET) {
 
 // bundle typings
 buildConfig.push({
-  input: 'typings/index.d.ts',
+  input: 'src/index.ts',
   output: {
     file: 'dist/vue-composition-api.d.ts',
     format: 'es',

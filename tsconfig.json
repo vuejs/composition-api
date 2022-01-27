@@ -2,8 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "esnext"],
-    "declaration": true,
-    "declarationDir": "./typings",
     "module": "esnext",
     "moduleResolution": "node",
     "skipLibCheck": true,
@@ -21,6 +19,5 @@
     "downlevelIteration": true,
     "noUnusedLocals": true
   },
-  "include": ["src"],
-  "exclude": ["typings"]
+  "include": ["src"]
 }
