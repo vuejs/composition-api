@@ -51,9 +51,6 @@
   "peerDependencies": {
     "vue": ">= 2.5 < 3"
   },
-  "dependencies": {
-    "tslib": "^2.3.1"
-  },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/plugin-replace": "^3.0.1",
