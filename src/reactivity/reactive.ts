@@ -14,6 +14,7 @@ import { isComponentInstance, defineComponentInstance } from '../utils/helper'
 import { RefKey } from '../utils/symbols'
 import { isRef, UnwrapRef } from './ref'
 import { rawSet, accessModifiedSet } from '../utils/sets'
+import { isForceTrigger } from './force'
 
 export function isRaw(obj: any): boolean {
   return Boolean(
@@ -213,8 +214,9 @@ export function shallowReactive(obj: any) {
         return value
       },
       set: function setterHandler(newVal: any) {
+        if (getter && !setter) return
         const value = getter ? getter.call(obj) : val
-        if (newVal === value || (getter && !setter)) return
+        if (!isForceTrigger() && value === newVal) return
         if (setter) {
           setter.call(obj, newVal)
         } else {
