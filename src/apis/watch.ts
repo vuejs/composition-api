@@ -11,6 +11,7 @@ import {
   isPlainObject,
   isSet,
   isMap,
+  isSame,
 } from '../utils'
 import { defineComponentInstance } from '../utils/helper'
 import { getVueConstructor } from '../runtimeContext'
@@ -346,7 +347,7 @@ function createWatcher(
     if (
       !deep &&
       isMultiSource &&
-      n.every((v: any, i: number) => Object.is(v, o[i]))
+      n.every((v: any, i: number) => isSame(v, o[i]))
     )
       return
     // cleanup before running cb again
