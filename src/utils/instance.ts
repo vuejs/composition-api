@@ -1,3 +1,4 @@
+import type { VNode } from 'vue'
 import { ComponentInstance } from '../component'
 import vmStateManager from './vmStateManager'
 import {
@@ -76,7 +77,7 @@ export function asVmProperty(
   }
 }
 
-export function updateTemplateRef(vm: ComponentInstance) {
+function updateTemplateRef(vm: ComponentInstance) {
   const rawBindings = vmStateManager.get(vm, 'rawBindings') || {}
   if (!rawBindings || !Object.keys(rawBindings).length) return
 
@@ -101,6 +102,19 @@ export function updateTemplateRef(vm: ComponentInstance) {
     }
   }
   vmStateManager.set(vm, 'refs', validNewKeys)
+}
+
+export function afterRender(vm: ComponentInstance) {
+  const stack = [(vm as any)._vnode as VNode]
+  while (stack.length) {
+    const vnode = stack.pop()!
+    if (vnode.context) updateTemplateRef(vnode.context)
+    if (vnode.children) {
+      for (let i = 0; i < vnode.children.length; ++i) {
+        stack.push(vnode.children[i])
+      }
+    }
+  }
 }
 
 export function updateVmAttrs(vm: ComponentInstance, ctx?: SetupContext) {
