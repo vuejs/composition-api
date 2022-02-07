@@ -1,3 +1,13 @@
+<a name="1.4.6"></a>
+## [1.4.6](https://github.com/vuejs/composition-api/compare/v1.4.5...v1.4.6) (2022-02-07)
+
+
+### Bug Fixes
+
+* dynamically update deep scopedSlot refs ([#899](https://github.com/vuejs/composition-api/issues/899)) ([ef312a3](https://github.com/vuejs/composition-api/commit/ef312a3))
+
+
+
 <a name="1.4.5"></a>
 ## [1.4.5](https://github.com/vuejs/composition-api/compare/v1.4.4...v1.4.5) (2022-01-27)
 
