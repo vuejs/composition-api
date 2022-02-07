@@ -113,6 +113,36 @@ describe('ref', () => {
     //@ts-ignore
     expect(vm.$refs.barRef).toBe(vm.barRef)
   })
+
+  it('should update deeply nested component refs using scoped slots', async () => {
+    const vm = new Vue({
+      setup() {
+        const divRef = ref(null)
+        const showDiv = ref(false)
+        return {
+          divRef,
+          showDiv,
+        }
+      },
+      template: `<div><foo #default>Slot: <div ref="divRef" v-if="showDiv" /></foo></div>`,
+      components: {
+        foo: {
+          components: {
+            bar: {
+              template: `<div><slot /></div>`,
+            },
+          },
+          template: '<div><bar #default><slot /></bar></div>',
+        },
+      },
+    }).$mount()
+    await nextTick()
+    //@ts-ignore
+    vm.showDiv = true
+    await nextTick()
+    //@ts-ignore
+    expect(vm.$refs.divRef).toBe(vm.divRef)
+  })
   // TODO: how ?
   // it('work with createElement', () => {
   //   let root;

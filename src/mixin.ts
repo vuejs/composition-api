@@ -14,7 +14,7 @@ import {
 import { ref } from './apis'
 import vmStateManager from './utils/vmStateManager'
 import {
-  updateTemplateRef,
+  afterRender,
   activateCurrentInstance,
   resolveScopedSlots,
   asVmProperty,
@@ -31,16 +31,13 @@ export function mixin(Vue: VueConstructor) {
   Vue.mixin({
     beforeCreate: functionApiInit,
     mounted(this: ComponentInstance) {
-      updateTemplateRef(this)
+      afterRender(this)
     },
     beforeUpdate() {
       updateVmAttrs(this as ComponentInstance)
     },
     updated(this: ComponentInstance) {
-      updateTemplateRef(this)
-      if (this.$vnode?.context) {
-        updateTemplateRef(this.$vnode.context)
-      }
+      afterRender(this)
     },
   })
 
