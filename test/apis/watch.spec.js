@@ -7,6 +7,7 @@ const {
   set,
   computed,
   nextTick,
+  markRaw,
 } = require('../../src')
 const { mockWarn } = require('../helpers')
 
@@ -175,6 +176,34 @@ describe('api/watch', () => {
         expect(spy).toHaveBeenLastCalledWith(vm.a, oldA)
       })
       .then(done)
+  })
+
+  it('markRaw', (done) => {
+    const nestedState = ref(100)
+
+    const state = ref({
+      rawValue: markRaw({
+        nestedState,
+      }),
+    })
+
+    watch(
+      state,
+      () => {
+        spy()
+      },
+      { deep: true }
+    )
+
+    function changeRawValue() {
+      nestedState.value = Math.random()
+    }
+
+    changeRawValue()
+
+    waitForUpdate(() => {
+      expect(spy).not.toBeCalled()
+    }).then(done)
   })
 
   it('should flush after render (immediate=false)', (done) => {
