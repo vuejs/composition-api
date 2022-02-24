@@ -20,6 +20,7 @@ import {
   WatcherPostFlushQueueKey,
 } from '../utils/symbols'
 import { getCurrentScopeVM } from './effectScope'
+import { rawSet } from '../utils/sets'
 
 export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
 
@@ -475,7 +476,7 @@ export function watch<T = any>(
 }
 
 function traverse(value: unknown, seen: Set<unknown> = new Set()) {
-  if (!isObject(value) || seen.has(value)) {
+  if (!isObject(value) || seen.has(value) || rawSet.has(value)) {
     return value
   }
   seen.add(value)
