@@ -76,7 +76,19 @@ export type ExtractPropTypes<O> = O extends object
   : { [K in string]: any }
 
 type DefaultKeys<T> = {
-  [K in keyof T]: T[K] extends { default: any } ? K : never
+  [K in keyof T]: T[K] extends
+    | {
+        default: any
+      }
+    | BooleanConstructor
+    | { type: BooleanConstructor }
+    ? T[K] extends {
+        type: BooleanConstructor
+        required: true
+      }
+      ? never
+      : K
+    : never
 }[keyof T]
 
 // extract props which defined with default from prop options
