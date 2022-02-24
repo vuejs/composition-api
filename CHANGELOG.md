@@ -1,3 +1,13 @@
+<a name="1.4.7"></a>
+## [1.4.7](https://github.com/vuejs/composition-api/compare/v1.4.6...v1.4.7) (2022-02-24)
+
+
+### Bug Fixes
+
+* markRaw in watch ([#903](https://github.com/vuejs/composition-api/issues/903)) ([192f4c1](https://github.com/vuejs/composition-api/commit/192f4c1))
+
+
+
 <a name="1.4.6"></a>
 ## [1.4.6](https://github.com/vuejs/composition-api/compare/v1.4.5...v1.4.6) (2022-02-07)
 
