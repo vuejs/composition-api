@@ -9,7 +9,7 @@ import {
   UnionToIntersection,
   isFunction,
 } from './utils'
-import Vue$1 from 'vue'
+import type Vue$1 from 'vue'
 
 let vueDependency: VueConstructor | undefined = undefined
 
