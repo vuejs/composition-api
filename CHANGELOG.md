@@ -1,3 +1,14 @@
+<a name="1.4.8"></a>
+## [1.4.8](https://github.com/vuejs/composition-api/compare/v1.4.7...v1.4.8) (2022-02-26)
+
+
+### Bug Fixes
+
+* **types:** optional Boolean props as default props ([#909](https://github.com/vuejs/composition-api/issues/909)) ([8f88ae6](https://github.com/vuejs/composition-api/commit/8f88ae6))
+* use registered Vue instance for warning ([b01f1e4](https://github.com/vuejs/composition-api/commit/b01f1e4))
+
+
+
 <a name="1.4.7"></a>
 ## [1.4.7](https://github.com/vuejs/composition-api/compare/v1.4.6...v1.4.7) (2022-02-24)
 
