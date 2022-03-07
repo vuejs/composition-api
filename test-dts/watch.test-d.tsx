@@ -16,7 +16,7 @@ watch([source, source2, source3], (values, oldValues) => {
 })
 
 // const array
-watch([source, source2, source3] as const, (values, oldValues) => {
+watch([source, source2, source3], (values, oldValues) => {
   expectType<Readonly<[string, string, number]>>(values)
   expectType<Readonly<[string, string, number]>>(oldValues)
 })
@@ -42,7 +42,7 @@ watch(
 
 // const array
 watch(
-  [source, source2, source3] as const,
+  [source, source2, source3],
   (values, oldValues) => {
     expectType<Readonly<[string, string, number]>>(values)
     expectType<
