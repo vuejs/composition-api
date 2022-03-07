@@ -143,7 +143,7 @@ describe('api: watch', () => {
     const status = ref(false)
 
     let dummy
-    watch([() => state.count, status] as const, (vals, oldVals) => {
+    watch([() => state.count, status], (vals, oldVals) => {
       dummy = [vals, oldVals]
       const [count] = vals
       const [, oldStatus] = oldVals
