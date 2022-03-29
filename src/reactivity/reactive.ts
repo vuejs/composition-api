@@ -208,14 +208,13 @@ export function shallowReactive(obj: any) {
 
     proxy(observed, key, {
       get: function getterHandler() {
-        const value = getter ? getter.call(obj) : val
         ob.dep?.depend()
-        return value
+        return val
       },
       set: function setterHandler(newVal: any) {
         if (getter && !setter) return
-        const value = getter ? getter.call(obj) : val
-        if (!isForceTrigger() && value === newVal) return
+
+        if (!isForceTrigger() && val === newVal) return
         if (setter) {
           setter.call(obj, newVal)
         } else {
