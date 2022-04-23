@@ -16,12 +16,14 @@ import { isRef, UnwrapRef } from './ref'
 import { rawSet, accessModifiedSet } from '../utils/sets'
 import { isForceTrigger } from './force'
 
+const SKIPFLAG = '__v_skip'
+
 export function isRaw(obj: any): boolean {
   return Boolean(
     obj &&
       hasOwn(obj, '__ob__') &&
       typeof obj.__ob__ === 'object' &&
-      obj.__ob__?.__raw__
+      obj.__ob__?.[SKIPFLAG]
   )
 }
 
@@ -30,7 +32,7 @@ export function isReactive(obj: any): boolean {
     obj &&
       hasOwn(obj, '__ob__') &&
       typeof obj.__ob__ === 'object' &&
-      !obj.__ob__?.__raw__
+      !obj.__ob__?.[SKIPFLAG]
   )
 }
 
@@ -261,7 +263,7 @@ export function markRaw<T extends object>(obj: T): T {
 
   // set the vue observable flag at obj
   const ob = createObserver()
-  ob.__raw__ = true
+  ob[SKIPFLAG] = true
   def(obj, '__ob__', ob)
 
   // mark as Raw
