@@ -1,5 +1,5 @@
-import { h, createApp } from '../../../src'
-import { mockWarn } from '../../helpers'
+import { h, createApp, ref, getCurrentInstance } from '../../../src'
+import { mockWarn, sleep } from '../../helpers'
 
 describe('renderer: h', () => {
   mockWarn(true)
@@ -8,6 +8,45 @@ describe('renderer: h', () => {
     expect(
       '[Vue warn]: `createElement()` has been called outside of render function.'
     ).toHaveBeenWarned()
+  })
+
+  it('should not warn with called outside of render function', async () => {
+    const spy = jest.fn()
+    const Comp = {
+      setup() {
+        const instance = getCurrentInstance()
+        const createElement = h.bind(instance)
+        const renderVnode = () => createElement('p', {})
+        setTimeout(renderVnode, 10)
+      },
+    }
+    const root = document.createElement('div')
+    createApp(Comp).mount(root)
+    await sleep(50)
+
+    expect(spy).toHaveBeenCalledTimes(0)
+  })
+
+  it(`Should support h's responsive rendering`, async () => {
+    const Comp = {
+      setup() {
+        const showNode1 = ref(true)
+        setTimeout(() => {
+          showNode1.value = false
+        }, 10)
+        return () =>
+          showNode1.value
+            ? h('div', void 0, [h('br'), 'hello world', h('br')])
+            : h('div', void 0, [h('div'), 'nextTick render', h('div')])
+      },
+    }
+    const root = document.createElement('div')
+    const vm = createApp(Comp).mount(root)
+    expect(vm.$el.outerHTML).toBe(`<div><br>hello world<br></div>`)
+    await sleep(50)
+    expect(vm.$el.outerHTML).toBe(
+      `<div><div></div>nextTick render<div></div></div>`
+    )
   })
 
   it('should work with called outside of render function', () => {
