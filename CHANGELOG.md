@@ -1,3 +1,14 @@
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/vuejs/composition-api/compare/v1.4.10...v1.5.0) (2022-04-25)
+
+
+### Features
+
+* **createElement:** allow createElement to bind vm ([#920](https://github.com/vuejs/composition-api/issues/920)) ([564a5a4](https://github.com/vuejs/composition-api/commit/564a5a4))
+* Unified as the key of raw in vue3 ([#922](https://github.com/vuejs/composition-api/issues/922)) ([5874eb5](https://github.com/vuejs/composition-api/commit/5874eb5))
+
+
+
 <a name="1.4.10"></a>
 ## [1.4.10](https://github.com/vuejs/composition-api/compare/v1.4.9...v1.4.10) (2022-03-16)
 
