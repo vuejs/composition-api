@@ -401,6 +401,37 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 </details>
 
+### `createElement` / `h`
+
+<summary>
+⚠️ <code>createElement</code> / <code>h</code> workaround
+</summary>
+
+<br>
+
+`createElement` / `h` in Vue 2 is only accessable in `render()` function. To use it outside of `render()`, you can explicitly bind a component instance to it.
+
+> :warning: **Warning**: This ability is provided as a workaround Vue 2, it's not part of the Vue 3 API.
+
+```jsx
+import { h as _h } from '@vue/composition-api'
+
+export default {
+  setup() {
+    const vm = getCurrentInstance()
+    const h = _h.bind(vm)
+
+    return () =>
+      h('div', {
+        ref: 'root',
+      })
+  },
+}
+```
+
+</details>
+
+
 ### `shallowReadonly`
 
 <details>

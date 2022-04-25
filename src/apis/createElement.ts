@@ -11,7 +11,7 @@ import { VNode, VNodeChildren, VNodeData } from 'vue/types/vnode'
 
 export interface H extends CreateElement {
   (
-    this: ComponentInternalInstance | null,
+    this: ComponentInternalInstance | null | undefined,
     tag?:
       | string
       | Component<any, any, any, any>
@@ -20,7 +20,7 @@ export interface H extends CreateElement {
     children?: VNodeChildren
   ): VNode
   (
-    this: ComponentInternalInstance | null,
+    this: ComponentInternalInstance | null | undefined,
     tag?:
       | string
       | Component<any, any, any, any>
@@ -33,8 +33,8 @@ export interface H extends CreateElement {
 
 let fallbackCreateElement: CreateElement
 
-export const createElement = function createElement(this, ...args: any) {
-  const instance = this ? this.proxy : getCurrentInstance()?.proxy
+export const createElement: H = function createElement(this, ...args: any) {
+  const instance = this?.proxy || getCurrentInstance()?.proxy
   if (!instance) {
     __DEV__ &&
       warn('`createElement()` has been called outside of render function.')
@@ -48,4 +48,4 @@ export const createElement = function createElement(this, ...args: any) {
   }
 
   return instance.$createElement.apply(instance, args)
-} as H
+}
