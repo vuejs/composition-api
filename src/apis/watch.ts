@@ -44,6 +44,8 @@ type MapOldSources<T, Immediate> = {
     : never
 }
 
+type MultiWatchSources = (WatchSource<unknown> | object)[]
+
 export interface WatchOptionsBase {
   flush?: FlushMode
   // onTrack?: ReactiveEffectOptions['onTrack'];
@@ -416,12 +418,22 @@ export function watchSyncEffect(effect: WatchEffect) {
   return watchEffect(effect, { flush: 'sync' })
 }
 
-// overload #1: array of multiple sources + cb
-// Readonly constraint helps the callback to correctly infer value types based
-// on position in the source array. Otherwise the values will get a union type
-// of all possible value types.
+// overload #1 + #2: array of multiple sources + cb
+
+// overload #1: Readonly constraint helps the callback to correctly infer value types based
+// on position in the source array.
 export function watch<
-  T extends Readonly<WatchSource<unknown>[]>,
+  T extends Readonly<MultiWatchSources>,
+  Immediate extends Readonly<boolean> = false
+>(
+  sources: T,
+  cb: WatchCallback<MapSources<T>, MapOldSources<T, Immediate>>,
+  options?: WatchOptions<Immediate>
+): WatchStopHandle
+
+// overload #2: the values will get a union type of all possible value types
+export function watch<
+  T extends MultiWatchSources,
   Immediate extends Readonly<boolean> = false
 >(
   sources: [...T],
@@ -429,14 +441,14 @@ export function watch<
   options?: WatchOptions<Immediate>
 ): WatchStopHandle
 
-// overload #2: single source + cb
+// overload #3: single source + cb
 export function watch<T, Immediate extends Readonly<boolean> = false>(
   source: WatchSource<T>,
   cb: WatchCallback<T, Immediate extends true ? T | undefined : T>,
   options?: WatchOptions<Immediate>
 ): WatchStopHandle
 
-// overload #3: watching reactive object w/ cb
+// overload #4: watching reactive object w/ cb
 export function watch<
   T extends object,
   Immediate extends Readonly<boolean> = false
