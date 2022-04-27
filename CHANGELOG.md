@@ -1,3 +1,14 @@
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/vuejs/composition-api/compare/v1.5.0...v1.6.0) (2022-04-27)
+
+
+### Bug Fixes
+
+* nullish check for vnode ([#925](https://github.com/vuejs/composition-api/issues/925)) ([293f03b](https://github.com/vuejs/composition-api/commit/293f03b))
+* **type:** align watch types with vue3 ([#927](https://github.com/vuejs/composition-api/issues/927)) ([679f5c2](https://github.com/vuejs/composition-api/commit/679f5c2))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/vuejs/composition-api/compare/v1.4.10...v1.5.0) (2022-04-25)
 
