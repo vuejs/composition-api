@@ -107,11 +107,13 @@ function updateTemplateRef(vm: ComponentInstance) {
 export function afterRender(vm: ComponentInstance) {
   const stack = [(vm as any)._vnode as VNode]
   while (stack.length) {
-    const vnode = stack.pop()!
-    if (vnode.context) updateTemplateRef(vnode.context)
-    if (vnode.children) {
-      for (let i = 0; i < vnode.children.length; ++i) {
-        stack.push(vnode.children[i])
+    const vnode = stack.pop()
+    if (vnode) {
+      if (vnode.context) updateTemplateRef(vnode.context)
+      if (vnode.children) {
+        for (let i = 0; i < vnode.children.length; ++i) {
+          stack.push(vnode.children[i])
+        }
       }
     }
   }
