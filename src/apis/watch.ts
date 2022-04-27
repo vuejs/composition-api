@@ -32,17 +32,15 @@ export type WatchCallback<V = any, OV = any> = (
   onInvalidate: InvalidateCbRegistrator
 ) => any
 
-type MapSources<T> = {
-  [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never
-}
-
-type MapOldSources<T, Immediate> = {
+declare type MapSources<T, Immediate> = {
   [K in keyof T]: T[K] extends WatchSource<infer V>
     ? Immediate extends true
       ? V | undefined
       : V
     : never
 }
+
+type MultiWatchSources = (WatchSource<unknown> | object)[]
 
 export interface WatchOptionsBase {
   flush?: FlushMode
@@ -204,8 +202,8 @@ function patchWatcherTeardown(watcher: VueWatcher, runCleanup: () => void) {
 
 function createWatcher(
   vm: ComponentInstance,
-  source: WatchSource<unknown> | WatchSource<unknown>[] | WatchEffect,
-  cb: WatchCallback<any> | null,
+  source: WatchSource | WatchSource[] | WatchEffect,
+  cb: WatchCallback | null,
   options: WatchOptions
 ): () => void {
   if (__DEV__ && !cb) {
@@ -416,27 +414,47 @@ export function watchSyncEffect(effect: WatchEffect) {
   return watchEffect(effect, { flush: 'sync' })
 }
 
-// overload #1: array of multiple sources + cb
-// Readonly constraint helps the callback to correctly infer value types based
-// on position in the source array. Otherwise the values will get a union type
-// of all possible value types.
+// overload #1 + #2 + #3: array of multiple sources + cb
+
+// overload #1: In readonly case the first overload must be spread tuple type.
+// In otherwise members in tuple can not get the correct types.
 export function watch<
-  T extends Readonly<WatchSource<unknown>[]>,
+  T extends Readonly<MultiWatchSources>,
   Immediate extends Readonly<boolean> = false
 >(
   sources: [...T],
-  cb: WatchCallback<MapSources<T>, MapOldSources<T, Immediate>>,
+  cb: WatchCallback<MapSources<T, false>, MapSources<T, Immediate>>,
   options?: WatchOptions<Immediate>
 ): WatchStopHandle
 
-// overload #2: single source + cb
+// overload #2: for not spread readonly tuple
+export function watch<
+  T extends Readonly<MultiWatchSources>,
+  Immediate extends Readonly<boolean> = false
+>(
+  sources: T,
+  cb: WatchCallback<MapSources<T, false>, MapSources<T, Immediate>>,
+  options?: WatchOptions<Immediate>
+): WatchStopHandle
+
+// overload #3: for not readonly multiSources
+export function watch<
+  T extends MultiWatchSources,
+  Immediate extends Readonly<boolean> = false
+>(
+  sources: [...T],
+  cb: WatchCallback<MapSources<T, false>, MapSources<T, Immediate>>,
+  options?: WatchOptions<Immediate>
+): WatchStopHandle
+
+// overload #4: single source + cb
 export function watch<T, Immediate extends Readonly<boolean> = false>(
   source: WatchSource<T>,
   cb: WatchCallback<T, Immediate extends true ? T | undefined : T>,
   options?: WatchOptions<Immediate>
 ): WatchStopHandle
 
-// overload #3: watching reactive object w/ cb
+// overload #5: watching reactive object w/ cb
 export function watch<
   T extends object,
   Immediate extends Readonly<boolean> = false
