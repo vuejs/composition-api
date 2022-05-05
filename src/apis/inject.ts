@@ -76,7 +76,7 @@ export function inject(
     return val
   }
 
-  if (defaultValue === undefined && __DEV__) {
+  if (arguments.length > 1 && __DEV__) {
     warn(`Injection "${String(key)}" not found`, vm)
   }
 
