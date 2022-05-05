@@ -166,24 +166,4 @@ describe('Hooks provide/inject', () => {
     }).$mount()
     expect(fn).toHaveBeenCalled()
   })
-
-  it('should not warn when default value is undefined', () => {
-    let injected
-    new Vue({
-      template: `<child/>`,
-      components: {
-        child: {
-          template: `<div>{{ msg }}</div>`,
-          setup() {
-            injected = inject('foo', undefined)
-            return {
-              injected,
-            }
-          },
-        },
-      },
-    }).$mount()
-
-    expect(`injection "foo" not found`).not.toHaveBeenWarned()
-  })
 })
