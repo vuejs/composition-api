@@ -74,13 +74,11 @@ export function inject(
   const val = resolveInject(key, vm)
   if (val !== NOT_FOUND) {
     return val
+  } else if (arguments.length > 1) {
+    return treatDefaultAsFactory && isFunction(defaultValue)
+      ? defaultValue()
+      : defaultValue
+  } else if (__DEV__) {
+    warn(`Injection "${String(key)}" not found.`, vm)
   }
-
-  if (defaultValue === undefined && __DEV__) {
-    warn(`Injection "${String(key)}" not found`, vm)
-  }
-
-  return treatDefaultAsFactory && isFunction(defaultValue)
-    ? defaultValue()
-    : defaultValue
 }

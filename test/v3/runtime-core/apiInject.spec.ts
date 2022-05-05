@@ -239,7 +239,7 @@ describe('api: provide/inject', () => {
     const root = document.createElement('div')
     const vm = createApp(Provider).mount(root)
     expect(vm.$el.outerHTML).toBe(`<div></div>`)
-    expect(`[Vue warn]: Injection "foo" not found`).toHaveBeenWarned()
+    expect(`[Vue warn]: Injection "foo" not found.`).toHaveBeenWarned()
   })
 
   it('should warn unfound w/ injectionKey is undefined', () => {
@@ -276,5 +276,32 @@ describe('api: provide/inject', () => {
     const root = document.createElement('div')
     const vm = createApp(Comp).mount(root)
     expect(vm.$el.outerHTML).toBe(`<div>foo</div>`)
+  })
+
+  it('should not warn when default value is undefined', () => {
+    const Provider = {
+      setup() {
+        provide('foo', undefined)
+        return () => h(Middle)
+      },
+    }
+
+    const Middle = {
+      setup() {
+        return () => h(Consumer)
+      },
+    }
+
+    const Consumer = {
+      setup() {
+        const foo = inject('foo')
+        return () => h('div', foo as unknown as string)
+      },
+    }
+
+    const root = document.createElement('div')
+    const vm = createApp(Provider).mount(root)
+    expect(vm.$el.outerHTML).toBe(`<div></div>`)
+    expect(`injection "foo" not found.`).not.toHaveBeenWarned()
   })
 })
