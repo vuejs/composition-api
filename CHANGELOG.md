@@ -1,3 +1,13 @@
+<a name="1.6.1"></a>
+## [1.6.1](https://github.com/vuejs/composition-api/compare/v1.6.0...v1.6.1) (2022-05-05)
+
+
+### Bug Fixes
+
+* **inject:** allow default value to be undefined ([#930](https://github.com/vuejs/composition-api/issues/930)) ([17d3fc1](https://github.com/vuejs/composition-api/commit/17d3fc1))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/vuejs/composition-api/compare/v1.5.0...v1.6.0) (2022-04-27)
 
