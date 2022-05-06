@@ -187,7 +187,7 @@ b.list[1].count === 1 // true
 > ⚠️ 警告: `set` 和 `del` 并非 Vue 3 的一部分。由于 [Vue 2.x 响应式系统的限制](https://vuejs.org/v2/guide/reactivity.html#For-Objects)，我们在插件中提供该 API 作为添加响应式属性的一个变通方案。在 Vue 3 中，你只需要直接为属性赋值即可。
 
 ```ts
-import { reactive, set } from '@vue/composition-api'
+import { reactive, set, del } from '@vue/composition-api'
 
 const a = reactive({
   foo: 1
