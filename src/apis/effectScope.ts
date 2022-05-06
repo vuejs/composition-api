@@ -84,7 +84,7 @@ export function recordEffectScope(
     scope.effects.push(effect)
     return
   }
-  // destory on parent component unmounted
+  // destroy on parent component unmounted
   const vm = getCurrentInstance()?.proxy
   vm && vm.$on('hook:destroyed', () => effect.stop())
 }
@@ -103,7 +103,7 @@ export function onScopeDispose(fn: () => void) {
   } else if (__DEV__) {
     warn(
       `onScopeDispose() is called when there is no active effect scope` +
-        ` to be associated with.`
+      ` to be associated with.`
     )
   }
 }
