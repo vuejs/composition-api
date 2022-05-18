@@ -69,11 +69,13 @@ type InferPropType<T> = T extends null
                     : ExtractCorrectPropType<V>
                   : T
 
-export type ExtractPropTypes<O> = O extends object
-  ? { [K in RequiredKeys<O>]: InferPropType<O[K]> } & {
-      [K in OptionalKeys<O>]?: InferPropType<O[K]>
-    }
-  : { [K in string]: any }
+export type ExtractPropTypes<O> = {
+  // use `keyof Pick<O, RequiredKeys<O>>` instead of `RequiredKeys<O>` to support IDE features
+  [K in keyof Pick<O, RequiredKeys<O>>]: InferPropType<O[K]>
+} & {
+  // use `keyof Pick<O, OptionalKeys<O>>` instead of `OptionalKeys<O>` to support IDE features
+  [K in keyof Pick<O, OptionalKeys<O>>]?: InferPropType<O[K]>
+}
 
 type DefaultKeys<T> = {
   [K in keyof T]: T[K] extends
