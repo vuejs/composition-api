@@ -1,3 +1,13 @@
+<a name="1.6.2"></a>
+## [1.6.2](https://github.com/vuejs/composition-api/compare/v1.6.1...v1.6.2) (2022-05-23)
+
+
+### Features
+
+* **types:** fix props JSDoc loss ([#935](https://github.com/vuejs/composition-api/issues/935)) ([fcee038](https://github.com/vuejs/composition-api/commit/fcee038))
+
+
+
 <a name="1.6.1"></a>
 ## [1.6.1](https://github.com/vuejs/composition-api/compare/v1.6.0...v1.6.1) (2022-05-05)
 
