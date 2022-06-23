@@ -72,13 +72,35 @@ describe('createApp', () => {
     const app = createApp(
       defineComponent({
         template: '<Foo />',
+        components: { Foo },
       })
     )
-    app.component('Foo', Foo)
     app.provide('msg', 'foobar')
     const vm = app.mount()
 
     await nextTick()
     expect(vm.$el.textContent).toBe('foobar')
+  })
+
+  it("should respect root component's provide", async () => {
+    const Foo = defineComponent({
+      inject: ['msg'],
+      template: '<p>{{msg}}</p>',
+    })
+
+    const app = createApp(
+      defineComponent({
+        template: '<Foo />',
+        provide: {
+          msg: 'root component',
+        },
+        components: { Foo },
+      })
+    )
+    app.provide('msg', 'application')
+    const vm = app.mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('root component')
   })
 })
