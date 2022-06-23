@@ -3,6 +3,7 @@ import { VueConstructor } from 'vue'
 import { Directive } from '../component/directives'
 import { getVueConstructor } from '../runtimeContext'
 import { warn } from '../utils'
+import { InjectionKey } from './inject'
 
 // Has a generic to match Vue 3 API and be type compatible
 export interface App<T = any> {
@@ -12,6 +13,7 @@ export interface App<T = any> {
   component: VueConstructor['component']
   directive(name: string): Directive | undefined
   directive(name: string, directive: Directive): this
+  provide<T>(key: InjectionKey<T> | symbol | string, value: T): this
   mount: Vue['$mount']
   unmount: Vue['$destroy']
 }
@@ -21,11 +23,17 @@ export function createApp(rootComponent: any, rootProps: any = undefined): App {
 
   let mountedVM: Vue | undefined = undefined
 
+  let provide: Record<any, any> = {}
+
   const app: App = {
     config: V.config,
     use: V.use.bind(V),
     mixin: V.mixin.bind(V),
     component: V.component.bind(V),
+    provide<T>(key: InjectionKey<T> | symbol | string, value: T) {
+      provide[key as any] = value
+      return this
+    },
     directive(name: string, dir?: Directive | undefined): any {
       if (dir) {
         V.directive(name, dir as any)
@@ -36,7 +44,11 @@ export function createApp(rootComponent: any, rootProps: any = undefined): App {
     },
     mount: (el, hydrating) => {
       if (!mountedVM) {
-        mountedVM = new V({ propsData: rootProps, ...rootComponent })
+        mountedVM = new V({
+          propsData: rootProps,
+          ...rootComponent,
+          provide: { ...provide, ...rootComponent.provide },
+        })
         mountedVM.$mount(el, hydrating)
         return mountedVM
       } else {

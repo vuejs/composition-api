@@ -62,4 +62,23 @@ describe('createApp', () => {
     await nextTick()
     expect(vm.$el.textContent).toBe('foobar')
   })
+
+  it('should work with provide', async () => {
+    const Foo = defineComponent({
+      inject: ['msg'],
+      template: '<p>{{msg}}</p>',
+    })
+
+    const app = createApp(
+      defineComponent({
+        template: '<Foo />',
+      })
+    )
+    app.component('Foo', Foo)
+    app.provide('msg', 'foobar')
+    const vm = app.mount()
+
+    await nextTick()
+    expect(vm.$el.textContent).toBe('foobar')
+  })
 })
