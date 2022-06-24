@@ -1,3 +1,13 @@
+<a name="1.6.3"></a>
+## [1.6.3](https://github.com/vuejs/composition-api/compare/v1.6.2...v1.6.3) (2022-06-24)
+
+
+### Features
+
+* support Vue3 style app-level provide ([#945](https://github.com/vuejs/composition-api/issues/945)) ([d167b9b](https://github.com/vuejs/composition-api/commit/d167b9b))
+
+
+
 <a name="1.6.2"></a>
 ## [1.6.2](https://github.com/vuejs/composition-api/compare/v1.6.1...v1.6.2) (2022-05-23)
 
