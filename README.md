@@ -403,6 +403,7 @@ app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
 
 ### `createElement` / `h`
 
+<details>
 <summary>
 ⚠️ <code>createElement</code> / <code>h</code> workaround
 </summary>
