@@ -1,3 +1,13 @@
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/vuejs/composition-api/compare/v1.6.3...v1.7.0) (2022-07-01)
+
+
+### Bug Fixes
+
+* add note about Vue 2.7 ([6117f81](https://github.com/vuejs/composition-api/commit/6117f81))
+
+
+
 <a name="1.6.3"></a>
 ## [1.6.3](https://github.com/vuejs/composition-api/compare/v1.6.2...v1.6.3) (2022-06-24)
 

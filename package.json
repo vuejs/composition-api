@@ -1,6 +1,6 @@
 {
   "name": "@vue/composition-api",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "packageManager": "pnpm@7.0.0",
   "description": "Provide logic composition capabilities for Vue.",
   "keywords": [
