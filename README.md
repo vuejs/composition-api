@@ -8,6 +8,9 @@ Vue 2 plugin for **Composition API**
 
 English | [中文](./README.zh-CN.md) ・ [**Composition API Docs**](https://v3.vuejs.org/guide/composition-api-introduction.html)
 
+
+> ⚠️ With the release of [Vue 2.7](https://blog.vuejs.org/posts/vue-2-7-naruto.html), which has Composition API built-in, **you no longer need this plugin**. Thereby this plugin has entered maintenance mode and will only support Vue 2.6 or earlier. This project will reach End of Life by the end of 2022.
+
 ## Installation
 
 ### NPM

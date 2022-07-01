@@ -7,6 +7,9 @@
 
 [English](./README.md) | 中文 ・ [**组合式 API 文档**](https://v3.cn.vuejs.org/guide/composition-api-introduction.html)
 
+
+> ⚠️ 随着 [Vue 2.7](https://blog.vuejs.org/posts/vue-2-7-naruto.html)的发布，它内置了Composition API，**你不再需要这个插件了**。因此，这个插件已经进入维护模式，将只支持Vue 2.6 或更早的版本。本项目将在 2022 年底达到生命终点（EOL）。
+
 ## 安装
 
 ### NPM
