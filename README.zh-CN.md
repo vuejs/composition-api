@@ -186,7 +186,7 @@ b.list[1].count === 1 // true
 
 <details>
 <summary>
-✅ 字符串 ref && 从 <code>setup()</code> 返回 ref
+✅ 在`模板`中使用字符串 ref && 从 <code>setup()</code> 返回 ref
 </summary>
 
 ```html
@@ -216,7 +216,7 @@ b.list[1].count === 1 // true
 
 <details>
 <summary>
-✅ 字符串 ref && 从 <code>setup()</code> 返回 ref && 渲染函数 / JSX
+✅ 在<code>render()</code>中使用字符串 ref && 从 <code>setup()</code> 返回 ref
 </summary>
 
 ```jsx
@@ -244,7 +244,7 @@ export default {
 
 <details>
 <summary>
-❌ 函数 ref
+❌ 函数式 ref
 </summary>
 
 ```html
@@ -269,7 +269,7 @@ export default {
 
 <details>
 <summary>
-❌ 在 <code>setup()</code> 中的渲染函数 / JSX
+❌ 在 <code>setup()</code> 中返回的`渲染函数 / JSX`
 </summary>
 
 ```jsx
