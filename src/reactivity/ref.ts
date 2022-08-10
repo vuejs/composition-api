@@ -34,7 +34,7 @@ type WeakCollections = WeakMap<any, any> | WeakSet<any>
 // corner case when use narrows type
 // Ex. type RelativePath = string & { __brand: unknown }
 // RelativePath extends object -> true
-type BaseTypes = string | number | boolean | Node | Window
+type BaseTypes = string | number | boolean | Node | Window | Date
 
 export type ShallowUnwrapRef<T> = {
   [K in keyof T]: T[K] extends Ref<infer V> ? V : T[K]
