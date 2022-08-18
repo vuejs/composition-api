@@ -1,12 +1,14 @@
 declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toHaveBeenWarned(): R
-      toHaveBeenWarnedLast(): R
-      toHaveBeenWarnedTimes(n: number): R
+  namespace Vi {
+    interface JestAssertion<T> {
+      toHaveBeenWarned(): T
+      toHaveBeenWarnedLast(): T
+      toHaveBeenWarnedTimes(n: number): T
     }
   }
 }
+
+import type { SpyInstance } from 'vitest'
 
 export const mockError = () => mockWarn(true)
 
@@ -76,12 +78,12 @@ export function mockWarn(asError = false) {
     },
   })
 
-  let warn: jest.SpyInstance
+  let warn: SpyInstance
   const asserted: Set<string> = new Set()
 
   beforeEach(() => {
     asserted.clear()
-    warn = jest.spyOn(console, asError ? 'error' : 'warn')
+    warn = vi.spyOn(console, asError ? 'error' : 'warn')
     warn.mockImplementation(() => {})
   })
 

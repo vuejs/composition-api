@@ -16,7 +16,7 @@ import {
 describe('api: lifecycle hooks', () => {
   it('onBeforeMount', () => {
     const root = document.createElement('div')
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       // should be called before inner div is rendered
       expect(root.innerHTML).toBe(``)
     })
@@ -34,7 +34,7 @@ describe('api: lifecycle hooks', () => {
 
   it('onMounted', () => {
     const root = document.createElement('div')
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       // should be called after inner div is rendered
       expect(root.outerHTML).toBe(`<div></div>`)
     })
@@ -53,7 +53,7 @@ describe('api: lifecycle hooks', () => {
   it('onBeforeUpdate', async () => {
     const count = ref(0)
     // const root = document.createElement('div');
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       // should be called before inner div is updated
       expect(vm.$el.outerHTML).toBe(`<div>0</div>`)
     })
@@ -75,7 +75,7 @@ describe('api: lifecycle hooks', () => {
   it('onUpdated', async () => {
     const count = ref(0)
     // const root = document.createElement('div');
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       // should be called after inner div is updated
       expect(vm.$el.outerHTML).toBe(`<div>1</div>`)
     })
@@ -97,7 +97,7 @@ describe('api: lifecycle hooks', () => {
   // it('onBeforeUnmount', async () => {
   //   const toggle = ref(true);
   //   const root = document.createElement('div');
-  //   const fn = jest.fn(() => {
+  //   const fn = vi.fn(() => {
   //     // should be called before inner div is removed
   //     expect(root.outerHTML).toBe(`<div></div>`);
   //   });
@@ -126,7 +126,7 @@ describe('api: lifecycle hooks', () => {
   // it('onUnmounted', async () => {
   //   const toggle = ref(true);
   //   const root = document.createElement('div');
-  //   const fn = jest.fn(() => {
+  //   const fn = vi.fn(() => {
   //     // should be called after inner div is removed
   //     expect(root.outerHTML).toBe(`<!---->`);
   //   });
@@ -155,7 +155,7 @@ describe('api: lifecycle hooks', () => {
   it('onBeforeUnmount in onMounted', async () => {
     const toggle = ref(true)
     const root = document.createElement('div')
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       // should be called before inner div is removed
       expect(root.outerHTML).toBe(`<div></div>`)
     })
@@ -274,7 +274,7 @@ describe('api: lifecycle hooks', () => {
 
   // it('onRenderTracked', () => {
   //   const events: DebuggerEvent[] = [];
-  //   const onTrack = jest.fn((e: DebuggerEvent) => {
+  //   const onTrack = vi.fn((e: DebuggerEvent) => {
   //     events.push(e);
   //   });
   //   const obj = reactive({ foo: 1, bar: 2 });
@@ -309,7 +309,7 @@ describe('api: lifecycle hooks', () => {
 
   // it('onRenderTriggered', async () => {
   //   const events: DebuggerEvent[] = [];
-  //   const onTrigger = jest.fn((e: DebuggerEvent) => {
+  //   const onTrigger = vi.fn((e: DebuggerEvent) => {
   //     events.push(e);
   //   });
   //   const obj = reactive({ foo: 1, bar: 2 });

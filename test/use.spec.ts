@@ -25,7 +25,7 @@ describe('use', () => {
         config: {
           optionMergeStrategies: {},
         },
-        mixin: jest.fn(),
+        mixin: vi.fn(),
       }
 
       // @ts-ignore

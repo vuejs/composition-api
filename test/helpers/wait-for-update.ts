@@ -1,4 +1,4 @@
-const Vue = require('vue')
+import Vue from 'vue'
 
 // helper for async assertions.
 // Use like this:
@@ -13,7 +13,7 @@ const Vue = require('vue')
 // })
 // .then(done)
 
-const waitForUpdate = (initialCb) => {
+export const waitForUpdate = (initialCb) => {
   let end
   const queue = initialCb ? [initialCb] : []
 
@@ -68,12 +68,6 @@ const waitForUpdate = (initialCb) => {
 
   return chainer
 }
-
-if (typeof window !== 'undefined') {
-  window.waitForUpdate = waitForUpdate
-}
-
-exports.waitForUpdate = waitForUpdate
 
 function timeout(n) {
   return (next) => setTimeout(next, n)

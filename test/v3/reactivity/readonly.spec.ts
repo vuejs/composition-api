@@ -424,7 +424,7 @@ describe('reactivity/readonly', () => {
 
     // #712
     test('watch should work for ref with shallowReadonly', async () => {
-      const cb = jest.fn()
+      const cb = vi.fn()
       const vm = new Vue({
         template: '<div>{{ countRef }}</div>',
         setup() {
@@ -452,7 +452,7 @@ describe('reactivity/readonly', () => {
 
     // #712
     test('watch should work for reactive with shallowReadonly', async () => {
-      const cb = jest.fn()
+      const cb = vi.fn()
       const vm = new Vue({
         template: '<div>{{ count.number }}</div>',
         setup() {

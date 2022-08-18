@@ -1,71 +1,72 @@
-const Vue = require('vue/dist/vue.common.js')
-const {
-  ref,
-  computed,
-  isReadonly,
-  reactive,
-  isRef,
-  toRef,
-} = require('../../src')
+import Vue from 'vue/dist/vue.common.js'
+import { ref, computed, isReadonly, reactive, isRef, toRef } from '../../src'
 
 describe('Hooks computed', () => {
+  let warn = null
+
   beforeEach(() => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
   })
   afterEach(() => {
     warn.mockRestore()
   })
 
-  it('basic usage', (done) => {
-    const vm = new Vue({
-      template: '<div>{{ b }}</div>',
-      setup() {
-        const a = ref(1)
-        const b = computed(() => a.value + 1)
-        return {
-          a,
-          b,
-        }
-      },
-    }).$mount()
-    expect(vm.b).toBe(2)
-    expect(vm.$el.textContent).toBe('2')
-    vm.a = 2
-    expect(vm.b).toBe(3)
-    waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('3')
-    }).then(done)
-  })
+  it('basic usage', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-  it('with setter', (done) => {
-    const vm = new Vue({
-      template: '<div>{{ b }}</div>',
-      setup() {
-        const a = ref(1)
-        const b = computed({
-          get: () => a.value + 1,
-          set: (v) => (a.value = v - 1),
-        })
-        return {
-          a,
-          b,
-        }
-      },
-    }).$mount()
-    expect(vm.b).toBe(2)
-    expect(vm.$el.textContent).toBe('2')
-    vm.a = 2
-    expect(vm.b).toBe(3)
-    waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('3')
-      vm.b = 1
-      expect(vm.a).toBe(0)
-    })
-      .then(() => {
-        expect(vm.$el.textContent).toBe('1')
+      const vm = new Vue({
+        template: '<div>{{ b }}</div>',
+        setup() {
+          const a = ref(1)
+          const b = computed(() => a.value + 1)
+          return {
+            a,
+            b,
+          }
+        },
+      }).$mount()
+      expect(vm.b).toBe(2)
+      expect(vm.$el.textContent).toBe('2')
+      vm.a = 2
+      expect(vm.b).toBe(3)
+      waitForUpdate(() => {
+        expect(vm.$el.textContent).toBe('3')
+      }).then(done)
+    }))
+
+  it('with setter', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      const vm = new Vue({
+        template: '<div>{{ b }}</div>',
+        setup() {
+          const a = ref(1)
+          const b = computed({
+            get: () => a.value + 1,
+            set: (v) => (a.value = v - 1),
+          })
+          return {
+            a,
+            b,
+          }
+        },
+      }).$mount()
+      expect(vm.b).toBe(2)
+      expect(vm.$el.textContent).toBe('2')
+      vm.a = 2
+      expect(vm.b).toBe(3)
+      waitForUpdate(() => {
+        expect(vm.$el.textContent).toBe('3')
+        vm.b = 1
+        expect(vm.a).toBe(0)
       })
-      .then(done)
-  })
+        .then(() => {
+          expect(vm.$el.textContent).toBe('1')
+        })
+        .then(done)
+    }))
 
   it('warn assigning to computed with no setter', () => {
     const vm = new Vue({
@@ -82,27 +83,30 @@ describe('Hooks computed', () => {
     )
   })
 
-  it('watching computed', (done) => {
-    const spy = jest.fn()
-    const vm = new Vue({
-      setup() {
-        const a = ref(1)
-        const b = computed(() => a.value + 1)
-        return {
-          a,
-          b,
-        }
-      },
-    })
-    vm.$watch('b', spy)
-    vm.a = 2
-    waitForUpdate(() => {
-      expect(spy).toHaveBeenCalledWith(3, 2)
-    }).then(done)
-  })
+  it('watching computed', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      const spy = vi.fn()
+      const vm = new Vue({
+        setup() {
+          const a = ref(1)
+          const b = computed(() => a.value + 1)
+          return {
+            a,
+            b,
+          }
+        },
+      })
+      vm.$watch('b', spy)
+      vm.a = 2
+      waitForUpdate(() => {
+        expect(spy).toHaveBeenCalledWith(3, 2)
+      }).then(done)
+    }))
 
   it('caching', () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     const vm = new Vue({
       setup() {
         const a = ref(1)
@@ -123,42 +127,45 @@ describe('Hooks computed', () => {
     expect(spy.mock.calls.length).toBe(1)
   })
 
-  it('as component', (done) => {
-    const Comp = Vue.extend({
-      template: `<div>{{ b }} {{ c }}</div>`,
-      setup() {
-        const a = ref(1)
-        const b = computed(() => {
-          return a.value + 1
-        })
-        return {
-          a,
-          b,
-        }
-      },
-    })
+  it('as component', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-    const vm = new Comp({
-      setup(_, { _vm }) {
-        const c = computed(() => {
-          return _vm.b + 1
-        })
+      const Comp = Vue.extend({
+        template: `<div>{{ b }} {{ c }}</div>`,
+        setup() {
+          const a = ref(1)
+          const b = computed(() => {
+            return a.value + 1
+          })
+          return {
+            a,
+            b,
+          }
+        },
+      })
 
-        return {
-          c,
-        }
-      },
-    }).$mount()
-    expect(vm.b).toBe(2)
-    expect(vm.c).toBe(3)
-    expect(vm.$el.textContent).toBe('2 3')
-    vm.a = 2
-    expect(vm.b).toBe(3)
-    expect(vm.c).toBe(4)
-    waitForUpdate(() => {
-      expect(vm.$el.textContent).toBe('3 4')
-    }).then(done)
-  })
+      const vm = new Comp({
+        setup(_, { _vm }) {
+          const c = computed(() => {
+            return _vm.b + 1
+          })
+
+          return {
+            c,
+          }
+        },
+      }).$mount()
+      expect(vm.b).toBe(2)
+      expect(vm.c).toBe(3)
+      expect(vm.$el.textContent).toBe('2 3')
+      vm.a = 2
+      expect(vm.b).toBe(3)
+      expect(vm.c).toBe(4)
+      waitForUpdate(() => {
+        expect(vm.$el.textContent).toBe('3 4')
+      }).then(done)
+    }))
 
   it('rethrow computed error', () => {
     const vm = new Vue({
@@ -202,25 +209,28 @@ describe('Hooks computed', () => {
     expect(app.$children[1].example).toBe('B')
   })
 
-  it('should watch a reactive property created via toRef', (done) => {
-    const spy = jest.fn()
-    const vm = new Vue({
-      setup() {
-        const a = reactive({})
-        const b = toRef(a, 'b')
+  it('should watch a reactive property created via toRef', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-        return {
-          a,
-          b,
-        }
-      },
-    })
-    vm.$watch('b', spy)
-    vm.b = 2
-    waitForUpdate(() => {
-      expect(spy).toHaveBeenCalledWith(2, undefined)
-    }).then(done)
-  })
+      const spy = vi.fn()
+      const vm = new Vue({
+        setup() {
+          const a = reactive({})
+          const b = toRef(a, 'b')
+
+          return {
+            a,
+            b,
+          }
+        },
+      })
+      vm.$watch('b', spy)
+      vm.b = 2
+      waitForUpdate(() => {
+        expect(spy).toHaveBeenCalledWith(2, undefined)
+      }).then(done)
+    }))
 
   it('should be readonly', () => {
     let a = { a: 1 }

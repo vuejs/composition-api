@@ -1,5 +1,5 @@
-const Vue = require('vue/dist/vue.common.js')
-const { useCssModule } = require('../../src')
+import Vue from 'vue/dist/vue.common.js'
+import { useCssModule } from '../../src'
 
 const style = { whateverStyle: 'whateverStyle' }
 
@@ -13,19 +13,20 @@ function injectStyles() {
 }
 
 describe('api/useCssModule', () => {
-  it('should get the same object', (done) => {
-    const vm = new Vue({
-      beforeCreate() {
-        injectStyles.call(this)
-      },
-      template: '<div>{{style}}</div>',
-      setup() {
-        const style = useCssModule()
-        return { style }
-      },
-    })
-    vm.$mount()
-    expect(vm.style).toBe(style)
-    done()
-  })
+  it('should get the same object', () =>
+    new Promise((done) => {
+      const vm = new Vue({
+        beforeCreate() {
+          injectStyles.call(this)
+        },
+        template: '<div>{{style}}</div>',
+        setup() {
+          const style = useCssModule()
+          return { style }
+        },
+      })
+      vm.$mount()
+      expect(vm.style).toBe(style)
+      done()
+    }))
 })

@@ -1,9 +1,11 @@
-const Vue = require('vue/dist/vue.common.js')
-const { warn: apiWarn } = require('../../src')
+import Vue from 'vue/dist/vue.common.js'
+import { warn as apiWarn } from '../../src'
 
 describe('api/warn', () => {
+  let warn = null
+
   beforeEach(() => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
   })
   afterEach(() => {
     warn.mockRestore()

@@ -1,5 +1,5 @@
-const Vue = require('vue/dist/vue.common.js')
-const {
+import Vue from 'vue/dist/vue.common.js'
+import {
   onBeforeMount,
   onMounted,
   onBeforeUpdate,
@@ -8,12 +8,12 @@ const {
   onUnmounted,
   onErrorCaptured,
   getCurrentInstance,
-} = require('../../src')
+} from '../../src'
 
 describe('Hooks lifecycle', () => {
   describe('beforeMount', () => {
     it('should not have mounted', () => {
-      const spy = jest.fn()
+      const spy = vi.fn()
       const vm = new Vue({
         render() {},
         setup(_, { _vm }) {
@@ -34,7 +34,7 @@ describe('Hooks lifecycle', () => {
 
   describe('mounted', () => {
     it('should have mounted', () => {
-      const spy = jest.fn()
+      const spy = vi.fn()
       const vm = new Vue({
         template: '<div></div>',
         setup(_, { _vm }) {
@@ -52,7 +52,7 @@ describe('Hooks lifecycle', () => {
     })
 
     it('should call for manually mounted instance with parent', () => {
-      const spy = jest.fn()
+      const spy = vi.fn()
       const parent = new Vue()
       expect(spy).not.toHaveBeenCalled()
       new Vue({
@@ -138,177 +138,195 @@ describe('Hooks lifecycle', () => {
   })
 
   describe('beforeUpdate', () => {
-    it('should be called before update', (done) => {
-      const spy = jest.fn()
-      const vm = new Vue({
-        template: '<div>{{ msg }}</div>',
-        data: { msg: 'foo' },
-        setup(_, { _vm }) {
-          onBeforeUpdate(() => {
-            expect(_vm.$el.textContent).toBe('foo')
-            spy()
-          })
-        },
-      }).$mount()
-      expect(spy).not.toHaveBeenCalled()
-      vm.msg = 'bar'
-      expect(spy).not.toHaveBeenCalled() // should be async
-      waitForUpdate(() => {
-        expect(spy).toHaveBeenCalled()
-      }).then(done)
-    })
+    it('should be called before update', () =>
+      new Promise((done, reject) => {
+        done.fail = reject
 
-    it('should be called before render and allow mutating state', (done) => {
-      const vm = new Vue({
-        template: '<div>{{ msg }}</div>',
-        data: { msg: 'foo' },
-        setup(_, { _vm }) {
-          onBeforeUpdate(() => {
-            _vm.msg += '!'
-          })
-        },
-      }).$mount()
-      expect(vm.$el.textContent).toBe('foo')
-      vm.msg = 'bar'
-      waitForUpdate(() => {
-        expect(vm.$el.textContent).toBe('bar!')
-      }).then(done)
-    })
+        const spy = vi.fn()
+        const vm = new Vue({
+          template: '<div>{{ msg }}</div>',
+          data: { msg: 'foo' },
+          setup(_, { _vm }) {
+            onBeforeUpdate(() => {
+              expect(_vm.$el.textContent).toBe('foo')
+              spy()
+            })
+          },
+        }).$mount()
+        expect(spy).not.toHaveBeenCalled()
+        vm.msg = 'bar'
+        expect(spy).not.toHaveBeenCalled() // should be async
+        waitForUpdate(() => {
+          expect(spy).toHaveBeenCalled()
+        }).then(done)
+      }))
 
-    it('should not be called after destroy', (done) => {
-      const beforeUpdate = jest.fn()
-      const destroyed = jest.fn()
+    it('should be called before render and allow mutating state', () =>
+      new Promise((done, reject) => {
+        done.fail = reject
 
-      Vue.component('todo', {
-        template: '<div>{{todo.done}}</div>',
-        props: ['todo'],
-        setup() {
-          onBeforeUpdate(beforeUpdate)
-          onUnmounted(destroyed)
-        },
-      })
+        const vm = new Vue({
+          template: '<div>{{ msg }}</div>',
+          data: { msg: 'foo' },
+          setup(_, { _vm }) {
+            onBeforeUpdate(() => {
+              _vm.msg += '!'
+            })
+          },
+        }).$mount()
+        expect(vm.$el.textContent).toBe('foo')
+        vm.msg = 'bar'
+        waitForUpdate(() => {
+          expect(vm.$el.textContent).toBe('bar!')
+        }).then(done)
+      }))
 
-      const vm = new Vue({
-        template: `
+    it('should not be called after destroy', () =>
+      new Promise((done, reject) => {
+        done.fail = reject
+
+        const beforeUpdate = vi.fn()
+        const destroyed = vi.fn()
+
+        Vue.component('todo', {
+          template: '<div>{{todo.done}}</div>',
+          props: ['todo'],
+          setup() {
+            onBeforeUpdate(beforeUpdate)
+            onUnmounted(destroyed)
+          },
+        })
+
+        const vm = new Vue({
+          template: `
           <div>
             <todo v-for="t in pendingTodos" :todo="t" :key="t.id"></todo>
           </div>
         `,
-        data() {
-          return {
-            todos: [{ id: 1, done: false }],
-          }
-        },
-        computed: {
-          pendingTodos() {
-            return this.todos.filter((t) => !t.done)
+          data() {
+            return {
+              todos: [{ id: 1, done: false }],
+            }
           },
-        },
-      }).$mount()
+          computed: {
+            pendingTodos() {
+              return this.todos.filter((t) => !t.done)
+            },
+          },
+        }).$mount()
 
-      vm.todos[0].done = true
-      waitForUpdate(() => {
-        expect(destroyed).toHaveBeenCalled()
-        expect(beforeUpdate).not.toHaveBeenCalled()
-      }).then(done)
-    })
+        vm.todos[0].done = true
+        waitForUpdate(() => {
+          expect(destroyed).toHaveBeenCalled()
+          expect(beforeUpdate).not.toHaveBeenCalled()
+        }).then(done)
+      }))
   })
 
   describe('updated', () => {
-    it('should be called after update', (done) => {
-      const spy = jest.fn()
-      const vm = new Vue({
-        template: '<div>{{ msg }}</div>',
-        data: { msg: 'foo' },
-        setup(_, { _vm }) {
-          onUpdated(() => {
-            expect(_vm.$el.textContent).toBe('bar')
-            spy()
-          })
-        },
-      }).$mount()
-      expect(spy).not.toHaveBeenCalled()
-      vm.msg = 'bar'
-      expect(spy).not.toHaveBeenCalled() // should be async
-      waitForUpdate(() => {
-        expect(spy).toHaveBeenCalled()
-      }).then(done)
-    })
+    it('should be called after update', () =>
+      new Promise((done, reject) => {
+        done.fail = reject
 
-    it('should be called after children are updated', (done) => {
-      const calls = []
-      const vm = new Vue({
-        template: '<div><test ref="child">{{ msg }}</test></div>',
-        data: { msg: 'foo' },
-        components: {
-          test: {
-            template: `<div><slot></slot></div>`,
-            setup(_, { _vm }) {
-              onUpdated(() => {
-                expect(_vm.$el.textContent).toBe('bar')
-                calls.push('child')
-              })
+        const spy = vi.fn()
+        const vm = new Vue({
+          template: '<div>{{ msg }}</div>',
+          data: { msg: 'foo' },
+          setup(_, { _vm }) {
+            onUpdated(() => {
+              expect(_vm.$el.textContent).toBe('bar')
+              spy()
+            })
+          },
+        }).$mount()
+        expect(spy).not.toHaveBeenCalled()
+        vm.msg = 'bar'
+        expect(spy).not.toHaveBeenCalled() // should be async
+        waitForUpdate(() => {
+          expect(spy).toHaveBeenCalled()
+        }).then(done)
+      }))
+
+    it('should be called after children are updated', () =>
+      new Promise((done, reject) => {
+        done.fail = reject
+
+        const calls = []
+        const vm = new Vue({
+          template: '<div><test ref="child">{{ msg }}</test></div>',
+          data: { msg: 'foo' },
+          components: {
+            test: {
+              template: `<div><slot></slot></div>`,
+              setup(_, { _vm }) {
+                onUpdated(() => {
+                  expect(_vm.$el.textContent).toBe('bar')
+                  calls.push('child')
+                })
+              },
             },
           },
-        },
-        setup(_, { _vm }) {
-          onUpdated(() => {
-            expect(_vm.$el.textContent).toBe('bar')
-            calls.push('parent')
-          })
-        },
-      }).$mount()
+          setup(_, { _vm }) {
+            onUpdated(() => {
+              expect(_vm.$el.textContent).toBe('bar')
+              calls.push('parent')
+            })
+          },
+        }).$mount()
 
-      expect(calls).toEqual([])
-      vm.msg = 'bar'
-      expect(calls).toEqual([])
-      waitForUpdate(() => {
-        expect(calls).toEqual(['child', 'parent'])
-      }).then(done)
-    })
+        expect(calls).toEqual([])
+        vm.msg = 'bar'
+        expect(calls).toEqual([])
+        waitForUpdate(() => {
+          expect(calls).toEqual(['child', 'parent'])
+        }).then(done)
+      }))
 
-    it('should not be called after destroy', (done) => {
-      const updated = jest.fn()
-      const destroyed = jest.fn()
+    it('should not be called after destroy', () =>
+      new Promise((done, reject) => {
+        done.fail = reject
 
-      Vue.component('todo', {
-        template: '<div>{{todo.done}}</div>',
-        props: ['todo'],
-        setup() {
-          onUpdated(updated)
-          onUnmounted(destroyed)
-        },
-      })
+        const updated = vi.fn()
+        const destroyed = vi.fn()
 
-      const vm = new Vue({
-        template: `
+        Vue.component('todo', {
+          template: '<div>{{todo.done}}</div>',
+          props: ['todo'],
+          setup() {
+            onUpdated(updated)
+            onUnmounted(destroyed)
+          },
+        })
+
+        const vm = new Vue({
+          template: `
           <div>
             <todo v-for="t in pendingTodos" :todo="t" :key="t.id"></todo>
           </div>
         `,
-        data() {
-          return {
-            todos: [{ id: 1, done: false }],
-          }
-        },
-        computed: {
-          pendingTodos() {
-            return this.todos.filter((t) => !t.done)
+          data() {
+            return {
+              todos: [{ id: 1, done: false }],
+            }
           },
-        },
-      }).$mount()
+          computed: {
+            pendingTodos() {
+              return this.todos.filter((t) => !t.done)
+            },
+          },
+        }).$mount()
 
-      vm.todos[0].done = true
-      waitForUpdate(() => {
-        expect(destroyed).toHaveBeenCalled()
-        expect(updated).not.toHaveBeenCalled()
-      }).then(done)
-    })
+        vm.todos[0].done = true
+        waitForUpdate(() => {
+          expect(destroyed).toHaveBeenCalled()
+          expect(updated).not.toHaveBeenCalled()
+        }).then(done)
+      }))
   })
 
   describe('beforeUnmount', () => {
     it('should be called before destroy', () => {
-      const spy = jest.fn()
+      const spy = vi.fn()
       const vm = new Vue({
         render() {},
         setup(_, { _vm }) {
@@ -329,7 +347,7 @@ describe('Hooks lifecycle', () => {
 
   describe('unmounted', () => {
     it('should be called after destroy', () => {
-      const spy = jest.fn()
+      const spy = vi.fn()
       const vm = new Vue({
         render() {},
         setup(_, { _vm }) {
@@ -352,7 +370,7 @@ describe('Hooks lifecycle', () => {
     let globalSpy
 
     beforeEach(() => {
-      globalSpy = Vue.config.errorHandler = jest.fn()
+      globalSpy = Vue.config.errorHandler = vi.fn()
     })
 
     afterEach(() => {
@@ -360,7 +378,7 @@ describe('Hooks lifecycle', () => {
     })
 
     it('should capture error from child component', () => {
-      const spy = jest.fn()
+      const spy = vi.fn()
 
       let child
       let err

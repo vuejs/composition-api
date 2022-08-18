@@ -1,5 +1,5 @@
-const Vue = require('vue/dist/vue.common.js')
-const {
+import Vue from 'vue/dist/vue.common.js'
+import {
   ref,
   computed,
   h,
@@ -16,12 +16,14 @@ const {
   onMounted,
   set,
   del,
-} = require('../src')
-const { sleep } = require('./helpers/utils')
+} from '../src'
+import { sleep } from './helpers/utils'
 
 describe('setup', () => {
+  let warn = null
+
   beforeEach(() => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
   })
   afterEach(() => {
     warn.mockRestore()
@@ -93,52 +95,55 @@ describe('setup', () => {
     expect(vm.b).toBe(1)
   })
 
-  it('should work with `methods` and `data` options', (done) => {
-    let calls = 0
-    const vm = new Vue({
-      template: `<div>{{a}}{{b}}{{c}}</div>`,
-      setup() {
-        return {
-          a: ref(1),
-        }
-      },
-      beforeUpdate() {
-        calls++
-      },
-      created() {
-        this.m()
-      },
-      data() {
-        return {
-          b: this.a,
-          c: 0,
-        }
-      },
-      methods: {
-        m() {
-          this.c = this.a
+  it('should work with `methods` and `data` options', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      let calls = 0
+      const vm = new Vue({
+        template: `<div>{{a}}{{b}}{{c}}</div>`,
+        setup() {
+          return {
+            a: ref(1),
+          }
         },
-      },
-    }).$mount()
-    expect(vm.a).toBe(1)
-    expect(vm.b).toBe(1)
-    expect(vm.c).toBe(1)
-    vm.a = 2
-    waitForUpdate(() => {
-      expect(calls).toBe(1)
-      expect(vm.a).toBe(2)
+        beforeUpdate() {
+          calls++
+        },
+        created() {
+          this.m()
+        },
+        data() {
+          return {
+            b: this.a,
+            c: 0,
+          }
+        },
+        methods: {
+          m() {
+            this.c = this.a
+          },
+        },
+      }).$mount()
+      expect(vm.a).toBe(1)
       expect(vm.b).toBe(1)
       expect(vm.c).toBe(1)
-      vm.b = 2
-    })
-      .then(() => {
-        expect(calls).toBe(2)
+      vm.a = 2
+      waitForUpdate(() => {
+        expect(calls).toBe(1)
         expect(vm.a).toBe(2)
-        expect(vm.b).toBe(2)
+        expect(vm.b).toBe(1)
         expect(vm.c).toBe(1)
+        vm.b = 2
       })
-      .then(done)
-  })
+        .then(() => {
+          expect(calls).toBe(2)
+          expect(vm.a).toBe(2)
+          expect(vm.b).toBe(2)
+          expect(vm.c).toBe(1)
+        })
+        .then(done)
+    }))
 
   it('should receive props as first params', () => {
     let props
@@ -307,46 +312,49 @@ describe('setup', () => {
     expect(vm.$refs.test.b).toBe(1)
   })
 
-  it('props should be reactive', (done) => {
-    let calls = 0
-    let _props
-    const vm = new Vue({
-      template: `<child :msg="msg"></child>`,
-      setup() {
-        return { msg: ref('hello') }
-      },
-      beforeUpdate() {
-        calls++
-      },
-      components: {
-        child: {
-          template: `<span>{{ localMsg }}</span>`,
-          props: ['msg'],
-          setup(props) {
-            _props = props
+  it('props should be reactive', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-            return {
-              localMsg: props.msg,
-              computedMsg: computed(() => props.msg + ' world'),
-            }
+      let calls = 0
+      let _props
+      const vm = new Vue({
+        template: `<child :msg="msg"></child>`,
+        setup() {
+          return { msg: ref('hello') }
+        },
+        beforeUpdate() {
+          calls++
+        },
+        components: {
+          child: {
+            template: `<span>{{ localMsg }}</span>`,
+            props: ['msg'],
+            setup(props) {
+              _props = props
+
+              return {
+                localMsg: props.msg,
+                computedMsg: computed(() => props.msg + ' world'),
+              }
+            },
           },
         },
-      },
-    }).$mount()
+      }).$mount()
 
-    expect(isReactive(_props)).toBe(true)
+      expect(isReactive(_props)).toBe(true)
 
-    const child = vm.$children[0]
-    expect(child.localMsg).toBe('hello')
-    expect(child.computedMsg).toBe('hello world')
-    expect(calls).toBe(0)
-    vm.msg = 'hi'
-    waitForUpdate(() => {
+      const child = vm.$children[0]
       expect(child.localMsg).toBe('hello')
-      expect(child.computedMsg).toBe('hi world')
-      expect(calls).toBe(1)
-    }).then(done)
-  })
+      expect(child.computedMsg).toBe('hello world')
+      expect(calls).toBe(0)
+      vm.msg = 'hi'
+      waitForUpdate(() => {
+        expect(child.localMsg).toBe('hello')
+        expect(child.computedMsg).toBe('hi world')
+        expect(calls).toBe(1)
+      }).then(done)
+    }))
 
   it('toRefs(props) should not warn', async () => {
     let a
@@ -407,37 +415,40 @@ describe('setup', () => {
     }).$mount()
   })
 
-  it('should not make returned non-reactive object reactive', (done) => {
-    const vm = new Vue({
-      setup() {
-        return {
-          form: {
-            a: 1,
-            b: 2,
-          },
-        }
-      },
-      template: '<div>{{ form.a }}, {{ form.b }}</div>',
-    }).$mount()
-    expect(vm.$el.textContent).toBe('1, 2')
+  it('should not make returned non-reactive object reactive', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-    // should not trigger a re-render
-    vm.form.a = 2
-    waitForUpdate(() => {
+      const vm = new Vue({
+        setup() {
+          return {
+            form: {
+              a: 1,
+              b: 2,
+            },
+          }
+        },
+        template: '<div>{{ form.a }}, {{ form.b }}</div>',
+      }).$mount()
       expect(vm.$el.textContent).toBe('1, 2')
 
-      // not trigger event
-      vm.form = { a: 2, b: 3 }
-    })
-      .then(() => {
+      // should not trigger a re-render
+      vm.form.a = 2
+      waitForUpdate(() => {
         expect(vm.$el.textContent).toBe('1, 2')
+
+        // not trigger event
+        vm.form = { a: 2, b: 3 }
       })
-      .then(done)
-  })
+        .then(() => {
+          expect(vm.$el.textContent).toBe('1, 2')
+        })
+        .then(done)
+    }))
 
   it("should put a unenumerable '__ob__' for non-reactive object", () => {
     const clone = (obj) => JSON.parse(JSON.stringify(obj))
-    const componentSetup = jest.fn((props) => {
+    const componentSetup = vi.fn((props) => {
       const internalOptions = clone(props.options)
       return { internalOptions }
     })
@@ -454,7 +465,7 @@ describe('setup', () => {
   })
 
   it('current vue should exist in nested setup call', () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     new Vue({
       setup() {
         new Vue({
@@ -491,47 +502,50 @@ describe('setup', () => {
     expect(p).toBe(undefined)
   })
 
-  it('inline render function should work', (done) => {
-    // let createElement;
-    const vm = new Vue({
-      props: ['msg'],
-      template: '<div>1</div>',
-      setup(props) {
-        const count = ref(0)
-        const increment = () => {
-          count.value++
-        }
+  it('inline render function should work', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-        return () =>
-          h('div', [
-            h('span', props.msg),
-            h(
-              'button',
-              {
-                on: {
-                  click: increment,
+      // let createElement;
+      const vm = new Vue({
+        props: ['msg'],
+        template: '<div>1</div>',
+        setup(props) {
+          const count = ref(0)
+          const increment = () => {
+            count.value++
+          }
+
+          return () =>
+            h('div', [
+              h('span', props.msg),
+              h(
+                'button',
+                {
+                  on: {
+                    click: increment,
+                  },
                 },
-              },
-              count.value
-            ),
-          ])
-      },
-      propsData: {
-        msg: 'foo',
-      },
-    }).$mount()
-    expect(vm.$el.querySelector('span').textContent).toBe('foo')
-    expect(vm.$el.querySelector('button').textContent).toBe('0')
-    vm.$el.querySelector('button').click()
-    waitForUpdate(() => {
-      expect(vm.$el.querySelector('button').textContent).toBe('1')
-      vm.msg = 'bar'
-    })
-      .then(() => {
-        expect(vm.$el.querySelector('span').textContent).toBe('bar')
+                count.value
+              ),
+            ])
+        },
+        propsData: {
+          msg: 'foo',
+        },
+      }).$mount()
+      expect(vm.$el.querySelector('span').textContent).toBe('foo')
+      expect(vm.$el.querySelector('button').textContent).toBe('0')
+      vm.$el.querySelector('button').click()
+      waitForUpdate(() => {
+        expect(vm.$el.querySelector('button').textContent).toBe('1')
+        vm.msg = 'bar'
       })
-      .then(done)
-  })
+        .then(() => {
+          expect(vm.$el.querySelector('span').textContent).toBe('bar')
+        })
+        .then(done)
+    }))
 
   describe('setup unwrap', () => {
     test('ref', () => {
@@ -825,7 +839,7 @@ describe('setup', () => {
   describe('Methods', () => {
     it('binds methods when calling with parenthesis', async () => {
       let context = null
-      const contextFunction = jest.fn(function () {
+      const contextFunction = vi.fn(function () {
         context = this
       })
 
@@ -845,7 +859,7 @@ describe('setup', () => {
 
     it('binds methods when calling without parenthesis', async () => {
       let context = null
-      const contextFunction = jest.fn(function () {
+      const contextFunction = vi.fn(function () {
         context = this
       })
 
@@ -1176,7 +1190,7 @@ describe('setup', () => {
       {},
       {
         get() {
-          return jest.fn()
+          return vi.fn()
         },
       }
     )
@@ -1223,7 +1237,7 @@ describe('setup', () => {
 
   // #794
   it('should not trigger getter w/ object computed nested', () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     new Vue({
       setup() {
         new Vue({

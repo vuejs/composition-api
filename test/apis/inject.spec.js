@@ -1,5 +1,5 @@
-const Vue = require('vue/dist/vue.common.js')
-const { inject, provide, ref, reactive } = require('../../src')
+import Vue from 'vue/dist/vue.common.js'
+import { inject, provide, ref, reactive } from '../../src'
 
 let injected
 const injectedComp = {
@@ -20,8 +20,10 @@ beforeEach(() => {
 })
 
 describe('Hooks provide/inject', () => {
+  let warn = null
+
   beforeEach(() => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
   })
   afterEach(() => {
     warn.mockRestore()
@@ -68,57 +70,63 @@ describe('Hooks provide/inject', () => {
     expect(injected).toBe('foo')
   })
 
-  it('should work for ref value', (done) => {
-    const Msg = Symbol()
-    const app = new Vue({
-      template: `<child/>`,
-      setup() {
-        provide(Msg, ref('hello'))
-      },
-      components: {
-        child: {
-          template: `<div>{{ msg }}</div>`,
-          setup() {
-            return {
-              msg: inject(Msg),
-            }
+  it('should work for ref value', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      const Msg = Symbol()
+      const app = new Vue({
+        template: `<child/>`,
+        setup() {
+          provide(Msg, ref('hello'))
+        },
+        components: {
+          child: {
+            template: `<div>{{ msg }}</div>`,
+            setup() {
+              return {
+                msg: inject(Msg),
+              }
+            },
           },
         },
-      },
-    }).$mount()
+      }).$mount()
 
-    app.$children[0].msg = 'bar'
-    waitForUpdate(() => {
-      expect(app.$el.textContent).toBe('bar')
-    }).then(done)
-  })
+      app.$children[0].msg = 'bar'
+      waitForUpdate(() => {
+        expect(app.$el.textContent).toBe('bar')
+      }).then(done)
+    }))
 
-  it('should work for reactive value', (done) => {
-    const State = Symbol()
-    let obj
-    const app = new Vue({
-      template: `<child/>`,
-      setup() {
-        provide(State, reactive({ msg: 'foo' }))
-      },
-      components: {
-        child: {
-          template: `<div>{{ state.msg }}</div>`,
-          setup() {
-            obj = inject(State)
-            return {
-              state: obj,
-            }
+  it('should work for reactive value', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      const State = Symbol()
+      let obj
+      const app = new Vue({
+        template: `<child/>`,
+        setup() {
+          provide(State, reactive({ msg: 'foo' }))
+        },
+        components: {
+          child: {
+            template: `<div>{{ state.msg }}</div>`,
+            setup() {
+              obj = inject(State)
+              return {
+                state: obj,
+              }
+            },
           },
         },
-      },
-    }).$mount()
-    expect(obj.msg).toBe('foo')
-    app.$children[0].state.msg = 'bar'
-    waitForUpdate(() => {
-      expect(app.$el.textContent).toBe('bar')
-    }).then(done)
-  })
+      }).$mount()
+      expect(obj.msg).toBe('foo')
+      app.$children[0].state.msg = 'bar'
+      waitForUpdate(() => {
+        expect(app.$el.textContent).toBe('bar')
+      }).then(done)
+    }))
 
   it('should work when combined with 2.x provide option', () => {
     const State = Symbol()
@@ -148,7 +156,7 @@ describe('Hooks provide/inject', () => {
 
   it('should call default value as factory', () => {
     const State = Symbol()
-    let fn = jest.fn()
+    let fn = vi.fn()
     new Vue({
       template: `<child/>`,
       setup() {},

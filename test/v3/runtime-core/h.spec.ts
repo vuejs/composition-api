@@ -11,7 +11,7 @@ describe('renderer: h', () => {
   })
 
   it('should not warn with called outside of render function', async () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     const Comp = {
       setup() {
         const instance = getCurrentInstance()

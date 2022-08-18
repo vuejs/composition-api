@@ -78,42 +78,43 @@ describe('SSR Reactive', () => {
   })
 
   // #550
-  it('props should work with set', async (done) => {
-    let props: any
+  it('props should work with set', () =>
+    new Promise<void>(async (done) => {
+      let props: any
 
-    const app = new Vue({
-      render(this: any, h) {
-        return h('child', { attrs: { msg: this.msg } })
-      },
-      setup() {
-        return { msg: ref('hello') }
-      },
-      components: {
-        child: {
-          render(this: any, h: any) {
-            return h('span', this.data.msg)
-          },
-          props: ['msg'],
-          setup(_props) {
-            props = _props
+      const app = new Vue({
+        render(this: any, h) {
+          return h('child', { attrs: { msg: this.msg } })
+        },
+        setup() {
+          return { msg: ref('hello') }
+        },
+        components: {
+          child: {
+            render(this: any, h: any) {
+              return h('span', this.data.msg)
+            },
+            props: ['msg'],
+            setup(_props) {
+              props = _props
 
-            return { data: _props }
+              return { data: _props }
+            },
           },
         },
-      },
-    })
+      })
 
-    const serverRenderer = createRenderer()
-    const html = await serverRenderer.renderToString(app)
+      const serverRenderer = createRenderer()
+      const html = await serverRenderer.renderToString(app)
 
-    expect(html).toBe('<span data-server-rendered="true">hello</span>')
+      expect(html).toBe('<span data-server-rendered="true">hello</span>')
 
-    expect(props.bar).toBeUndefined()
-    set(props, 'bar', 'bar')
-    expect(props.bar).toBe('bar')
+      expect(props.bar).toBeUndefined()
+      set(props, 'bar', 'bar')
+      expect(props.bar).toBe('bar')
 
-    done()
-  })
+      done()
+    }))
 
   // #721
   it('should behave correctly', () => {

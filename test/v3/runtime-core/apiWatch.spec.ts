@@ -14,8 +14,8 @@ import { getRegisteredVueOrDefault } from '../../../src/runtimeContext'
 
 describe('api: watch', () => {
   const Vue = getRegisteredVueOrDefault()
-  // const warnSpy = jest.spyOn(console, 'warn');
-  const warnSpy = jest.spyOn((Vue as any).util, 'warn')
+  // const warnSpy = vi.spyOn(console, 'warn');
+  const warnSpy = vi.spyOn((Vue as any).util, 'warn')
 
   beforeEach(() => {
     warnSpy.mockReset()
@@ -208,7 +208,7 @@ describe('api: watch', () => {
 
   it('cleanup registration (effect)', async () => {
     const state = reactive({ count: 0 })
-    const cleanup = jest.fn()
+    const cleanup = vi.fn()
     let dummy
     const stop = watchEffect((onCleanup) => {
       onCleanup(cleanup)
@@ -227,7 +227,7 @@ describe('api: watch', () => {
 
   it('cleanup registration (with source)', async () => {
     const count = ref(0)
-    const cleanup = jest.fn()
+    const cleanup = vi.fn()
     let dummy
     const stop = watch(count, (count, prevCount, onCleanup) => {
       onCleanup(cleanup)
@@ -251,7 +251,7 @@ describe('api: watch', () => {
   // it('flush timing: post (default)', async () => {
   //   const count = ref(0);
   //   let callCount = 0;
-  //   const assertion = jest.fn(count => {
+  //   const assertion = vi.fn(count => {
   //     callCount++;
   //     // on mount, the watcher callback should be called before DOM render
   //     // on update, should be called after the count is updated
@@ -281,7 +281,7 @@ describe('api: watch', () => {
   //   const count2 = ref(0);
 
   //   let callCount = 0;
-  //   const assertion = jest.fn((count, count2Value) => {
+  //   const assertion = vi.fn((count, count2Value) => {
   //     callCount++;
   //     // on mount, the watcher callback should be called before DOM render
   //     // on update, should be called before the count is updated
@@ -322,7 +322,7 @@ describe('api: watch', () => {
   //   const count2 = ref(0);
 
   //   let callCount = 0;
-  //   const assertion = jest.fn(count => {
+  //   const assertion = vi.fn(count => {
   //     callCount++;
   //     // on mount, the watcher callback should be called before DOM render
   //     // on update, should be called before the count is updated
@@ -408,7 +408,7 @@ describe('api: watch', () => {
 
   it('immediate', async () => {
     const count = ref(0)
-    const cb = jest.fn()
+    const cb = vi.fn()
     watch(count, cb, { immediate: true })
     expect(cb).toHaveBeenCalledTimes(1)
     count.value++
@@ -418,14 +418,14 @@ describe('api: watch', () => {
 
   it('immediate: triggers when initial value is null', async () => {
     const state = ref(null)
-    const spy = jest.fn()
+    const spy = vi.fn()
     watch(() => state.value, spy, { immediate: true })
     expect(spy).toHaveBeenCalled()
   })
 
   it('immediate: triggers when initial value is undefined', async () => {
     const state = ref()
-    const spy = jest.fn()
+    const spy = vi.fn()
     watch(() => state.value, spy, { immediate: true })
     expect(spy).toHaveBeenCalled()
     state.value = 3
@@ -500,7 +500,7 @@ describe('api: watch', () => {
 
   // it('warn and not respect deep option when using effect', async () => {
   //   const arr = ref([1, [2]]);
-  //   const spy = jest.fn();
+  //   const spy = vi.fn();
   //   watchEffect(
   //     () => {
   //       spy();
@@ -577,7 +577,7 @@ describe('api: watch', () => {
   // #805 #807
   it('watching sources: [ref<[]>] w/ deep', async () => {
     const foo = ref([1])
-    const cb = jest.fn()
+    const cb = vi.fn()
     watch([foo], cb, { deep: true })
     foo.value.push(2)
     await nextTick()
