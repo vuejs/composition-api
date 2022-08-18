@@ -23,7 +23,7 @@ describe('reactivity/computed', () => {
 
   it('should compute lazily', () => {
     const value = reactive<{ foo?: number }>({ foo: undefined })
-    const getter = jest.fn(() => value.foo)
+    const getter = vi.fn(() => value.foo)
     const cValue = computed(getter)
 
     // lazy
@@ -77,8 +77,8 @@ describe('reactivity/computed', () => {
 
   it('should trigger effect when chained', () => {
     const value = reactive({ foo: 0 })
-    const getter1 = jest.fn(() => value.foo)
-    const getter2 = jest.fn(() => {
+    const getter1 = vi.fn(() => value.foo)
+    const getter2 = vi.fn(() => {
       return c1.value + 1
     })
     const c1 = computed(getter1)
@@ -103,8 +103,8 @@ describe('reactivity/computed', () => {
 
   it('should trigger effect when chained (mixed invocations)', async () => {
     const value = reactive({ foo: 0 })
-    const getter1 = jest.fn(() => value.foo)
-    const getter2 = jest.fn(() => {
+    const getter1 = vi.fn(() => value.foo)
+    const getter2 = vi.fn(() => {
       return c1.value + 1
     })
     const c1 = computed(getter1)

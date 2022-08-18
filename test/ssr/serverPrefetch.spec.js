@@ -1,12 +1,6 @@
-const Vue = require('vue/dist/vue.common.js')
-const { createRenderer } = require('vue-server-renderer')
-const {
-  ref,
-  onServerPrefetch,
-  getCurrentInstance,
-  isReactive,
-  reactive,
-} = require('../../src')
+import Vue from 'vue/dist/vue.common.js'
+import { createRenderer } from 'vue-server-renderer'
+import { ref, onServerPrefetch, getCurrentInstance } from '../../src'
 
 function fetch(result) {
   return new Promise((resolve) => {

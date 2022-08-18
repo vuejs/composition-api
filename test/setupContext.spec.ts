@@ -65,9 +65,7 @@ describe('setupContext', () => {
   })
 
   it('warn for slots calls outside of the render() function', () => {
-    let warn = jest
-      .spyOn(global.console, 'error')
-      .mockImplementation(() => null)
+    let warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
 
     createApp(
       defineComponent({
@@ -229,7 +227,7 @@ describe('setupContext', () => {
 
   // #794
   it('should not trigger getter w/ object computed nested', async () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     createApp(
       defineComponent({
         template: `<div/>`,

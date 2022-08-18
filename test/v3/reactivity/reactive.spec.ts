@@ -12,9 +12,9 @@ import {
 } from '../../../src'
 
 describe('reactivity/reactive', () => {
-  let warn: jest.SpyInstance
+  let warn: vi.SpyInstance
   beforeEach(() => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
     warn.mockReset()
   })
   afterEach(() => {

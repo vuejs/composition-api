@@ -151,7 +151,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => (toggle.value ? h(Foo) : null),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
 
@@ -200,7 +200,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => (toggle.value ? h(Foo) : null),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
 
@@ -247,7 +247,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => (toggle.value ? h(Foo) : null),
     })
 
-    jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    vi.spyOn(global.console, 'error').mockImplementation(() => null)
 
     const vm = app.mount()
     expect(vm.$el.textContent).toBe('')
@@ -296,7 +296,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => (toggle.value ? h(Foo) : null),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
 
@@ -349,7 +349,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => h(Foo),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
 
@@ -384,7 +384,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => h(Foo),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
 
@@ -418,7 +418,7 @@ describe('api: defineAsyncComponent', () => {
     const app = createApp({
       render: () => h(Foo),
     })
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
     const vm = app.mount()
@@ -452,7 +452,7 @@ describe('api: defineAsyncComponent', () => {
     const app = createApp({
       render: () => h(Foo),
     })
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
     const vm = app.mount()
@@ -499,7 +499,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => h(Foo),
     })
 
-    jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    vi.spyOn(global.console, 'error').mockImplementation(() => null)
 
     const vm = app.mount()
     expect(vm.$el.textContent).toBe('')
@@ -543,7 +543,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => h(Foo),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
     const vm = app.mount()
@@ -584,7 +584,7 @@ describe('api: defineAsyncComponent', () => {
       render: () => h(Foo),
     })
 
-    const handler = jest
+    const handler = vi
       .spyOn(global.console, 'error')
       .mockImplementation(() => null)
     const vm = app.mount()

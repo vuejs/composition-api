@@ -1,13 +1,5 @@
-const Vue = require('vue/dist/vue.common.js')
-const {
-  reactive,
-  ref,
-  watch,
-  set,
-  toRefs,
-  computed,
-  unref,
-} = require('../../src')
+import Vue from 'vue/dist/vue.common.js'
+import { reactive, ref, watch, set, toRefs, computed, unref } from '../../src'
 
 describe('api/ref', () => {
   it('should work with array', () => {
@@ -29,67 +21,76 @@ describe('api/ref', () => {
     expect(a.value).toBe(2)
   })
 
-  it('should be reactive', (done) => {
-    const a = ref(1)
-    let dummy
-    watch(
-      a,
-      () => {
-        dummy = a.value
-      },
-      { immediate: true }
-    )
-    expect(dummy).toBe(1)
-    a.value = 2
-    waitForUpdate(() => {
-      expect(dummy).toBe(2)
-    }).then(done)
-  })
+  it('should be reactive', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-  it('should make nested properties reactive', (done) => {
-    const a = ref({
-      count: 1,
-    })
-    let dummy
-    watch(
-      a,
-      () => {
-        dummy = a.value.count
-      },
-      { deep: true, immediate: true }
-    )
-    expect(dummy).toBe(1)
-    a.value.count = 2
-    waitForUpdate(() => {
-      expect(dummy).toBe(2)
-    }).then(done)
-  })
+      const a = ref(1)
+      let dummy
+      watch(
+        a,
+        () => {
+          dummy = a.value
+        },
+        { immediate: true }
+      )
+      expect(dummy).toBe(1)
+      a.value = 2
+      waitForUpdate(() => {
+        expect(dummy).toBe(2)
+      }).then(done)
+    }))
+
+  it('should make nested properties reactive', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      const a = ref({
+        count: 1,
+      })
+      let dummy
+      watch(
+        a,
+        () => {
+          dummy = a.value.count
+        },
+        { deep: true, immediate: true }
+      )
+      expect(dummy).toBe(1)
+      a.value.count = 2
+      waitForUpdate(() => {
+        expect(dummy).toBe(2)
+      }).then(done)
+    }))
 })
 
 describe('api/reactive', () => {
-  it('should work', (done) => {
-    const app = new Vue({
-      setup() {
-        return {
-          state: reactive({
-            count: 0,
-          }),
-        }
-      },
-      render(h) {
-        return h('div', [h('span', this.state.count)])
-      },
-    }).$mount()
+  it('should work', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-    expect(app.$el.querySelector('span').textContent).toBe('0')
-    app.state.count++
-    waitForUpdate(() => {
-      expect(app.$el.querySelector('span').textContent).toBe('1')
-    }).then(done)
-  })
+      const app = new Vue({
+        setup() {
+          return {
+            state: reactive({
+              count: 0,
+            }),
+          }
+        },
+        render(h) {
+          return h('div', [h('span', this.state.count)])
+        },
+      }).$mount()
+
+      expect(app.$el.querySelector('span').textContent).toBe('0')
+      app.state.count++
+      waitForUpdate(() => {
+        expect(app.$el.querySelector('span').textContent).toBe('1')
+      }).then(done)
+    }))
 
   it('should warn for non-object params', () => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
+    let warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
     reactive()
     expect(warn.mock.calls[0][0]).toMatch(
       '[Vue warn]: "reactive()" must be called on an object.'
@@ -104,40 +105,43 @@ describe('api/reactive', () => {
 })
 
 describe('api/toRefs', () => {
-  it('should work', (done) => {
-    const state = reactive({
-      foo: 1,
-      bar: 2,
-    })
+  it('should work', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
 
-    let dummy
-    watch(
-      () => state,
-      () => {
-        dummy = state.foo
-      },
-      { immediate: true }
-    )
-    const stateAsRefs = toRefs(state)
-    expect(dummy).toBe(1)
-    expect(stateAsRefs.foo.value).toBe(1)
-    expect(stateAsRefs.bar.value).toBe(2)
-    state.foo++
-    waitForUpdate(() => {
-      dummy = 2
-      expect(stateAsRefs.foo.value).toBe(2)
-      stateAsRefs.foo.value++
-    })
-      .then(() => {
-        dummy = 3
-        expect(state.foo).toBe(3)
+      const state = reactive({
+        foo: 1,
+        bar: 2,
       })
-      .then(done)
-  })
+
+      let dummy
+      watch(
+        () => state,
+        () => {
+          dummy = state.foo
+        },
+        { immediate: true }
+      )
+      const stateAsRefs = toRefs(state)
+      expect(dummy).toBe(1)
+      expect(stateAsRefs.foo.value).toBe(1)
+      expect(stateAsRefs.bar.value).toBe(2)
+      state.foo++
+      waitForUpdate(() => {
+        dummy = 2
+        expect(stateAsRefs.foo.value).toBe(2)
+        stateAsRefs.foo.value++
+      })
+        .then(() => {
+          dummy = 3
+          expect(state.foo).toBe(3)
+        })
+        .then(done)
+    }))
 
   it('should proxy plain object but not make it a reactive', () => {
-    warn = jest.spyOn(global.console, 'error').mockImplementation(() => null)
-    const spy = jest.fn()
+    let warn = vi.spyOn(global.console, 'error').mockImplementation(() => null)
+    const spy = vi.fn()
     const state = {
       foo: 1,
       bar: 2,
@@ -379,7 +383,7 @@ describe('unwrapping', () => {
   })
 
   it('should not call the computed property until accessing it', () => {
-    const spy = jest.fn()
+    const spy = vi.fn()
     const state = reactive({
       count: 1,
       double: computed(() => {

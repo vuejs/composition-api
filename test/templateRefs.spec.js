@@ -1,73 +1,80 @@
-const Vue = require('vue/dist/vue.common.js')
-const { ref, watchEffect, nextTick } = require('../src')
+import Vue from 'vue/dist/vue.common.js'
+import { ref, watchEffect, nextTick } from '../src'
 
 describe('ref', () => {
-  it('should work', (done) => {
-    let dummy
-    const vm = new Vue({
-      setup() {
-        const ref1 = ref(null)
-        watchEffect(() => {
-          dummy = ref1.value
-        })
+  it('should work', () =>
+    new Promise((done) => {
+      let dummy
+      const vm = new Vue({
+        setup() {
+          const ref1 = ref(null)
+          watchEffect(() => {
+            dummy = ref1.value
+          })
 
-        return {
-          bar: ref1,
-        }
-      },
-      template: `<div>
+          return {
+            bar: ref1,
+          }
+        },
+        template: `<div>
         <test ref="bar"></test>
       </div>`,
-      components: {
-        test: {
-          id: 'test',
-          template: '<div>test</div>',
+        components: {
+          test: {
+            id: 'test',
+            template: '<div>test</div>',
+          },
         },
-      },
-    }).$mount()
-    vm.$nextTick()
-      .then(() => {
-        expect(dummy).toBe(vm.$refs.bar)
-      })
-      .then(done)
-  })
-
-  it('should dynamically update refs', (done) => {
-    const vm = new Vue({
-      setup() {
-        const ref1 = ref(null)
-        const ref2 = ref(null)
-        watchEffect(() => {
-          dummy1 = ref1.value
-          dummy2 = ref2.value
+      }).$mount()
+      vm.$nextTick()
+        .then(() => {
+          expect(dummy).toBe(vm.$refs.bar)
         })
+        .then(done)
+    }))
 
-        return {
-          value: 'bar',
-          bar: ref1,
-          foo: ref2,
-        }
-      },
-      template: '<div :ref="value"></div>',
-    }).$mount()
-    waitForUpdate(() => {})
-      .then(() => {
-        expect(dummy1).toBe(vm.$refs.bar)
-        expect(dummy2).toBe(null)
-        vm.value = 'foo'
-      })
-      .then(() => {
-        // vm updated. ref update occures after updated;
-      })
-      .then(() => {
-        // no render cycle, empty tick
-      })
-      .then(() => {
-        expect(dummy1).toBe(null)
-        expect(dummy2).toBe(vm.$refs.foo)
-      })
-      .then(done)
-  })
+  it('should dynamically update refs', () =>
+    new Promise((done, reject) => {
+      done.fail = reject
+
+      let dummy1 = null
+      let dummy2 = null
+
+      const vm = new Vue({
+        setup() {
+          const ref1 = ref(null)
+          const ref2 = ref(null)
+          watchEffect(() => {
+            dummy1 = ref1.value
+            dummy2 = ref2.value
+          })
+
+          return {
+            value: 'bar',
+            bar: ref1,
+            foo: ref2,
+          }
+        },
+        template: '<div :ref="value"></div>',
+      }).$mount()
+      waitForUpdate(() => {})
+        .then(() => {
+          expect(dummy1).toBe(vm.$refs.bar)
+          expect(dummy2).toBe(null)
+          vm.value = 'foo'
+        })
+        .then(() => {
+          // vm updated. ref update occures after updated;
+        })
+        .then(() => {
+          // no render cycle, empty tick
+        })
+        .then(() => {
+          expect(dummy1).toBe(null)
+          expect(dummy2).toBe(vm.$refs.foo)
+        })
+        .then(done)
+    }))
 
   // #296
   it('should dynamically update refs in context', async () => {
