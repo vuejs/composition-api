@@ -19,6 +19,7 @@
   "exports": {
     ".": {
       "import": "./dist/vue-composition-api.mjs",
+      "types": "./dist/vue-composition-api.d.ts",
       "require": "./index.js"
     },
     "./*": "./*"
