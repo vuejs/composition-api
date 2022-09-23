@@ -1,3 +1,14 @@
+<a name="1.7.1"></a>
+## [1.7.1](https://github.com/vuejs/composition-api/compare/v1.7.0...v1.7.1) (2022-09-23)
+
+
+### Bug Fixes
+
+* **types:** add `Date` to `BaseTypes` ([#957](https://github.com/vuejs/composition-api/issues/957)) ([c3f4e91](https://github.com/vuejs/composition-api/commit/c3f4e91))
+* **types:** add types to package export ([#968](https://github.com/vuejs/composition-api/issues/968)) ([39f2036](https://github.com/vuejs/composition-api/commit/39f2036))
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/vuejs/composition-api/compare/v1.6.3...v1.7.0) (2022-07-01)
 
