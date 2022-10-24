@@ -59,7 +59,7 @@ type InferPropType<T> = T extends null
         ? boolean
           : T extends DateConstructor | { type: DateConstructor}
             ? Date
-              : T extends FunctionConstructor
+              : T extends FunctionConstructor | { type: FunctionConstructor }
                 ? Function
                 : T extends Prop<infer V, infer D>
                   ? unknown extends V
