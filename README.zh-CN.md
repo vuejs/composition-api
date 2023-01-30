@@ -3,7 +3,7 @@
 用于提供 **组合式 API** 的 Vue 2 插件.
 
 [![npm](https://img.shields.io/npm/v/@vue/composition-api)](https://www.npmjs.com/package/@vue/composition-api)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/vuejs/composition-api/Build%20&%20Test)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/vuejs/composition-api/test.yml)](https://github.com/vuejs/composition-api/actions?query=workflow%3A%22Build+%26+Test%22)
 
 [English](./README.md) | 中文 ・ [**组合式 API 文档**](https://v3.cn.vuejs.org/guide/composition-api-introduction.html)
 
