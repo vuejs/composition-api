@@ -409,7 +409,7 @@ app1.component('Foo', Foo) // 相当于 Vue.component('Foo', Foo)
 app1.use(VueRouter) // 相当于 Vue.use(VueRouter)
 
 const app2 = createApp(RootComponent2)
-app2.component('Bar', Bar) // 相当于 Vue.use('Bar', Bar)
+app2.component('Bar', Bar) // 相当于 Vue.component('Bar', Bar)
 ```
 
 </details>
