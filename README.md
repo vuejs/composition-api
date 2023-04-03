@@ -399,7 +399,7 @@ app1.component('Foo', Foo) // equivalent to Vue.component('Foo', Foo)
 app1.use(VueRouter) // equivalent to Vue.use(VueRouter)
 
 const app2 = createApp(RootComponent2)
-app2.component('Bar', Bar) // equivalent to Vue.use('Bar', Bar)
+app2.component('Bar', Bar) // equivalent to Vue.component('Bar', Bar)
 ```
 
 </details>
