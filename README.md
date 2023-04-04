@@ -334,7 +334,7 @@ export default {
 
 `reactive` uses `Vue.observable` underneath which will ***mutate*** the original object.
 
-> :bulb: In Vue 3, it will return an new proxy object.
+> :bulb: In Vue 3, it will return a new proxy object.
 
 </details>
 
@@ -391,7 +391,7 @@ watch(() => {
 ⚠️ <code>createApp()</code> is global
 </summary>
 
-In Vue 3, `createApp()` is introduced to provide context(plugin, components, etc.) isolation between app instances. Due the the design of Vue 2, in this plugin, we provide `createApp()` as a forward compatible API which is just an alias of the global.
+In Vue 3, `createApp()` is introduced to provide context(plugin, components, etc.) isolation between app instances. Due the design of Vue 2, in this plugin, we provide `createApp()` as a forward compatible API which is just an alias of the global.
 
 ```ts
 const app1 = createApp(RootComponent1)
@@ -443,7 +443,7 @@ export default {
 ⚠️ <code>shallowReadonly()</code> will create a new object and with the same root properties, new properties added will <b>not</b> be readonly or reactive.
 </summary>
 
-> :bulb: In Vue 3, it will return an new proxy object.
+> :bulb: In Vue 3, it will return a new proxy object.
 
 </details>
 
@@ -553,6 +553,6 @@ defineComponent({
 
 ### Performance Impact
 
-Due the the limitation of Vue2's public API. `@vue/composition-api` inevitably introduces some performance overhead. Note that in most scenarios, this shouldn't be the source of performance issues.
+Due the limitation of Vue2's public API. `@vue/composition-api` inevitably introduces some performance overhead. Note that in most scenarios, this shouldn't be the source of performance issues.
 
 You can check the [benchmark results](https://antfu.github.io/vue-composition-api-benchmark-results/) for more details.

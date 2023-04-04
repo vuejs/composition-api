@@ -132,7 +132,7 @@ describe('reactivity/effect/scope', () => {
     await nextTick()
     expect(dummy).toBe(7)
 
-    // nested scope should not be stoped
+    // nested scope should not be stopped
     expect(doubled).toBe(12)
   })
 

@@ -383,7 +383,7 @@ function createWatcher(
   if (isReactive(watcher.value) && watcher.value.__ob__?.dep && deep) {
     watcher.value.__ob__.dep.addSub({
       update() {
-        // this will force the source to be revaluated and the callback
+        // this will force the source to be reevaluated and the callback
         // executed if needed
         watcher.run()
       },
