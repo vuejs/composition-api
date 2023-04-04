@@ -30,7 +30,7 @@ jobs:
         env:
           CI: true
 
-      - name: Typing Declartion Tests
+      - name: Typing Declaration Tests
         run: pnpm run test:dts
         env:
           CI: true
