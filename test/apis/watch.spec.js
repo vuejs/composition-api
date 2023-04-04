@@ -549,8 +549,8 @@ describe('api/watch', () => {
       expect(spy).toHaveBeenCalledTimes(1)
       arr.value[1][0] = 3
       await nextTick()
-      expect(spy).toHaveBeenCalledTimes(1),
-        expect(`"deep" option is only respected`).toHaveBeenWarned()
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(`"deep" option is only respected`).toHaveBeenWarned()
     })
   })
 
