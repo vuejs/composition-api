@@ -13,6 +13,7 @@ declare module 'vue/types/vue' {
     readonly _uid: number
     readonly _data: Record<string, any>
     _watchers: VueWatcher[]
+    _provided: Record<PropertyKey, any>
     __composition_api_state__?: VfaState
   }
 
