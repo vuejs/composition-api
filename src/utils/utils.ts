@@ -36,7 +36,7 @@ export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
   })
 }
 
-export function hasOwn(obj: Object, key: string): boolean {
+export function hasOwn(obj: Object, key: PropertyKey): boolean {
   return Object.hasOwnProperty.call(obj, key)
 }
 

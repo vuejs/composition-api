@@ -17,10 +17,8 @@ function resolveInject(
 ): any {
   let source = vm
   while (source) {
-    // @ts-ignore
-    if (source._provided && hasOwn(source._provided, provideKey)) {
-      //@ts-ignore
-      return source._provided[provideKey]
+    if (source._provided && hasOwn(source._provided, provideKey as PropertyKey)) {
+      return source._provided[provideKey as PropertyKey]
     }
     source = source.$parent
   }
@@ -29,7 +27,7 @@ function resolveInject(
 }
 
 export function provide<T>(key: InjectionKey<T> | string, value: T): void {
-  const vm: any = getCurrentInstanceForFn('provide')?.proxy
+  const vm = getCurrentInstanceForFn('provide')?.proxy
   if (!vm) return
 
   if (!vm._provided) {
