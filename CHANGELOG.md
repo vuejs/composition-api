@@ -1,3 +1,18 @@
+<a name="1.7.2"></a>
+## [1.7.2](https://github.com/vuejs/composition-api/compare/v1.7.1...v1.7.2) (2023-08-15)
+
+
+### Bug Fixes
+
+* **types:** function constructor should be a Function ([#972](https://github.com/vuejs/composition-api/issues/972)) ([6247ba3](https://github.com/vuejs/composition-api/commit/6247ba3))
+
+
+### Features
+
+* support inject key types ([#986](https://github.com/vuejs/composition-api/issues/986)) ([599423c](https://github.com/vuejs/composition-api/commit/599423c))
+
+
+
 <a name="1.7.1"></a>
 ## [1.7.1](https://github.com/vuejs/composition-api/compare/v1.7.0...v1.7.1) (2022-09-23)
 
